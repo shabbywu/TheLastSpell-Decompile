@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>TheLastStand</AssemblyName>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <TargetFramework>net40</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>11.0</LangVersion>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup />
+  <ItemGroup />
+  <ItemGroup>
+    <Reference Include="TPLib" />
+    <Reference Include="UnityEngine.AnimationModule" />
+    <Reference Include="UnityEngine.CoreModule" />
+    <Reference Include="UnityEngine.UI" />
+    <Reference Include="Steamworks.NET" />
+    <Reference Include="Rewired_Core" />
+    <Reference Include="Framework" />
+    <Reference Include="Sirenix.Serialization" />
+    <Reference Include="DOTween" />
+    <Reference Include="Unity.TextMeshPro" />
+    <Reference Include="TextTyper" />
+    <Reference Include="UnityEngine.UIModule" />
+    <Reference Include="UnityEngine.AudioModule" />
+    <Reference Include="UnityEngine.Physics2DModule" />
+    <Reference Include="System.Core">
+      <HintPath>../../../../opt/bitnami/dotnet-sdk/bin/shared/Microsoft.NETCore.App/6.0.22/System.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="CoffeeUIParticle" />
+    <Reference Include="UnityEngine.GridModule" />
+    <Reference Include="UnityEngine.TilemapModule" />
+    <Reference Include="PortraitAPI" />
+    <Reference Include="UnityEngine.ParticleSystemModule" />
+    <Reference Include="System.Xml.Linq">
+      <HintPath>../../../../opt/bitnami/dotnet-sdk/bin/shared/Microsoft.NETCore.App/6.0.22/System.Xml.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.2D.PixelPerfect" />
+    <Reference Include="ProCamera2D" />
+    <Reference Include="Amplify Color" />
+    <Reference Include="Unity.Postprocessing.Runtime" />
+    <Reference Include="System.Xml">
+      <HintPath>../../../../opt/bitnami/dotnet-sdk/bin/shared/Microsoft.NETCore.App/6.0.22/System.Xml.dll</HintPath>
+    </Reference>
+    <Reference Include="TheLastStand.Framework.Encryption">
+      <HintPath>../../TheLastStand.Framework.Encryption.dll</HintPath>
+    </Reference>
+    <Reference Include="AsusAuraWrapper" />
+    <Reference Include="Rewired" />
+    <Reference Include="UnityEngine.TextCoreModule" />
+    <Reference Include="TPDebug" />
+    <Reference Include="NaconAPI" />
+    <Reference Include="RestSharp" />
+    <Reference Include="DOTween.Modules" />
+    <Reference Include="UnityEngine.InputLegacyModule" />
+    <Reference Include="UnityEngine.TextRenderingModule" />
+    <Reference Include="UnityEngine.IMGUIModule" />
+    <Reference Include="Sirenix.Utilities" />
+    <Reference Include="UnityEngine.ImageConversionModule" />
+  </ItemGroup>
+</Project>

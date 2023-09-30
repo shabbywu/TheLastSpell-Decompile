@@ -1,0 +1,35 @@
+using System;
+using System.Collections.Generic;
+using System.Xml.Linq;
+using TPLib.Log;
+using TheLastStand.Definition.Meta.Glyphs;
+using TheLastStand.Framework.Database;
+using UnityEngine;
+
+namespace TheLastStand.Database.Meta;
+
+public class GlyphDatabase : Database<GlyphDatabase>
+{
+	[SerializeField]
+	private TextAsset[] glyphDefinitions;
+
+	public static Dictionary<string, GlyphDefinition> GlyphDefinitions { get; private set; }
+
+	public override void Deserialize(XContainer container = null)
+	{
+		Queue<XElement> queue = base.GatherElements((IEnumerable<TextAsset>)glyphDefinitions, (IEnumerable<TextAsset>)null, "GlyphDefinition", (string)null);
+		GlyphDefinitions = new Dictionary<string, GlyphDefinition>();
+		while (queue.Count > 0)
+		{
+			GlyphDefinition glyphDefinition = new GlyphDefinition((XContainer)(object)queue.Dequeue());
+			try
+			{
+				GlyphDefinitions.Add(glyphDefinition.Id, glyphDefinition);
+			}
+			catch (ArgumentException)
+			{
+				CLoggerManager.Log((object)("Duplicate GlyphDefinition found for Id " + glyphDefinition.Id + "."), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+			}
+		}
+	}
+}
