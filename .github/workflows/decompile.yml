@@ -5,6 +5,7 @@ on:
     paths:
     - TheLastStand.dll
     - TheLastStand.Framework.Encryption.dll
+    - Framework.dll
   workflow_dispatch:
 jobs:
   decompile:
@@ -20,6 +21,7 @@ jobs:
         files: |
           TheLastStand.dll
           TheLastStand.Framework.Encryption.dll
+          Framework.dll
         output-dir: src/
         project: true
     - name: Fix permission
