@@ -292,7 +292,7 @@ public class GameOverPanel : TPSingleton<GameOverPanel>, IOverlayUser
 				rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, 0f);
 			}
 			isOpened = false;
-			moveTween = (Tween)(object)TweenSettingsExtensions.OnComplete<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenExtensions.SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosY(rectTransform, posYInit, 0.25f, false), (Ease)26), "GameOverPanelClose", (Component)(object)this), (TweenCallback)delegate
+			moveTween = (Tween)(object)TweenSettingsExtensions.OnComplete<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosY(rectTransform, posYInit, 0.25f, false), (Ease)26).SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>("GameOverPanelClose", (Component)(object)this), (TweenCallback)delegate
 			{
 				((Behaviour)canvas).enabled = false;
 				soulsRewardPanel.ClearTrophies();
@@ -345,7 +345,7 @@ public class GameOverPanel : TPSingleton<GameOverPanel>, IOverlayUser
 				TweenExtensions.Kill(moveTween, false);
 				rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, posYInit);
 			}
-			moveTween = (Tween)(object)TweenExtensions.SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosY(rectTransform, panelDeltaPosY, 0.25f, false), (Ease)27), "GameOverPanelOpen", (Component)(object)this);
+			moveTween = (Tween)(object)TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosY(rectTransform, panelDeltaPosY, 0.25f, false), (Ease)27).SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>("GameOverPanelOpen", (Component)(object)this);
 			OnOpenRelease();
 			SimpleFontLocalizedParent obj = simpleFontLocalizedParent;
 			if (obj != null)
@@ -493,7 +493,7 @@ public class GameOverPanel : TPSingleton<GameOverPanel>, IOverlayUser
 		//IL_025a: Unknown result type (might be due to invalid IL or missing references)
 		//IL_026a: Unknown result type (might be due to invalid IL or missing references)
 		bool isVictory = TPSingleton<GameManager>.Instance.Game.IsVictory;
-		cityPortrait.sprite = ResourcePooler<Sprite>.LoadOnce("View/Sprites/UI/Cities/Portraits/WorldMap_CityPortrait_" + TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.Id + (isVictory ? "02" : "03"), false);
+		cityPortrait.sprite = ResourcePooler<Sprite>.LoadOnce("View/Sprites/UI/Cities/Portraits/WorldMap_CityPortrait_" + TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.Id + (isVictory ? "02" : "03"));
 		cityPortraitBox.sprite = (isVictory ? cityPortraitBoxVictory : cityPortraitBoxDefeat);
 		glyphsBox.sprite = (isVictory ? modifierBoxVictory : modifierBoxDefeat);
 		apocalypseModeBox.sprite = (isVictory ? modifierBoxVictory : modifierBoxDefeat);
@@ -596,10 +596,10 @@ public class GameOverPanel : TPSingleton<GameOverPanel>, IOverlayUser
 			if (TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CurrentGlyphPoints > 0)
 			{
 				glyphsJoystickTarget.NavigationEnabled = true;
-				TweenExtensions.SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosY(glyphsRectTransform, glyphsUnfoldedPositionY, unfoldDuration, false), unfoldEasing), "easyModeUnfoldTween", (Component)(object)this);
-				SelectableExtensions.SetMode((Selectable)(object)glyphsSelectable, (Mode)4);
-				SelectableExtensions.SetSelectOnDown((Selectable)(object)glyphsSelectable, soulsRewardPanel.GetFirstSelectableTrophy());
-				SelectableExtensions.SetSelectOnLeft((Selectable)(object)apocalypseSelectable, (Selectable)(object)glyphsSelectable);
+				TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosY(glyphsRectTransform, glyphsUnfoldedPositionY, unfoldDuration, false), unfoldEasing).SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>("easyModeUnfoldTween", (Component)(object)this);
+				((Selectable)(object)glyphsSelectable).SetMode((Mode)4);
+				((Selectable)(object)glyphsSelectable).SetSelectOnDown(soulsRewardPanel.GetFirstSelectableTrophy());
+				((Selectable)(object)apocalypseSelectable).SetSelectOnLeft((Selectable)(object)glyphsSelectable);
 				if (TPSingleton<WorldMapCityManager>.Instance.SelectedCity.GlyphsConfig.CustomModeEnabled)
 				{
 					((Behaviour)glyphsCustomModeText).enabled = true;
@@ -612,11 +612,11 @@ public class GameOverPanel : TPSingleton<GameOverPanel>, IOverlayUser
 			}
 			if (ApocalypseManager.CurrentApocalypseIndex > 0)
 			{
-				TweenExtensions.SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosY(apocalypseRectTransform, apocalypseUnfoldedPositionY, unfoldDuration, false), unfoldEasing), "apocalypseUnfoldTween", (Component)(object)this);
+				TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosY(apocalypseRectTransform, apocalypseUnfoldedPositionY, unfoldDuration, false), unfoldEasing).SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>("apocalypseUnfoldTween", (Component)(object)this);
 				apocalypseJoystickTarget.NavigationEnabled = true;
-				SelectableExtensions.SetMode((Selectable)(object)apocalypseSelectable, (Mode)4);
-				SelectableExtensions.SetSelectOnDown((Selectable)(object)apocalypseSelectable, soulsRewardPanel.GetFirstSelectableTrophy());
-				SelectableExtensions.SetSelectOnRight((Selectable)(object)glyphsSelectable, (Selectable)(object)apocalypseSelectable);
+				((Selectable)(object)apocalypseSelectable).SetMode((Mode)4);
+				((Selectable)(object)apocalypseSelectable).SetSelectOnDown(soulsRewardPanel.GetFirstSelectableTrophy());
+				((Selectable)(object)glyphsSelectable).SetSelectOnRight((Selectable)(object)apocalypseSelectable);
 			}
 			else
 			{
@@ -675,14 +675,14 @@ public class GameOverPanel : TPSingleton<GameOverPanel>, IOverlayUser
 			playableJoystickTarget.AddSelectables((IEnumerable<Selectable>)playableReports.Select((PlayableReportDisplay x) => x.Selectable));
 			SelectPlayablePanelJoystick();
 		}
-		TweenExtensions.SetFullId<TweenerCore<float, float, FloatOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(DOTweenModuleUI.DOFade(playableReportCanvasGroup, 1f, 1f), (Ease)9), "PlayableReportFadeIn", (Component)(object)this);
+		TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(DOTweenModuleUI.DOFade(playableReportCanvasGroup, 1f, 1f), (Ease)9).SetFullId<TweenerCore<float, float, FloatOptions>>("PlayableReportFadeIn", (Component)(object)this);
 		alreadySeenPlayableReport = true;
 	}
 
 	private IEnumerator ShowStats()
 	{
 		yield return SharedYields.WaitForSeconds(PlayableUnitManager.DebugForceSkipNightReport ? 0f : waitBeforeShowingStats);
-		TweenExtensions.SetFullId<TweenerCore<float, float, FloatOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(DOTweenModuleUI.DOFade(statsCanvasGroup, 1f, 1f), (Ease)9), "StatsFadeIn", (Component)(object)this);
+		TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(DOTweenModuleUI.DOFade(statsCanvasGroup, 1f, 1f), (Ease)9).SetFullId<TweenerCore<float, float, FloatOptions>>("StatsFadeIn", (Component)(object)this);
 		((MonoBehaviour)this).StartCoroutine(ShowUnlocks());
 	}
 
@@ -691,16 +691,16 @@ public class GameOverPanel : TPSingleton<GameOverPanel>, IOverlayUser
 		yield return SharedYields.WaitForSeconds(PlayableUnitManager.DebugForceSkipNightReport ? 0f : waitBeforeShowingUnlocks);
 		unlockParticlesSquare.SetActive(TPSingleton<ApocalypseManager>.Instance.FreshlyUnlockedApocalypse);
 		unlockParticlesRays.SetActive(TPSingleton<ApocalypseManager>.Instance.FreshlyUnlockedApocalypse);
-		TweenExtensions.SetFullId<TweenerCore<float, float, FloatOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(DOTweenModuleUI.DOFade(unlocksCanvasGroup, unlocksAlphaTarget, 1f), (Ease)9), "UnlocksFadeIn", (Component)(object)this);
-		SelectableExtensions.SetMode((Selectable)(object)unlocksSelectable, (Mode)4);
-		SelectableExtensions.SetSelectOnUp((Selectable)(object)unlocksSelectable, soulsRewardPanel.GetFirstSelectableTrophy());
+		TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(DOTweenModuleUI.DOFade(unlocksCanvasGroup, unlocksAlphaTarget, 1f), (Ease)9).SetFullId<TweenerCore<float, float, FloatOptions>>("UnlocksFadeIn", (Component)(object)this);
+		((Selectable)(object)unlocksSelectable).SetMode((Mode)4);
+		((Selectable)(object)unlocksSelectable).SetSelectOnUp(soulsRewardPanel.GetFirstSelectableTrophy());
 		((MonoBehaviour)this).StartCoroutine(ShowContinueButton());
 	}
 
 	private IEnumerator ShowContinueButton()
 	{
 		yield return SharedYields.WaitForSeconds(PlayableUnitManager.DebugForceSkipNightReport ? 0f : waitBeforeShowingContinue);
-		TweenSettingsExtensions.OnComplete<TweenerCore<float, float, FloatOptions>>(TweenExtensions.SetFullId<TweenerCore<float, float, FloatOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(DOTweenModuleUI.DOFade(continueCanvasGroup, 1f, 1f), (Ease)9), "ContinueFadeIn", (Component)(object)this), (TweenCallback)delegate
+		TweenSettingsExtensions.OnComplete<TweenerCore<float, float, FloatOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(DOTweenModuleUI.DOFade(continueCanvasGroup, 1f, 1f), (Ease)9).SetFullId<TweenerCore<float, float, FloatOptions>>("ContinueFadeIn", (Component)(object)this), (TweenCallback)delegate
 		{
 			continueCanvasGroup.interactable = true;
 		});

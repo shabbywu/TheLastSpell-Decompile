@@ -49,10 +49,10 @@ public abstract class AGlyphDisplay : MonoBehaviour, IPointerEnterHandler, IEven
 
 	public static Sprite GetGlyphIcon(GlyphDefinition glyphDefinition)
 	{
-		Sprite val = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Meta/Glyphs/Orbs/Glyphs_Orbs_" + glyphDefinition.Id, true);
+		Sprite val = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Meta/Glyphs/Orbs/Glyphs_Orbs_" + glyphDefinition.Id, failSilently: true);
 		if (!Object.op_Implicit((Object)(object)val))
 		{
-			return ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Meta/Glyphs/Orbs/Glyphs_Orbs_Default", false);
+			return ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Meta/Glyphs/Orbs/Glyphs_Orbs_Default", failSilently: false);
 		}
 		return val;
 	}

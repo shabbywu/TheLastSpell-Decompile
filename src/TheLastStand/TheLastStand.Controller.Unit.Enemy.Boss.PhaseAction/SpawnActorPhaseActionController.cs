@@ -35,9 +35,8 @@ public class SpawnActorPhaseActionController : ABossPhaseActionController
 	public override IEnumerator Execute()
 	{
 		string bossPhaseActorId = SpawnActorPhaseActionDefinition.UnitCreationSettings.BossPhaseActorId;
-		BossPhase currentBossPhase = TPSingleton<BossManager>.Instance.CurrentBossPhase;
-		ActorDefinition actorDefinition = ((currentBossPhase != null) ? DictionaryExtensions.GetValueOrDefault<string, ActorDefinition>(currentBossPhase.BossPhaseDefinition.ActorDefinitions, bossPhaseActorId) : null);
-		Definition actorTypedDefinition = actorDefinition?.GetCorrespondingDefinition();
+		ActorDefinition actorDefinition = TPSingleton<BossManager>.Instance.CurrentBossPhase?.BossPhaseDefinition.ActorDefinitions.GetValueOrDefault(bossPhaseActorId);
+		TheLastStand.Framework.Serialization.Definition actorTypedDefinition = actorDefinition?.GetCorrespondingDefinition();
 		bool cameraWasZoomed = ACameraView.IsZoomedIn;
 		if (SpawnActorPhaseActionDefinition.CameraFocus)
 		{

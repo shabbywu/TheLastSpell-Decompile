@@ -52,7 +52,7 @@ public class GlyphModifyBuildingActionsCostEffect : ISerializable, IDeserializab
 
 	public ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedModifyBuildingActionsCostGlyph
+		return new SerializedModifyBuildingActionsCostGlyph
 		{
 			GlyphParentId = GlyphParentId,
 			EffectIndex = EffectIndex,

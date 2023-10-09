@@ -4,7 +4,6 @@ using TPLib;
 using TPLib.Log;
 using TheLastStand.Definition.Unit;
 using TheLastStand.Definition.Unit.Enemy;
-using TheLastStand.Framework.Serialization;
 using UnityEngine;
 
 namespace TheLastStand.Definition.Building.Module;
@@ -44,7 +43,7 @@ public class BattleModuleDefinition : BuildingModuleDefinition
 				{
 					if (!int.TryParse(val3.Value, out result))
 					{
-						TPDebug.LogError((object)("The skill " + item.Value + " " + ((Definition)this).HasAnInvalidInt(val3.Value)), (Object)null);
+						TPDebug.LogError((object)("The skill " + item.Value + " " + HasAnInvalidInt(val3.Value)), (Object)null);
 						continue;
 					}
 					if (result == -1)

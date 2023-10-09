@@ -30,7 +30,7 @@ public class MagicCircleDefinition : BuildingDefinition
 			return;
 		}
 		XElement val2 = ((XContainer)val).Element(XName.op_Implicit("MageSlotMax"));
-		if (XDocumentExtensions.IsNullOrEmpty(val2))
+		if (val2.IsNullOrEmpty())
 		{
 			Debug.Log((object)"ConstructionDefinition must have a MageSlotMax");
 			return;
@@ -42,7 +42,7 @@ public class MagicCircleDefinition : BuildingDefinition
 		}
 		MageSlotMax = result;
 		XElement val3 = ((XContainer)val).Element(XName.op_Implicit("MageSlotInit"));
-		if (XDocumentExtensions.IsNullOrEmpty(val3))
+		if (val3.IsNullOrEmpty())
 		{
 			Debug.Log((object)"ConstructionDefinition must have a MageSlotInit");
 			return;
@@ -54,7 +54,7 @@ public class MagicCircleDefinition : BuildingDefinition
 		}
 		MageSlotInit = result2;
 		XElement val4 = ((XContainer)val).Element(XName.op_Implicit("MageCountInit"));
-		if (XDocumentExtensions.IsNullOrEmpty(val4))
+		if (val4.IsNullOrEmpty())
 		{
 			Debug.Log((object)"MagicCircle must have a MageCountInit");
 			return;
@@ -66,7 +66,7 @@ public class MagicCircleDefinition : BuildingDefinition
 		}
 		MageCountInit = result3;
 		XElement val5 = ((XContainer)val).Element(XName.op_Implicit("OpenSealsInit"));
-		if (XDocumentExtensions.IsNullOrEmpty(val5))
+		if (val5.IsNullOrEmpty())
 		{
 			Debug.Log((object)"MagicCircle must have a OpenSealsInit");
 			return;
@@ -79,7 +79,7 @@ public class MagicCircleDefinition : BuildingDefinition
 		OpenSealsInit = result4;
 		XElement val6 = ((XContainer)val).Element(XName.op_Implicit("SealsToClose"));
 		int result5;
-		if (XDocumentExtensions.IsNullOrEmpty(val6))
+		if (val6.IsNullOrEmpty())
 		{
 			Debug.Log((object)"ConstructionDefinition must have a SealsToClose");
 		}

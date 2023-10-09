@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Xml.Linq;
-using TheLastStand.Framework.Serialization;
 using TheLastStand.Model.Status;
 
 namespace TheLastStand.Definition.Skill.SkillEffect;
@@ -30,6 +29,6 @@ public class PoisonEffectDefinition : StatusEffectDefinition
 		AffectedUnits = E_SkillUnitAffect.IgnoreCaster;
 		base.Deserialize(container);
 		XElement val = (XElement)(object)((container is XElement) ? container : null);
-		damagePerTurnInterpretedFloat = new InterpretedFloat((XContainer)(object)((XContainer)val).Element(XName.op_Implicit("DamagePerTurn")), 0f, ((Definition)this).TokenVariables);
+		damagePerTurnInterpretedFloat = new InterpretedFloat((XContainer)(object)((XContainer)val).Element(XName.op_Implicit("DamagePerTurn")), 0f, base.TokenVariables);
 	}
 }

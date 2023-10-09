@@ -5,7 +5,7 @@ using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Brazier;
 
-public class BraziersDefinition : Definition
+public class BraziersDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public class GuardiansGroup
 	{

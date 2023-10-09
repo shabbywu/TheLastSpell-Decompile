@@ -156,7 +156,7 @@ public class AnimatedCutsceneView : TPSingleton<AnimatedCutsceneView>
 	private void ChangeMusic(AnimatedCutsceneSlideChangeMusicDefinition changeMusicDefinition)
 	{
 		string text = "Sounds/SFX/AnimatedCutscene/" + currentCutsceneId + "/" + changeMusicDefinition.ClipAssetName;
-		AudioClip val = ResourcePooler.LoadOnce<AudioClip>(text, false);
+		AudioClip val = ResourcePooler.LoadOnce<AudioClip>(text, failSilently: false);
 		if ((Object)(object)val == (Object)null)
 		{
 			((CLogger<AnimatedCutsceneManager>)TPSingleton<AnimatedCutsceneManager>.Instance).LogError((object)("No clip found at Resources path " + text + " during slide " + currentSlideDefinition.Id + "! Aborting music change."), (CLogLevel)1, true, true);
@@ -279,7 +279,7 @@ public class AnimatedCutsceneView : TPSingleton<AnimatedCutsceneView>
 	private void PlaySoundEffect(AnimatedCutsceneSlidePlaySoundDefinition playSoundDefinition)
 	{
 		string text = "Sounds/SFX/AnimatedCutscene/" + currentCutsceneId + "/" + playSoundDefinition.ClipAssetName;
-		AudioClip val = ResourcePooler.LoadOnce<AudioClip>(text, false);
+		AudioClip val = ResourcePooler.LoadOnce<AudioClip>(text, failSilently: false);
 		if ((Object)(object)val == (Object)null)
 		{
 			((CLogger<AnimatedCutsceneManager>)TPSingleton<AnimatedCutsceneManager>.Instance).LogError((object)("No clip found at Resources path " + text + " during slide " + currentSlideDefinition.Id + "! Aborting SFX play."), (CLogLevel)1, true, true);

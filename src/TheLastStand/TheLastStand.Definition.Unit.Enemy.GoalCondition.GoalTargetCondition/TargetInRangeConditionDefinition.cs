@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.ExpressionInterpreter;
 
@@ -21,17 +20,9 @@ public class TargetInRangeConditionDefinition : GoalConditionDefinition
 	{
 		if (interpreterContext == null)
 		{
-			if (node == null)
-			{
-				return 0;
-			}
-			return node.EvalToInt();
+			return node?.EvalToInt() ?? 0;
 		}
-		if (node == null)
-		{
-			return 0;
-		}
-		return node.EvalToInt(interpreterContext);
+		return node?.EvalToInt(interpreterContext) ?? 0;
 	}
 
 	public int GetMinEvalToInt(InterpreterContext interpreterContext = null)
@@ -50,12 +41,12 @@ public class TargetInRangeConditionDefinition : GoalConditionDefinition
 		XAttribute val = ((XElement)obj).Attribute(XName.op_Implicit("Min"));
 		if (val != null)
 		{
-			MinExpression = Parser.Parse(val.Value, (Dictionary<string, string>)null);
+			MinExpression = Parser.Parse(val.Value);
 		}
 		XAttribute val2 = ((XElement)obj).Attribute(XName.op_Implicit("Max"));
 		if (val2 != null)
 		{
-			MaxExpression = Parser.Parse(val2.Value, (Dictionary<string, string>)null);
+			MaxExpression = Parser.Parse(val2.Value);
 		}
 	}
 }

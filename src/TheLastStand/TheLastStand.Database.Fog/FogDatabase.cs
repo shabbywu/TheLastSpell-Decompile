@@ -25,8 +25,8 @@ public class FogDatabase : Database<FogDatabase>
 		{
 			return;
 		}
-		Queue<XElement> queue = base.GatherElements((IEnumerable<TextAsset>)fogDefinitionsTextAssets, (IEnumerable<TextAsset>)null, "FogDefinition", (string)null);
-		IEnumerable<XElement> enumerable = base.SortElementsByDependencies((IEnumerable<XElement>)queue);
+		Queue<XElement> elements = GatherElements(fogDefinitionsTextAssets, null, "FogDefinition");
+		IEnumerable<XElement> enumerable = SortElementsByDependencies(elements);
 		FogsDefinitions = new Dictionary<string, FogDefinition>();
 		foreach (XElement item in enumerable)
 		{

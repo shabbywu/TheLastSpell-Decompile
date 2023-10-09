@@ -14,7 +14,6 @@ using TheLastStand.Definition.Unit.Enemy.GoalCondition.GoalPostcondition;
 using TheLastStand.Definition.Unit.Enemy.GoalCondition.GoalPrecondition;
 using TheLastStand.Definition.Unit.Enemy.GoalCondition.GoalTargetCondition;
 using TheLastStand.Definition.Unit.Enemy.TargetingMethod;
-using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Framework.Extensions;
 using TheLastStand.Manager;
 using TheLastStand.Manager.Building;
@@ -209,7 +208,7 @@ public class GoalController
 		}
 		if (Goal.Owner is EnemyUnit enemyUnit && goalConditionDefinition is InterpretedTurnCondition interpretedTurnCondition)
 		{
-			return interpretedTurnCondition.Expression.EvalToInt((InterpreterContext)(object)enemyUnit.EnemyUnitController.InterpretedTurnConditionContext) == TPSingleton<GameManager>.Instance.Game.CurrentNightHour;
+			return interpretedTurnCondition.Expression.EvalToInt(enemyUnit.EnemyUnitController.InterpretedTurnConditionContext) == TPSingleton<GameManager>.Instance.Game.CurrentNightHour;
 		}
 		if (goalConditionDefinition is PlayableUnitCloseToCasterConditionDefinition)
 		{
@@ -222,8 +221,7 @@ public class GoalController
 		}
 		if (goalConditionDefinition is NotInFogCondition notInFogCondition)
 		{
-			Node nbTurns = notInFogCondition.NbTurns;
-			int num2 = ((nbTurns != null) ? nbTurns.EvalToInt((InterpreterContext)(object)Goal) : 0);
+			int num2 = notInFogCondition.NbTurns?.EvalToInt(Goal) ?? 0;
 			if (!(Goal.Owner is EnemyUnit enemyUnit2))
 			{
 				return !Goal.Owner.OriginTile.HasFog;
@@ -236,8 +234,7 @@ public class GoalController
 		}
 		if (goalConditionDefinition is NotInAnyFogCondition notInAnyFogCondition)
 		{
-			Node nbTurns2 = notInAnyFogCondition.NbTurns;
-			int num3 = ((nbTurns2 != null) ? nbTurns2.EvalToInt((InterpreterContext)(object)Goal) : 0);
+			int num3 = notInAnyFogCondition.NbTurns?.EvalToInt(Goal) ?? 0;
 			if (!(Goal.Owner is EnemyUnit enemyUnit3))
 			{
 				return !Goal.Owner.OriginTile.HasAnyFog;
@@ -296,8 +293,8 @@ public class GoalController
 		if (goalConditionDefinition is TargetInRangeConditionDefinition targetInRangeConditionDefinition)
 		{
 			int num = TileMapController.DistanceBetweenTiles(Goal.Owner.OriginTile, tile);
-			int minEvalToInt = targetInRangeConditionDefinition.GetMinEvalToInt((InterpreterContext)(object)Goal);
-			int maxEvalToInt = targetInRangeConditionDefinition.GetMaxEvalToInt((InterpreterContext)(object)Goal);
+			int minEvalToInt = targetInRangeConditionDefinition.GetMinEvalToInt(Goal);
+			int maxEvalToInt = targetInRangeConditionDefinition.GetMaxEvalToInt(Goal);
 			if (num >= minEvalToInt)
 			{
 				return num <= maxEvalToInt;
@@ -405,8 +402,8 @@ public class GoalController
 		if (Goal.Owner.GoalComputingStep == IBehaviorModel.E_GoalComputingStep.BeforeMoving && goalConditionDefinition is TargetInRangeConditionDefinition targetInRangeConditionDefinition)
 		{
 			_ = Goal.Owner;
-			int minEvalToInt = targetInRangeConditionDefinition.GetMinEvalToInt((InterpreterContext)(object)Goal);
-			int maxEvalToInt = targetInRangeConditionDefinition.GetMaxEvalToInt((InterpreterContext)(object)Goal);
+			int minEvalToInt = targetInRangeConditionDefinition.GetMinEvalToInt(Goal);
+			int maxEvalToInt = targetInRangeConditionDefinition.GetMaxEvalToInt(Goal);
 			foreach (Tile occupiedTile in Goal.Owner.OccupiedTiles)
 			{
 				foreach (Tile occupiedTile2 in targetTileObject.OccupiedTiles)
@@ -501,8 +498,8 @@ public class GoalController
 				{
 					if (array[j] is TargetInRangeConditionDefinition targetInRangeConditionDefinition)
 					{
-						int minEvalToInt = targetInRangeConditionDefinition.GetMinEvalToInt((InterpreterContext)(object)Goal);
-						int maxEvalToInt = targetInRangeConditionDefinition.GetMaxEvalToInt((InterpreterContext)(object)Goal);
+						int minEvalToInt = targetInRangeConditionDefinition.GetMinEvalToInt(Goal);
+						int maxEvalToInt = targetInRangeConditionDefinition.GetMaxEvalToInt(Goal);
 						if (minEvalToInt < num)
 						{
 							num = minEvalToInt;
@@ -770,7 +767,7 @@ public class GoalController
 			for (int num8 = list.Count - 1; num8 >= 0; num8--)
 			{
 				Goal.GoalInterpreterContext.TargetCandidateTile = list[num8].Tile;
-				float num9 = scoreTargetingMethodDefinition.Score.EvalToFloat((object)Goal.GoalInterpreterContext);
+				float num9 = scoreTargetingMethodDefinition.Score.EvalToFloat(Goal.GoalInterpreterContext);
 				list5.Add(new Tuple<SkillTargetedTileInfo, float>(list[num8], num9));
 				if (num9 > maxScore)
 				{
@@ -793,19 +790,18 @@ public class GoalController
 			AddCandidateTargets(list, Goal.GoalDefinition.GoalTargetTypeDefinitions[num]);
 		}
 		Dictionary<SkillTargetedTileInfo, bool> dictionary = list.ToDictionary((SkillTargetedTileInfo key) => key, (SkillTargetedTileInfo value) => false);
-		KeyValuePair<IDamageable, GroupTargetingInfo> keyValuePair = default(KeyValuePair<IDamageable, GroupTargetingInfo>);
 		for (int num2 = dictionary.Count - 1; num2 >= 0; num2--)
 		{
 			SkillTargetedTileInfo skillInfo = dictionary.ElementAt(num2).Key;
-			if (alreadyTargetedDamageables != null && skillInfo.Tile.Damageable != null && ListExtensions.TryFind<KeyValuePair<IDamageable, GroupTargetingInfo>>((IEnumerable<KeyValuePair<IDamageable, GroupTargetingInfo>>)alreadyTargetedDamageables, (Func<KeyValuePair<IDamageable, GroupTargetingInfo>, bool>)((KeyValuePair<IDamageable, GroupTargetingInfo> x) => x.Key == skillInfo.Tile.Damageable), ref keyValuePair))
+			if (alreadyTargetedDamageables != null && skillInfo.Tile.Damageable != null && alreadyTargetedDamageables.TryFind((KeyValuePair<IDamageable, GroupTargetingInfo> x) => x.Key == skillInfo.Tile.Damageable, out var value2))
 			{
-				if (keyValuePair.Value.EntitiesIdTargeting.Contains(Goal.Owner.RandomId) && Goal.Owner is BattleModule battleModule && battleModule.BuildingParent.IsTurret)
+				if (value2.Value.EntitiesIdTargeting.Contains(Goal.Owner.RandomId) && Goal.Owner is BattleModule battleModule && battleModule.BuildingParent.IsTurret)
 				{
 					dictionary.Remove(skillInfo);
 					continue;
 				}
 				TargetingMethodsContainerDefinition targetingMethodsContainer = Goal.GoalDefinition.TargetingMethodsContainer;
-				if (targetingMethodsContainer != null && targetingMethodsContainer.AvoidOverkill && keyValuePair.Value.MinDamage >= keyValuePair.Key.Health + keyValuePair.Key.Armor)
+				if (targetingMethodsContainer != null && targetingMethodsContainer.AvoidOverkill && value2.Value.MinDamage >= value2.Key.Health + value2.Key.Armor)
 				{
 					dictionary[skillInfo] = true;
 				}

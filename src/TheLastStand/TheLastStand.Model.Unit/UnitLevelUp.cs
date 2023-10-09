@@ -75,7 +75,7 @@ public class UnitLevelUp : ISerializable, IDeserializable
 	{
 		UnitLevelUpDefinition = definition;
 		UnitLevelUpController = controller;
-		Deserialize((ISerializedData)(object)container);
+		Deserialize(container);
 	}
 
 	public UnitLevelUp(UnitLevelUpDefinition definition, UnitLevelUpController controller)
@@ -118,6 +118,6 @@ public class UnitLevelUp : ISerializable, IDeserializable
 				Stat = AvailableSecondaryStats[j].Definition.Stat
 			});
 		}
-		return (ISerializedData)(object)serializedLevelUpBonuses;
+		return serializedLevelUpBonuses;
 	}
 }

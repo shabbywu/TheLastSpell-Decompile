@@ -4,7 +4,6 @@ using System.Xml.Linq;
 using TPLib.Log;
 using TheLastStand.Definition.Apocalypse.LightFogSpawner;
 using TheLastStand.Definition.Hazard;
-using TheLastStand.Framework.Serialization;
 using UnityEngine;
 
 namespace TheLastStand.Definition.Fog;
@@ -62,7 +61,7 @@ public class LightFogDefinition : HazardDefinition
 		foreach (XElement item in ((XContainer)val2).Elements(XName.op_Implicit("LightFogSpawnersGeneration")))
 		{
 			XAttribute val3 = item.Attribute(XName.op_Implicit("Id"));
-			LightFogSpawnersGenerationDefinitions.Add(val3.Value, new LightFogSpawnersGenerationDefinition((XContainer)(object)item, ((Definition)this).TokenVariables));
+			LightFogSpawnersGenerationDefinitions.Add(val3.Value, new LightFogSpawnersGenerationDefinition((XContainer)(object)item, base.TokenVariables));
 		}
 		foreach (XElement item2 in ((XContainer)((XContainer)val2).Element(XName.op_Implicit("LightFogSpawnersMultipliers"))).Elements(XName.op_Implicit("LightFogSpawnersMultiplier")))
 		{

@@ -1,5 +1,4 @@
 using TPLib;
-using TheLastStand.Framework;
 using TheLastStand.Framework.Automaton;
 using TheLastStand.Manager;
 
@@ -16,6 +15,6 @@ public class MainMenuLoadingState : State
 
 	public override void OnStateEnter()
 	{
-		((ASceneLoader)TPSingleton<SplashScreenManager>.Instance.SplashScreenSceneLoader).StartLoadScene();
+		TPSingleton<SplashScreenManager>.Instance.SplashScreenSceneLoader.StartLoadScene();
 	}
 }

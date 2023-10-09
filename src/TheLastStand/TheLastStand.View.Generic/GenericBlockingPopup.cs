@@ -306,12 +306,12 @@ public class GenericBlockingPopup : MonoBehaviour, IOverlayUser
 	{
 		if (InputManager.IsLastControllerJoystick)
 		{
-			SelectableExtensions.SetMode((Selectable)(object)levelUpBlockingPopupLine.MainButton, (Mode)4);
-			SelectableExtensions.SetMode((Selectable)(object)rewardBlockingPopupLine.MainButton, (Mode)4);
+			((Selectable)(object)levelUpBlockingPopupLine.MainButton).SetMode((Mode)4);
+			((Selectable)(object)rewardBlockingPopupLine.MainButton).SetMode((Mode)4);
 			if (((Component)levelUpBlockingPopupLine.MainButton).gameObject.activeInHierarchy && ((Component)rewardBlockingPopupLine.MainButton).gameObject.activeInHierarchy)
 			{
-				SelectableExtensions.SetSelectOnDown((Selectable)(object)levelUpBlockingPopupLine.MainButton, (Selectable)(object)rewardBlockingPopupLine.MainButton);
-				SelectableExtensions.SetSelectOnUp((Selectable)(object)rewardBlockingPopupLine.MainButton, (Selectable)(object)levelUpBlockingPopupLine.MainButton);
+				((Selectable)(object)levelUpBlockingPopupLine.MainButton).SetSelectOnDown((Selectable)(object)rewardBlockingPopupLine.MainButton);
+				((Selectable)(object)rewardBlockingPopupLine.MainButton).SetSelectOnUp((Selectable)(object)levelUpBlockingPopupLine.MainButton);
 			}
 			EventSystem.current.SetSelectedGameObject(((Component)levelUpBlockingPopupLine.MainButton).gameObject.activeInHierarchy ? ((Component)levelUpBlockingPopupLine.MainButton).gameObject : ((Component)rewardBlockingPopupLine.MainButton).gameObject);
 		}

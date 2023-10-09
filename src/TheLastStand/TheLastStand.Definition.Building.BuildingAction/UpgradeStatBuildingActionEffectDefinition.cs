@@ -2,7 +2,6 @@ using System;
 using System.Xml.Linq;
 using TPLib.Log;
 using TheLastStand.Definition.Unit;
-using TheLastStand.Framework.Serialization;
 using UnityEngine;
 
 namespace TheLastStand.Definition.Building.BuildingAction;
@@ -46,7 +45,7 @@ public class UpgradeStatBuildingActionEffectDefinition : BuildingActionEffectDef
 			{
 				if (!Enum.TryParse<UnitStatDefinition.E_Stat>(val2.Value, out var result))
 				{
-					CLoggerManager.Log((object)("UpgradeStat Stat " + ((Definition)this).HasAnInvalid("E_Stat", val2.Value)), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+					CLoggerManager.Log((object)("UpgradeStat Stat " + HasAnInvalid("E_Stat", val2.Value)), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 					return;
 				}
 				Stat = result;
@@ -55,7 +54,7 @@ public class UpgradeStatBuildingActionEffectDefinition : BuildingActionEffectDef
 				{
 					if (!int.TryParse(val3.Value, out var result2))
 					{
-						CLoggerManager.Log((object)("UpgradeStat Bonus " + ((Definition)this).HasAnInvalid("int", val3.Value)), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+						CLoggerManager.Log((object)("UpgradeStat Bonus " + HasAnInvalid("int", val3.Value)), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 						return;
 					}
 					Bonus = result2;
@@ -64,7 +63,7 @@ public class UpgradeStatBuildingActionEffectDefinition : BuildingActionEffectDef
 					{
 						if (!Enum.TryParse<E_BuildingActionTargeting>(val4.Value, out var result3))
 						{
-							CLoggerManager.Log((object)("UpgradeStat Target " + ((Definition)this).HasAnInvalid("E_Target", val4.Value)), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+							CLoggerManager.Log((object)("UpgradeStat Target " + HasAnInvalid("E_Target", val4.Value)), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 						}
 						else
 						{

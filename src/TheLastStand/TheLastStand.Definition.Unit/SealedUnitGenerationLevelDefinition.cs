@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Framework.Serialization;
@@ -28,7 +27,7 @@ public class SealedUnitGenerationLevelDefinition : ILegacyDeserializable
 		}
 		else
 		{
-			Level = Parser.Parse(val.Value, (Dictionary<string, string>)null);
+			Level = Parser.Parse(val.Value);
 		}
 	}
 

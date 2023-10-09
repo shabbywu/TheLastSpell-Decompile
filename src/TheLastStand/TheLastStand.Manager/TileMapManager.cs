@@ -8,7 +8,6 @@ using TheLastStand.Controller.TileMap;
 using TheLastStand.Definition.TileMap;
 using TheLastStand.Definition.Unit;
 using TheLastStand.Framework;
-using TheLastStand.Framework.Automaton;
 using TheLastStand.Manager.Building;
 using TheLastStand.Manager.LevelEditor;
 using TheLastStand.Manager.Unit;
@@ -73,10 +72,10 @@ public class TileMapManager : Manager<TileMapManager>
 		{
 			if (tileMap == null)
 			{
-				bool num = ((StateMachine)ApplicationManager.Application).State.GetName() == "LevelEditor";
+				bool num = ApplicationManager.Application.State.GetName() == "LevelEditor";
 				string text = (num ? LevelEditorManager.CityToLoadId : TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.LevelLayoutTileMapId);
 				string format = ((num || GameManager.LoadLevelEditorCityAssets) ? "TextAssets/Cities/Level Editor/{0}/{0}_TileMap" : "TextAssets/Cities/{0}/{0}_TileMap");
-				TextAsset val = ResourcePooler.LoadOnce<TextAsset>(string.Format(format, text), false);
+				TextAsset val = ResourcePooler.LoadOnce<TextAsset>(string.Format(format, text), failSilently: false);
 				((CLogger<TileMapManager>)TPSingleton<TileMapManager>.Instance).Log((object)("Loading Level Tilemap layout using Id <b>" + text + "</b> from path <b>" + string.Format(format, text) + "</b> " + (GameManager.LoadLevelEditorCityAssets ? " (in Level but using Level Editor path)" : string.Empty) + "."), (CLogLevel)2, true, false);
 				((CLogger<TileMapManager>)TPSingleton<TileMapManager>.Instance).Log((object)("Level Tilemap layout loading " + (((Object)(object)val != (Object)null) ? "<color=green>succeeded</color>" : "<color=red>failed</color>") + "."), (CLogLevel)2, true, false);
 				tileMap = new TileMapController((XContainer)(object)(((Object)(object)val != (Object)null) ? XDocument.Parse(val.text, (LoadOptions)2) : null), TPSingleton<TileMapView>.Instance).TileMap;

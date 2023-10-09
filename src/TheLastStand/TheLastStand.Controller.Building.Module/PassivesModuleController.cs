@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using TPLib;
 using TheLastStand.Controller.Building.BuildingPassive;
 using TheLastStand.Definition.Building.Module;
-using TheLastStand.Framework.Automaton;
 using TheLastStand.Manager;
 using TheLastStand.Manager.Unit;
 using TheLastStand.Model;
@@ -25,7 +24,7 @@ public class PassivesModuleController : BuildingModuleController
 
 	public void ApplyPassiveEffect(E_EffectTime effectTime, bool force = false, bool onLoad = false)
 	{
-		if (PassivesModule.BuildingPassives != null && !(((StateMachine)ApplicationManager.Application).State.GetName() == "LevelEditor"))
+		if (PassivesModule.BuildingPassives != null && !(ApplicationManager.Application.State.GetName() == "LevelEditor"))
 		{
 			for (int i = 0; i < PassivesModule.BuildingPassives.Count; i++)
 			{
@@ -73,7 +72,7 @@ public class PassivesModuleController : BuildingModuleController
 
 	public void OnDeath(bool triggerOnDeathEvent = true)
 	{
-		if (!(((StateMachine)ApplicationManager.Application).State.GetName() == "LevelEditor"))
+		if (!(ApplicationManager.Application.State.GetName() == "LevelEditor"))
 		{
 			if (triggerOnDeathEvent)
 			{

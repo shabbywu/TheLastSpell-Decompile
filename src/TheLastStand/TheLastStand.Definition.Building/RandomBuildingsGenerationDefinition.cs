@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Building;
 
-public class RandomBuildingsGenerationDefinition : Definition
+public class RandomBuildingsGenerationDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public static class Constants
 	{

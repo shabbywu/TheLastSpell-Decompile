@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Xml.Linq;
-using TheLastStand.Framework.Serialization;
 using TheLastStand.Model.Status;
 
 namespace TheLastStand.Definition.Skill.SkillEffect;
@@ -26,7 +25,7 @@ public abstract class StatusEffectDefinition : AffectingUnitSkillEffectDefinitio
 	{
 		base.Deserialize(container);
 		XElement val = (XElement)(object)((container is XElement) ? container : null);
-		baseChanceInterpretedValue = new InterpretedFloat((XContainer)(object)((XContainer)val).Element(XName.op_Implicit("BaseChance")), 1f, ((Definition)this).TokenVariables);
-		turnsCountInterpretedValue = new InterpretedInt(((XContainer)val).Element(XName.op_Implicit("TurnsCount")), 1, ((Definition)this).TokenVariables);
+		baseChanceInterpretedValue = new InterpretedFloat((XContainer)(object)((XContainer)val).Element(XName.op_Implicit("BaseChance")), 1f, base.TokenVariables);
+		turnsCountInterpretedValue = new InterpretedInt(((XContainer)val).Element(XName.op_Implicit("TurnsCount")), 1, base.TokenVariables);
 	}
 }

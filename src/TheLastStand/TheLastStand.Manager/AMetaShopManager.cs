@@ -224,7 +224,7 @@ public abstract class AMetaShopManager<T> : Manager<T> where T : SerializedMonoB
 		{
 			if (list[i].Category == TPSingleton<OraculumView>.Instance.CurrentCategory)
 			{
-				SelectCategory(list[IntExtensions.Mod(i - 1, list.Count)].Category, isSelectingFirstTab: false, updateLastSelectedTab: true);
+				SelectCategory(list[(i - 1).Mod(list.Count)].Category, isSelectingFirstTab: false, updateLastSelectedTab: true);
 				break;
 			}
 		}

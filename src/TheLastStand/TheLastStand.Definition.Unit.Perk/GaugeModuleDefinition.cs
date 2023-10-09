@@ -5,7 +5,6 @@ using System.Xml.Linq;
 using JetBrains.Annotations;
 using TPLib.Log;
 using TheLastStand.Framework.ExpressionInterpreter;
-using TheLastStand.Framework.Serialization;
 using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.Perk;
@@ -32,7 +31,7 @@ public class GaugeModuleDefinition : BufferModuleDefinition
 		base.Deserialize(container);
 		XElement val = (XElement)(object)((container is XElement) ? container : null);
 		XAttribute val2 = val.Attribute(XName.op_Implicit("GaugeValue"));
-		GaugeValue = Parser.Parse(val2.Value, ((Definition)this).TokenVariables);
+		GaugeValue = Parser.Parse(val2.Value, base.TokenVariables);
 		XAttribute val3 = val.Attribute(XName.op_Implicit("GaugeStat"));
 		if (Enum.TryParse<UnitStatDefinition.E_Stat>(val3.Value, out var result))
 		{

@@ -170,7 +170,7 @@ public class DraggedItem : TooltipBase
 		iconImage.sprite = ItemView.GetUiSprite(ItemSlot.Item.ItemDefinition.ArtId);
 		iconBGImage.sprite = ItemView.GetUiSprite(ItemSlot.Item.ItemDefinition.ArtId, isBG: true);
 		((Graphic)iconBGImage).color = rarityColors.GetColorAt((int)(ItemSlot.Item.Rarity - 1));
-		itemBox.sprite = ResourcePooler.LoadOnce<Sprite>(string.Format("{0}{1}_Off", "View/Sprites/UI/Items/Rarity/ItemBox_0", (int)ItemSlot.Item.Rarity), false);
+		itemBox.sprite = ResourcePooler.LoadOnce<Sprite>(string.Format("{0}{1}_Off", "View/Sprites/UI/Items/Rarity/ItemBox_0", (int)ItemSlot.Item.Rarity), failSilently: false);
 		if (RarityParticles == null)
 		{
 			return;
@@ -207,12 +207,12 @@ public class DraggedItem : TooltipBase
 		{
 			if (!canSell && (TargetItemSlot is ShopSlot || TPSingleton<ShopView>.Instance.ShopSellRectView.IsInRect))
 			{
-				itemBox.sprite = ResourcePooler.LoadOnce<Sprite>(string.Format("{0}{1}_On", "View/Sprites/UI/Items/Rarity/ItemBox_0", (int)ItemSlot.Item.Rarity), false);
+				itemBox.sprite = ResourcePooler.LoadOnce<Sprite>(string.Format("{0}{1}_On", "View/Sprites/UI/Items/Rarity/ItemBox_0", (int)ItemSlot.Item.Rarity), failSilently: false);
 				canSell = true;
 			}
 			else if (canSell && !(TargetItemSlot is ShopSlot) && !TPSingleton<ShopView>.Instance.ShopSellRectView.IsInRect)
 			{
-				itemBox.sprite = ResourcePooler.LoadOnce<Sprite>(string.Format("{0}{1}_Off", "View/Sprites/UI/Items/Rarity/ItemBox_0", (int)ItemSlot.Item.Rarity), false);
+				itemBox.sprite = ResourcePooler.LoadOnce<Sprite>(string.Format("{0}{1}_Off", "View/Sprites/UI/Items/Rarity/ItemBox_0", (int)ItemSlot.Item.Rarity), failSilently: false);
 				canSell = false;
 			}
 		}

@@ -20,7 +20,7 @@ public class CreateItemDisplay : AppearingEffectDisplay
 	public void Init(ProductionItems productionItem)
 	{
 		base.Init();
-		Sprite val = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/ProductionReportPanel/Production_" + productionItem.ProductionBuildingDefinition.Id, false);
+		Sprite val = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/ProductionReportPanel/Production_" + productionItem.ProductionBuildingDefinition.Id, failSilently: false);
 		if ((Object)(object)val != (Object)null)
 		{
 			itemDisplay.sprite = val;

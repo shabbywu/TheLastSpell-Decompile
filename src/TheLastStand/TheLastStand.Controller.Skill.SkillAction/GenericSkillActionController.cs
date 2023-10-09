@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using TPLib;
 using TPLib.Log;
@@ -145,10 +144,6 @@ public class GenericSkillActionController : SkillActionController
 	{
 		base.ApplySkillEffectsOnTile(targetTile, caster, resultDatas, skillEffectDefinitions, hitsUnit, hitsBuilding, forceApply);
 		EnsurePerkData(base.SkillAction.PerkDataContainer?.TargetTile ?? targetTile, targetTile.Damageable, null, base.SkillAction.Skill.SkillContainer is Perk);
-		TheLastStand.Model.Unit.Unit unit = targetTile.Unit;
-		if (unit != null)
-		{
-			DictionaryExtensions.GetValueOrDefault<E_EffectTime, Action<PerkDataContainer>>(unit.Events, E_EffectTime.OnHitTaken)?.Invoke(base.SkillAction.PerkDataContainer);
-		}
+		targetTile.Unit?.Events.GetValueOrDefault(E_EffectTime.OnHitTaken)?.Invoke(base.SkillAction.PerkDataContainer);
 	}
 }

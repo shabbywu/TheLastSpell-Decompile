@@ -22,7 +22,7 @@ public class GainGoldController : BuildingGaugeEffectController
 	{
 		base.BuildingGaugeEffect = new GainGold(productionBuilding, definition, this, new GainGoldView());
 		base.BuildingGaugeEffect.BuildingGaugeEffectView.BuildingGaugeEffect = base.BuildingGaugeEffect;
-		base.BuildingGaugeEffect.Deserialize((ISerializedData)(object)container);
+		base.BuildingGaugeEffect.Deserialize(container);
 	}
 
 	public GainGoldController(ProductionModule productionBuilding, BuildingGaugeEffectDefinition definition)
@@ -36,7 +36,7 @@ public class GainGoldController : BuildingGaugeEffectController
 		List<IEffectTargetSkillActionController> list = base.TriggerEffect();
 		int num = GainGold.ComputeGoldValue();
 		TPSingleton<ResourceManager>.Instance.SetGold(TPSingleton<ResourceManager>.Instance.Gold + num);
-		GainGoldDisplay pooledComponent = ObjectPooler.GetPooledComponent<GainGoldDisplay>("GainGoldDisplay", ResourcePooler.LoadOnce<GainGoldDisplay>("Prefab/Displayable Effect/UI Effect Displays/GainGoldDisplay", false), EffectManager.EffectDisplaysParent, false);
+		GainGoldDisplay pooledComponent = ObjectPooler.GetPooledComponent<GainGoldDisplay>("GainGoldDisplay", ResourcePooler.LoadOnce<GainGoldDisplay>("Prefab/Displayable Effect/UI Effect Displays/GainGoldDisplay", failSilently: false), EffectManager.EffectDisplaysParent, dontSetParent: false);
 		pooledComponent.Init(num);
 		base.BuildingGaugeEffect.ProductionBuilding.BuildingParent.BuildingController.BlueprintModuleController.AddEffectDisplay(pooledComponent);
 		list.Add(base.BuildingGaugeEffect.ProductionBuilding.BuildingParent.BuildingController.BlueprintModuleController);

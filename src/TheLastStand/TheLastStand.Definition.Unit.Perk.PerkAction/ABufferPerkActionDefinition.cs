@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Xml.Linq;
 using TPLib.Log;
 using TheLastStand.Framework.ExpressionInterpreter;
-using TheLastStand.Framework.Serialization;
 using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.Perk.PerkAction;
@@ -25,7 +24,7 @@ public abstract class ABufferPerkActionDefinition : APerkActionDefinition
 	{
 		XContainer obj = ((container is XElement) ? container : null);
 		XAttribute val = ((XElement)obj).Attribute(XName.op_Implicit("Value"));
-		ValueExpression = Parser.Parse(val.Value, ((Definition)this).TokenVariables);
+		ValueExpression = Parser.Parse(val.Value, base.TokenVariables);
 		XAttribute val2 = ((XElement)obj).Attribute(XName.op_Implicit("BufferIndex"));
 		if (!string.IsNullOrEmpty((val2 != null) ? val2.Value : null))
 		{

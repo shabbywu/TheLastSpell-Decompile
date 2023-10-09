@@ -23,8 +23,8 @@ public class InstantiateBuffEffectDisplayController : InstantiateEffectDisplayCo
 
 	protected override AppearingEffectDisplay AddEffectDisplay(int value)
 	{
-		BuffDisplay buffDisplay = ResourcePooler.LoadOnce<BuffDisplay>("Prefab/Displayable Effect/UI Effect Displays/BuffDisplay", false);
-		BuffDisplay pooledComponent = ObjectPooler.GetPooledComponent<BuffDisplay>("BuffDisplay", buffDisplay, EffectManager.EffectDisplaysParent, false);
+		BuffDisplay component = ResourcePooler.LoadOnce<BuffDisplay>("Prefab/Displayable Effect/UI Effect Displays/BuffDisplay", failSilently: false);
+		BuffDisplay pooledComponent = ObjectPooler.GetPooledComponent<BuffDisplay>("BuffDisplay", component, EffectManager.EffectDisplaysParent, dontSetParent: false);
 		pooledComponent.Init(InstantiateBuffEffectDisplay.InstantiateBuffEffectDisplayDefinition.Stat, value);
 		return pooledComponent;
 	}

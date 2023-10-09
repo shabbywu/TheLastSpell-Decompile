@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Xml.Linq;
 using TPLib.Log;
 using TheLastStand.Framework.ExpressionInterpreter;
-using TheLastStand.Framework.Serialization;
 using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.Perk.PerkEffect;
@@ -40,6 +39,6 @@ public class DynamicStatsModifierEffectDefinition : APerkEffectDefinition
 			}
 		}
 		XAttribute val2 = val.Attribute(XName.op_Implicit("Value"));
-		ValueExpression = Parser.Parse(val2.Value, ((Definition)this).TokenVariables);
+		ValueExpression = Parser.Parse(val2.Value, base.TokenVariables);
 	}
 }

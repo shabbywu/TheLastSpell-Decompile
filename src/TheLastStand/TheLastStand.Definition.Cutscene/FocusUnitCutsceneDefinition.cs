@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Cutscene;
 
-public class FocusUnitCutsceneDefinition : Definition, ICutsceneDefinition
+public class FocusUnitCutsceneDefinition : TheLastStand.Framework.Serialization.Definition, ICutsceneDefinition
 {
 	public static class Constants
 	{

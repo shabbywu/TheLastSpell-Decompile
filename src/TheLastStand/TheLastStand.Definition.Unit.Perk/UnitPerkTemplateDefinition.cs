@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.Perk;
 
-public class UnitPerkTemplateDefinition : Definition
+public class UnitPerkTemplateDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public Dictionary<int, int> RequiredPerksCountPerTier { get; private set; }
 
@@ -15,7 +15,7 @@ public class UnitPerkTemplateDefinition : Definition
 	public int TierCount { get; private set; }
 
 	public UnitPerkTemplateDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

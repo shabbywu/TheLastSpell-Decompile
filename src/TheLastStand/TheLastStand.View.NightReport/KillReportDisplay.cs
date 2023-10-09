@@ -30,7 +30,7 @@ public class KillReportDisplay : MonoBehaviour
 
 	public void Refresh(string enemyId, int kills, float experience)
 	{
-		enemyBackground.sprite = ResourcePooler.LoadOnce<Sprite>($"View/Sprites/UI/NightReportPanel/KillReport_{enemyId}", false);
+		enemyBackground.sprite = ResourcePooler.LoadOnce<Sprite>($"View/Sprites/UI/NightReportPanel/KillReport_{enemyId}", failSilently: false);
 		((TMP_Text)killsCountText).text = $"x{kills}";
 		((TMP_Text)totalXPText).text = experience.ToString();
 	}

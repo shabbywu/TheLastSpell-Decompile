@@ -16,7 +16,7 @@ public class GainGoldBuildingActionEffectDefinition : BuildingActionEffectDefini
 	public override void Deserialize(XContainer xContainer)
 	{
 		XElement val = (XElement)(object)((xContainer is XElement) ? xContainer : null);
-		if (!XDocumentExtensions.IsNullOrEmpty(val))
+		if (!val.IsNullOrEmpty())
 		{
 			if (!int.TryParse(val.Value, out var result))
 			{

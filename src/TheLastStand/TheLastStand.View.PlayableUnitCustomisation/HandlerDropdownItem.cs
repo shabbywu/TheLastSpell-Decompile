@@ -21,7 +21,7 @@ public class HandlerDropdownItem : MonoBehaviour, ISelectHandler, IEventSystemHa
 		//IL_0037: Expected O, but got Unknown
 		if (InputManager.IsLastControllerJoystick)
 		{
-			GUIHelpers.AdjustScrollViewToFocusedItem((RectTransform)((Component)this).transform, scrollViewport, scrollbar, 0.01f, 0.01f, (float?)null);
+			GUIHelpers.AdjustScrollViewToFocusedItem((RectTransform)((Component)this).transform, scrollViewport, scrollbar, 0.01f, 0.01f);
 		}
 	}
 }

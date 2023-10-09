@@ -18,7 +18,7 @@ public class TooltipDatabase : Database<TooltipDatabase>
 	public override void Deserialize(XContainer container = null)
 	{
 		XElement val = ((XContainer)XDocument.Parse(compendiumDefinitionTextAsset.text, (LoadOptions)2)).Element(XName.op_Implicit("CompendiumDefinition"));
-		if (XDocumentExtensions.IsNullOrEmpty(val))
+		if (val.IsNullOrEmpty())
 		{
 			CLoggerManager.Log((object)("The document " + ((Object)compendiumDefinitionTextAsset).name + " must have an CompendiumDefinition!"), (LogType)0, (CLogLevel)2, true, "TooltipDatabase", false);
 		}

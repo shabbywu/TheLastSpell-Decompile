@@ -81,7 +81,7 @@ public class BuildingUpgrade
 
 	public virtual ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedUpgrade
+		return new SerializedUpgrade
 		{
 			Id = BuildingUpgradeDefinition.Id,
 			UpgradeLevel = UpgradeLevel

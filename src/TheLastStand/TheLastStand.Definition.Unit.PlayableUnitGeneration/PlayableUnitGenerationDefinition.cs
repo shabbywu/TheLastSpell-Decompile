@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.PlayableUnitGeneration;
 
-public class PlayableUnitGenerationDefinition : Definition
+public class PlayableUnitGenerationDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public string ArchetypeId { get; private set; }
 
@@ -21,7 +21,7 @@ public class PlayableUnitGenerationDefinition : Definition
 	public int BaseGenerationLevel { get; set; }
 
 	public PlayableUnitGenerationDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
@@ -29,7 +29,7 @@ public class PlayableUnitGenerationDefinition : Definition
 	{
 		XElement val = (XElement)(object)((container is XElement) ? container : null);
 		XAttribute val2 = val.Attribute(XName.op_Implicit("ArchetypeId"));
-		if (XDocumentExtensions.IsNullOrEmpty(val2))
+		if (val2.IsNullOrEmpty())
 		{
 			TPDebug.LogError((object)"PlayableUnitGenerationDefinition must have an attribute ArchetypeId", (Object)null);
 			return;
@@ -67,7 +67,7 @@ public class PlayableUnitGenerationDefinition : Definition
 		foreach (XElement item3 in ((XContainer)val4).Elements(XName.op_Implicit("UnitTraitDefinition")))
 		{
 			XAttribute val5 = item3.Attribute(XName.op_Implicit("Id"));
-			if (XDocumentExtensions.IsNullOrEmpty(val5))
+			if (val5.IsNullOrEmpty())
 			{
 				TPDebug.LogError((object)"PlayableUnitGenerationDefinition must have an attribute Id", (Object)null);
 			}

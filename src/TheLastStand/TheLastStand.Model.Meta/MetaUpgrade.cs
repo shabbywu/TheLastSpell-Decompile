@@ -83,7 +83,7 @@ public class MetaUpgrade : ISerializable, IDeserializable
 
 	public ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedMetaUpgrade
+		return new SerializedMetaUpgrade
 		{
 			InvestedSouls = InvestedSouls,
 			Id = MetaUpgradeDefinition.Id

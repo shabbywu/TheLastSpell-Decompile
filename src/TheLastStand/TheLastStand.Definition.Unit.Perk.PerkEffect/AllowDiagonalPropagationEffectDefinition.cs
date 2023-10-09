@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Definition.Unit.Perk.PerkDataCondition;
-using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Unit.Perk.PerkEffect;
 
@@ -22,6 +21,6 @@ public class AllowDiagonalPropagationEffectDefinition : APerkEffectDefinition
 	public override void Deserialize(XContainer container)
 	{
 		XElement val = (XElement)(object)((container is XElement) ? container : null);
-		PerkDataConditionsDefinition = new PerkDataConditionsDefinition((XContainer)(object)((XContainer)val).Element(XName.op_Implicit("Conditions")), ((Definition)this).TokenVariables);
+		PerkDataConditionsDefinition = new PerkDataConditionsDefinition((XContainer)(object)((XContainer)val).Element(XName.op_Implicit("Conditions")), base.TokenVariables);
 	}
 }

@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.PlayableUnitGeneration;
 
-public class EquipmentGenerationDefinition : Definition
+public class EquipmentGenerationDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public class ItemGenerationData
 	{
@@ -37,7 +37,7 @@ public class EquipmentGenerationDefinition : Definition
 	public int TotalWeight { get; private set; }
 
 	public EquipmentGenerationDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

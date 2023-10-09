@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TMPro;
 using TheLastStand.Framework.Serialization;
@@ -8,7 +7,7 @@ using UnityEngine.TextCore.LowLevel;
 
 namespace TheLastStand.Definition.Modding;
 
-public class FontAssetsCreationDefinition : Definition
+public class FontAssetsCreationDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	private class Constants
 	{
@@ -48,7 +47,7 @@ public class FontAssetsCreationDefinition : Definition
 	public int SamplingPointSize => samplingPointSize;
 
 	public FontAssetsCreationDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}//IL_000a: Unknown result type (might be due to invalid IL or missing references)
 	//IL_001a: Unknown result type (might be due to invalid IL or missing references)

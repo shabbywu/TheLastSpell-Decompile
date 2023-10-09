@@ -56,7 +56,7 @@ public class Goal : FormulaInterpreterContext, ISkillContainer, ISerializable, I
 
 	public ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedGoal
+		return new SerializedGoal
 		{
 			Cooldown = Cooldown,
 			Id = GoalDefinition.Id

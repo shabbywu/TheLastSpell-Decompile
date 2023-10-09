@@ -32,7 +32,7 @@ public class TutorialSequenceView : CutsceneView
 	{
 		cutsceneStep++;
 		string text = $"TutorialSequence_Step{cutsceneStep}";
-		CutsceneDefinition valueOrDefault = DictionaryExtensions.GetValueOrDefault<string, CutsceneDefinition>(GameDatabase.CutsceneDefinitions, text);
+		CutsceneDefinition valueOrDefault = GameDatabase.CutsceneDefinitions.GetValueOrDefault(text);
 		if (valueOrDefault == null)
 		{
 			((CLogger<CutsceneManager>)TPSingleton<CutsceneManager>.Instance).LogError((object)("Tried to play " + text + " but it was not found in the database."), (Object)(object)this, (CLogLevel)2, true, false);

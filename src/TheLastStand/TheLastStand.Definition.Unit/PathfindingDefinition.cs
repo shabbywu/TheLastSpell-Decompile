@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Globalization;
 using System.Xml.Linq;
 using TheLastStand.Framework.Serialization;
@@ -6,7 +5,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit;
 
-public class PathfindingDefinition : Definition
+public class PathfindingDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public enum E_PathfindingStyle
 	{
@@ -21,7 +20,7 @@ public class PathfindingDefinition : Definition
 	public float NodeWeightFogMultiplier { get; private set; }
 
 	public PathfindingDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

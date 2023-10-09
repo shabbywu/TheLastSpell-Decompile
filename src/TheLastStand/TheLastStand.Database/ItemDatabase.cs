@@ -146,7 +146,7 @@ public class ItemDatabase : Database<ItemDatabase>
 			return;
 		}
 		ItemsListDefinitions = new Dictionary<string, ItemsListDefinition>();
-		Queue<XElement> queue = base.GatherElements((IEnumerable<TextAsset>)itemListsDefinitions, (IEnumerable<TextAsset>)null, "ItemsListDefinition", (string)null);
+		Queue<XElement> queue = GatherElements(itemListsDefinitions, null, "ItemsListDefinition");
 		while (queue.Count > 0)
 		{
 			ItemsListDefinition itemsListDefinition = new ItemsListDefinition((XContainer)(object)queue.Dequeue());
@@ -188,8 +188,8 @@ public class ItemDatabase : Database<ItemDatabase>
 			return;
 		}
 		ItemDefinitions = new Dictionary<string, ItemDefinition>();
-		Queue<XElement> queue = base.GatherElements((IEnumerable<TextAsset>)groupItemDefinitions, (IEnumerable<TextAsset>)individualItemDefinitions, "ItemDefinition", (string)null);
-		Queue<XElement> queue2 = base.GatherElements((IEnumerable<TextAsset>)groupItemsArtDefinitions, (IEnumerable<TextAsset>)individualArtItemDefinitions, "ItemArtDefinition", (string)null);
+		Queue<XElement> queue = GatherElements(groupItemDefinitions, individualItemDefinitions, "ItemDefinition");
+		Queue<XElement> queue2 = GatherElements(groupItemsArtDefinitions, individualArtItemDefinitions, "ItemArtDefinition");
 		while (queue.Count > 0)
 		{
 			ItemDefinition itemDefinition = new ItemDefinition((XContainer)(object)queue.Dequeue());
@@ -254,7 +254,7 @@ public class ItemDatabase : Database<ItemDatabase>
 				AffixesCountPerRarity.Add(result, result2);
 			}
 		}
-		ItemPriceEquation = Parser.Parse(((XContainer)val).Element(XName.op_Implicit("ItemPriceEquation")).Value, (Dictionary<string, string>)null);
+		ItemPriceEquation = Parser.Parse(((XContainer)val).Element(XName.op_Implicit("ItemPriceEquation")).Value);
 		XElement val2 = ((XContainer)val).Element(XName.op_Implicit("ItemPriceEquationConstant1"));
 		XElement val3 = ((XContainer)val).Element(XName.op_Implicit("ItemPriceEquationConstant2"));
 		XElement val4 = ((XContainer)val).Element(XName.op_Implicit("ItemPriceEquationPowerConstant"));

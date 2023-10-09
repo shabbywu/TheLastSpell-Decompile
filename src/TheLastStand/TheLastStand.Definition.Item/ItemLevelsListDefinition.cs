@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Item;
 
-public class ItemLevelsListDefinition : Definition
+public class ItemLevelsListDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public string Id { get; set; }
 
@@ -14,7 +14,7 @@ public class ItemLevelsListDefinition : Definition
 
 
 	public ItemLevelsListDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
@@ -22,7 +22,7 @@ public class ItemLevelsListDefinition : Definition
 	{
 		XElement val = (XElement)(object)((container is XElement) ? container : null);
 		XAttribute val2 = val.Attribute(XName.op_Implicit("Id"));
-		if (XDocumentExtensions.IsNullOrEmpty(val2))
+		if (val2.IsNullOrEmpty())
 		{
 			Debug.LogError((object)"xItemLevelsListDefinition must have a valid Id");
 			return;
@@ -31,13 +31,13 @@ public class ItemLevelsListDefinition : Definition
 		foreach (XElement item in ((XContainer)val).Elements(XName.op_Implicit("ItemLevel")))
 		{
 			XAttribute val3 = item.Attribute(XName.op_Implicit("Odd"));
-			if (XDocumentExtensions.IsNullOrEmpty(val3) || !int.TryParse(val3.Value, out var result))
+			if (val3.IsNullOrEmpty() || !int.TryParse(val3.Value, out var result))
 			{
 				Debug.LogError((object)(Id + " Invalid odd!"));
 				continue;
 			}
 			XAttribute val4 = item.Attribute(XName.op_Implicit("Id"));
-			if (XDocumentExtensions.IsNullOrEmpty(val4) || !int.TryParse(val4.Value, out var result2))
+			if (val4.IsNullOrEmpty() || !int.TryParse(val4.Value, out var result2))
 			{
 				Debug.LogError((object)(Id + " Invalid level!"));
 			}

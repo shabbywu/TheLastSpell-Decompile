@@ -23,8 +23,8 @@ public class InstantiateStatEffectDisplayController : InstantiateEffectDisplayCo
 
 	protected override AppearingEffectDisplay AddEffectDisplay(int value)
 	{
-		AttributeOffsetDisplay attributeOffsetDisplay = ResourcePooler.LoadOnce<AttributeOffsetDisplay>("Prefab/Displayable Effect/UI Effect Displays/AttributeOffsetDisplay", false);
-		AttributeOffsetDisplay pooledComponent = ObjectPooler.GetPooledComponent<AttributeOffsetDisplay>("AttributeOffsetDisplay", attributeOffsetDisplay, EffectManager.EffectDisplaysParent, false);
+		AttributeOffsetDisplay component = ResourcePooler.LoadOnce<AttributeOffsetDisplay>("Prefab/Displayable Effect/UI Effect Displays/AttributeOffsetDisplay", failSilently: false);
+		AttributeOffsetDisplay pooledComponent = ObjectPooler.GetPooledComponent<AttributeOffsetDisplay>("AttributeOffsetDisplay", component, EffectManager.EffectDisplaysParent, dontSetParent: false);
 		pooledComponent.Init(InstantiateStatEffectDisplay.InstantiateStatEffectDisplayDefinition.Stat, value);
 		return pooledComponent;
 	}

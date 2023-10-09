@@ -1,6 +1,5 @@
 using TheLastStand.Controller.Unit.Enemy.Affix;
 using TheLastStand.Definition.Unit.Enemy.Affix;
-using TheLastStand.Framework.ExpressionInterpreter;
 
 namespace TheLastStand.Model.Unit.Enemy.Affix;
 
@@ -19,7 +18,7 @@ public class EnemyMistyAffix : EnemyAffix, ILightFogSupplier
 
 	public bool CanLightFogSupplierMove => true;
 
-	public int Range => EnemyMistyAffixEffectDefinition.Range.EvalToInt((InterpreterContext)(object)Interpreter);
+	public int Range => EnemyMistyAffixEffectDefinition.Range.EvalToInt(Interpreter);
 
 	public EnemyMistyAffix(EnemyMistyAffixController enemyAffixController, EnemyAffixDefinition enemyAffixDefinition, EnemyUnit enemyUnit)
 		: base(enemyAffixController, enemyAffixDefinition, enemyUnit)

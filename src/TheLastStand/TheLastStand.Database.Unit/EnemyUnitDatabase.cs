@@ -102,7 +102,7 @@ public class EnemyUnitDatabase : Database<EnemyUnitDatabase>
 			return;
 		}
 		EnemyAffixDefinitions = new Dictionary<string, EnemyAffixDefinition>();
-		Queue<XElement> queue = base.GatherElements(groupEliteAffixDefinitionsTextAssets, individualEliteAffixDefinitionsTextAssets, "EnemyAffixDefinition", (string)null);
+		Queue<XElement> queue = GatherElements(groupEliteAffixDefinitionsTextAssets, individualEliteAffixDefinitionsTextAssets, "EnemyAffixDefinition");
 		while (queue.Count > 0)
 		{
 			EnemyAffixDefinition enemyAffixDefinition = new EnemyAffixDefinition((XContainer)(object)queue.Dequeue());
@@ -116,8 +116,8 @@ public class EnemyUnitDatabase : Database<EnemyUnitDatabase>
 			}
 		}
 		EnemyUnitTemplateDefinitions = new Dictionary<string, EnemyUnitTemplateDefinition>();
-		Queue<XElement> queue2 = base.GatherElements(groupEnemyUnitTemplateDefinitionsTextAssets, individualEnemyUnitTemplateDefinitionsTextAssets, "EnemyUnitTemplateDefinition", (string)null);
-		foreach (XElement item in base.SortElementsByDependencies((IEnumerable<XElement>)queue2))
+		Queue<XElement> elements = GatherElements(groupEnemyUnitTemplateDefinitionsTextAssets, individualEnemyUnitTemplateDefinitionsTextAssets, "EnemyUnitTemplateDefinition");
+		foreach (XElement item in SortElementsByDependencies(elements))
 		{
 			EnemyUnitTemplateDefinition enemyUnitTemplateDefinition = new EnemyUnitTemplateDefinition((XContainer)(object)item);
 			try
@@ -139,10 +139,10 @@ public class EnemyUnitDatabase : Database<EnemyUnitDatabase>
 			EnemyUnitTemplatesByTierDefinitions[value.Tier].Add(value);
 		}
 		EliteEnemyUnitTemplateDefinitions = new Dictionary<string, EliteEnemyUnitTemplateDefinition>();
-		Queue<XElement> queue3 = base.GatherElements(groupEliteEnemyUnitTemplateDefinitionsTextAssets, individualEliteEnemyUnitTemplateDefinitionsTextAssets, "EliteEnemyUnitTemplateDefinition", (string)null);
-		while (queue3.Count > 0)
+		Queue<XElement> queue2 = GatherElements(groupEliteEnemyUnitTemplateDefinitionsTextAssets, individualEliteEnemyUnitTemplateDefinitionsTextAssets, "EliteEnemyUnitTemplateDefinition");
+		while (queue2.Count > 0)
 		{
-			EliteEnemyUnitTemplateDefinition eliteEnemyUnitTemplateDefinition = new EliteEnemyUnitTemplateDefinition((XContainer)(object)queue3.Dequeue());
+			EliteEnemyUnitTemplateDefinition eliteEnemyUnitTemplateDefinition = new EliteEnemyUnitTemplateDefinition((XContainer)(object)queue2.Dequeue());
 			try
 			{
 				EliteEnemyUnitTemplateDefinitions.Add(eliteEnemyUnitTemplateDefinition.EliteId, eliteEnemyUnitTemplateDefinition);
@@ -163,7 +163,7 @@ public class EnemyUnitDatabase : Database<EnemyUnitDatabase>
 		UnintegratedElites = new HashSet<string>();
 		foreach (KeyValuePair<string, EliteEnemyUnitTemplateDefinition> eliteEnemyUnitTemplateDefinition2 in EliteEnemyUnitTemplateDefinitions)
 		{
-			if ((Object)(object)ResourcePooler.LoadOnce<RuntimeAnimatorController>("Animators/Units/EnemyUnits/" + eliteEnemyUnitTemplateDefinition2.Key + "/" + eliteEnemyUnitTemplateDefinition2.Key + "_01", true) == (Object)null)
+			if ((Object)(object)ResourcePooler.LoadOnce<RuntimeAnimatorController>("Animators/Units/EnemyUnits/" + eliteEnemyUnitTemplateDefinition2.Key + "/" + eliteEnemyUnitTemplateDefinition2.Key + "_01", failSilently: true) == (Object)null)
 			{
 				CLoggerManager.Log((object)("Elite with id \"" + eliteEnemyUnitTemplateDefinition2.Key + "\" animator could not be found at path : Animators/Units/EnemyUnits/" + eliteEnemyUnitTemplateDefinition2.Key + "/" + eliteEnemyUnitTemplateDefinition2.Key + "_01.\nIt will be considered as impossible to spawn."), (Object)(object)this, (LogType)2, (CLogLevel)2, true, "EnemyUnitDatabase", false);
 				UnintegratedElites.Add(eliteEnemyUnitTemplateDefinition2.Key);

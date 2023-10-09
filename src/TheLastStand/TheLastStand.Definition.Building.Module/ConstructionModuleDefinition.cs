@@ -86,7 +86,7 @@ public class ConstructionModuleDefinition : BuildingModuleDefinition
 					}
 				}
 			}
-			num += DictionaryExtensions.GetValueOrDefault<string, int>(TPSingleton<GlyphManager>.Instance.BuildLimitModifiers, BuildingDefinition.Id);
+			num += TPSingleton<GlyphManager>.Instance.BuildLimitModifiers.GetValueOrDefault(BuildingDefinition.Id);
 		}
 		return NativeBuildLimit + num;
 	}
@@ -210,7 +210,7 @@ public class ConstructionModuleDefinition : BuildingModuleDefinition
 				GroundCategories.Add(result6);
 				continue;
 			}
-			CLoggerManager.Log((object)("Error while parsing GroundCategory for " + BuildingDefinition.Id + " : " + item.Value + " is not a valid GroundType"), (LogType)0, (CLogLevel)1, true, ((object)this).GetType().Name, false);
+			CLoggerManager.Log((object)("Error while parsing GroundCategory for " + BuildingDefinition.Id + " : " + item.Value + " is not a valid GroundType"), (LogType)0, (CLogLevel)1, true, GetType().Name, false);
 		}
 		ShouldDisplayConstructionTileFeedback = OccupationVolumeType != BuildingDefinition.E_OccupationVolumeType.Ignore || (GroundCategories.Count == 1 && GroundCategories[0] == GroundDefinition.E_GroundCategory.City);
 		XElement val10 = ((XContainer)val).Element(XName.op_Implicit("MaterialsCost"));
@@ -252,7 +252,7 @@ public class ConstructionModuleDefinition : BuildingModuleDefinition
 		XElement val14 = ((XContainer)val).Element(XName.op_Implicit("IsDemolishable"));
 		IsDemolishable = ((val14 != null) ? bool.Parse(val14.Value) : IsBuyable);
 		XElement val15 = ((XContainer)val).Element(XName.op_Implicit("BuildLimit"));
-		if (!XDocumentExtensions.IsNullOrEmpty(val15))
+		if (!val15.IsNullOrEmpty())
 		{
 			BuildingLimitGroupDefinition value;
 			if (sbyte.TryParse(val15.Value, out var result9))

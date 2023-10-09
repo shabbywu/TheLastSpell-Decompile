@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Trophy;
 
-public class TrophyConfigDefinition : Definition
+public class TrophyConfigDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public enum E_GemRarity
 	{
@@ -37,7 +37,7 @@ public class TrophyConfigDefinition : Definition
 
 
 	public TrophyConfigDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

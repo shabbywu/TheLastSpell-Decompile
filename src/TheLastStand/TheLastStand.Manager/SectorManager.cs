@@ -5,7 +5,6 @@ using TPLib;
 using TPLib.Debugging.Console;
 using TPLib.Log;
 using TheLastStand.Framework;
-using TheLastStand.Framework.Automaton;
 using TheLastStand.Manager.LevelEditor;
 using TheLastStand.Manager.WorldMap;
 using TheLastStand.Model;
@@ -84,9 +83,9 @@ public sealed class SectorManager : Manager<SectorManager>
 	{
 		if (!initialized)
 		{
-			string text = ((((StateMachine)ApplicationManager.Application).State.GetName() == "LevelEditor") ? LevelEditorManager.CityToLoadId : TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.SectorContainerPrefabId);
+			string text = ((ApplicationManager.Application.State.GetName() == "LevelEditor") ? LevelEditorManager.CityToLoadId : TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.SectorContainerPrefabId);
 			string text2 = string.Format("Prefab/Sectors/{0}/{0}_Sectors", text);
-			SectorContainer sectorContainer = ResourcePooler.LoadOnce<SectorContainer>(text2, false);
+			SectorContainer sectorContainer = ResourcePooler.LoadOnce<SectorContainer>(text2, failSilently: false);
 			if ((Object)(object)sectorContainer != (Object)null)
 			{
 				((CLogger<SectorManager>)this).Log((object)("Prefab has been found for city Id " + text + " at " + text2 + "."), (CLogLevel)2, false, false);

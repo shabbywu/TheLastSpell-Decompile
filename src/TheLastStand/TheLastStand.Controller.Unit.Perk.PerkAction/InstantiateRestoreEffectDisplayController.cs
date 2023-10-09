@@ -23,8 +23,8 @@ public class InstantiateRestoreEffectDisplayController : InstantiateEffectDispla
 
 	protected override AppearingEffectDisplay AddEffectDisplay(int value)
 	{
-		RestoreStatDisplay restoreStatDisplay = ResourcePooler.LoadOnce<RestoreStatDisplay>("Prefab/Displayable Effect/UI Effect Displays/RestoreStatDisplay", false);
-		RestoreStatDisplay pooledComponent = ObjectPooler.GetPooledComponent<RestoreStatDisplay>("RestoreStatDisplay", restoreStatDisplay, EffectManager.EffectDisplaysParent, false);
+		RestoreStatDisplay component = ResourcePooler.LoadOnce<RestoreStatDisplay>("Prefab/Displayable Effect/UI Effect Displays/RestoreStatDisplay", failSilently: false);
+		RestoreStatDisplay pooledComponent = ObjectPooler.GetPooledComponent<RestoreStatDisplay>("RestoreStatDisplay", component, EffectManager.EffectDisplaysParent, dontSetParent: false);
 		pooledComponent.Init(InstantiateRestoreEffectDisplay.InstantiateRestoreEffectDisplayDefinition.Stat, value);
 		return pooledComponent;
 	}

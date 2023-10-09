@@ -21,7 +21,7 @@ public class ImproveLevelDefinition : BuildingUpgradeEffectDefinition
 	{
 		base.Deserialize(xContainer);
 		XAttribute val = ((XElement)((xContainer is XElement) ? xContainer : null)).Attribute(XName.op_Implicit("UpgradedBonusValue"));
-		if (!XDocumentExtensions.IsNullOrEmpty(val))
+		if (!val.IsNullOrEmpty())
 		{
 			if (!int.TryParse(val.Value, out var result))
 			{

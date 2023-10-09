@@ -26,7 +26,7 @@ public class InstantiateParticlesCutsceneController : CutsceneController
 			((CLogger<CutsceneManager>)TPSingleton<CutsceneManager>.Instance).LogError((object)"Tried to play a InstantiateParticlesCutsceneController with a null tile.", (CLogLevel)1, true, true);
 			yield break;
 		}
-		GameObject pooledGameObject = ObjectPooler.GetPooledGameObject(InstantiateParticlesCutsceneDefinition.ParticlesId, ResourcePooler.LoadOnce<GameObject>(InstantiateParticlesCutsceneDefinition.ParticlesPath, false), (Transform)null, false);
+		GameObject pooledGameObject = ObjectPooler.GetPooledGameObject(InstantiateParticlesCutsceneDefinition.ParticlesId, ResourcePooler.LoadOnce<GameObject>(InstantiateParticlesCutsceneDefinition.ParticlesPath, failSilently: false));
 		if ((Object)(object)pooledGameObject != (Object)null)
 		{
 			pooledGameObject.transform.position = Vector2.op_Implicit(TileMapView.GetTileCenter(cutsceneData.Tile));

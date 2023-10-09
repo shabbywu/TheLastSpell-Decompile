@@ -59,12 +59,12 @@ public class EnemyUnitStat : UnitStat
 	public override void Deserialize(ISerializedData container = null, int saveVersion = -1)
 	{
 		SerializedEnemyUnitStat serializedEnemyUnitStat = container as SerializedEnemyUnitStat;
-		base.Deserialize((ISerializedData)(object)serializedEnemyUnitStat.Stat, saveVersion);
+		base.Deserialize(serializedEnemyUnitStat.Stat, saveVersion);
 	}
 
 	public override ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedEnemyUnitStat
+		return new SerializedEnemyUnitStat
 		{
 			Stat = (base.Serialize() as SerializedUnitStat)
 		};

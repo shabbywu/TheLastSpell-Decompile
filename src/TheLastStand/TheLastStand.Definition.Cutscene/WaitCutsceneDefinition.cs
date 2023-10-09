@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Globalization;
 using System.Xml.Linq;
 using TPLib.Log;
@@ -7,7 +6,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Cutscene;
 
-public class WaitCutsceneDefinition : Definition, ICutsceneDefinition
+public class WaitCutsceneDefinition : TheLastStand.Framework.Serialization.Definition, ICutsceneDefinition
 {
 	public static class Constants
 	{
@@ -17,7 +16,7 @@ public class WaitCutsceneDefinition : Definition, ICutsceneDefinition
 	public float Duration { get; private set; }
 
 	public WaitCutsceneDefinition(XContainer xContainer)
-		: base(xContainer, (Dictionary<string, string>)null)
+		: base(xContainer)
 	{
 	}
 

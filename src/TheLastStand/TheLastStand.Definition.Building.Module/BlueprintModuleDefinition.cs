@@ -88,7 +88,7 @@ public class BlueprintModuleDefinition : BuildingModuleDefinition, ITileObjectDe
 			ShadowType = val3.Value;
 		}
 		XElement val4 = ((XContainer)val).Element(XName.op_Implicit("SidewalkType"));
-		if (!XDocumentExtensions.IsNullOrEmpty(val4))
+		if (!val4.IsNullOrEmpty())
 		{
 			SidewalkType = val4.Value;
 		}

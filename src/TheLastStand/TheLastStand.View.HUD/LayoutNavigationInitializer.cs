@@ -85,7 +85,7 @@ public class LayoutNavigationInitializer : MonoBehaviour
 		//IL_004b: Expected O, but got Unknown
 		GridInfo gridInfo = default(GridInfo);
 		Transform transform = ((Component)gridLayoutGroup).transform;
-		gridInfo.GridSize = GridLayoutExtensions.GetColumnAndRow(gridLayoutGroup);
+		gridInfo.GridSize = gridLayoutGroup.GetColumnAndRow();
 		gridInfo.IsHorizontal = (int)gridLayoutGroup.startAxis == 0;
 		gridInfo.Selectables = new List<Selectable>();
 		Selectable val2 = default(Selectable);
@@ -96,7 +96,7 @@ public class LayoutNavigationInitializer : MonoBehaviour
 			{
 				if (reset)
 				{
-					SelectableExtensions.ClearNavigation(val2);
+					val2.ClearNavigation();
 				}
 				if (((Component)val).gameObject.activeInHierarchy)
 				{
@@ -107,9 +107,9 @@ public class LayoutNavigationInitializer : MonoBehaviour
 		gridInfo.ChildCount = gridInfo.Selectables.Count;
 		for (int i = 0; i < gridInfo.ChildCount; i++)
 		{
-			Selectable val3 = gridInfo.Selectables[i];
-			SelectableExtensions.SetMode(val3, (Mode)4);
-			SetGridEdgeSelection(gridInfo, val3, i);
+			Selectable selectable = gridInfo.Selectables[i];
+			selectable.SetMode((Mode)4);
+			SetGridEdgeSelection(gridInfo, selectable, i);
 		}
 	}
 
@@ -127,7 +127,7 @@ public class LayoutNavigationInitializer : MonoBehaviour
 			{
 				if (reset)
 				{
-					SelectableExtensions.ClearNavigation(val2);
+					val2.ClearNavigation();
 				}
 				if (((Component)val).gameObject.activeInHierarchy)
 				{
@@ -139,28 +139,28 @@ public class LayoutNavigationInitializer : MonoBehaviour
 		int count = list.Count;
 		for (int i = 0; i < count; i++)
 		{
-			Selectable val3 = list[i];
-			SelectableExtensions.SetMode(val3, (Mode)4);
+			Selectable selectable = list[i];
+			selectable.SetMode((Mode)4);
 			if (i > 0)
 			{
 				if (flag)
 				{
-					SelectableExtensions.SetSelectOnUp(val3, list[i - 1]);
+					selectable.SetSelectOnUp(list[i - 1]);
 				}
 				else
 				{
-					SelectableExtensions.SetSelectOnLeft(val3, list[i - 1]);
+					selectable.SetSelectOnLeft(list[i - 1]);
 				}
 			}
 			if (i < count - 1)
 			{
 				if (flag)
 				{
-					SelectableExtensions.SetSelectOnDown(val3, list[i + 1]);
+					selectable.SetSelectOnDown(list[i + 1]);
 				}
 				else
 				{
-					SelectableExtensions.SetSelectOnRight(val3, list[i + 1]);
+					selectable.SetSelectOnRight(list[i + 1]);
 				}
 			}
 		}
@@ -173,7 +173,7 @@ public class LayoutNavigationInitializer : MonoBehaviour
 		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0027: Expected O, but got Unknown
 		Transform transform = ((Component)alternatingGridLayoutGroup).transform;
-		Vector2Int columnAndRow = GridLayoutExtensions.GetColumnAndRow(alternatingGridLayoutGroup);
+		Vector2Int columnAndRow = alternatingGridLayoutGroup.GetColumnAndRow();
 		List<Selectable> list = new List<Selectable>();
 		Selectable val2 = default(Selectable);
 		foreach (Transform item in transform)
@@ -183,10 +183,10 @@ public class LayoutNavigationInitializer : MonoBehaviour
 			{
 				if (reset)
 				{
-					SelectableExtensions.ClearNavigation(val2);
+					val2.ClearNavigation();
 				}
 				list.Add(val2);
-				SelectableExtensions.SetMode(val2, (Mode)4);
+				val2.SetMode((Mode)4);
 			}
 		}
 		for (int i = 0; i < ((Vector2Int)(ref columnAndRow)).y; i++)
@@ -200,14 +200,14 @@ public class LayoutNavigationInitializer : MonoBehaviour
 				{
 					continue;
 				}
-				Selectable val3 = list[num3];
+				Selectable selectable = list[num3];
 				if (j > 0 && list.Count > num3 - 1)
 				{
-					SelectableExtensions.SetSelectOnLeft(val3, list[num3 - 1]);
+					selectable.SetSelectOnLeft(list[num3 - 1]);
 				}
 				if (j < num2 - num && list.Count > num3 + 1)
 				{
-					SelectableExtensions.SetSelectOnRight(val3, list[num3 + 1]);
+					selectable.SetSelectOnRight(list[num3 + 1]);
 				}
 				if (i < ((Vector2Int)(ref columnAndRow)).y - 1)
 				{
@@ -216,12 +216,12 @@ public class LayoutNavigationInitializer : MonoBehaviour
 						int num4 = ((j == num2 - num) ? (num3 + ((Vector2Int)(ref columnAndRow)).x - 1) : (num3 + ((Vector2Int)(ref columnAndRow)).x));
 						if (list.Count > num4)
 						{
-							SelectableExtensions.SetSelectOnDown(val3, list[num4]);
+							selectable.SetSelectOnDown(list[num4]);
 						}
 					}
 					else if (list.Count > num3 + ((Vector2Int)(ref columnAndRow)).x - 1)
 					{
-						SelectableExtensions.SetSelectOnDown(val3, list[num3 + ((Vector2Int)(ref columnAndRow)).x - 1]);
+						selectable.SetSelectOnDown(list[num3 + ((Vector2Int)(ref columnAndRow)).x - 1]);
 					}
 				}
 				if (i <= 0)
@@ -233,12 +233,12 @@ public class LayoutNavigationInitializer : MonoBehaviour
 					int num5 = num3 - ((Vector2Int)(ref columnAndRow)).x + 1;
 					if (list.Count > num5)
 					{
-						SelectableExtensions.SetSelectOnUp(val3, list[num5]);
+						selectable.SetSelectOnUp(list[num5]);
 					}
 				}
 				else if (list.Count > num3 - ((Vector2Int)(ref columnAndRow)).x)
 				{
-					SelectableExtensions.SetSelectOnUp(val3, list[num3 - ((Vector2Int)(ref columnAndRow)).x]);
+					selectable.SetSelectOnUp(list[num3 - ((Vector2Int)(ref columnAndRow)).x]);
 				}
 			}
 		}
@@ -259,22 +259,22 @@ public class LayoutNavigationInitializer : MonoBehaviour
 			{
 				if (!edge2.Left)
 				{
-					SelectableExtensions.SetSelectOnLeft(selectable, gridInfo.Selectables[value - 1]);
+					selectable.SetSelectOnLeft(gridInfo.Selectables[value - 1]);
 				}
 				if (!edge2.Right && value + 1 < gridInfo.ChildCount)
 				{
-					SelectableExtensions.SetSelectOnRight(selectable, gridInfo.Selectables[value + 1]);
+					selectable.SetSelectOnRight(gridInfo.Selectables[value + 1]);
 				}
 			}
 			if (((Vector2Int)(ref gridInfo.GridSize)).y > 1)
 			{
 				if (!edge2.Top)
 				{
-					SelectableExtensions.SetSelectOnUp(selectable, gridInfo.Selectables[value - ((Vector2Int)(ref gridInfo.GridSize)).x]);
+					selectable.SetSelectOnUp(gridInfo.Selectables[value - ((Vector2Int)(ref gridInfo.GridSize)).x]);
 				}
 				if (!edge2.Bottom && value + ((Vector2Int)(ref gridInfo.GridSize)).x < gridInfo.ChildCount)
 				{
-					SelectableExtensions.SetSelectOnDown(selectable, gridInfo.Selectables[value + ((Vector2Int)(ref gridInfo.GridSize)).x]);
+					selectable.SetSelectOnDown(gridInfo.Selectables[value + ((Vector2Int)(ref gridInfo.GridSize)).x]);
 				}
 			}
 			return;
@@ -289,22 +289,22 @@ public class LayoutNavigationInitializer : MonoBehaviour
 		{
 			if (!edge3.Left)
 			{
-				SelectableExtensions.SetSelectOnLeft(selectable, gridInfo.Selectables[value - ((Vector2Int)(ref gridInfo.GridSize)).y]);
+				selectable.SetSelectOnLeft(gridInfo.Selectables[value - ((Vector2Int)(ref gridInfo.GridSize)).y]);
 			}
 			if (!edge3.Right && value + ((Vector2Int)(ref gridInfo.GridSize)).y < gridInfo.ChildCount)
 			{
-				SelectableExtensions.SetSelectOnRight(selectable, gridInfo.Selectables[value + ((Vector2Int)(ref gridInfo.GridSize)).y]);
+				selectable.SetSelectOnRight(gridInfo.Selectables[value + ((Vector2Int)(ref gridInfo.GridSize)).y]);
 			}
 		}
 		if (((Vector2Int)(ref gridInfo.GridSize)).y > 1)
 		{
 			if (!edge3.Top)
 			{
-				SelectableExtensions.SetSelectOnUp(selectable, gridInfo.Selectables[value - 1]);
+				selectable.SetSelectOnUp(gridInfo.Selectables[value - 1]);
 			}
 			if (!edge3.Bottom && value + 1 < gridInfo.ChildCount)
 			{
-				SelectableExtensions.SetSelectOnDown(selectable, gridInfo.Selectables[value + 1]);
+				selectable.SetSelectOnDown(gridInfo.Selectables[value + 1]);
 			}
 		}
 	}

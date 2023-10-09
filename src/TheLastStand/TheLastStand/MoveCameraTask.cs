@@ -25,16 +25,16 @@ public class MoveCameraTask : Task
 		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0029: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0033: Expected O, but got Unknown
-		((Task)this).StartTask();
+		base.StartTask();
 		TweenSettingsExtensions.OnComplete<TweenerCore<Vector3, Vector3, VectorOptions>>(ShortcutExtensions.DOMove(((Component)Camera.main).transform, targetPosition, duration, true), (TweenCallback)delegate
 		{
-			((Task)this).Complete();
+			Complete();
 		});
 	}
 
 	public override string ToString()
 	{
 		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		return $"{((Task)this).ToString()}: Camera to {targetPosition} during {duration} seconds";
+		return $"{base.ToString()}: Camera to {targetPosition} during {duration} seconds";
 	}
 }

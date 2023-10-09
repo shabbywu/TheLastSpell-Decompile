@@ -93,7 +93,7 @@ public sealed class FogManager : Manager<FogManager>, ISerializable, IDeserializ
 
 	public FogManager(SerializedFog container)
 	{
-		Deserialize((ISerializedData)(object)container);
+		Deserialize(container);
 	}
 
 	public static List<Tile> GetLightFogRepelTiles(Tile sourceTile)
@@ -169,7 +169,7 @@ public sealed class FogManager : Manager<FogManager>, ISerializable, IDeserializ
 
 	public ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedFog
+		return new SerializedFog
 		{
 			FogDensityIndex = Fog.DensityIndex,
 			FogDailyUpdateFrequency = Fog.DailyUpdateFrequency

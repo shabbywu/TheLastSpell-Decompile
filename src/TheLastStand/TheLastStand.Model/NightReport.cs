@@ -49,7 +49,7 @@ public class NightReport : ISerializable, IDeserializable
 		for (int count = serializedNightReport.SerializedKillReportDataContainer.Count; i < count; i++)
 		{
 			SerializedKillReportData serializedData = serializedNightReport.SerializedKillReportDataContainer[i];
-			EnemyUnitTemplateDefinition enemyUnitTemplateDefinition = DictionaryExtensions.GetValueOrDefault<string, EnemyUnitTemplateDefinition>(EnemyUnitDatabase.EnemyUnitTemplateDefinitions, serializedData.EnemyUnitSpecificId) ?? DictionaryExtensions.GetValueOrDefault<string, EliteEnemyUnitTemplateDefinition>(EnemyUnitDatabase.EliteEnemyUnitTemplateDefinitions, serializedData.EnemyUnitSpecificId);
+			EnemyUnitTemplateDefinition enemyUnitTemplateDefinition = EnemyUnitDatabase.EnemyUnitTemplateDefinitions.GetValueOrDefault(serializedData.EnemyUnitSpecificId) ?? EnemyUnitDatabase.EliteEnemyUnitTemplateDefinitions.GetValueOrDefault(serializedData.EnemyUnitSpecificId);
 			if (enemyUnitTemplateDefinition != null)
 			{
 				KillsThisNight.Add(new KillReportData(serializedData, enemyUnitTemplateDefinition));
@@ -65,7 +65,7 @@ public class NightReport : ISerializable, IDeserializable
 		{
 			list.Add(KillsThisNight[i].Serialize());
 		}
-		return (ISerializedData)(object)new SerializedNightReport
+		return new SerializedNightReport
 		{
 			SerializedKillReportDataContainer = list
 		};

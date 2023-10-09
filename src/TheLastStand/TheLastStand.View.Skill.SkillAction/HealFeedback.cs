@@ -38,7 +38,7 @@ public class HealFeedback : SerializedMonoBehaviour, IDisplayableEffect
 		{
 			if ((Object)(object)healDisplayPrefab == (Object)null)
 			{
-				healDisplayPrefab = ResourcePooler.LoadOnce<RestoreStatDisplay>("Prefab/Displayable Effect/UI Effect Displays/RestoreStatDisplay", false);
+				healDisplayPrefab = ResourcePooler.LoadOnce<RestoreStatDisplay>("Prefab/Displayable Effect/UI Effect Displays/RestoreStatDisplay", failSilently: false);
 			}
 			return healDisplayPrefab;
 		}
@@ -76,7 +76,7 @@ public class HealFeedback : SerializedMonoBehaviour, IDisplayableEffect
 		{
 			Tuple<float, float> tuple = healInstancesBeingDisplayed.Dequeue();
 			CLoggerManager.Log((object)$"Displaying healInstance {tuple}", (Object)(object)this, (LogType)3, (CLogLevel)0, true, "Feedbacks", false);
-			RestoreStatDisplay pooledComponent = ObjectPooler.GetPooledComponent<RestoreStatDisplay>("RestoreStatDisplay", HealDisplayPrefab, (Transform)null, true);
+			RestoreStatDisplay pooledComponent = ObjectPooler.GetPooledComponent<RestoreStatDisplay>("RestoreStatDisplay", HealDisplayPrefab, (Transform)null, dontSetParent: true);
 			((Component)pooledComponent).transform.SetParent(EffectManager.EffectDisplaysParent, false);
 			((Object)pooledComponent).name = "HealDisplay - " + ((Object)DamageableView.GameObject).name;
 			pooledComponent.FollowElement.ChangeTarget(DamageableView.DamageableHUD.Transform);

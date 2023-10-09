@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.Enemy;
 
-public class SpawnDefinition : Definition
+public class SpawnDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public List<string> DisallowedEnemies { get; private set; }
 
@@ -37,7 +37,7 @@ public class SpawnDefinition : Definition
 	public Vector2Int SpawnPointRect { get; private set; }
 
 	public SpawnDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
@@ -122,7 +122,7 @@ public class SpawnDefinition : Definition
 			SpawnsCountMultipliers = list;
 		}
 		XElement val5 = ((XContainer)val).Element(XName.op_Implicit("SpawnsCountPerWave"));
-		if (XDocumentExtensions.IsNullOrEmpty(val5))
+		if (val5.IsNullOrEmpty())
 		{
 			if (spawnDefinition == null)
 			{
@@ -133,7 +133,7 @@ public class SpawnDefinition : Definition
 		}
 		else
 		{
-			SpawnsCountPerWave = Parser.Parse(val5.Value, (Dictionary<string, string>)null);
+			SpawnsCountPerWave = Parser.Parse(val5.Value);
 		}
 		SpawnWavesPerDayDefinitions = new Dictionary<int, Dictionary<string, int>>();
 		XElement val6 = ((XContainer)val).Element(XName.op_Implicit("SpawnWavesPerDayDefinitions"));
@@ -154,7 +154,7 @@ public class SpawnDefinition : Definition
 			foreach (XElement item2 in ((XContainer)val6).Elements(XName.op_Implicit("SpawnWavesPerDayDefinition")))
 			{
 				XAttribute val7 = item2.Attribute(XName.op_Implicit("StartingNight"));
-				if (XDocumentExtensions.IsNullOrEmpty(val7))
+				if (val7.IsNullOrEmpty())
 				{
 					CLoggerManager.Log((object)"SpawnWavesPerDayDefinition must have StartingNight!", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 					continue;
@@ -168,14 +168,14 @@ public class SpawnDefinition : Definition
 				foreach (XElement item3 in ((XContainer)item2).Elements(XName.op_Implicit("SpawnWaveDefinition")))
 				{
 					XAttribute val8 = item3.Attribute(XName.op_Implicit("Id"));
-					if (XDocumentExtensions.IsNullOrEmpty(val8))
+					if (val8.IsNullOrEmpty())
 					{
 						CLoggerManager.Log((object)"SpawnWaveDefinition must have an Id!", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 						continue;
 					}
 					XAttribute val9 = item3.Attribute(XName.op_Implicit("Weight"));
 					int result4;
-					if (XDocumentExtensions.IsNullOrEmpty(val9))
+					if (val9.IsNullOrEmpty())
 					{
 						CLoggerManager.Log((object)"SpawnWaveDefinition must have a Weight!", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 					}
@@ -209,7 +209,7 @@ public class SpawnDefinition : Definition
 			foreach (XElement item4 in ((XContainer)val10).Elements(XName.op_Implicit("SpawnDirectionsPerDayDefinition")))
 			{
 				XAttribute val11 = item4.Attribute(XName.op_Implicit("StartingNight"));
-				if (XDocumentExtensions.IsNullOrEmpty(val11))
+				if (val11.IsNullOrEmpty())
 				{
 					CLoggerManager.Log((object)"SpawnDirectionPerDayDefinition must have StartingNight!", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 					continue;
@@ -223,14 +223,14 @@ public class SpawnDefinition : Definition
 				foreach (XElement item5 in ((XContainer)item4).Elements(XName.op_Implicit("SpawnDirectionDefinition")))
 				{
 					XAttribute val12 = item5.Attribute(XName.op_Implicit("Id"));
-					if (XDocumentExtensions.IsNullOrEmpty(val12))
+					if (val12.IsNullOrEmpty())
 					{
 						CLoggerManager.Log((object)"SpawnDirectionDefinition must have an Id!", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 						continue;
 					}
 					XAttribute val13 = item5.Attribute(XName.op_Implicit("Weight"));
 					int result6;
-					if (XDocumentExtensions.IsNullOrEmpty(val13))
+					if (val13.IsNullOrEmpty())
 					{
 						CLoggerManager.Log((object)"SpawnDirectionDefinition must have a Weight!", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 					}
@@ -247,7 +247,7 @@ public class SpawnDefinition : Definition
 		}
 		OverridenForbiddenDirectionsPerDay = new Dictionary<int, List<SpawnDirectionsDefinition.E_Direction>>();
 		XElement val14 = ((XContainer)val).Element(XName.op_Implicit("OverridenForbiddenDirectionsPerDay"));
-		if (XDocumentExtensions.IsNullOrEmpty(val14))
+		if (val14.IsNullOrEmpty())
 		{
 			if (spawnDefinition != null)
 			{
@@ -279,7 +279,7 @@ public class SpawnDefinition : Definition
 					}
 					else
 					{
-						DictionaryExtensions.AddAtKey<int, SpawnDirectionsDefinition.E_Direction>(OverridenForbiddenDirectionsPerDay, num, result7);
+						OverridenForbiddenDirectionsPerDay.AddAtKey(num, result7);
 					}
 				}
 			}
@@ -314,8 +314,8 @@ public class SpawnDefinition : Definition
 						CLoggerManager.Log((object)$"Could not parse Tier attribute into an int in element ElitesPerDayDefinition ({Id}, starting night : {result8}), skipping this one.", (Object)(object)TPSingleton<SpawnWaveDatabase>.Instance, (LogType)0, (CLogLevel)2, true, "SpawnWaveDatabase", false);
 						continue;
 					}
-					Node val16 = Parser.Parse(item9.Value, (Dictionary<string, string>)null);
-					if (val16 == null)
+					Node node = Parser.Parse(item9.Value);
+					if (node == null)
 					{
 						CLoggerManager.Log((object)$"Could not parse Elites element into an interpreted expression in element ElitesPerDayDefinition ({Id}, starting night : {result8}), skipping this one.", (Object)(object)TPSingleton<SpawnWaveDatabase>.Instance, (LogType)0, (CLogLevel)2, true, "SpawnWaveDatabase", false);
 					}
@@ -325,7 +325,7 @@ public class SpawnDefinition : Definition
 					}
 					else
 					{
-						dictionary.Add(result9, val16);
+						dictionary.Add(result9, node);
 					}
 				}
 				ElitesPerDayDefinitions.Add(dictionary);
@@ -336,8 +336,8 @@ public class SpawnDefinition : Definition
 		{
 			ElitesPerDayDefinitions.Add(new Dictionary<int, Node>());
 		}
-		XElement val17 = ((XContainer)val).Element(XName.op_Implicit("SpawnPointsPerGroup"));
-		if (XDocumentExtensions.IsNullOrEmpty(val17))
+		XElement val16 = ((XContainer)val).Element(XName.op_Implicit("SpawnPointsPerGroup"));
+		if (val16.IsNullOrEmpty())
 		{
 			if (spawnDefinition == null)
 			{
@@ -348,15 +348,15 @@ public class SpawnDefinition : Definition
 		}
 		else
 		{
-			if (!int.TryParse(val17.Value, out var result10))
+			if (!int.TryParse(val16.Value, out var result10))
 			{
 				CLoggerManager.Log((object)"Invalid SpawnPointsPerGroup", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 				return;
 			}
 			SpawnPointsPerGroup = result10;
 		}
-		XElement val18 = ((XContainer)val).Element(XName.op_Implicit("SpawnPointRect"));
-		if (val18 == null)
+		XElement val17 = ((XContainer)val).Element(XName.op_Implicit("SpawnPointRect"));
+		if (val17 == null)
 		{
 			if (spawnDefinition == null)
 			{
@@ -367,20 +367,20 @@ public class SpawnDefinition : Definition
 		}
 		else
 		{
-			if (!int.TryParse(val18.Attribute(XName.op_Implicit("Width")).Value, out var result11))
+			if (!int.TryParse(val17.Attribute(XName.op_Implicit("Width")).Value, out var result11))
 			{
 				CLoggerManager.Log((object)"Invalid SpawnPointRect Width", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 				return;
 			}
-			if (!int.TryParse(val18.Attribute(XName.op_Implicit("Height")).Value, out var result12))
+			if (!int.TryParse(val17.Attribute(XName.op_Implicit("Height")).Value, out var result12))
 			{
 				CLoggerManager.Log((object)"Invalid SpawnPointRect Height", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 				return;
 			}
 			SpawnPointRect = new Vector2Int(result11, result12);
 		}
-		XElement val19 = ((XContainer)val).Element(XName.op_Implicit("DistanceMaxFromCenterPerDays"));
-		if (val19 == null)
+		XElement val18 = ((XContainer)val).Element(XName.op_Implicit("DistanceMaxFromCenterPerDays"));
+		if (val18 == null)
 		{
 			if (spawnDefinition == null)
 			{
@@ -393,26 +393,26 @@ public class SpawnDefinition : Definition
 		else
 		{
 			DistanceMaxFromCenterPerDays = new Dictionary<int, int>();
-			foreach (XElement item10 in ((XContainer)val19).Elements(XName.op_Implicit("DistanceMaxFromCenterPerDay")))
+			foreach (XElement item10 in ((XContainer)val18).Elements(XName.op_Implicit("DistanceMaxFromCenterPerDay")))
 			{
-				XAttribute val20 = item10.Attribute(XName.op_Implicit("StartingNight"));
-				if (XDocumentExtensions.IsNullOrEmpty(val20))
+				XAttribute val19 = item10.Attribute(XName.op_Implicit("StartingNight"));
+				if (val19.IsNullOrEmpty())
 				{
 					CLoggerManager.Log((object)"DistanceMaxFromCenterPerDay must have StartingNight!", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 					continue;
 				}
-				if (!int.TryParse(val20.Value, out var result13))
+				if (!int.TryParse(val19.Value, out var result13))
 				{
 					CLoggerManager.Log((object)"StartingDay must be int!", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 					continue;
 				}
-				XAttribute val21 = item10.Attribute(XName.op_Implicit("Value"));
+				XAttribute val20 = item10.Attribute(XName.op_Implicit("Value"));
 				int result14;
-				if (XDocumentExtensions.IsNullOrEmpty(val21))
+				if (val20.IsNullOrEmpty())
 				{
 					CLoggerManager.Log((object)"DistanceMaxFromCenterPerDay must have Value", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 				}
-				else if (!int.TryParse(val21.Value, out result14))
+				else if (!int.TryParse(val20.Value, out result14))
 				{
 					CLoggerManager.Log((object)("Invalid DistanceMaxFromCenterPerDay Value " + item10.Value), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 				}
@@ -422,8 +422,8 @@ public class SpawnDefinition : Definition
 				}
 			}
 		}
-		XElement val22 = ((XContainer)val).Element(XName.op_Implicit("DisallowedEnemies"));
-		if (val22 == null)
+		XElement val21 = ((XContainer)val).Element(XName.op_Implicit("DisallowedEnemies"));
+		if (val21 == null)
 		{
 			if (spawnDefinition != null && spawnDefinition.DisallowedEnemies != null)
 			{
@@ -432,7 +432,7 @@ public class SpawnDefinition : Definition
 			return;
 		}
 		DisallowedEnemies = new List<string>();
-		foreach (XElement item11 in ((XContainer)val22).Elements(XName.op_Implicit("EnemyId")))
+		foreach (XElement item11 in ((XContainer)val21).Elements(XName.op_Implicit("EnemyId")))
 		{
 			DisallowedEnemies.Add(item11.Value);
 		}

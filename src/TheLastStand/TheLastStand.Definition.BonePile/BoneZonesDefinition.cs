@@ -4,7 +4,7 @@ using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.BonePile;
 
-public class BoneZonesDefinition : Definition
+public class BoneZonesDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public List<BoneZoneDefinition> BoneZoneDefinitions { get; private set; }
 

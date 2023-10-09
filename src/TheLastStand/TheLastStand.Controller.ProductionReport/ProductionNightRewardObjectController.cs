@@ -13,7 +13,7 @@ public class ProductionNightRewardObjectController : ProductionObjectController
 
 	public ProductionNightRewardObjectController(SerializedProductionItems container)
 	{
-		base.ProductionObject = new ProductionNightRewardObject((ISerializedData)(object)container, this);
+		base.ProductionObject = new ProductionNightRewardObject(container, this);
 	}
 
 	public ProductionNightRewardObjectController(TheLastStand.Model.Item.Item[] items, BuildingDefinition productionBuilding = null)

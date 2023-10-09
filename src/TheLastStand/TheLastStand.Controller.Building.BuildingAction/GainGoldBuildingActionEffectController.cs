@@ -32,7 +32,7 @@ public class GainGoldBuildingActionEffectController : BuildingActionEffectContro
 		{
 			TPSingleton<ResourceManager>.Instance.SetGold(TPSingleton<ResourceManager>.Instance.Gold + GainGoldBuildingActionEffect.GainGoldBuildingActionDefinition.GainGold);
 			((CLogger<BuildingManager>)TPSingleton<BuildingManager>.Instance).Log((object)$"Gaining {GainGoldBuildingActionEffect.GainGoldBuildingActionDefinition.GainGold} Gold from GainGold building action effect.", (CLogLevel)1, false, false);
-			GainGoldDisplay pooledComponent = ObjectPooler.GetPooledComponent<GainGoldDisplay>("GainGoldDisplay", ResourcePooler.LoadOnce<GainGoldDisplay>("Prefab/Displayable Effect/UI Effect Displays/GainGoldDisplay", false), EffectManager.EffectDisplaysParent, false);
+			GainGoldDisplay pooledComponent = ObjectPooler.GetPooledComponent<GainGoldDisplay>("GainGoldDisplay", ResourcePooler.LoadOnce<GainGoldDisplay>("Prefab/Displayable Effect/UI Effect Displays/GainGoldDisplay", failSilently: false), EffectManager.EffectDisplaysParent, dontSetParent: false);
 			pooledComponent.Init(GainGoldBuildingActionEffect.GainGoldBuildingActionDefinition.GainGold);
 			base.BuildingActionEffect.ProductionBuilding.BuildingParent.BuildingController.BlueprintModuleController.AddEffectDisplay(pooledComponent);
 		}

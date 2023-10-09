@@ -37,8 +37,8 @@ public class BossUnitDatabase : Database<BossUnitDatabase>
 			return;
 		}
 		BossUnitTemplateDefinitions = new Dictionary<string, BossUnitTemplateDefinition>();
-		Queue<XElement> queue = base.GatherElements(groupBossUnitTemplateDefinitionsTextAssets, individualBossUnitTemplateDefinitionsTextAssets, "BossUnitTemplateDefinition", (string)null);
-		foreach (XElement item in base.SortElementsByDependencies((IEnumerable<XElement>)queue))
+		Queue<XElement> elements = GatherElements(groupBossUnitTemplateDefinitionsTextAssets, individualBossUnitTemplateDefinitionsTextAssets, "BossUnitTemplateDefinition");
+		foreach (XElement item in SortElementsByDependencies(elements))
 		{
 			BossUnitTemplateDefinition bossUnitTemplateDefinition = new BossUnitTemplateDefinition((XContainer)(object)item);
 			try

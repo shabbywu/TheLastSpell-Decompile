@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit;
 
-public class ComboDefinition : Definition
+public class ComboDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public Dictionary<int, int> Multipliers { get; private set; } = new Dictionary<int, int>();
 
@@ -16,7 +16,7 @@ public class ComboDefinition : Definition
 
 
 	public ComboDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
@@ -25,7 +25,7 @@ public class ComboDefinition : Definition
 		foreach (XElement item in container.Elements(XName.op_Implicit("Multiplier")))
 		{
 			XAttribute val = item.Attribute(XName.op_Implicit("Step"));
-			if (XDocumentExtensions.IsNullOrEmpty(val))
+			if (val.IsNullOrEmpty())
 			{
 				Debug.LogError((object)"The Multiplier must have Step!");
 				continue;
@@ -37,7 +37,7 @@ public class ComboDefinition : Definition
 			}
 			XElement val2 = ((XContainer)item).Element(XName.op_Implicit("KillsNeeded"));
 			int result2;
-			if (XDocumentExtensions.IsNullOrEmpty(val2))
+			if (val2.IsNullOrEmpty())
 			{
 				Debug.LogError((object)"The Multiplier must have KillsNeeded!");
 			}
@@ -57,7 +57,7 @@ public class ComboDefinition : Definition
 		Multipliers = Multipliers.OrderBy((KeyValuePair<int, int> x) => x.Key).ToDictionary((KeyValuePair<int, int> x) => x.Key, (KeyValuePair<int, int> x) => x.Value);
 		XElement val3 = container.Element(XName.op_Implicit("EnemyAttacksReceivedForOnePenalty"));
 		int result3;
-		if (XDocumentExtensions.IsNullOrEmpty(val3))
+		if (val3.IsNullOrEmpty())
 		{
 			Debug.LogError((object)"The Combo Definition must have EnemyAttacksReceivedForOnePenalty!");
 		}

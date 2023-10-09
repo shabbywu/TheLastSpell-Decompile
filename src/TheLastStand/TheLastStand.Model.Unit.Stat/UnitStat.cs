@@ -133,7 +133,7 @@ public class UnitStat : ISerializable, IDeserializable
 
 	public virtual ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedUnitStat
+		return new SerializedUnitStat
 		{
 			StatId = StatId,
 			Base = Base

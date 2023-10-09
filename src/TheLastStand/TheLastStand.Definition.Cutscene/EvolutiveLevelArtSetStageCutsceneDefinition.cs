@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TPLib.Log;
 using TheLastStand.Framework.Serialization;
@@ -6,7 +5,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Cutscene;
 
-public class EvolutiveLevelArtSetStageCutsceneDefinition : Definition, ICutsceneDefinition
+public class EvolutiveLevelArtSetStageCutsceneDefinition : TheLastStand.Framework.Serialization.Definition, ICutsceneDefinition
 {
 	public static class Constants
 	{
@@ -16,7 +15,7 @@ public class EvolutiveLevelArtSetStageCutsceneDefinition : Definition, ICutscene
 	public int StageIndex { get; private set; }
 
 	public EvolutiveLevelArtSetStageCutsceneDefinition(XContainer xContainer)
-		: base(xContainer, (Dictionary<string, string>)null)
+		: base(xContainer)
 	{
 	}
 

@@ -31,8 +31,8 @@ public class RefreshPerkActivationFeedbackController : APerkActionController
 			if (RefreshPerkActivationFeedback.RefreshPerkActivationFeedbackDefinition.RefreshView)
 			{
 				PlayableUnit owner = PerkAction.PerkEvent.PerkModule.Perk.Owner;
-				PerkActivationDisplay perkActivationDisplay = ResourcePooler.LoadOnce<PerkActivationDisplay>("Prefab/Displayable Effect/UI Effect Displays/PerkActivationDisplay", false);
-				PerkActivationDisplay pooledComponent = ObjectPooler.GetPooledComponent<PerkActivationDisplay>("PerkActivationDisplay", perkActivationDisplay, EffectManager.EffectDisplaysParent, false);
+				PerkActivationDisplay component = ResourcePooler.LoadOnce<PerkActivationDisplay>("Prefab/Displayable Effect/UI Effect Displays/PerkActivationDisplay", failSilently: false);
+				PerkActivationDisplay pooledComponent = ObjectPooler.GetPooledComponent<PerkActivationDisplay>("PerkActivationDisplay", component, EffectManager.EffectDisplaysParent, dontSetParent: false);
 				pooledComponent.Init(PerkAction.PerkEvent.PerkModule.Perk.PerkDefinition.Name, flag);
 				owner.UnitController.AddEffectDisplay(pooledComponent);
 				owner.UnitController.DisplayEffects();

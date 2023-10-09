@@ -47,15 +47,13 @@ public class MoveUnitCommand : UnitCommand
 
 	public override void Compensate()
 	{
-		//IL_00bc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c6: Expected O, but got Unknown
 		//IL_00b1: Unknown result type (might be due to invalid IL or missing references)
 		//IL_00b6: Unknown result type (might be due to invalid IL or missing references)
 		//IL_00bc: Expected O, but got Unknown
 		base.PlayableUnit.Path.Clear();
 		base.PlayableUnit.Path.Add(base.PlayableUnit.OriginTile);
 		base.PlayableUnit.Path.Add(StartTile);
-		Task val = base.PlayableUnit.PlayableUnitController.PrepareForMovement(playWalkAnim: false, followPathOrientation: false, float.PositiveInfinity, 0f, isMovementInstant: true);
+		Task task = base.PlayableUnit.PlayableUnitController.PrepareForMovement(playWalkAnim: false, followPathOrientation: false, float.PositiveInfinity, 0f, isMovementInstant: true);
 		if (TPSingleton<GameManager>.Instance.Game.Cycle != Game.E_Cycle.Day)
 		{
 			PathfindingManager.Pathfinding.PathfindingController.ClearReachableTiles();
@@ -66,15 +64,15 @@ public class MoveUnitCommand : UnitCommand
 		object obj = _003C_003Ec._003C_003E9__12_0;
 		if (obj == null)
 		{
-			UnityAction val2 = delegate
+			UnityAction val = delegate
 			{
 				GameController.SetState(Game.E_State.Management);
 			};
-			_003C_003Ec._003C_003E9__12_0 = val2;
-			obj = (object)val2;
+			_003C_003Ec._003C_003E9__12_0 = val;
+			obj = (object)val;
 		}
 		instance.MoveUnitsTaskGroup = new TaskGroup((UnityAction)obj);
-		TPSingleton<PlayableUnitManager>.Instance.MoveUnitsTaskGroup.AddTask(val);
+		TPSingleton<PlayableUnitManager>.Instance.MoveUnitsTaskGroup.AddTask(task);
 		TPSingleton<PlayableUnitManager>.Instance.MoveUnitsTaskGroup.Run();
 		base.PlayableUnit.PlayableUnitStatsController.IncreaseBaseStat(UnitStatDefinition.E_Stat.MovePoints, movePointsSpent, includeChildStat: false);
 		base.PlayableUnit.PlayableUnitController.AddCrossedTiles(-movePointsSpent);

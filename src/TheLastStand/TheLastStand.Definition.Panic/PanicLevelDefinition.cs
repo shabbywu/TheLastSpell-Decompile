@@ -1,18 +1,17 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.Serialization;
 using UnityEngine;
 
 namespace TheLastStand.Definition.Panic;
 
-public class PanicLevelDefinition : Definition
+public class PanicLevelDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public PanicRewardDefinition PanicRewardDefinition { get; private set; }
 
 	public float PanicValueNeeded { get; private set; }
 
 	public PanicLevelDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

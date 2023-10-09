@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.Extensions;
-using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Meta.Glyphs.GlyphEffects;
 
@@ -21,6 +20,6 @@ public class GlyphIncreaseBuildingHealthEffectDefinition : GlyphIntValueBasedEff
 		XContainer obj = ((container is XElement) ? container : null);
 		base.Deserialize(container);
 		XAttribute val = ((XElement)obj).Attribute(XName.op_Implicit("IdList"));
-		IdList = StringExtensions.Replace(val.Value, ((Definition)this).TokenVariables);
+		IdList = val.Value.Replace(base.TokenVariables);
 	}
 }

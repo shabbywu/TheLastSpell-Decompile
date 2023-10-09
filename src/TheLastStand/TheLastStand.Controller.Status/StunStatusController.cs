@@ -17,7 +17,7 @@ public class StunStatusController : StatusController
 
 	public override bool CreateEffectDisplay(IDamageableController damageableController)
 	{
-		StyledKeyDisplay pooledComponent = ObjectPooler.GetPooledComponent<StyledKeyDisplay>("StyledKeyDisplay", ResourcePooler.LoadOnce<StyledKeyDisplay>("Prefab/Displayable Effect/UI Effect Displays/StyledKeyDisplay", false), EffectManager.EffectDisplaysParent, false);
+		StyledKeyDisplay pooledComponent = ObjectPooler.GetPooledComponent<StyledKeyDisplay>("StyledKeyDisplay", ResourcePooler.LoadOnce<StyledKeyDisplay>("Prefab/Displayable Effect/UI Effect Displays/StyledKeyDisplay", failSilently: false), EffectManager.EffectDisplaysParent, dontSetParent: false);
 		pooledComponent.Init(base.Status.StatusType);
 		damageableController.AddEffectDisplay(pooledComponent);
 		return true;

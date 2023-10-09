@@ -13,7 +13,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit;
 
-public abstract class UnitTemplateDefinition : Definition, ITileObjectDefinition
+public abstract class UnitTemplateDefinition : TheLastStand.Framework.Serialization.Definition, ITileObjectDefinition
 {
 	public enum E_MoveMethod
 	{
@@ -61,7 +61,7 @@ public abstract class UnitTemplateDefinition : Definition, ITileObjectDefinition
 	public DamageableType UnitType { get; protected set; }
 
 	public UnitTemplateDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}//IL_0013: Unknown result type (might be due to invalid IL or missing references)
 	//IL_0018: Unknown result type (might be due to invalid IL or missing references)

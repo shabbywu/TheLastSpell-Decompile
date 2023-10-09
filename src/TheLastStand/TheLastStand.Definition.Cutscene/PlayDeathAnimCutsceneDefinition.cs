@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Cutscene;
 
-public class PlayDeathAnimCutsceneDefinition : Definition, ICutsceneDefinition
+public class PlayDeathAnimCutsceneDefinition : TheLastStand.Framework.Serialization.Definition, ICutsceneDefinition
 {
 	public static class Constants
 	{

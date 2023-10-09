@@ -1,10 +1,9 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Cutscene;
 
-public class PlayCommanderFadeOutAnimCutsceneDefinition : Definition, ICutsceneDefinition
+public class PlayCommanderFadeOutAnimCutsceneDefinition : TheLastStand.Framework.Serialization.Definition, ICutsceneDefinition
 {
 	public class Constants
 	{
@@ -12,7 +11,7 @@ public class PlayCommanderFadeOutAnimCutsceneDefinition : Definition, ICutsceneD
 	}
 
 	public PlayCommanderFadeOutAnimCutsceneDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

@@ -1,5 +1,4 @@
 using TheLastStand.Definition.Building.BuildingPassive;
-using TheLastStand.Framework.Automaton;
 using TheLastStand.Manager;
 using TheLastStand.Model;
 using TheLastStand.Model.Building.BuildingPassive;
@@ -33,7 +32,7 @@ public class BuildingPassiveController
 
 	public void Trigger(E_EffectTime effectTime, bool force = false, bool OnLoad = false)
 	{
-		if (((StateMachine)ApplicationManager.Application).State.GetName() == "LevelEditor")
+		if (ApplicationManager.Application.State.GetName() == "LevelEditor")
 		{
 			return;
 		}

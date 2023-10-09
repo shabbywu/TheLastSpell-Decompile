@@ -18,7 +18,9 @@
     <Reference Include="UnityEngine.UI" />
     <Reference Include="Steamworks.NET" />
     <Reference Include="Rewired_Core" />
-    <Reference Include="Framework" />
+    <Reference Include="Framework">
+      <HintPath>../../Framework.dll</HintPath>
+    </Reference>
     <Reference Include="Sirenix.Serialization" />
     <Reference Include="DOTween" />
     <Reference Include="Unity.TextMeshPro" />

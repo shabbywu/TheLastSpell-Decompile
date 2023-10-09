@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Apocalypse;
 
-public class ApocalypseDefinition : Definition
+public class ApocalypseDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public List<ApocalypseEffectDefinition> Effects { get; private set; } = new List<ApocalypseEffectDefinition>();
 
@@ -15,7 +15,7 @@ public class ApocalypseDefinition : Definition
 	public int Id { get; private set; }
 
 	public ApocalypseDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
@@ -25,7 +25,7 @@ public class ApocalypseDefinition : Definition
 		XAttribute val2 = val.Attribute(XName.op_Implicit("Id"));
 		if (!int.TryParse(val2.Value, out var result))
 		{
-			CLoggerManager.Log((object)("An apocalypse's Id " + ((Definition)this).HasAnInvalidInt(val2.Value) + " !"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+			CLoggerManager.Log((object)("An apocalypse's Id " + HasAnInvalidInt(val2.Value) + " !"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 			return;
 		}
 		Id = result;

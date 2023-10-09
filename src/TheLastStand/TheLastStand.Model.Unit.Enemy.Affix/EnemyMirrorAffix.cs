@@ -1,6 +1,5 @@
 using TheLastStand.Controller.Unit.Enemy.Affix;
 using TheLastStand.Definition.Unit.Enemy.Affix;
-using TheLastStand.Framework.ExpressionInterpreter;
 
 namespace TheLastStand.Model.Unit.Enemy.Affix;
 
@@ -17,6 +16,6 @@ public class EnemyMirrorAffix : EnemyAffix
 
 	public float ComputeDamage()
 	{
-		return EnemyMirrorAffixEffectDefinition.DamageValue.EvalToFloat((InterpreterContext)(object)Interpreter);
+		return EnemyMirrorAffixEffectDefinition.DamageValue.EvalToFloat(Interpreter);
 	}
 }

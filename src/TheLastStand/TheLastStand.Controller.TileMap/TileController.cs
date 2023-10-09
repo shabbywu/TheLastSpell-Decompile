@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using TPLib;
@@ -234,7 +233,7 @@ public class TileController : ITileObjectController
 		}
 		TileMapManager.ClearBuildingOnTiles(Tile.GetOccupiedTiles(buildingDefinition.BlueprintModuleDefinition));
 		BuildingManager.CreateBuilding(buildingDefinition, Tile, updateView: true, playSound: false, instantly: false, triggerEvent: true, null, recomputeReachableTiles: true, isGeneratingBonePile: true);
-		DictionaryExtensions.AddValueOrCreateKey<string, int>(TPSingleton<BuildingManager>.Instance.BonePileGenerationCounter, buildingId, 1, (Func<int, int, int>)((int a, int b) => a + b));
+		TPSingleton<BuildingManager>.Instance.BonePileGenerationCounter.AddValueOrCreateKey(buildingId, 1, (int a, int b) => a + b);
 		CleanDeadBodies(instant: true);
 	}
 
@@ -444,11 +443,11 @@ public class TileController : ITileObjectController
 			Vector2Int.op_Implicit(Tile.Position) + Vector2.up + Vector2.right
 		};
 		Vector2 val = TPHelpers.__VECTOR2_ERROR;
-		bool flag = default(bool);
 		for (int i = 0; i < 4; i++)
 		{
-			Vector2 val2 = Maths.LineSegmentsIntersection(segmentOrigin, segmentDestination, array[i * 2], array[i * 2 + 1], ref flag);
-			if (flag)
+			bool hit;
+			Vector2 val2 = Maths.LineSegmentsIntersection(segmentOrigin, segmentDestination, array[i * 2], array[i * 2 + 1], out hit);
+			if (hit)
 			{
 				Vector2 val3 = array[i * 2] - val2;
 				float magnitude = ((Vector2)(ref val3)).magnitude;

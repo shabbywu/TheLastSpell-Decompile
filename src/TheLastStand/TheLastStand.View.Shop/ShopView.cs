@@ -282,7 +282,7 @@ public class ShopView : TPSingleton<ShopView>, IOverlayUser
 			TPSingleton<ShopView>.Instance.InitSortDropdown();
 			((UnityEvent<float>)(object)TPSingleton<ShopView>.Instance.shopScrollbar.onValueChanged).AddListener((UnityAction<float>)TPSingleton<ShopView>.Instance.ResetShopScrollbar);
 			TPSingleton<ShopView>.Instance.disabledRerollDropdownsWidthBase = TPSingleton<ShopView>.Instance.filtersContainer.sizeDelta.x;
-			TPSingleton<ShopView>.Instance.rerollAudioClips = ResourcePooler.LoadAllOnce<AudioClip>("Sounds/SFX/UI_Reroll/UI_Reroll_Shop", false);
+			TPSingleton<ShopView>.Instance.rerollAudioClips = ResourcePooler.LoadAllOnce<AudioClip>("Sounds/SFX/UI_Reroll/UI_Reroll_Shop", failSilently: false);
 			TPSingleton<ShopView>.Instance.initialized = true;
 		}
 	}
@@ -420,7 +420,7 @@ public class ShopView : TPSingleton<ShopView>, IOverlayUser
 		}
 		else
 		{
-			TPSingleton<ShopView>.Instance.fadeTween = (Tween)(object)TweenExtensions.SetFullId<TweenerCore<float, float, FloatOptions>>(TweenSettingsExtensions.OnComplete<TweenerCore<float, float, FloatOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(DOTweenModuleUI.DOFade(TPSingleton<ShopView>.Instance.shopCanvasGroup, 0f, 0.4f), (Ease)9), new TweenCallback(DeactivateView)), "ShopFadeOut", (Component)(object)this);
+			TPSingleton<ShopView>.Instance.fadeTween = (Tween)(object)TweenSettingsExtensions.OnComplete<TweenerCore<float, float, FloatOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(DOTweenModuleUI.DOFade(TPSingleton<ShopView>.Instance.shopCanvasGroup, 0f, 0.4f), (Ease)9), new TweenCallback(DeactivateView)).SetFullId<TweenerCore<float, float, FloatOptions>>("ShopFadeOut", (Component)(object)this);
 			if (InputManager.IsLastControllerJoystick)
 			{
 				TPSingleton<HUDJoystickNavigationManager>.Instance.OnPopupExitToWorld();
@@ -479,7 +479,7 @@ public class ShopView : TPSingleton<ShopView>, IOverlayUser
 	{
 		if (Shop.ShopController.TryToPayReroll())
 		{
-			SoundManager.PlayAudioClip(ListExtensions.PickRandom<AudioClip>((IEnumerable<AudioClip>)rerollAudioClips));
+			SoundManager.PlayAudioClip(rerollAudioClips.PickRandom());
 			OnShopReroll();
 		}
 	}
@@ -488,7 +488,7 @@ public class ShopView : TPSingleton<ShopView>, IOverlayUser
 	{
 		if (InputManager.IsLastControllerJoystick)
 		{
-			GUIHelpers.AdjustScrollViewToFocusedItem(itemRectTransform, shopSlotsScrollViewport, shopScrollbar, 0.01f, 0.01f, (float?)null);
+			GUIHelpers.AdjustScrollViewToFocusedItem(itemRectTransform, shopSlotsScrollViewport, shopScrollbar, 0.01f, 0.01f);
 		}
 	}
 
@@ -496,7 +496,7 @@ public class ShopView : TPSingleton<ShopView>, IOverlayUser
 	{
 		if (InputManager.IsLastControllerJoystick)
 		{
-			GUIHelpers.AdjustScrollViewToFocusedItem(itemRectTransform, inventoryViewport, shopInventoryScrollbar, 0.01f, 0.01f, (float?)null);
+			GUIHelpers.AdjustScrollViewToFocusedItem(itemRectTransform, inventoryViewport, shopInventoryScrollbar, 0.01f, 0.01f);
 		}
 	}
 
@@ -531,7 +531,7 @@ public class ShopView : TPSingleton<ShopView>, IOverlayUser
 		else
 		{
 			TPSingleton<HUDJoystickNavigationManager>.Instance.JoystickHighlight.ToggleAlwaysFollow(state: true);
-			TweenerCore<float, float, FloatOptions> obj2 = TweenExtensions.SetFullId<TweenerCore<float, float, FloatOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(DOTweenModuleUI.DOFade(shopCanvasGroup, 1f, 0.4f), (Ease)9), "ShopFadeIn", (Component)(object)this);
+			TweenerCore<float, float, FloatOptions> obj2 = TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(DOTweenModuleUI.DOFade(shopCanvasGroup, 1f, 0.4f), (Ease)9).SetFullId<TweenerCore<float, float, FloatOptions>>("ShopFadeIn", (Component)(object)this);
 			object obj3 = _003C_003Ec._003C_003E9__92_0;
 			if (obj3 == null)
 			{
@@ -614,7 +614,7 @@ public class ShopView : TPSingleton<ShopView>, IOverlayUser
 		//IL_019f: Unknown result type (might be due to invalid IL or missing references)
 		for (int i = 0; i < Shop.ShopSlots.Count; i++)
 		{
-			SelectableExtensions.ClearNavigation((Selectable)(object)Shop.ShopSlots[i].ShopSlotView.JoystickSelectable);
+			((Selectable)(object)Shop.ShopSlots[i].ShopSlotView.JoystickSelectable).ClearNavigation();
 		}
 		shelvesNavigationInitializer.InitNavigation();
 		List<JoystickSelectable> list = (from o in Shop.ShopSlots
@@ -622,22 +622,22 @@ public class ShopView : TPSingleton<ShopView>, IOverlayUser
 			orderby ((Component)o).transform.GetSiblingIndex()
 			select o).ToList();
 		List<JoystickSelectable> list2 = list.Where((JoystickSelectable o) => ((Component)o).gameObject.activeInHierarchy).ToList();
-		JoystickSelectable joystickSelectable = ((list2.Count > 0) ? list2[0] : null);
-		SelectableExtensions.SetSelectOnDown((Selectable)(object)sortTypeDropdown, (Selectable)(object)joystickSelectable);
-		SelectableExtensions.SetSelectOnDown((Selectable)(object)rerollButton, (Selectable)(object)joystickSelectable);
-		SelectableExtensions.SetSelectOnLeft((Selectable)(object)sortTypeDropdown, (Selectable)(object)(((Component)rerollButton).gameObject.activeSelf ? rerollButton : null));
-		SelectableExtensions.SetSelectOnLeft((Selectable)(object)categoryFilterDropdown, (Selectable)(object)(((Component)rerollButton).gameObject.activeSelf ? rerollButton : null));
+		JoystickSelectable selectOnDown = ((list2.Count > 0) ? list2[0] : null);
+		((Selectable)(object)sortTypeDropdown).SetSelectOnDown((Selectable)(object)selectOnDown);
+		((Selectable)(object)rerollButton).SetSelectOnDown((Selectable)(object)selectOnDown);
+		((Selectable)(object)sortTypeDropdown).SetSelectOnLeft((Selectable)(object)(((Component)rerollButton).gameObject.activeSelf ? rerollButton : null));
+		((Selectable)(object)categoryFilterDropdown).SetSelectOnLeft((Selectable)(object)(((Component)rerollButton).gameObject.activeSelf ? rerollButton : null));
 		for (int j = 0; j < Mathf.Min(3, list2.Count); j++)
 		{
-			SelectableExtensions.SetSelectOnUp((Selectable)(object)list2[j], (Selectable)(object)sortTypeDropdown);
+			((Selectable)(object)list2[j]).SetSelectOnUp((Selectable)(object)sortTypeDropdown);
 		}
-		JoystickSelectable joystickSelectable2 = ((Component)InventoryItemsPanelTransform.GetChild(0)).GetComponent<ShopInventorySlotView>().JoystickSelectable;
+		JoystickSelectable joystickSelectable = ((Component)InventoryItemsPanelTransform.GetChild(0)).GetComponent<ShopInventorySlotView>().JoystickSelectable;
 		for (int k = 0; k < list2.Count; k++)
 		{
 			Navigation navigation = ((Selectable)list2[k]).navigation;
 			if ((Object)(object)((Navigation)(ref navigation)).selectOnRight == (Object)null)
 			{
-				SelectableExtensions.SetSelectOnRight((Selectable)(object)list2[k], (Selectable)(object)joystickSelectable2);
+				((Selectable)(object)list2[k]).SetSelectOnRight((Selectable)(object)joystickSelectable);
 			}
 		}
 		shelvesJoystickTarget.ClearSelectables();
@@ -726,7 +726,7 @@ public class ShopView : TPSingleton<ShopView>, IOverlayUser
 			OptionData item = new OptionData
 			{
 				text = Localizer.Get(localizationKey),
-				image = ((displayedCategories[i] != ItemDefinition.E_Category.All && displayedCategories[i] != 0) ? ResourcePooler.LoadOnce<Sprite>($"View/Sprites/UI/ShopFilters/ShopFilters_{displayedCategories[i]}_On", false) : null)
+				image = ((displayedCategories[i] != ItemDefinition.E_Category.All && displayedCategories[i] != 0) ? ResourcePooler.LoadOnce<Sprite>($"View/Sprites/UI/ShopFilters/ShopFilters_{displayedCategories[i]}_On", failSilently: false) : null)
 			};
 			list.Add(item);
 		}
@@ -785,12 +785,12 @@ public class ShopView : TPSingleton<ShopView>, IOverlayUser
 			OptionData item = new OptionData
 			{
 				text = Localizer.Get(text2),
-				image = ResourcePooler.LoadOnce<Sprite>(string.Format("View/Sprites/UI/ShopFilters/ShopFilters_{0}_On", string.Format("{0}{1}", array[i], "Ascending")), false)
+				image = ResourcePooler.LoadOnce<Sprite>(string.Format("View/Sprites/UI/ShopFilters/ShopFilters_{0}_On", string.Format("{0}{1}", array[i], "Ascending")), failSilently: false)
 			};
 			OptionData item2 = new OptionData
 			{
 				text = Localizer.Get(text3),
-				image = ResourcePooler.LoadOnce<Sprite>(string.Format("View/Sprites/UI/ShopFilters/ShopFilters_{0}_On", string.Format("{0}{1}", array[i], "Descending")), false)
+				image = ResourcePooler.LoadOnce<Sprite>(string.Format("View/Sprites/UI/ShopFilters/ShopFilters_{0}_On", string.Format("{0}{1}", array[i], "Descending")), failSilently: false)
 			};
 			list.Add(item);
 			list.Add(item2);
@@ -935,7 +935,7 @@ public class ShopView : TPSingleton<ShopView>, IOverlayUser
 
 	private void PlayOpenSound()
 	{
-		SoundManager.PlayAudioClip(ListExtensions.PickRandom<AudioClip>((IEnumerable<AudioClip>)openClips));
+		SoundManager.PlayAudioClip(openClips.PickRandom());
 	}
 
 	private void PlayCloseSound()

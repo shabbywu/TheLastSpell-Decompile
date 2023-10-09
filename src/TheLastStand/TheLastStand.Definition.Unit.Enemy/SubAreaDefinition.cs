@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TPLib.Log;
 using TheLastStand.Framework.Serialization;
@@ -6,7 +5,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.Enemy;
 
-public class SubAreaDefinition : Definition
+public class SubAreaDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public int Distance { get; private set; }
 
@@ -17,7 +16,7 @@ public class SubAreaDefinition : Definition
 	public int Width { get; private set; }
 
 	public SubAreaDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

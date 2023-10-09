@@ -1,7 +1,6 @@
 using System;
 using TPLib;
 using TPLib.Localization;
-using TheLastStand.Framework.UI.TMPro;
 using TheLastStand.Manager;
 using TheLastStand.Manager.Building;
 using TheLastStand.Manager.Unit;
@@ -33,23 +32,23 @@ public class UnitDropdownPanel : MonoBehaviour
 
 	public void OnChangeUnitToCompare()
 	{
-		int num = ((TMP_BetterDropdown)unitDropdown).value - 1;
+		int num = unitDropdown.value - 1;
 		PlayableUnit playableUnit = ((num != -1) ? TPSingleton<PlayableUnitManager>.Instance.PlayableUnits[num] : null);
 		unitToComparePortrait.PlayableUnit = playableUnit;
 		unitToComparePortrait.RefreshPortrait();
-		((TMP_BetterDropdown)unitDropdown).RefreshShownValue();
+		unitDropdown.RefreshShownValue();
 		this.OnUnitToCompareChanged(num);
 	}
 
 	public void ResetDropdown(int unitSelected = 0)
 	{
-		((TMP_BetterDropdown)unitDropdown).options.Clear();
-		((TMP_BetterDropdown)unitDropdown).options.Add((OptionData)(object)new WeaponSetDropdown.WeaponSetOptionData(Localizer.Get("Shop_HeroesDropdown_None"), null, null));
+		unitDropdown.options.Clear();
+		unitDropdown.options.Add(new WeaponSetDropdown.WeaponSetOptionData(Localizer.Get("Shop_HeroesDropdown_None"), null, null));
 		for (int i = 0; i < TPSingleton<PlayableUnitManager>.Instance.PlayableUnits.Count; i++)
 		{
-			((TMP_BetterDropdown)unitDropdown).options.Add((OptionData)(object)new WeaponSetDropdown.WeaponSetOptionData(TPSingleton<PlayableUnitManager>.Instance.PlayableUnits[i].Name, null, TPSingleton<PlayableUnitManager>.Instance.PlayableUnits[i]));
+			unitDropdown.options.Add(new WeaponSetDropdown.WeaponSetOptionData(TPSingleton<PlayableUnitManager>.Instance.PlayableUnits[i].Name, null, TPSingleton<PlayableUnitManager>.Instance.PlayableUnits[i]));
 		}
-		((TMP_BetterDropdown)unitDropdown).value = unitSelected;
+		unitDropdown.value = unitSelected;
 		OnChangeUnitToCompare();
 	}
 

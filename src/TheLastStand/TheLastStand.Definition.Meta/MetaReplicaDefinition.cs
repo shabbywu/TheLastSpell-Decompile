@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Meta;
 
-public class MetaReplicaDefinition : Definition
+public class MetaReplicaDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public int AnswersCount { get; private set; }
 
@@ -19,7 +19,7 @@ public class MetaReplicaDefinition : Definition
 	public bool Mandatory { get; private set; }
 
 	public MetaReplicaDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

@@ -86,10 +86,10 @@ public class UnitTraitDisplay : MonoBehaviour
 		if ((Object)(object)iconImage != (Object)null)
 		{
 			string text = ((!UnitTraitDefinition.IsBackgroundTrait) ? (PlayableUnitDatabase.UnitTraitTiersId.ContainsKey(UnitTraitDefinition.Cost) ? PlayableUnitDatabase.UnitTraitTiersId[UnitTraitDefinition.Cost] : "Default") : ("Background_" + (PlayableUnitDatabase.UnitBackgroundTraitTiersId.ContainsKey(UnitTraitDefinition.Cost) ? PlayableUnitDatabase.UnitBackgroundTraitTiersId[UnitTraitDefinition.Cost] : "Default")));
-			iconImage.sprite = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Traits/Icons_Traits_" + UnitTraitDefinition.Id, true);
+			iconImage.sprite = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Traits/Icons_Traits_" + UnitTraitDefinition.Id, failSilently: true);
 			if ((Object)(object)iconImage.sprite == (Object)null)
 			{
-				iconImage.sprite = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Traits/Icons_Traits_" + text, false);
+				iconImage.sprite = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Traits/Icons_Traits_" + text, failSilently: false);
 			}
 		}
 	}

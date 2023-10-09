@@ -20,7 +20,7 @@ public class ReplaceBuildingDefinition : BuildingUpgradeEffectDefinition
 	{
 		base.Deserialize(xContainer);
 		XAttribute val = ((XElement)((xContainer is XElement) ? xContainer : null)).Attribute(XName.op_Implicit("NewBuildingId"));
-		if (XDocumentExtensions.IsNullOrEmpty(val))
+		if (val.IsNullOrEmpty())
 		{
 			TPDebug.LogError((object)"ReplaceBuildingDefinition must have a NewBuildingId", (Object)null);
 		}

@@ -247,7 +247,7 @@ public class InputManager : Manager<InputManager>
 		}
 		else if (TPSingleton<ApplicationManager>.Exist())
 		{
-			TPSingleton<InputManager>.Instance.OnApplicationStateChange(((StateMachine)ApplicationManager.Application).State);
+			TPSingleton<InputManager>.Instance.OnApplicationStateChange(ApplicationManager.Application.State);
 		}
 	}
 
@@ -321,7 +321,7 @@ public class InputManager : Manager<InputManager>
 			TPSingleton<InputManager>.Instance.Player.controllers.maps.SetMapsEnabled(true, 0);
 			TPSingleton<InputManager>.Instance.Player.controllers.maps.SetMapsEnabled(true, 11);
 		}
-		else if (((StateMachine)ApplicationManager.Application).State.GetName() == "WorldMap")
+		else if (ApplicationManager.Application.State.GetName() == "WorldMap")
 		{
 			TPSingleton<InputManager>.Instance.Player.controllers.maps.SetMapsEnabled(true, 3);
 			TPSingleton<InputManager>.Instance.Player.controllers.maps.SetMapsEnabled(true, 4);
@@ -346,7 +346,7 @@ public class InputManager : Manager<InputManager>
 		}
 		else if (TPSingleton<ApplicationManager>.Exist())
 		{
-			TPSingleton<InputManager>.Instance.OnApplicationStateChange(((StateMachine)ApplicationManager.Application).State);
+			TPSingleton<InputManager>.Instance.OnApplicationStateChange(ApplicationManager.Application.State);
 		}
 	}
 

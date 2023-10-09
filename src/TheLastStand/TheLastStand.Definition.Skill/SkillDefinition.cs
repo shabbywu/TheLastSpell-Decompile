@@ -16,7 +16,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Skill;
 
-public class SkillDefinition : Definition
+public class SkillDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public enum E_Phase
 	{
@@ -124,7 +124,7 @@ public class SkillDefinition : Definition
 
 
 	public SkillDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
@@ -434,7 +434,7 @@ public class SkillDefinition : Definition
 			foreach (XElement item2 in ((XContainer)val22).Elements(XName.op_Implicit("Building")))
 			{
 				XAttribute val23 = item2.Attribute(XName.op_Implicit("Id"));
-				if (XDocumentExtensions.IsNullOrEmpty(val23))
+				if (val23.IsNullOrEmpty())
 				{
 					CLoggerManager.Log((object)("ValidTargets' building of skill " + Id + " must have a valid Id"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 					continue;
@@ -460,7 +460,7 @@ public class SkillDefinition : Definition
 			foreach (XElement item3 in ((XContainer)val22).Elements(XName.op_Implicit("BuildingsList")))
 			{
 				XAttribute val26 = item3.Attribute(XName.op_Implicit("Id"));
-				if (XDocumentExtensions.IsNullOrEmpty(val26))
+				if (val26.IsNullOrEmpty())
 				{
 					CLoggerManager.Log((object)("ValidTargets' buildings list of skill " + Id + " must have a valid Id"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 					continue;
@@ -483,7 +483,7 @@ public class SkillDefinition : Definition
 			foreach (XElement item4 in ((XContainer)val22).Elements(XName.op_Implicit("BuildingCategory")))
 			{
 				XAttribute val28 = item4.Attribute(XName.op_Implicit("Category"));
-				if (XDocumentExtensions.IsNullOrEmpty(val28) || !Enum.TryParse<BuildingDefinition.E_BuildingCategory>(val28.Value, out var result7))
+				if (val28.IsNullOrEmpty() || !Enum.TryParse<BuildingDefinition.E_BuildingCategory>(val28.Value, out var result7))
 				{
 					CLoggerManager.Log((object)("ValidTargets' building category of skill " + Id + " must have a valid category : \"" + ((val28 != null) ? val28.Value : null) + "\""), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 					continue;

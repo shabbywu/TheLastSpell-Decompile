@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Building;
 
-public class BuildingDefinition : Definition
+public class BuildingDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public enum E_ConstructionAnimationType
 	{
@@ -90,7 +90,7 @@ public class BuildingDefinition : Definition
 	public List<string> IdListIds { get; }
 
 	public BuildingDefinition(XContainer buildingDefinitionContainer)
-		: base(buildingDefinitionContainer, (Dictionary<string, string>)null)
+		: base(buildingDefinitionContainer)
 	{
 		if (GenericDatabase.TryGetIdListIdsForEntity(Id, out var foundDefinitions))
 		{

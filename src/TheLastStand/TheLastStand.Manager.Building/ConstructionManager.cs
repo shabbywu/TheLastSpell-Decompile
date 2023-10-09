@@ -79,7 +79,7 @@ public class ConstructionManager : Manager<ConstructionManager>
 			TPSingleton<ResourceManager>.Instance.SetGold(TPSingleton<ResourceManager>.Instance.Gold - repairCost);
 			if (addEffectDisplays)
 			{
-				GainGoldDisplay pooledComponent = ObjectPooler.GetPooledComponent<GainGoldDisplay>("GainGoldDisplay", ResourcePooler.LoadOnce<GainGoldDisplay>("Prefab/Displayable Effect/UI Effect Displays/GainGoldDisplay", false), EffectManager.EffectDisplaysParent, false);
+				GainGoldDisplay pooledComponent = ObjectPooler.GetPooledComponent<GainGoldDisplay>("GainGoldDisplay", ResourcePooler.LoadOnce<GainGoldDisplay>("Prefab/Displayable Effect/UI Effect Displays/GainGoldDisplay", failSilently: false), EffectManager.EffectDisplaysParent, dontSetParent: false);
 				pooledComponent.Init(-repairCost);
 				building.BuildingController.BlueprintModuleController.AddEffectDisplay(pooledComponent);
 			}
@@ -90,7 +90,7 @@ public class ConstructionManager : Manager<ConstructionManager>
 			TPSingleton<ResourceManager>.Instance.Materials -= repairCost2;
 			if (addEffectDisplays)
 			{
-				GainMaterialDisplay pooledComponent2 = ObjectPooler.GetPooledComponent<GainMaterialDisplay>("GainMaterialDisplay", ResourcePooler.LoadOnce<GainMaterialDisplay>("Prefab/Displayable Effect/UI Effect Displays/GainMaterialDisplay", false), EffectManager.EffectDisplaysParent, false);
+				GainMaterialDisplay pooledComponent2 = ObjectPooler.GetPooledComponent<GainMaterialDisplay>("GainMaterialDisplay", ResourcePooler.LoadOnce<GainMaterialDisplay>("Prefab/Displayable Effect/UI Effect Displays/GainMaterialDisplay", failSilently: false), EffectManager.EffectDisplaysParent, dontSetParent: false);
 				pooledComponent2.Init(-repairCost2);
 				building.BuildingController.BlueprintModuleController.AddEffectDisplay(pooledComponent2);
 			}
@@ -536,14 +536,14 @@ public class ConstructionManager : Manager<ConstructionManager>
 			{
 				if (materialsCost > 0)
 				{
-					GainMaterialDisplay pooledComponent = ObjectPooler.GetPooledComponent<GainMaterialDisplay>("GainMaterialDisplay", ResourcePooler.LoadOnce<GainMaterialDisplay>("Prefab/Displayable Effect/UI Effect Displays/GainMaterialDisplay", false), EffectManager.EffectDisplaysParent, false);
+					GainMaterialDisplay pooledComponent = ObjectPooler.GetPooledComponent<GainMaterialDisplay>("GainMaterialDisplay", ResourcePooler.LoadOnce<GainMaterialDisplay>("Prefab/Displayable Effect/UI Effect Displays/GainMaterialDisplay", failSilently: false), EffectManager.EffectDisplaysParent, dontSetParent: false);
 					pooledComponent.Init(-(materialsCost - materialsDiscount));
 					tile.Building.BuildingController.BlueprintModuleController.AddEffectDisplay(pooledComponent);
 					EffectManager.DisplayEffects();
 				}
 				else if (goldCost > 0)
 				{
-					GainGoldDisplay pooledComponent2 = ObjectPooler.GetPooledComponent<GainGoldDisplay>("GainGoldDisplay", ResourcePooler.LoadOnce<GainGoldDisplay>("Prefab/Displayable Effect/UI Effect Displays/GainGoldDisplay", false), EffectManager.EffectDisplaysParent, false);
+					GainGoldDisplay pooledComponent2 = ObjectPooler.GetPooledComponent<GainGoldDisplay>("GainGoldDisplay", ResourcePooler.LoadOnce<GainGoldDisplay>("Prefab/Displayable Effect/UI Effect Displays/GainGoldDisplay", failSilently: false), EffectManager.EffectDisplaysParent, dontSetParent: false);
 					pooledComponent2.Init(-(goldCost - goldDiscount));
 					tile.Building.BuildingController.BlueprintModuleController.AddEffectDisplay(pooledComponent2);
 					EffectManager.DisplayEffects();
@@ -657,7 +657,7 @@ public class ConstructionManager : Manager<ConstructionManager>
 				ProductionBonus = instantProductionBonu.Value
 			});
 		}
-		return (ISerializedData)(object)serializedConstruction;
+		return serializedConstruction;
 	}
 
 	[DevConsoleCommand(Name = "ForceConstructionAllowed")]

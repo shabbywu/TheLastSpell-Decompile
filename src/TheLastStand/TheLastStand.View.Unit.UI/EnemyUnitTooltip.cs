@@ -178,14 +178,14 @@ public class EnemyUnitTooltip : UnitTooltip
 		}
 		if (EnemyUnit.UnitStatsController.GetStat(UnitStatDefinition.E_Stat.StunResistance).FinalClamped > 0f)
 		{
-			portraitPanelBackground.sprite = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/InfosPanel/InfosPanel_Box_01_Elite", false);
+			portraitPanelBackground.sprite = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/InfosPanel/InfosPanel_Box_01_Elite", failSilently: false);
 			((Graphic)portraitPanelBackground).SetNativeSize();
 			((Component)stunResistanceParent).gameObject.SetActive(true);
 			((TMP_Text)stunResistanceText).text = $"{UnitDatabase.UnitStatDefinitions[UnitStatDefinition.E_Stat.StunResistance].ShortName} ({EnemyUnit.UnitStatsController.GetStat(UnitStatDefinition.E_Stat.StunResistance).FinalClamped}%)";
 		}
 		else
 		{
-			portraitPanelBackground.sprite = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/InfosPanel/InfosPanel_Box_01_Enemies", false);
+			portraitPanelBackground.sprite = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/InfosPanel/InfosPanel_Box_01_Enemies", failSilently: false);
 			((Graphic)portraitPanelBackground).SetNativeSize();
 			((Component)stunResistanceParent).gameObject.SetActive(false);
 		}
@@ -200,7 +200,7 @@ public class EnemyUnitTooltip : UnitTooltip
 		{
 			EnemyAffixEffectDefinition.E_EnemyAffixEffect enemyAffixEffect = affix.EnemyAffixDefinition.EnemyAffixEffectDefinition.EnemyAffixEffect;
 			string text = "<color=#" + enemyAffixNameColor._HexCode + ">" + affix.EnemyAffixDefinition.GetTitle() + "</color>";
-			string[] array = affix.EnemyAffixDefinition.GetArguments((InterpreterContext)(object)affix.Interpreter).ToList().Cast<string>()
+			string[] array = affix.EnemyAffixDefinition.GetArguments(affix.Interpreter).ToList().Cast<string>()
 				.ToArray();
 			switch (enemyAffixEffect)
 			{

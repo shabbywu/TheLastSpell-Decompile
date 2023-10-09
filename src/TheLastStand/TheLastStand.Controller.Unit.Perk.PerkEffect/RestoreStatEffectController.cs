@@ -3,7 +3,6 @@ using TPLib.Log;
 using TheLastStand.Definition.Unit;
 using TheLastStand.Definition.Unit.Perk.PerkEffect;
 using TheLastStand.Framework;
-using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Manager;
 using TheLastStand.Manager.Unit;
 using TheLastStand.Model.Unit;
@@ -33,7 +32,7 @@ public class RestoreStatEffectController : APerkEffectController
 	{
 		base.Trigger(data);
 		TPSingleton<PlayableUnitManager>.Instance.ShouldClearUndoStack = true;
-		float num = RestoreStatEffect.RestoreStatEffectDefinition.ValueExpression.EvalToFloat((InterpreterContext)(object)base.PerkEffect.APerkModule.Perk);
+		float num = RestoreStatEffect.RestoreStatEffectDefinition.ValueExpression.EvalToFloat(base.PerkEffect.APerkModule.Perk);
 		if (!(num <= 0f))
 		{
 			PlayableUnit owner = base.PerkEffect.APerkModule.Perk.Owner;
@@ -83,7 +82,7 @@ public class RestoreStatEffectController : APerkEffectController
 			case UnitStatDefinition.E_Stat.ActionPoints:
 			case UnitStatDefinition.E_Stat.MovePoints:
 			{
-				RestoreStatDisplay pooledComponent = ObjectPooler.GetPooledComponent<RestoreStatDisplay>("RestoreStatDisplay", ResourcePooler.LoadOnce<RestoreStatDisplay>("Prefab/Displayable Effect/UI Effect Displays/RestoreStatDisplay", false), EffectManager.EffectDisplaysParent, false);
+				RestoreStatDisplay pooledComponent = ObjectPooler.GetPooledComponent<RestoreStatDisplay>("RestoreStatDisplay", ResourcePooler.LoadOnce<RestoreStatDisplay>("Prefab/Displayable Effect/UI Effect Displays/RestoreStatDisplay", failSilently: false), EffectManager.EffectDisplaysParent, dontSetParent: false);
 				pooledComponent.Init(stat, (int)valueRestored);
 				playableUnit.UnitController.AddEffectDisplay(pooledComponent);
 				playableUnit.UnitController.DisplayEffects();

@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit;
 
-public class UnitLevelUpStatDefinition : Definition
+public class UnitLevelUpStatDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public Dictionary<UnitLevelUp.E_StatLevelUpRarity, int> Bonuses { get; private set; }
 
@@ -19,7 +19,7 @@ public class UnitLevelUpStatDefinition : Definition
 	public float Weight { get; private set; }
 
 	public UnitLevelUpStatDefinition(XContainer xContainer)
-		: base(xContainer, (Dictionary<string, string>)null)
+		: base(xContainer)
 	{
 	}
 
@@ -27,7 +27,7 @@ public class UnitLevelUpStatDefinition : Definition
 	{
 		XElement val = (XElement)(object)((xContainer is XElement) ? xContainer : null);
 		XAttribute val2 = val.Attribute(XName.op_Implicit("Stat"));
-		if (XDocumentExtensions.IsNullOrEmpty(val2))
+		if (val2.IsNullOrEmpty())
 		{
 			Debug.LogError((object)"UnitLevelUpStat must have a Stat");
 			return;
@@ -39,7 +39,7 @@ public class UnitLevelUpStatDefinition : Definition
 		}
 		Stat = result;
 		XAttribute val3 = val.Attribute(XName.op_Implicit("Weight"));
-		if (XDocumentExtensions.IsNullOrEmpty(val3))
+		if (val3.IsNullOrEmpty())
 		{
 			TPDebug.LogError((object)"UnitLevelUpStat must have a Weight", (Object)null);
 			return;
@@ -51,7 +51,7 @@ public class UnitLevelUpStatDefinition : Definition
 		}
 		Weight = result2;
 		XElement val4 = ((XContainer)val).Element(XName.op_Implicit("Bonuses"));
-		if (XDocumentExtensions.IsNullOrEmpty(val4))
+		if (val4.IsNullOrEmpty())
 		{
 			TPDebug.LogError((object)"UnitLevelUpStat must have a Bonuses", (Object)null);
 			return;

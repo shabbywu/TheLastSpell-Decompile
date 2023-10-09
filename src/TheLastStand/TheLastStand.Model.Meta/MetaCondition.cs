@@ -53,7 +53,7 @@ public class MetaCondition : ISerializable, IDeserializable
 
 	public ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedMetaCondition
+		return new SerializedMetaCondition
 		{
 			MetaUpgradeId = MetaUpgradeController.MetaUpgrade.MetaUpgradeDefinition.Id,
 			Id = Id,

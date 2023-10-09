@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TPLib.Log;
 using TheLastStand.Framework.Serialization;
@@ -7,7 +6,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.Enemy;
 
-public class BehaviorDefinition : Definition
+public class BehaviorDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public GoalDefinition[] GoalDefinitions { get; private set; }
 
@@ -22,7 +21,7 @@ public class BehaviorDefinition : Definition
 	public int NumberOfGoalsToExecute { get; private set; }
 
 	public BehaviorDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

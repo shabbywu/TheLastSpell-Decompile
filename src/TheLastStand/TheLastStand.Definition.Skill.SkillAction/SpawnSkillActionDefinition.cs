@@ -75,7 +75,7 @@ public class SpawnSkillActionDefinition : SkillActionDefinition
 				XAttribute val6 = val5.Attribute(XName.op_Implicit("Amount"));
 				if (val6 != null)
 				{
-					RandomEnemiesAmount = Parser.Parse(val6.Value, (Dictionary<string, string>)null);
+					RandomEnemiesAmount = Parser.Parse(val6.Value);
 				}
 				foreach (XElement item3 in ((XContainer)val5).Elements(XName.op_Implicit("Enemy")))
 				{
@@ -84,26 +84,26 @@ public class SpawnSkillActionDefinition : SkillActionDefinition
 			}
 			if (RandomEnemiesAmount == null)
 			{
-				Node val8 = (RandomEnemiesAmount = Parser.Parse("0", (Dictionary<string, string>)null));
+				Node node2 = (RandomEnemiesAmount = Parser.Parse("0"));
 			}
 		}
 		IsByAmount = EnemiesByAmount.Count > 0 || RandomEnemies.Count > 0;
-		XElement val9 = ((XContainer)val).Element(XName.op_Implicit("BuildingDestructionRule"));
-		if (val9 == null)
+		XElement val7 = ((XContainer)val).Element(XName.op_Implicit("BuildingDestructionRule"));
+		if (val7 == null)
 		{
 			return;
 		}
-		foreach (XElement item4 in ((XContainer)val9).Elements(XName.op_Implicit("BuildingsList")))
+		foreach (XElement item4 in ((XContainer)val7).Elements(XName.op_Implicit("BuildingsList")))
 		{
-			XAttribute val10 = item4.Attribute(XName.op_Implicit("Id"));
-			if (val10 == null)
+			XAttribute val8 = item4.Attribute(XName.op_Implicit("Id"));
+			if (val8 == null)
 			{
 				CLoggerManager.Log((object)"SpawnSkillAction has an empty Id of a BuildingDestructionRule/BuildingsList !", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 				continue;
 			}
-			if (!GenericDatabase.IdsListDefinitions.TryGetValue(val10.Value, out var value))
+			if (!GenericDatabase.IdsListDefinitions.TryGetValue(val8.Value, out var value))
 			{
-				CLoggerManager.Log((object)("Trying to get Ids List " + val10.Value + " but it does not exist."), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+				CLoggerManager.Log((object)("Trying to get Ids List " + val8.Value + " but it does not exist."), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 				continue;
 			}
 			foreach (string id in value.Ids)
@@ -125,14 +125,14 @@ public class SpawnSkillActionDefinition : SkillActionDefinition
 		XAttribute val2 = enemyElement.Attribute(XName.op_Implicit("Weight"));
 		if (val2 != null && !int.TryParse(val2.Value, out result))
 		{
-			CLoggerManager.Log((object)$"Could not parse Weight \"{val2.Value}\" of {((object)this).GetType().Name} to a valid int! (Enemy to spawn Id: {val})", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+			CLoggerManager.Log((object)$"Could not parse Weight \"{val2.Value}\" of {GetType().Name} to a valid int! (Enemy to spawn Id: {val})", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 		}
 		XAttribute val3 = enemyElement.Attribute(XName.op_Implicit("Amount"));
-		Node amount = ((val3 == null) ? Parser.Parse("1", (Dictionary<string, string>)null) : Parser.Parse(val3.Value, (Dictionary<string, string>)null));
+		Node amount = ((val3 == null) ? Parser.Parse("1") : Parser.Parse(val3.Value));
 		XAttribute val4 = enemyElement.Attribute(XName.op_Implicit("FlagTag"));
 		if (val4 != null && !Enum.TryParse<TileFlagDefinition.E_TileFlagTag>(val4.Value, out result2))
 		{
-			CLoggerManager.Log((object)$"Could not parse FlagTag \"{val4.Value}\" of {((object)this).GetType().Name} to a valid TileFlag! (Enemy to spawn Id: {val})", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+			CLoggerManager.Log((object)$"Could not parse FlagTag \"{val4.Value}\" of {GetType().Name} to a valid TileFlag! (Enemy to spawn Id: {val})", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 		}
 		XAttribute val5 = enemyElement.Attribute(XName.op_Implicit("BossActorId"));
 		if (val5 != null)

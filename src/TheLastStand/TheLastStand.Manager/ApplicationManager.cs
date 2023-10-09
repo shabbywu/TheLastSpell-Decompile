@@ -192,8 +192,8 @@ public class ApplicationManager : Manager<ApplicationManager>, ISerializable, ID
 		LastLoadedVersion = saveVersion;
 		SerializedApplicationState serializedApplicationState = container as SerializedApplicationState;
 		TPSingleton<AchievementManager>.Instance.Deserialize(serializedApplicationState?.Achievements);
-		TPSingleton<MetaUpgradesManager>.Instance.Deserialize((ISerializedData)(object)serializedApplicationState?.MetaUpgrades);
-		TPSingleton<MetaConditionManager>.Instance.DeserializeFromAppSave((ISerializedData)(object)serializedApplicationState?.MetaConditions);
+		TPSingleton<MetaUpgradesManager>.Instance.Deserialize(serializedApplicationState?.MetaUpgrades);
+		TPSingleton<MetaConditionManager>.Instance.DeserializeFromAppSave(serializedApplicationState?.MetaConditions);
 		MetaUpgradesManager.ActivateNewAvailableUpgradesInApplication();
 		Application.DamnedSouls = serializedApplicationState?.DamnedSouls ?? 0;
 		Application.DamnedSoulsObtained = serializedApplicationState?.DamnedSoulsObtained ?? 0;
@@ -204,10 +204,10 @@ public class ApplicationManager : Manager<ApplicationManager>, ISerializable, ID
 		Application.TutorialDone = serializedApplicationState?.TutorialDone ?? false;
 		Application.ApplicationQuitInOraculum = serializedApplicationState?.ApplicationQuitInOraculum ?? false;
 		Application.TutorialsRead = ((serializedApplicationState?.TutorialsRead != null) ? new List<string>(serializedApplicationState?.TutorialsRead) : new List<string>());
-		TPSingleton<ApocalypseManager>.Instance.GlobalDeserialize((ISerializedData)(object)serializedApplicationState?.GlobalApocalypse);
-		TPSingleton<WorldMapCityManager>.Instance.DeserializeCities(((int?)serializedApplicationState?.SaveVersion) ?? (-1), (ISerializedData)(object)serializedApplicationState?.Cities);
-		TPSingleton<MetaShopsManager>.Instance.Deserialize((ISerializedData)(object)serializedApplicationState?.MetaShops, saveVersion);
-		TPSingleton<MetaNarrationsManager>.Instance.Deserialize((ISerializedData)(object)serializedApplicationState?.MetaNarrations, saveVersion);
+		TPSingleton<ApocalypseManager>.Instance.GlobalDeserialize(serializedApplicationState?.GlobalApocalypse);
+		TPSingleton<WorldMapCityManager>.Instance.DeserializeCities(((int?)serializedApplicationState?.SaveVersion) ?? (-1), serializedApplicationState?.Cities);
+		TPSingleton<MetaShopsManager>.Instance.Deserialize(serializedApplicationState?.MetaShops, saveVersion);
+		TPSingleton<MetaNarrationsManager>.Instance.Deserialize(serializedApplicationState?.MetaNarrations, saveVersion);
 		TPSingleton<GlyphManager>.Instance.Deserialize(serializedApplicationState, saveVersion);
 		if (saveVersion <= 12)
 		{
@@ -217,7 +217,7 @@ public class ApplicationManager : Manager<ApplicationManager>, ISerializable, ID
 
 	public ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedApplicationState
+		return new SerializedApplicationState
 		{
 			Achievements = TPSingleton<AchievementManager>.Instance.Serialize(),
 			DamnedSouls = Application.DamnedSouls,

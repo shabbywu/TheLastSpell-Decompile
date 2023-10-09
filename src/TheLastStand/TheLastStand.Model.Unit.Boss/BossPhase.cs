@@ -84,12 +84,12 @@ public class BossPhase : FormulaInterpreterContext, ISerializable, IDeserializab
 
 	public void Deserialize(ISerializedData container = null, int saveVersion = -1)
 	{
-		SerializedBossPhase serializedBossPhase = (SerializedBossPhase)(object)container;
+		SerializedBossPhase serializedBossPhase = (SerializedBossPhase)container;
 		PhaseStartedAtTurn = serializedBossPhase.PhaseStartedAtTurn;
 		int i;
 		for (i = 0; i < serializedBossPhase.BossPhaseHandlers.Count; i++)
 		{
-			BossPhaseHandlers.Values.FirstOrDefault((BossPhaseHandler x) => x.BossPhaseHandlerDefinition.Id == serializedBossPhase.BossPhaseHandlers[i].Id)?.Deserialize((ISerializedData)(object)serializedBossPhase.BossPhaseHandlers[i], saveVersion);
+			BossPhaseHandlers.Values.FirstOrDefault((BossPhaseHandler x) => x.BossPhaseHandlerDefinition.Id == serializedBossPhase.BossPhaseHandlers[i].Id)?.Deserialize(serializedBossPhase.BossPhaseHandlers[i], saveVersion);
 		}
 	}
 
@@ -98,9 +98,9 @@ public class BossPhase : FormulaInterpreterContext, ISerializable, IDeserializab
 		List<SerializedBossPhaseHandler> list = new List<SerializedBossPhaseHandler>();
 		foreach (BossPhaseHandler value in BossPhaseHandlers.Values)
 		{
-			list.Add((SerializedBossPhaseHandler)(object)value.Serialize());
+			list.Add((SerializedBossPhaseHandler)value.Serialize());
 		}
-		return (ISerializedData)(object)new SerializedBossPhase
+		return new SerializedBossPhase
 		{
 			PhaseStartedAtTurn = PhaseStartedAtTurn,
 			BossPhaseHandlers = list

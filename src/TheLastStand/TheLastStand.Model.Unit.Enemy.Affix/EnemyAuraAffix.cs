@@ -1,7 +1,6 @@
 using TheLastStand.Controller.Unit.Enemy.Affix;
 using TheLastStand.Definition.Unit;
 using TheLastStand.Definition.Unit.Enemy.Affix;
-using TheLastStand.Framework.ExpressionInterpreter;
 
 namespace TheLastStand.Model.Unit.Enemy.Affix;
 
@@ -11,7 +10,7 @@ public class EnemyAuraAffix : EnemyAffix
 
 	public EnemyAuraAffixEffectDefinition EnemyAuraAffixEffectDefinition => base.EnemyAffixDefinition.EnemyAffixEffectDefinition as EnemyAuraAffixEffectDefinition;
 
-	public int Range => EnemyAuraAffixEffectDefinition.Range.EvalToInt((InterpreterContext)(object)Interpreter);
+	public int Range => EnemyAuraAffixEffectDefinition.Range.EvalToInt(Interpreter);
 
 	public EnemyAuraAffix(EnemyAuraAffixController enemyAffixController, EnemyAffixDefinition enemyAffixDefinition, EnemyUnit enemyUnit)
 		: base(enemyAffixController, enemyAffixDefinition, enemyUnit)
@@ -20,6 +19,6 @@ public class EnemyAuraAffix : EnemyAffix
 
 	public float GetBonusModifier(UnitStatDefinition.E_Stat stat)
 	{
-		return EnemyAuraAffixEffectDefinition.StatModifiers[stat].EvalToFloat((InterpreterContext)(object)Interpreter);
+		return EnemyAuraAffixEffectDefinition.StatModifiers[stat].EvalToFloat(Interpreter);
 	}
 }

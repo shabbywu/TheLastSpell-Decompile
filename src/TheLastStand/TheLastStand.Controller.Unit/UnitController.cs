@@ -174,7 +174,7 @@ public abstract class UnitController : ITileObjectController, IDamageableControl
 			{
 				return result;
 			}
-			Action<PerkDataContainer> valueOrDefault = DictionaryExtensions.GetValueOrDefault<E_EffectTime, Action<PerkDataContainer>>(events, E_EffectTime.OnStatusApplied);
+			Action<PerkDataContainer> valueOrDefault = events.GetValueOrDefault(E_EffectTime.OnStatusApplied);
 			if (valueOrDefault == null)
 			{
 				return result;
@@ -367,12 +367,12 @@ public abstract class UnitController : ITileObjectController, IDamageableControl
 		if (skill.SkillDefinition.RangeModifiable)
 		{
 			num2 = (int)Unit.GetClampedStatValue(UnitStatDefinition.E_Stat.SkillRangeModifier);
-			num2 += (int)((statModifiers != null) ? DictionaryExtensions.GetValueOrDefault<UnitStatDefinition.E_Stat, float>(statModifiers, UnitStatDefinition.E_Stat.SkillRangeModifier) : 0f);
+			num2 += (int)(statModifiers?.GetValueOrDefault(UnitStatDefinition.E_Stat.SkillRangeModifier) ?? 0f);
 		}
 		if (Unit is PlayableUnit playableUnit && skill.SkillContainer is TheLastStand.Model.Item.Item item && item.ItemDefinition.Category == ItemDefinition.E_Category.Potion)
 		{
 			num += (int)playableUnit.UnitStatsController.GetStat(UnitStatDefinition.E_Stat.PotionRangeModifier).FinalClamped;
-			num += (int)((statModifiers != null) ? DictionaryExtensions.GetValueOrDefault<UnitStatDefinition.E_Stat, float>(statModifiers, UnitStatDefinition.E_Stat.PotionRangeModifier) : 0f);
+			num += (int)(statModifiers?.GetValueOrDefault(UnitStatDefinition.E_Stat.PotionRangeModifier) ?? 0f);
 		}
 		Vector2Int range = skill.SkillDefinition.Range;
 		int num3 = ((Vector2Int)(ref range)).y + num + num2;
@@ -476,7 +476,7 @@ public abstract class UnitController : ITileObjectController, IDamageableControl
 	{
 		if (Unit.State != TheLastStand.Model.Unit.Unit.E_State.Dead)
 		{
-			DictionaryExtensions.GetValueOrDefault<E_EffectTime, Action<PerkDataContainer>>(Unit.Events, E_EffectTime.OnDeath)?.Invoke(null);
+			Unit.Events.GetValueOrDefault(E_EffectTime.OnDeath)?.Invoke(null);
 			Unit.State = TheLastStand.Model.Unit.Unit.E_State.Dead;
 			TPSingleton<EnemyUnitManager>.Instance.DyingEnemiesWithContagion.Add(Unit);
 			FreeOccupiedTiles();
@@ -686,7 +686,7 @@ public abstract class UnitController : ITileObjectController, IDamageableControl
 		}
 		if (statusType == TheLastStand.Model.Status.Status.E_StatusType.Charged)
 		{
-			StyledKeyDisplay pooledComponent = ObjectPooler.GetPooledComponent<StyledKeyDisplay>("StyledKeyDisplay", ResourcePooler.LoadOnce<StyledKeyDisplay>("Prefab/Displayable Effect/UI Effect Displays/StyledKeyDisplay", false), EffectManager.EffectDisplaysParent, false);
+			StyledKeyDisplay pooledComponent = ObjectPooler.GetPooledComponent<StyledKeyDisplay>("StyledKeyDisplay", ResourcePooler.LoadOnce<StyledKeyDisplay>("Prefab/Displayable Effect/UI Effect Displays/StyledKeyDisplay", failSilently: false), EffectManager.EffectDisplaysParent, dontSetParent: false);
 			pooledComponent.Init("Discharge", "StatusName_Discharge");
 			AddEffectDisplay(pooledComponent);
 		}
@@ -836,7 +836,7 @@ public abstract class UnitController : ITileObjectController, IDamageableControl
 				if (randomRange < removeStatusDefinition.BaseChance)
 				{
 					RemoveStatus(removeStatusDefinition.Status, refreshHud: false);
-					DispelDisplay pooledComponent = ObjectPooler.GetPooledComponent<DispelDisplay>("DispelDisplay", ResourcePooler.LoadOnce<DispelDisplay>("Prefab/Displayable Effect/UI Effect Displays/DispelDisplay", false), EffectManager.EffectDisplaysParent, false);
+					DispelDisplay pooledComponent = ObjectPooler.GetPooledComponent<DispelDisplay>("DispelDisplay", ResourcePooler.LoadOnce<DispelDisplay>("Prefab/Displayable Effect/UI Effect Displays/DispelDisplay", failSilently: false), EffectManager.EffectDisplaysParent, dontSetParent: false);
 					pooledComponent.Init(removeStatusDefinition.Status);
 					AddEffectDisplay(pooledComponent);
 				}

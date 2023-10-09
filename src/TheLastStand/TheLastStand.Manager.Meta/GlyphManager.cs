@@ -137,7 +137,7 @@ public class GlyphManager : Manager<GlyphManager>
 		{
 			foreach (GlyphEffectDefinition glyphEffectDefinition in selectedGlyph.GlyphEffectDefinitions)
 			{
-				if (((object)glyphEffectDefinition).GetType() == typeof(TGlyphEffect))
+				if (glyphEffectDefinition.GetType() == typeof(TGlyphEffect))
 				{
 					glyphEffects.Add(glyphEffectDefinition as TGlyphEffect);
 				}
@@ -153,9 +153,9 @@ public class GlyphManager : Manager<GlyphManager>
 		{
 			foreach (GlyphEffectDefinition glyphEffectDefinition in selectedGlyph.GlyphEffectDefinitions)
 			{
-				if (((object)glyphEffectDefinition).GetType() == typeof(TGlyphEffect))
+				if (glyphEffectDefinition.GetType() == typeof(TGlyphEffect))
 				{
-					DictionaryExtensions.AddAtKey<string, TGlyphEffect>(glyphEffects, selectedGlyph.Id, glyphEffectDefinition as TGlyphEffect);
+					glyphEffects.AddAtKey(selectedGlyph.Id, glyphEffectDefinition as TGlyphEffect);
 				}
 			}
 		}
@@ -288,7 +288,7 @@ public class GlyphManager : Manager<GlyphManager>
 		{
 			foreach (GlyphIncreaseBuildingHealthEffectDefinition item5 in glyphEffects6)
 			{
-				DictionaryExtensions.AddValueOrCreateKey<string, int>(BuildingHealthModifiers, item5.IdList, item5.Value, (Func<int, int, int>)((int a, int b) => a + b));
+				BuildingHealthModifiers.AddValueOrCreateKey(item5.IdList, item5.Value, (int a, int b) => a + b);
 			}
 		}
 		BuildLimitModifiers = new Dictionary<string, int>();
@@ -296,7 +296,7 @@ public class GlyphManager : Manager<GlyphManager>
 		{
 			foreach (GlyphModifyBuildLimitEffectDefinition item6 in glyphEffects7)
 			{
-				DictionaryExtensions.AddValueOrCreateKey<string, int>(BuildLimitModifiers, item6.BuildLimitId, item6.Value, (Func<int, int, int>)((int a, int b) => a + b));
+				BuildLimitModifiers.AddValueOrCreateKey(item6.BuildLimitId, item6.Value, (int a, int b) => a + b);
 			}
 		}
 		CostsModifiers = new Dictionary<ResourceManager.E_PriceModifierType, int>();
@@ -308,7 +308,7 @@ public class GlyphManager : Manager<GlyphManager>
 				{
 					if (item7.Type.HasFlag(value))
 					{
-						DictionaryExtensions.AddValueOrCreateKey<ResourceManager.E_PriceModifierType, int>(CostsModifiers, value, item7.Value, (Func<int, int, int>)((int a, int b) => a + b));
+						CostsModifiers.AddValueOrCreateKey(value, item7.Value, (int a, int b) => a + b);
 					}
 				}
 			}
@@ -390,7 +390,7 @@ public class GlyphManager : Manager<GlyphManager>
 				{
 					LevelProbabilityTreeModifiers[item16.TreeId] = new Dictionary<int, int>();
 				}
-				LevelProbabilityTreeModifiers[item16.TreeId] = DictionaryExtensions.Add(LevelProbabilityTreeModifiers[item16.TreeId], item16.ProbabilityModifiers);
+				LevelProbabilityTreeModifiers[item16.TreeId] = LevelProbabilityTreeModifiers[item16.TreeId].Add(item16.ProbabilityModifiers);
 			}
 		}
 		MaterialScavengingPercentageModifier = 0;
@@ -434,7 +434,7 @@ public class GlyphManager : Manager<GlyphManager>
 			{
 				foreach (KeyValuePair<UnitStatDefinition.E_Stat, Node> item22 in item21.StatsToModify)
 				{
-					PlayableUnitsStatsToModify[item22.Key] = DictionaryExtensions.GetValueOrDefault<UnitStatDefinition.E_Stat, float>(PlayableUnitsStatsToModify, item22.Key) + item22.Value.EvalToFloat();
+					PlayableUnitsStatsToModify[item22.Key] = PlayableUnitsStatsToModify.GetValueOrDefault(item22.Key) + item22.Value.EvalToFloat();
 				}
 			}
 		}
@@ -447,7 +447,7 @@ public class GlyphManager : Manager<GlyphManager>
 				{
 					RarityProbabilityTreeModifiers[item23.TreeId] = new Dictionary<int, int>();
 				}
-				RarityProbabilityTreeModifiers[item23.TreeId] = DictionaryExtensions.Add(RarityProbabilityTreeModifiers[item23.TreeId], item23.ProbabilityModifiers);
+				RarityProbabilityTreeModifiers[item23.TreeId] = RarityProbabilityTreeModifiers[item23.TreeId].Add(item23.ProbabilityModifiers);
 			}
 		}
 		SkillProgressionFlag = E_SkillProgressionFlag.None;
@@ -465,12 +465,12 @@ public class GlyphManager : Manager<GlyphManager>
 		}
 		foreach (GlyphIncreaseStartingGearLevelEffectDefinition item25 in glyphEffects23)
 		{
-			Dictionary<int, int> valueOrDefault = DictionaryExtensions.GetValueOrDefault<string, Dictionary<int, int>>(StartingGearLevelModifiers, item25.LevelTreeId);
+			Dictionary<int, int> valueOrDefault = StartingGearLevelModifiers.GetValueOrDefault(item25.LevelTreeId);
 			if (valueOrDefault != null)
 			{
 				foreach (KeyValuePair<int, int> item26 in item25.WeightBonusByLevelProbability)
 				{
-					DictionaryExtensions.AddValueOrCreateKey<int, int>(valueOrDefault, item26.Key, item26.Value, (Func<int, int, int>)((int a, int b) => a + b));
+					valueOrDefault.AddValueOrCreateKey(item26.Key, item26.Value, (int a, int b) => a + b);
 				}
 			}
 			else
@@ -623,7 +623,7 @@ public class GlyphManager : Manager<GlyphManager>
 			{
 				if (buildingActionsCostModifier.GlyphParentId == serializedModifyBuildingActionsCostGlyph.GlyphParentId && buildingActionsCostModifier.EffectIndex == serializedModifyBuildingActionsCostGlyph.EffectIndex)
 				{
-					buildingActionsCostModifier.Deserialize((ISerializedData)(object)serializedModifyBuildingActionsCostGlyph);
+					buildingActionsCostModifier.Deserialize(serializedModifyBuildingActionsCostGlyph);
 				}
 			}
 		}
@@ -660,7 +660,7 @@ public class GlyphManager : Manager<GlyphManager>
 			list = new List<SerializedModifyBuildingActionsCostGlyph>();
 			foreach (GlyphModifyBuildingActionsCostEffect buildingActionsCostModifier in BuildingActionsCostModifiers)
 			{
-				list.Add((SerializedModifyBuildingActionsCostGlyph)(object)buildingActionsCostModifier.Serialize());
+				list.Add((SerializedModifyBuildingActionsCostGlyph)buildingActionsCostModifier.Serialize());
 			}
 		}
 		return new SerializedGlyphsContainer

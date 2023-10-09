@@ -32,7 +32,7 @@ public class BuffStatusController : StatModifierStatusController
 
 	public override bool CreateEffectDisplay(IDamageableController damageableController)
 	{
-		BuffDisplay pooledComponent = ObjectPooler.GetPooledComponent<BuffDisplay>("BuffDisplay", ResourcePooler.LoadOnce<BuffDisplay>("Prefab/Displayable Effect/UI Effect Displays/BuffDisplay", false), EffectManager.EffectDisplaysParent, false);
+		BuffDisplay pooledComponent = ObjectPooler.GetPooledComponent<BuffDisplay>("BuffDisplay", ResourcePooler.LoadOnce<BuffDisplay>("Prefab/Displayable Effect/UI Effect Displays/BuffDisplay", failSilently: false), EffectManager.EffectDisplaysParent, dontSetParent: false);
 		pooledComponent.Init(BuffStatus.Stat, (int)BuffStatus.ModifierValue);
 		damageableController.AddEffectDisplay(pooledComponent);
 		return true;

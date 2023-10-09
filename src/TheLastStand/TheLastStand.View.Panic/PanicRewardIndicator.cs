@@ -110,13 +110,13 @@ public class PanicRewardIndicator : MonoBehaviour
 		IsMoving = true;
 		float num = panic.Value / panic.PanicDefinition.ValueMax;
 		float num2 = 1f;
-		Sequence val = TweenExtensions.SetFullId<Sequence>(DOTween.Sequence(), "MoveIndicator", (Component)(object)this);
+		Sequence val = DOTween.Sequence().SetFullId<Sequence>("MoveIndicator", (Component)(object)this);
 		TweenCallback val2 = default(TweenCallback);
 		for (int panicLevel = panic.PanicDefinition.PanicLevelDefinitions.Length - 1; panicLevel >= 0; panicLevel--)
 		{
 			float num3 = ((num * 100f >= panic.PanicDefinition.PanicLevelDefinitions[panicLevel].PanicValueNeeded) ? num : (panic.PanicDefinition.PanicLevelDefinitions[panicLevel].PanicValueNeeded / 100f));
 			int currentLevel = panicLevel;
-			Sequence obj = TweenSettingsExtensions.Append(val, (Tween)(object)TweenSettingsExtensions.OnComplete<TweenerCore<float, float, FloatOptions>>(TweenSettingsExtensions.OnPlay<TweenerCore<float, float, FloatOptions>>(TweenExtensions.SetFullId<TweenerCore<float, float, FloatOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(DOTween.To((DOGetter<float>)(() => handleRect.anchorMin.x), (DOSetter<float>)delegate(float x)
+			Sequence obj = TweenSettingsExtensions.Append(val, (Tween)(object)TweenSettingsExtensions.OnComplete<TweenerCore<float, float, FloatOptions>>(TweenSettingsExtensions.OnPlay<TweenerCore<float, float, FloatOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(DOTween.To((DOGetter<float>)(() => handleRect.anchorMin.x), (DOSetter<float>)delegate(float x)
 			{
 				//IL_0017: Unknown result type (might be due to invalid IL or missing references)
 				//IL_0021: Unknown result type (might be due to invalid IL or missing references)
@@ -124,7 +124,7 @@ public class PanicRewardIndicator : MonoBehaviour
 				//IL_004c: Unknown result type (might be due to invalid IL or missing references)
 				handleRect.anchorMin = new Vector2(x, handleRect.anchorMin.y);
 				handleRect.anchorMax = new Vector2(x, handleRect.anchorMax.y);
-			}, num3, instant ? 0f : (timeToMoveFromMaxToMin * (num2 - num3))), moveEasing), "MoveIndicatorToNextLevel", (Component)(object)this), (TweenCallback)delegate
+			}, num3, instant ? 0f : (timeToMoveFromMaxToMin * (num2 - num3))), moveEasing).SetFullId<TweenerCore<float, float, FloatOptions>>("MoveIndicatorToNextLevel", (Component)(object)this), (TweenCallback)delegate
 			{
 				PlayMoveSound(currentLevel);
 			}), (TweenCallback)delegate
@@ -156,7 +156,7 @@ public class PanicRewardIndicator : MonoBehaviour
 			TweenExtensions.Kill(obj3, false);
 		}
 		rewardTextsCanvasGroup.alpha = 1f;
-		blinkTween = (Tween)(object)TweenExtensions.SetFullId<TweenerCore<float, float, FloatOptions>>(TweenSettingsExtensions.SetLoops<TweenerCore<float, float, FloatOptions>>(DOTweenModuleUI.DOFade(rewardTextsCanvasGroup, blinkFadeTo, blinkDuration), -1, (LoopType)1), "BlinkRewards", (Component)(object)this);
+		blinkTween = (Tween)(object)TweenSettingsExtensions.SetLoops<TweenerCore<float, float, FloatOptions>>(DOTweenModuleUI.DOFade(rewardTextsCanvasGroup, blinkFadeTo, blinkDuration), -1, (LoopType)1).SetFullId<TweenerCore<float, float, FloatOptions>>("BlinkRewards", (Component)(object)this);
 	}
 
 	private void FinishTween()
@@ -212,8 +212,8 @@ public class PanicRewardIndicator : MonoBehaviour
 			}
 		}
 		bool flag = false;
-		int num4 = panic.PanicDefinition.PanicLevelDefinitions[num].PanicRewardDefinition.Gold.EvalToInt((object)panic.PanicEvalGoldContext);
-		int num5 = panic.PanicDefinition.PanicLevelDefinitions[num].PanicRewardDefinition.Materials.EvalToInt((object)panic.PanicEvalMaterialContext);
+		int num4 = panic.PanicDefinition.PanicLevelDefinitions[num].PanicRewardDefinition.Gold.EvalToInt(panic.PanicEvalGoldContext);
+		int num5 = panic.PanicDefinition.PanicLevelDefinitions[num].PanicRewardDefinition.Materials.EvalToInt(panic.PanicEvalMaterialContext);
 		int num6 = ((text != null) ? 1 : 0);
 		if (num4 != lastGold || forceRefresh)
 		{
@@ -226,7 +226,7 @@ public class PanicRewardIndicator : MonoBehaviour
 				TweenExtensions.Kill(obj, false);
 			}
 			((Transform)((TMP_Text)goldRewardText).rectTransform).localScale = Vector3.one;
-			goldTween = (Tween)(object)TweenExtensions.SetFullId<Tweener>(ShortcutExtensions.DOPunchScale((Transform)(object)((TMP_Text)goldRewardText).rectTransform, Vector3.one * punchScaleStrength, punchScaleDuration, 1, 0.1f), "GoldPunchScale", (Component)(object)this);
+			goldTween = (Tween)(object)ShortcutExtensions.DOPunchScale((Transform)(object)((TMP_Text)goldRewardText).rectTransform, Vector3.one * punchScaleStrength, punchScaleDuration, 1, 0.1f).SetFullId<Tweener>("GoldPunchScale", (Component)(object)this);
 		}
 		if (num5 != lastMaterials || forceRefresh)
 		{
@@ -239,7 +239,7 @@ public class PanicRewardIndicator : MonoBehaviour
 				TweenExtensions.Kill(obj2, false);
 			}
 			((Transform)((TMP_Text)materialRewardText).rectTransform).localScale = Vector3.one;
-			materialTween = (Tween)(object)TweenExtensions.SetFullId<Tweener>(ShortcutExtensions.DOPunchScale((Transform)(object)((TMP_Text)materialRewardText).rectTransform, Vector3.one * punchScaleStrength, punchScaleDuration, 1, 0.1f), "MaterialsPunchScale", (Component)(object)this);
+			materialTween = (Tween)(object)ShortcutExtensions.DOPunchScale((Transform)(object)((TMP_Text)materialRewardText).rectTransform, Vector3.one * punchScaleStrength, punchScaleDuration, 1, 0.1f).SetFullId<Tweener>("MaterialsPunchScale", (Component)(object)this);
 		}
 		if (num6 != lastItemsCount || forceRefresh)
 		{
@@ -252,7 +252,7 @@ public class PanicRewardIndicator : MonoBehaviour
 				TweenExtensions.Kill(obj3, false);
 			}
 			((Transform)((TMP_Text)itemRewardText).rectTransform).localScale = Vector3.one;
-			itemsTween = (Tween)(object)TweenExtensions.SetFullId<Tweener>(ShortcutExtensions.DOPunchScale((Transform)(object)((TMP_Text)itemRewardText).rectTransform, Vector3.one * punchScaleStrength, punchScaleDuration, 1, 0.1f), "ItemPunchScale", (Component)(object)this);
+			itemsTween = (Tween)(object)ShortcutExtensions.DOPunchScale((Transform)(object)((TMP_Text)itemRewardText).rectTransform, Vector3.one * punchScaleStrength, punchScaleDuration, 1, 0.1f).SetFullId<Tweener>("ItemPunchScale", (Component)(object)this);
 		}
 		if (flag && (Object)(object)panicStepsCoinAudioClip[num] != (Object)null)
 		{

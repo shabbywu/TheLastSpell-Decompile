@@ -288,7 +288,7 @@ public class SeerPreviewDisplay : TPSingleton<SeerPreviewDisplay>
 		previewFoldSequence = DOTween.Sequence();
 		TPSingleton<HUDJoystickNavigationManager>.Instance.JoystickHighlight.ToggleAlwaysFollow(state: true);
 		TweenSettingsExtensions.Join(previewFoldSequence, (Tween)(object)TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosX(portraitsContainerRectTransform, num, foldDuration, false), foldEasing));
-		Sequence obj2 = TweenExtensions.SetFullId<Sequence>(TweenSettingsExtensions.Join(previewFoldSequence, (Tween)(object)TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosX(titleRectTransform, foldedTitlePosition, foldTitleDuration, false), foldTitleEasing)), "SeerPreviewFoldTween", (Component)(object)this);
+		Sequence obj2 = TweenSettingsExtensions.Join(previewFoldSequence, (Tween)(object)TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosX(titleRectTransform, foldedTitlePosition, foldTitleDuration, false), foldTitleEasing)).SetFullId<Sequence>("SeerPreviewFoldTween", (Component)(object)this);
 		object obj3 = _003C_003Ec._003C_003E9__41_1;
 		if (obj3 == null)
 		{
@@ -324,7 +324,7 @@ public class SeerPreviewDisplay : TPSingleton<SeerPreviewDisplay>
 		previewFoldSequence = DOTween.Sequence();
 		TPSingleton<HUDJoystickNavigationManager>.Instance.JoystickHighlight.ToggleAlwaysFollow(state: true);
 		TweenSettingsExtensions.Join(previewFoldSequence, (Tween)(object)TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosX(portraitsContainerRectTransform, unfoldedPosition, unfoldDuration, false), unfoldEasing));
-		Sequence obj2 = TweenExtensions.SetFullId<Sequence>(TweenSettingsExtensions.Join(previewFoldSequence, (Tween)(object)TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosX(titleRectTransform, 0f, unfoldTitleDuration, false), unfoldTitleEasing)), "SeerPreviewFoldTween", (Component)(object)this);
+		Sequence obj2 = TweenSettingsExtensions.Join(previewFoldSequence, (Tween)(object)TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosX(titleRectTransform, 0f, unfoldTitleDuration, false), unfoldTitleEasing)).SetFullId<Sequence>("SeerPreviewFoldTween", (Component)(object)this);
 		object obj3 = _003C_003Ec._003C_003E9__42_0;
 		if (obj3 == null)
 		{
@@ -386,6 +386,6 @@ public class SeerPreviewDisplay : TPSingleton<SeerPreviewDisplay>
 		{
 			previewScrollRect.verticalScrollbar.value = 1f;
 		}
-		SelectableExtensions.SetSelectOnDown(foldButton, canScroll ? scrollTopButton : null);
+		foldButton.SetSelectOnDown(canScroll ? scrollTopButton : null);
 	}
 }

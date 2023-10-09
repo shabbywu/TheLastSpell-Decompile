@@ -7,7 +7,7 @@ using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Building;
 
-public class RandomBuildingsDirectionsDefinition : Definition
+public class RandomBuildingsDirectionsDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public string Id { get; private set; }
 

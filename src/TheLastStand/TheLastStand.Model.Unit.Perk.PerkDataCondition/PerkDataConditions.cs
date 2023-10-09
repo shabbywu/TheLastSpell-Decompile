@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using TPLib.Log;
 using TheLastStand.Definition.Unit.Perk.PerkDataCondition;
-using TheLastStand.Framework.ExpressionInterpreter;
 using UnityEngine;
 
 namespace TheLastStand.Model.Unit.Perk.PerkDataCondition;
@@ -48,7 +47,7 @@ public class PerkDataConditions
 
 	public bool IsValid(PerkDataContainer perkDataContainer)
 	{
-		((InterpreterContext)Perk).TargetObject = perkDataContainer;
+		Perk.TargetObject = perkDataContainer;
 		return Conditions.All((APerkDataCondition condition) => condition.IsValid());
 	}
 }

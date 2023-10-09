@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition;
 
-public class ProbabilityTreeEntriesDefinition : Definition
+public class ProbabilityTreeEntriesDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public string Id { get; set; }
 
@@ -15,7 +15,7 @@ public class ProbabilityTreeEntriesDefinition : Definition
 
 
 	public ProbabilityTreeEntriesDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
@@ -23,7 +23,7 @@ public class ProbabilityTreeEntriesDefinition : Definition
 	{
 		XElement val = (XElement)(object)((container is XElement) ? container : null);
 		XAttribute val2 = val.Attribute(XName.op_Implicit("Id"));
-		if (XDocumentExtensions.IsNullOrEmpty(val2))
+		if (val2.IsNullOrEmpty())
 		{
 			Debug.LogError((object)"ProbabilityLevelsElement must have a valid Id");
 			return;
@@ -33,7 +33,7 @@ public class ProbabilityTreeEntriesDefinition : Definition
 		{
 			XAttribute val3 = item.Attribute(XName.op_Implicit("Weight"));
 			int result2;
-			if (XDocumentExtensions.IsNullOrEmpty(val3) || !int.TryParse(val3.Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var result))
+			if (val3.IsNullOrEmpty() || !int.TryParse(val3.Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var result))
 			{
 				Debug.LogError((object)("ProbabilityLevels " + Id + " Invalid weight!"));
 			}

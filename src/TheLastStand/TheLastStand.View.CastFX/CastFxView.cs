@@ -6,7 +6,6 @@ using TheLastStand.Definition;
 using TheLastStand.Definition.CastFx;
 using TheLastStand.Framework;
 using TheLastStand.Framework.Animation;
-using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Manager;
 using TheLastStand.Manager.Skill;
 using TheLastStand.Model;
@@ -59,7 +58,7 @@ public class CastFxView : MonoBehaviour
 		{
 			if ((Object)(object)animPlayerPrefab == (Object)null)
 			{
-				animPlayerPrefab = ResourcePooler.LoadOnce<GameObject>("Prefab/Skills FXs/Skill FX", false);
+				animPlayerPrefab = ResourcePooler.LoadOnce<GameObject>("Prefab/Skills FXs/Skill FX", failSilently: false);
 			}
 			return animPlayerPrefab;
 		}
@@ -90,7 +89,7 @@ public class CastFxView : MonoBehaviour
 	{
 		foreach (CastFxDefinition.CamShakeDefinition camShakeDefinition in castFx.CastFxDefinition.CamShakeDefinitions)
 		{
-			ACameraView.Shake(camShakeDefinition.Id, camShakeDefinition.Delay.EvalToFloat((InterpreterContext)(object)castFx.CastFXInterpreterContext));
+			ACameraView.Shake(camShakeDefinition.Id, camShakeDefinition.Delay.EvalToFloat(castFx.CastFXInterpreterContext));
 		}
 	}
 
@@ -128,7 +127,7 @@ public class CastFxView : MonoBehaviour
 			{
 				e_Direction = castFx.TargetTile.Unit?.LookDirection ?? GameDefinition.E_Direction.North;
 			}
-			AnimationClip clip = ResourcePooler.LoadOnce<AnimationClip>("Animation/Skills FXs/" + castFx.CastFxDefinition.VisualEffectDefinitions[i].GetPath(e_Direction), false);
+			AnimationClip clip = ResourcePooler.LoadOnce<AnimationClip>("Animation/Skills FXs/" + castFx.CastFxDefinition.VisualEffectDefinitions[i].GetPath(e_Direction), failSilently: false);
 			if (!(castFx.CastFxDefinition.VisualEffectDefinitions[i] is StandardVisualEffectDefinition standardVisualEffectDefinition))
 			{
 				continue;
@@ -151,9 +150,9 @@ public class CastFxView : MonoBehaviour
 				((Object)((Component)component).gameObject).name = $"CastFX_{((Vector2Int)(ref val2)).x}-{((Vector2Int)(ref val2)).y}";
 				if (standardVisualEffectDefinition.SpawnedParticlesPath != string.Empty)
 				{
-					ObjectPooler.GetPooledGameObject(standardVisualEffectDefinition.SpawnedParticlesPath, ResourcePooler.LoadOnce<GameObject>(standardVisualEffectDefinition.SpawnedParticlesPath, false), (Transform)null, false).transform.position = TileMapView.GetWorldPosition(val2) + val;
+					ObjectPooler.GetPooledGameObject(standardVisualEffectDefinition.SpawnedParticlesPath, ResourcePooler.LoadOnce<GameObject>(standardVisualEffectDefinition.SpawnedParticlesPath, failSilently: false)).transform.position = TileMapView.GetWorldPosition(val2) + val;
 				}
-				float num = castFx.CastFxDefinition.VisualEffectDefinitions[i].Delay.EvalToFloat((InterpreterContext)(object)castFx.CastFXInterpreterContext);
+				float num = castFx.CastFxDefinition.VisualEffectDefinitions[i].Delay.EvalToFloat(castFx.CastFXInterpreterContext);
 				if (standardVisualEffectDefinition.Target.TargetType == StandardVisualEffectDefinition.TargetData.E_TargetType.PropagationTiles && castFx.CastFxDefinition is SkillCastFxDefinition skillCastFxDefinition)
 				{
 					num += skillCastFxDefinition.PropagationDelay * (float)j;
@@ -168,13 +167,13 @@ public class CastFxView : MonoBehaviour
 		bool flag = source is TheLastStand.Model.Building.Building || source is BattleModule;
 		foreach (SoundEffectDefinition item in castFx.CastFxDefinition.SoundEffectDefinitionsOnCast)
 		{
-			OneShotSound component = ObjectPooler.GetPooledGameObject(flag ? "BuildingSkillSFX" : "Skill SFX Spatialized", ResourcePooler.LoadOnce<GameObject>("Prefab/Skills SFXs/Skill SFX", false), (Transform)null, false).GetComponent<OneShotSound>();
+			OneShotSound component = ObjectPooler.GetPooledGameObject(flag ? "BuildingSkillSFX" : "Skill SFX Spatialized", ResourcePooler.LoadOnce<GameObject>("Prefab/Skills SFXs/Skill SFX", failSilently: false)).GetComponent<OneShotSound>();
 			((Object)component).name = (source?.Id ?? "UnknownSource") + "_Launch";
 			component.PlaySpatialized(GetSoundEffectAudioClip(item), castFx.SourceTile, item.Delay.EvalToFloat());
 		}
 		foreach (SoundEffectDefinition item2 in castFx.CastFxDefinition.SoundEffectDefinitionsOnImpact)
 		{
-			OneShotSound component2 = ObjectPooler.GetPooledGameObject(flag ? "BuildingSkillSFX" : "Skill SFX Spatialized", ResourcePooler.LoadOnce<GameObject>("Prefab/Skills SFXs/Skill SFX", false), (Transform)null, false).GetComponent<OneShotSound>();
+			OneShotSound component2 = ObjectPooler.GetPooledGameObject(flag ? "BuildingSkillSFX" : "Skill SFX Spatialized", ResourcePooler.LoadOnce<GameObject>("Prefab/Skills SFXs/Skill SFX", failSilently: false)).GetComponent<OneShotSound>();
 			((Object)component2).name = (source?.Id ?? "UnknownSource") + "_Impact";
 			component2.PlaySpatialized(GetSoundEffectAudioClip(item2), castFx.TargetTile, item2.Delay.EvalToFloat());
 		}
@@ -184,12 +183,12 @@ public class CastFxView : MonoBehaviour
 	{
 		if (!string.IsNullOrEmpty(soundEffectDefinition.FolderPath))
 		{
-			AudioClip[] list = ResourcePooler.LoadAllOnce<AudioClip>("Sounds/SFX/Skills SFXs/" + soundEffectDefinition.FolderPath, false);
+			AudioClip[] list = ResourcePooler.LoadAllOnce<AudioClip>("Sounds/SFX/Skills SFXs/" + soundEffectDefinition.FolderPath, failSilently: false);
 			return RandomManager.GetRandomElement(TPSingleton<SkillManager>.Instance, list);
 		}
 		if (!string.IsNullOrEmpty(soundEffectDefinition.Path))
 		{
-			return ResourcePooler.LoadOnce<AudioClip>("Sounds/SFX/Skills SFXs/" + soundEffectDefinition.Path, false);
+			return ResourcePooler.LoadOnce<AudioClip>("Sounds/SFX/Skills SFXs/" + soundEffectDefinition.Path, failSilently: false);
 		}
 		if (soundEffectDefinition.RandomPaths.Count > 0)
 		{
@@ -205,10 +204,10 @@ public class CastFxView : MonoBehaviour
 				num2 -= soundEffectDefinition.RandomPaths.ElementAt(j).Value;
 				if (num2 < 0)
 				{
-					return ResourcePooler.LoadOnce<AudioClip>("Sounds/SFX/Skills SFXs/" + soundEffectDefinition.RandomPaths.ElementAt(j).Key, false);
+					return ResourcePooler.LoadOnce<AudioClip>("Sounds/SFX/Skills SFXs/" + soundEffectDefinition.RandomPaths.ElementAt(j).Key, failSilently: false);
 				}
 			}
-			return ResourcePooler.LoadOnce<AudioClip>("Sounds/SFX/Skills SFXs/" + soundEffectDefinition.RandomPaths.ElementAt(count - 1).Key, false);
+			return ResourcePooler.LoadOnce<AudioClip>("Sounds/SFX/Skills SFXs/" + soundEffectDefinition.RandomPaths.ElementAt(count - 1).Key, failSilently: false);
 		}
 		CLoggerManager.Log((object)"A sound effect should have a Path or some random paths !!", (LogType)3, (CLogLevel)1, true, "StaticLog", false);
 		return null;

@@ -317,7 +317,7 @@ public class GlyphSelectionPanel : OraculumHub<GlyphSelectionPanel>
 		//IL_006c: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0071: Unknown result type (might be due to invalid IL or missing references)
 		Rect worldRect = RectTransformExtensions.GetWorldRect((RectTransform)((Component)selectedGlyphDisplay).transform);
-		Rect worldRect2 = RectTransformExtensions.GetWorldRect(selectedGlyphsScrollRect.viewport);
+		Rect worldRect2 = selectedGlyphsScrollRect.viewport.GetWorldRect();
 		bool flag = false;
 		while (((Rect)(ref worldRect)).center.x > ((Rect)(ref worldRect2)).max.x)
 		{
@@ -511,8 +511,8 @@ public class GlyphSelectionPanel : OraculumHub<GlyphSelectionPanel>
 
 	private void InitAudio()
 	{
-		ListExtensions.Shuffle<AudioClip>((IList<AudioClip>)activateClips);
-		ListExtensions.Shuffle<AudioClip>((IList<AudioClip>)deactivateClips);
+		activateClips.Shuffle();
+		deactivateClips.Shuffle();
 		audioSources = (AudioSource[])(object)new AudioSource[audioSourcesCount];
 		audioSources[0] = audioSourceTemplate;
 		for (int i = 1; i < audioSources.Length; i++)
@@ -582,7 +582,7 @@ public class GlyphSelectionPanel : OraculumHub<GlyphSelectionPanel>
 
 	private void OnJoystickSelect(RectTransform source)
 	{
-		GUIHelpers.AdjustScrollViewToFocusedItem(source, glyphsViewport, glyphsScrollbar, 0.02f, 0f, (float?)0.1f);
+		GUIHelpers.AdjustScrollViewToFocusedItem(source, glyphsViewport, glyphsScrollbar, 0.02f, 0f, 0.1f);
 	}
 
 	private void PlayGlyphClip(bool selected)
@@ -718,17 +718,17 @@ public class GlyphSelectionPanel : OraculumHub<GlyphSelectionPanel>
 		}
 		for (int j = 0; j < list.Count; j++)
 		{
-			Selectable val = list[j];
-			SelectableExtensions.SetMode(val, (Mode)4);
-			SelectableExtensions.SetSelectOnLeft(val, (Selectable)null);
-			SelectableExtensions.SetSelectOnRight(val, (Selectable)null);
+			Selectable selectable = list[j];
+			selectable.SetMode((Mode)4);
+			selectable.SetSelectOnLeft(null);
+			selectable.SetSelectOnRight(null);
 			if (j > 0)
 			{
-				SelectableExtensions.SetSelectOnLeft(val, list[j - 1]);
+				selectable.SetSelectOnLeft(list[j - 1]);
 			}
 			if (j < list.Count - 1)
 			{
-				SelectableExtensions.SetSelectOnRight(val, list[j + 1]);
+				selectable.SetSelectOnRight(list[j + 1]);
 			}
 		}
 	}
@@ -739,14 +739,14 @@ public class GlyphSelectionPanel : OraculumHub<GlyphSelectionPanel>
 		//IL_00ec: Unknown result type (might be due to invalid IL or missing references)
 		//IL_00ff: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0104: Unknown result type (might be due to invalid IL or missing references)
-		SelectableExtensions.SetMode((Selectable)(object)customModeToggle, (Mode)4);
-		SelectableExtensions.ClearNavigation((Selectable)(object)customModeToggle);
+		((Selectable)(object)customModeToggle).SetMode((Mode)4);
+		((Selectable)(object)customModeToggle).ClearNavigation();
 		Selectable val = (Selectable)(object)glyphDisplays.FirstOrDefault((GlyphDisplay o) => ((Component)o).gameObject.activeSelf)?.JoystickSelectable;
 		Selectable val2 = (Selectable)(object)selectedGlyphDisplays.FirstOrDefault((SelectedGlyphDisplay o) => ((Component)o).gameObject.activeSelf && !o.DestroyingSelf)?.JoystickSelectable;
 		for (int i = 0; i < selectedGlyphDisplays.Count; i++)
 		{
-			SelectableExtensions.SetSelectOnDown((Selectable)(object)selectedGlyphDisplays[i].JoystickSelectable, val);
-			SelectableExtensions.SetSelectOnUp((Selectable)(object)selectedGlyphDisplays[i].JoystickSelectable, (Selectable)(object)customModeToggle);
+			((Selectable)(object)selectedGlyphDisplays[i].JoystickSelectable).SetSelectOnDown(val);
+			((Selectable)(object)selectedGlyphDisplays[i].JoystickSelectable).SetSelectOnUp((Selectable)(object)customModeToggle);
 		}
 		for (int j = 0; j < glyphDisplays.Count; j++)
 		{
@@ -760,9 +760,9 @@ public class GlyphSelectionPanel : OraculumHub<GlyphSelectionPanel>
 					continue;
 				}
 			}
-			SelectableExtensions.SetSelectOnUp(joystickSelectable, (Selectable)(((Object)(object)val2 != (Object)null) ? ((object)val2) : ((object)customModeToggle)));
+			joystickSelectable.SetSelectOnUp((Selectable)(object)(((Object)(object)val2 != (Object)null) ? ((BetterToggle)(object)val2) : customModeToggle));
 		}
-		SelectableExtensions.SetSelectOnDown((Selectable)(object)customModeToggle, ((Object)(object)val2 != (Object)null) ? val2 : val);
-		SelectableExtensions.SetSelectOnRight((Selectable)(object)customModeToggle, (Selectable)(object)closeButton);
+		((Selectable)(object)customModeToggle).SetSelectOnDown(((Object)(object)val2 != (Object)null) ? val2 : val);
+		((Selectable)(object)customModeToggle).SetSelectOnRight((Selectable)(object)closeButton);
 	}
 }

@@ -15,7 +15,7 @@ public class ShopSlot : ItemSlot
 	{
 		base.ItemSlotController = shopSlotController;
 		base.ItemSlotView = shopSlotView;
-		Deserialize((ISerializedData)(object)container);
+		Deserialize(container);
 	}
 
 	public ShopSlot(ItemSlotDefinition itemSlotDefinition, ShopSlotController shopSlotController, ShopSlotView shopSlotView)
@@ -32,7 +32,7 @@ public class ShopSlot : ItemSlot
 
 	public override ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedItemShopSlot
+		return new SerializedItemShopSlot
 		{
 			Item = (base.Item?.Serialize() as SerializedItem),
 			IsSoldOut = IsSoldOut

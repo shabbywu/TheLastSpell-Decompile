@@ -11,9 +11,9 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Item;
 
-public class AffixDefinition : Definition
+public class AffixDefinition : TheLastStand.Framework.Serialization.Definition
 {
-	public class LeveledAffixDefinition : Definition
+	public class LeveledAffixDefinition : TheLastStand.Framework.Serialization.Definition
 	{
 		public AffixDefinition AffixDefinition { get; private set; }
 
@@ -23,7 +23,7 @@ public class AffixDefinition : Definition
 
 
 		public LeveledAffixDefinition(AffixDefinition affixDefinition, XContainer container)
-			: base(container, (Dictionary<string, string>)null)
+			: base(container)
 		{
 			AffixDefinition = affixDefinition;
 		}
@@ -32,7 +32,7 @@ public class AffixDefinition : Definition
 		{
 			XElement val = (XElement)(object)((container is XElement) ? container : null);
 			XAttribute val2 = val.Attribute(XName.op_Implicit("Id"));
-			if (XDocumentExtensions.IsNullOrEmpty(val2))
+			if (val2.IsNullOrEmpty())
 			{
 				Debug.LogError((object)"The Level has no Id!");
 				return;
@@ -45,13 +45,13 @@ public class AffixDefinition : Definition
 			Level = result;
 			foreach (XElement item in ((XContainer)val).Elements(XName.op_Implicit("Modifier")))
 			{
-				if (XDocumentExtensions.IsNullOrEmpty(item))
+				if (item.IsNullOrEmpty())
 				{
 					Debug.LogError((object)"The Modifier is empty!");
 					continue;
 				}
 				XAttribute val3 = item.Attribute(XName.op_Implicit("Stat"));
-				if (XDocumentExtensions.IsNullOrEmpty(val3))
+				if (val3.IsNullOrEmpty())
 				{
 					Debug.LogError((object)"The Modifier has no Stat!");
 				}
@@ -87,7 +87,7 @@ public class AffixDefinition : Definition
 	public float TotalCategoryWeight { get; private set; }
 
 	public AffixDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
@@ -95,7 +95,7 @@ public class AffixDefinition : Definition
 	{
 		XElement val = (XElement)(object)((container is XElement) ? container : null);
 		XAttribute val2 = val.Attribute(XName.op_Implicit("Id"));
-		if (XDocumentExtensions.IsNullOrEmpty(val2))
+		if (val2.IsNullOrEmpty())
 		{
 			Debug.LogError((object)"The AffixDefinition has no Id!");
 			return;
@@ -161,14 +161,14 @@ public class AffixDefinition : Definition
 		}
 		foreach (XElement item in ((XContainer)val8).Elements(XName.op_Implicit("ItemCategory")))
 		{
-			if (XDocumentExtensions.IsNullOrEmpty(item))
+			if (item.IsNullOrEmpty())
 			{
 				Debug.LogError((object)("AffixDefinition " + Id + "'s ItemCategory is empty!"));
 				continue;
 			}
 			if (!Enum.TryParse<ItemDefinition.E_Category>(item.Value, out var result5))
 			{
-				Debug.LogError((object)("AffixDefinition " + Id + "'s ItemCategory " + ((Definition)this).HasAnInvalid("E_Category", item.Value)));
+				Debug.LogError((object)("AffixDefinition " + Id + "'s ItemCategory " + HasAnInvalid("E_Category", item.Value)));
 				continue;
 			}
 			if (ItemCategoriesWithWeight.ContainsKey(result5))
@@ -177,7 +177,7 @@ public class AffixDefinition : Definition
 				continue;
 			}
 			XAttribute val9 = item.Attribute(XName.op_Implicit("Weight"));
-			if (XDocumentExtensions.IsNullOrEmpty(val9))
+			if (val9.IsNullOrEmpty())
 			{
 				TPDebug.Log((object)$"The affix {Id} must have a Weight to its ItemCategory {result5}", (Object)null);
 				return;
@@ -202,20 +202,20 @@ public class AffixDefinition : Definition
 			LevelDefinitions.Add(leveledAffixDefinition.Level, leveledAffixDefinition);
 		}
 		XElement val11 = ((XContainer)val).Element(XName.op_Implicit("EpicBonus"));
-		if (XDocumentExtensions.IsNullOrEmpty(val11))
+		if (val11.IsNullOrEmpty())
 		{
 			Debug.LogError((object)("The AffixDefinition " + Id + " has no EpicBonus!"));
 			return;
 		}
 		foreach (XElement item3 in ((XContainer)val11).Elements(XName.op_Implicit("Modifier")))
 		{
-			if (XDocumentExtensions.IsNullOrEmpty(item3))
+			if (item3.IsNullOrEmpty())
 			{
 				Debug.LogError((object)"The Modifier is empty!");
 				continue;
 			}
 			XAttribute val12 = item3.Attribute(XName.op_Implicit("Stat"));
-			if (XDocumentExtensions.IsNullOrEmpty(val12))
+			if (val12.IsNullOrEmpty())
 			{
 				Debug.LogError((object)"The Modifier has no Stat!");
 			}

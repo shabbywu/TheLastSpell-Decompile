@@ -341,7 +341,7 @@ public abstract class UnitHUD : SerializedMonoBehaviour, IDamageableHUD
 		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
 		if ((Object)(object)skillTargetingMark == (Object)null)
 		{
-			skillTargetingMark = ObjectPooler.GetPooledComponent<SkillTargetingMark>("SkillTargetingMarkUI", SkillManager.SkillTargetingMarkUIPrefab, (Transform)(object)skillTargetingAnchor, false);
+			skillTargetingMark = ObjectPooler.GetPooledComponent<SkillTargetingMark>("SkillTargetingMarkUI", SkillManager.SkillTargetingMarkUIPrefab, (Transform)(object)skillTargetingAnchor, dontSetParent: false);
 			((Component)skillTargetingMark).transform.localPosition = Vector3.zero;
 		}
 		if (!((Component)skillTargetingMark).gameObject.activeInHierarchy)

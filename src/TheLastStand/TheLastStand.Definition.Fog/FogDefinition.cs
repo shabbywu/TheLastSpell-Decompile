@@ -5,7 +5,6 @@ using TPLib.Log;
 using TheLastStand.Database.Fog;
 using TheLastStand.Definition.Hazard;
 using TheLastStand.Framework.Extensions;
-using TheLastStand.Framework.Serialization;
 using UnityEngine;
 
 namespace TheLastStand.Definition.Fog;
@@ -62,7 +61,7 @@ public class FogDefinition : HazardDefinition
 		XElement val = (XElement)(object)((container is XElement) ? container : null);
 		FogDefinition fogDefinition = null;
 		XAttribute val2 = val.Attribute(XName.op_Implicit("Id"));
-		if (XDocumentExtensions.IsNullOrEmpty(val2))
+		if (val2.IsNullOrEmpty())
 		{
 			CLoggerManager.Log((object)"FogDefinition must have an Id!", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 			return;
@@ -74,7 +73,7 @@ public class FogDefinition : HazardDefinition
 			fogDefinition = FogDatabase.FogsDefinitions[val3.Value];
 		}
 		XElement val4 = ((XContainer)val).Element(XName.op_Implicit("IncreaseEveryXDays"));
-		if (XDocumentExtensions.IsNullOrEmpty(val4))
+		if (val4.IsNullOrEmpty())
 		{
 			if (fogDefinition == null)
 			{
@@ -87,13 +86,13 @@ public class FogDefinition : HazardDefinition
 		{
 			if (!int.TryParse(val4.Value, out var result))
 			{
-				CLoggerManager.Log((object)("FogDefinition " + Id + " IncreaseEveryXDays " + ((Definition)this).HasAnInvalidInt(val4.Value) + " !"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+				CLoggerManager.Log((object)("FogDefinition " + Id + " IncreaseEveryXDays " + HasAnInvalidInt(val4.Value) + " !"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 				return;
 			}
 			IncreaseEveryXDays = result;
 		}
 		XElement val5 = ((XContainer)val).Element(XName.op_Implicit("InitialDensityIndex"));
-		if (XDocumentExtensions.IsNullOrEmpty(val5))
+		if (val5.IsNullOrEmpty())
 		{
 			if (fogDefinition == null)
 			{
@@ -106,7 +105,7 @@ public class FogDefinition : HazardDefinition
 		{
 			if (!int.TryParse(val5.Value, out var result2))
 			{
-				CLoggerManager.Log((object)("FogDefinition " + Id + " InitialDensityIndex " + ((Definition)this).HasAnInvalidInt(val5.Value) + " !"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+				CLoggerManager.Log((object)("FogDefinition " + Id + " InitialDensityIndex " + HasAnInvalidInt(val5.Value) + " !"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 				return;
 			}
 			InitialDensityIndex = result2;
@@ -130,7 +129,7 @@ public class FogDefinition : HazardDefinition
 				string value = val7.Attribute(XName.op_Implicit("Name")).Value;
 				if (!int.TryParse(val7.Attribute(XName.op_Implicit("Value")).Value, out var result3))
 				{
-					CLoggerManager.Log((object)("FogDefinition's FogDensity " + ((Definition)this).HasAnInvalidInt(val7.Attribute(XName.op_Implicit("Value")).Value)), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+					CLoggerManager.Log((object)("FogDefinition's FogDensity " + HasAnInvalidInt(val7.Attribute(XName.op_Implicit("Value")).Value)), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 					return;
 				}
 				FogDensities.Add(new FogDensity(value, result3));

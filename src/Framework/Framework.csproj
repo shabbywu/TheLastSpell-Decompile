@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>Framework</AssemblyName>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <TargetFramework>net40</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>11.0</LangVersion>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup />
+  <ItemGroup />
+  <ItemGroup>
+    <Reference Include="UnityEngine.CoreModule" />
+    <Reference Include="UnityEngine.UI" />
+    <Reference Include="System.Xml.Linq">
+      <HintPath>../../../../opt/bitnami/dotnet-sdk/bin/shared/Microsoft.NETCore.App/6.0.22/System.Xml.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml">
+      <HintPath>../../../../opt/bitnami/dotnet-sdk/bin/shared/Microsoft.NETCore.App/6.0.22/System.Xml.dll</HintPath>
+    </Reference>
+    <Reference Include="DOTween" />
+    <Reference Include="System.Core">
+      <HintPath>../../../../opt/bitnami/dotnet-sdk/bin/shared/Microsoft.NETCore.App/6.0.22/System.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro" />
+    <Reference Include="UnityEngine.UIModule" />
+    <Reference Include="UnityEngine.TextRenderingModule" />
+    <Reference Include="UnityEngine.AnimationModule" />
+    <Reference Include="Sirenix.Serialization" />
+    <Reference Include="TPLib" />
+    <Reference Include="Unity.PlayableGraphVisualizer" />
+    <Reference Include="TPDebug" />
+  </ItemGroup>
+</Project>

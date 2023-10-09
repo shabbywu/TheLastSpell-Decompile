@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Globalization;
 using System.Xml.Linq;
 using TheLastStand.Framework.ExpressionInterpreter;
@@ -29,7 +28,7 @@ public class GainMaterialsDefinition : BuildingGaugeEffectDefinition
 	{
 		base.Deserialize(container);
 		XElement val = ((container is XElement) ? container : null).Element(XName.op_Implicit("Materials"));
-		if (XDocumentExtensions.IsNullOrEmpty(val))
+		if (val.IsNullOrEmpty())
 		{
 			Debug.LogError((object)"BuildingGaugeEffectDefinition must have Materials");
 			return;
@@ -42,7 +41,7 @@ public class GainMaterialsDefinition : BuildingGaugeEffectDefinition
 		}
 		else
 		{
-			MaterialsGain = Parser.Parse(val.Value, (Dictionary<string, string>)null);
+			MaterialsGain = Parser.Parse(val.Value);
 		}
 	}
 }

@@ -32,7 +32,7 @@ public class DebuffStatusController : StatModifierStatusController
 
 	public override bool CreateEffectDisplay(IDamageableController damageableController)
 	{
-		DebuffDisplay pooledComponent = ObjectPooler.GetPooledComponent<DebuffDisplay>("DebuffDisplay", ResourcePooler.LoadOnce<DebuffDisplay>("Prefab/Displayable Effect/UI Effect Displays/DebuffDisplay", false), EffectManager.EffectDisplaysParent, false);
+		DebuffDisplay pooledComponent = ObjectPooler.GetPooledComponent<DebuffDisplay>("DebuffDisplay", ResourcePooler.LoadOnce<DebuffDisplay>("Prefab/Displayable Effect/UI Effect Displays/DebuffDisplay", failSilently: false), EffectManager.EffectDisplaysParent, dontSetParent: false);
 		pooledComponent.Init(DebuffStatus.Stat, (int)DebuffStatus.ModifierValue);
 		damageableController.AddEffectDisplay(pooledComponent);
 		return true;

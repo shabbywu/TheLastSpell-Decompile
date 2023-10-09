@@ -1,10 +1,9 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Unit;
 
-public class StatModifierDefinition : Definition
+public class StatModifierDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public static class Constants
 	{
@@ -16,14 +15,14 @@ public class StatModifierDefinition : Definition
 	public float PercentageModifier { get; set; }
 
 	public StatModifierDefinition(float flatModifier, float percentageModifier)
-		: base((XContainer)null, (Dictionary<string, string>)null)
+		: base(null)
 	{
 		FlatModifier = flatModifier;
 		PercentageModifier = percentageModifier;
 	}
 
 	public StatModifierDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

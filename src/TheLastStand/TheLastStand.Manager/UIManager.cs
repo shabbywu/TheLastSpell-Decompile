@@ -155,7 +155,7 @@ public class UIManager : Manager<UIManager>
 			text2 = "Popup_SaveLoading_ErrorText_WrongVersion" + (backupHasBeenLoaded ? "_BackupLoadSuccessful" : "_BackupLoadFail");
 			break;
 		}
-		return (Object)(object)GenericPopUp.Open(new ParameterizedLocalizationLine(text, Array.Empty<string>()), new ParameterizedLocalizationLine(text2, new string[1] { fileCopyPath }), ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Stats/Icons/VerySmall_Critical", false)) != (Object)null;
+		return (Object)(object)GenericPopUp.Open(new ParameterizedLocalizationLine(text, Array.Empty<string>()), new ParameterizedLocalizationLine(text2, new string[1] { fileCopyPath }), ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Stats/Icons/VerySmall_Critical", failSilently: false)) != (Object)null;
 	}
 
 	public static void CloseAllOpenedPopups()

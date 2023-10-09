@@ -50,7 +50,7 @@ public class UnitInjuriesDisplay : MonoBehaviour
 
 	private void Init()
 	{
-		TransformExtensions.DestroyChildren((Transform)(object)injuriesParent);
+		((Transform)(object)injuriesParent).DestroyChildren();
 		injuries.Clear();
 		if (currentUnit == null)
 		{
@@ -66,8 +66,8 @@ public class UnitInjuriesDisplay : MonoBehaviour
 			}
 			else
 			{
-				SelectableExtensions.SetSelectOnUp((Selectable)(object)unitInjuryDisplay.JoystickSelectable, (selectOnUp.Length != 0) ? selectOnUp[0] : null);
-				SelectableExtensions.SetSelectOnDown((Selectable)(object)unitInjuryDisplay.JoystickSelectable, (selectOnDown.Length != 0) ? selectOnDown[0] : null);
+				((Selectable)(object)unitInjuryDisplay.JoystickSelectable).SetSelectOnUp((selectOnUp.Length != 0) ? selectOnUp[0] : null);
+				((Selectable)(object)unitInjuryDisplay.JoystickSelectable).SetSelectOnDown((selectOnDown.Length != 0) ? selectOnDown[0] : null);
 			}
 			if (i != currentUnit.UnitTemplateDefinition.InjuryDefinitions.Count - 1)
 			{
@@ -77,27 +77,27 @@ public class UnitInjuriesDisplay : MonoBehaviour
 			{
 				if ((Object)(object)selectOnUp[j] != (Object)null)
 				{
-					SelectableExtensions.SetSelectOnDown(selectOnUp[j], (Selectable)(object)unitInjuryDisplay.JoystickSelectable);
+					selectOnUp[j].SetSelectOnDown((Selectable)(object)unitInjuryDisplay.JoystickSelectable);
 				}
 			}
 			for (int k = 0; k < selectOnDown.Length; k++)
 			{
 				if ((Object)(object)selectOnDown[k] != (Object)null)
 				{
-					SelectableExtensions.SetSelectOnUp(selectOnDown[k], (Selectable)(object)unitInjuryDisplay.JoystickSelectable);
+					selectOnDown[k].SetSelectOnUp((Selectable)(object)unitInjuryDisplay.JoystickSelectable);
 				}
 			}
 		}
 		for (int l = 0; l < injuries.Count; l++)
 		{
-			SelectableExtensions.SetMode((Selectable)(object)injuries[l].JoystickSelectable, (Mode)4);
+			((Selectable)(object)injuries[l].JoystickSelectable).SetMode((Mode)4);
 			if (l > 0)
 			{
-				SelectableExtensions.SetSelectOnRight((Selectable)(object)injuries[l].JoystickSelectable, (Selectable)(object)injuries[l - 1].JoystickSelectable);
+				((Selectable)(object)injuries[l].JoystickSelectable).SetSelectOnRight((Selectable)(object)injuries[l - 1].JoystickSelectable);
 			}
 			if (l < injuries.Count - 1)
 			{
-				SelectableExtensions.SetSelectOnLeft((Selectable)(object)injuries[l].JoystickSelectable, (Selectable)(object)injuries[l + 1].JoystickSelectable);
+				((Selectable)(object)injuries[l].JoystickSelectable).SetSelectOnLeft((Selectable)(object)injuries[l + 1].JoystickSelectable);
 			}
 		}
 	}

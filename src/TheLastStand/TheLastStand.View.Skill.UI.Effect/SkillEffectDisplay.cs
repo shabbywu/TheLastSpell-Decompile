@@ -152,7 +152,7 @@ public class SkillEffectDisplay : MonoBehaviour
 		SkillOwner = skillOwner;
 		SkillOwnerUnit = SkillOwner as TheLastStand.Model.Unit.Unit;
 		this.isSurrounding = isSurrounding;
-		stunChanceStatModifier = ((statModifiers != null) ? DictionaryExtensions.GetValueOrDefault<UnitStatDefinition.E_Stat, float>(statModifiers, UnitStatDefinition.E_Stat.StunChanceModifier) : 0f);
+		stunChanceStatModifier = statModifiers?.GetValueOrDefault(UnitStatDefinition.E_Stat.StunChanceModifier) ?? 0f;
 		bool flag = false;
 		icon.sprite = skillEffectIcons.GetSpriteById(SkillEffectDefinition.Id);
 		RefreshTitle();
@@ -207,7 +207,7 @@ public class SkillEffectDisplay : MonoBehaviour
 											{
 												num = 1;
 												float num2 = armorShreddingEffectDefinition.BonusDamage * 100f;
-												num2 += SkillOwnerUnit?.GetClampedStatValueWithModifier(UnitStatDefinition.E_Stat.ArmorShreddingAttacks, (statModifiers != null) ? new float?(DictionaryExtensions.GetValueOrDefault<UnitStatDefinition.E_Stat, float>(statModifiers, UnitStatDefinition.E_Stat.ArmorShreddingAttacks)) : null) ?? 0f;
+												num2 += SkillOwnerUnit?.GetClampedStatValueWithModifier(UnitStatDefinition.E_Stat.ArmorShreddingAttacks, statModifiers?.GetValueOrDefault(UnitStatDefinition.E_Stat.ArmorShreddingAttacks)) ?? 0f;
 												momentumPanel.SetActive(true);
 												((TMP_Text)momentumPercentage).text = $"+{num2}%";
 											}
@@ -215,11 +215,11 @@ public class SkillEffectDisplay : MonoBehaviour
 										else
 										{
 											num = 1;
-											int num3 = ((SkillOwnerUnit != null) ? SkillOwnerUnit.UnitController.GetModifiedPropagationsCount(propagationSkillEffectDefinition.PropagationsCount, (statModifiers != null) ? new float?(DictionaryExtensions.GetValueOrDefault<UnitStatDefinition.E_Stat, float>(statModifiers, UnitStatDefinition.E_Stat.PropagationBouncesModifier)) : null) : propagationSkillEffectDefinition.PropagationsCount);
+											int num3 = ((SkillOwnerUnit != null) ? SkillOwnerUnit.UnitController.GetModifiedPropagationsCount(propagationSkillEffectDefinition.PropagationsCount, statModifiers?.GetValueOrDefault(UnitStatDefinition.E_Stat.PropagationBouncesModifier)) : propagationSkillEffectDefinition.PropagationsCount);
 											if (SkillOwnerUnit != null)
 											{
 												damagePanel.SetActive(true);
-												((TMP_Text)damage).text = $"{SkillOwnerUnit.GetClampedStatValueWithModifier(UnitStatDefinition.E_Stat.PropagationDamage, (statModifiers != null) ? new float?(DictionaryExtensions.GetValueOrDefault<UnitStatDefinition.E_Stat, float>(statModifiers, UnitStatDefinition.E_Stat.PropagationDamage)) : null):N0}%";
+												((TMP_Text)damage).text = $"{SkillOwnerUnit.GetClampedStatValueWithModifier(UnitStatDefinition.E_Stat.PropagationDamage, statModifiers?.GetValueOrDefault(UnitStatDefinition.E_Stat.PropagationDamage)):N0}%";
 												num = 2;
 											}
 											propagationPanel.SetActive(true);
@@ -230,7 +230,7 @@ public class SkillEffectDisplay : MonoBehaviour
 									{
 										num = 3;
 										float damageMultiplier = opportunisticSkillEffectDefinition.DamageMultiplier;
-										int num4 = Mathf.RoundToInt((SkillOwnerUnit?.GetClampedStatValueWithModifier(UnitStatDefinition.E_Stat.OpportunisticAttacks, (statModifiers != null) ? new float?(DictionaryExtensions.GetValueOrDefault<UnitStatDefinition.E_Stat, float>(statModifiers, UnitStatDefinition.E_Stat.OpportunisticAttacks)) : null) ?? 0f) * damageMultiplier);
+										int num4 = Mathf.RoundToInt((SkillOwnerUnit?.GetClampedStatValueWithModifier(UnitStatDefinition.E_Stat.OpportunisticAttacks, statModifiers?.GetValueOrDefault(UnitStatDefinition.E_Stat.OpportunisticAttacks)) ?? 0f) * damageMultiplier);
 										opportunisticPanel.SetActive(true);
 										((TMP_Text)opportunisticPercentage).text = $"x{damageMultiplier} ({num4}%)";
 									}
@@ -238,7 +238,7 @@ public class SkillEffectDisplay : MonoBehaviour
 								else
 								{
 									num = 1;
-									int num5 = ((SkillOwnerUnit != null) ? SkillOwnerUnit.UnitController.GetModifiedMultiHitsCount(multiHitSkillEffectDefinition.HitsCount, (statModifiers != null) ? new float?(DictionaryExtensions.GetValueOrDefault<UnitStatDefinition.E_Stat, float>(statModifiers, UnitStatDefinition.E_Stat.MultiHitsCountModifier)) : null) : multiHitSkillEffectDefinition.HitsCount);
+									int num5 = ((SkillOwnerUnit != null) ? SkillOwnerUnit.UnitController.GetModifiedMultiHitsCount(multiHitSkillEffectDefinition.HitsCount, statModifiers?.GetValueOrDefault(UnitStatDefinition.E_Stat.MultiHitsCountModifier)) : multiHitSkillEffectDefinition.HitsCount);
 									damagePanel.SetActive(true);
 									((TMP_Text)damage).text = $"x{num5}";
 								}
@@ -247,7 +247,7 @@ public class SkillEffectDisplay : MonoBehaviour
 							{
 								num = 1;
 								float num6 = ((SkillEffectDefinition is MomentumEffectDefinition momentumEffectDefinition) ? (momentumEffectDefinition.DamageBonusPerTile * 100f) : 0f);
-								num6 += SkillOwnerUnit?.GetClampedStatValueWithModifier(UnitStatDefinition.E_Stat.MomentumAttacks, (statModifiers != null) ? new float?(DictionaryExtensions.GetValueOrDefault<UnitStatDefinition.E_Stat, float>(statModifiers, UnitStatDefinition.E_Stat.MomentumAttacks)) : null) ?? 0f;
+								num6 += SkillOwnerUnit?.GetClampedStatValueWithModifier(UnitStatDefinition.E_Stat.MomentumAttacks, statModifiers?.GetValueOrDefault(UnitStatDefinition.E_Stat.MomentumAttacks)) ?? 0f;
 								momentumPanel.SetActive(true);
 								((TMP_Text)momentumPercentage).text = $"+{num6}%";
 							}
@@ -261,7 +261,7 @@ public class SkillEffectDisplay : MonoBehaviour
 					{
 						num = 3;
 						float num7 = ((SkillEffectDefinition is IsolatedSkillEffectDefinition isolatedSkillEffectDefinition) ? isolatedSkillEffectDefinition.DamageMultiplier : 0f);
-						float num8 = SkillOwnerUnit?.GetClampedStatValueWithModifier(UnitStatDefinition.E_Stat.IsolatedAttacks, (statModifiers != null) ? new float?(DictionaryExtensions.GetValueOrDefault<UnitStatDefinition.E_Stat, float>(statModifiers, UnitStatDefinition.E_Stat.IsolatedAttacks)) : null) ?? 0f;
+						float num8 = SkillOwnerUnit?.GetClampedStatValueWithModifier(UnitStatDefinition.E_Stat.IsolatedAttacks, statModifiers?.GetValueOrDefault(UnitStatDefinition.E_Stat.IsolatedAttacks)) ?? 0f;
 						int num9 = Mathf.RoundToInt(num7 * num8);
 						isolatedPanel.SetActive(true);
 						((TMP_Text)isolatedPercentage).text = $"x{num7} ({num9}%)";
@@ -303,7 +303,7 @@ public class SkillEffectDisplay : MonoBehaviour
 				float num10 = poisonEffectDefinition.DamagePerTurn;
 				if (SkillOwnerUnit != null)
 				{
-					num10 = SkillOwnerUnit.UnitController.GetModifiedPoisonDamage(num10, (statModifiers != null) ? new float?(DictionaryExtensions.GetValueOrDefault<UnitStatDefinition.E_Stat, float>(statModifiers, UnitStatDefinition.E_Stat.PoisonDamageModifier)) : null);
+					num10 = SkillOwnerUnit.UnitController.GetModifiedPoisonDamage(num10, statModifiers?.GetValueOrDefault(UnitStatDefinition.E_Stat.PoisonDamageModifier));
 				}
 				if (skillAction.Skill.SkillContainer is TheLastStand.Model.Item.Item item)
 				{

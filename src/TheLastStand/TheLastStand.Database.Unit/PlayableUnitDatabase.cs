@@ -253,7 +253,7 @@ public class PlayableUnitDatabase : Database<PlayableUnitDatabase>
 	private void DeserializePlayableUnitConfig()
 	{
 		XElement obj = ((XContainer)XDocument.Parse(playableUnitConfigTextAsset.text, (LoadOptions)2)).Element(XName.op_Implicit("PlayableUnitConfig"));
-		ExperienceNeededToNextLevel = Parser.Parse(((XContainer)obj).Element(XName.op_Implicit("ExperienceNeededToNextLevel")).Value, (Dictionary<string, string>)null);
+		ExperienceNeededToNextLevel = Parser.Parse(((XContainer)obj).Element(XName.op_Implicit("ExperienceNeededToNextLevel")).Value);
 		XElement val = ((XContainer)obj).Element(XName.op_Implicit("BonusExperiencePerKill"));
 		if (!float.TryParse(val.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var result))
 		{
@@ -294,7 +294,7 @@ public class PlayableUnitDatabase : Database<PlayableUnitDatabase>
 		UnitEquipmentSlotDefinitions = new Dictionary<ItemSlotDefinition.E_ItemSlotId, UnitEquipmentSlotDefinition>();
 		foreach (XElement item in ((XContainer)((XContainer)XDocument.Parse(unitEquipmentSlotsDefinitions.text, (LoadOptions)2)).Element(XName.op_Implicit("UnitEquipmentSlotDefinitions"))).Elements(XName.op_Implicit("UnitEquipmentSlotDefinition")))
 		{
-			if (XDocumentExtensions.IsNullOrEmpty(item.Attribute(XName.op_Implicit("Id"))))
+			if (item.Attribute(XName.op_Implicit("Id")).IsNullOrEmpty())
 			{
 				CLoggerManager.Log((object)"The UnitEquipmentSlotDefinition must have a valid id", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 				continue;
@@ -323,7 +323,7 @@ public class PlayableUnitDatabase : Database<PlayableUnitDatabase>
 			UnitGenerationLevelDefinitions.Add(unitGenerationLevelDefinition.Id, unitGenerationLevelDefinition);
 		}
 		UnitsGenerationStartDefinitions = new Dictionary<string, List<UnitGenerationDefinition>>();
-		Queue<XElement> queue = base.GatherElements((IEnumerable<TextAsset>)unitsGenerationsStartDefinitionsTextAssets, (IEnumerable<TextAsset>)null, "UnitsGenerationStartDefinitions", "UnitsGenerationsStartDefinitions");
+		Queue<XElement> queue = GatherElements(unitsGenerationsStartDefinitionsTextAssets, null, "UnitsGenerationStartDefinitions", "UnitsGenerationsStartDefinitions");
 		while (queue.Count > 0)
 		{
 			XElement obj = queue.Dequeue();
@@ -568,7 +568,7 @@ public class PlayableUnitDatabase : Database<PlayableUnitDatabase>
 	protected override void Awake()
 	{
 		base.Awake();
-		if (((TPSingleton<PlayableUnitDatabase>)(object)this)._IsValid || SecondaryTraitCost == null)
+		if (((TPSingleton<PlayableUnitDatabase>)this)._IsValid || SecondaryTraitCost == null)
 		{
 			InitializeSecondaryTraitCost();
 		}

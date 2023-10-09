@@ -1,6 +1,7 @@
 using System.Linq;
 using TPLib;
 using TPLib.Log;
+using TheLastStand.Framework.UI;
 using TheLastStand.Helpers;
 using TheLastStand.Manager.Sound;
 using TheLastStand.Model.WorldMap;
@@ -47,15 +48,13 @@ public class WorldMapUIManager : Manager<WorldMapUIManager>
 
 	public static int GetApocalypseSelectedLevel()
 	{
-		//IL_0037: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003d: Invalid comparison between Unknown and I4
 		if (TPSingleton<GameConfigurationsView>.Instance.ApocalypseLines.Count == 0)
 		{
 			return 0;
 		}
 		for (int num = TPSingleton<GameConfigurationsView>.Instance.ApocalypseLines.Count - 1; num >= 0; num--)
 		{
-			if ((int)TPSingleton<GameConfigurationsView>.Instance.ApocalypseLines[num].State == 2)
+			if (TPSingleton<GameConfigurationsView>.Instance.ApocalypseLines[num].State == BetterToggleGauge.E_BetterToggleGaugeState.Selected)
 			{
 				return TPSingleton<GameConfigurationsView>.Instance.ApocalypseLines[num].ApocalypseDefinition.Id;
 			}

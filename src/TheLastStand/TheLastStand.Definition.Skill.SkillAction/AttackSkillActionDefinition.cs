@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Xml.Linq;
 using TPLib.Log;
@@ -44,8 +43,8 @@ public class AttackSkillActionDefinition : SkillActionDefinition
 		XElement val2 = ((XContainer)val).Element(XName.op_Implicit("BaseDamage"));
 		if (val2 != null)
 		{
-			MinDamageNode = Parser.Parse(val2.Attribute(XName.op_Implicit("Min")).Value, (Dictionary<string, string>)null);
-			MaxDamageNode = Parser.Parse(val2.Attribute(XName.op_Implicit("Max")).Value, (Dictionary<string, string>)null);
+			MinDamageNode = Parser.Parse(val2.Attribute(XName.op_Implicit("Min")).Value);
+			MaxDamageNode = Parser.Parse(val2.Attribute(XName.op_Implicit("Max")).Value);
 		}
 		DamageMultiplier = float.Parse(((XContainer)val).Element(XName.op_Implicit("DamageMultiplier")).Value, NumberStyles.Float, CultureInfo.InvariantCulture);
 		XElement obj = ((XContainer)val).Element(XName.op_Implicit("AttackType"));
@@ -77,7 +76,7 @@ public class AttackSkillActionDefinition : SkillActionDefinition
 		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
 		if (MinDamageNode != null && MaxDamageNode != null)
 		{
-			return new Vector2(MinDamageNode.EvalToFloat((InterpreterContext)(object)formulaInterpreterContext), MaxDamageNode.EvalToFloat((InterpreterContext)(object)formulaInterpreterContext));
+			return new Vector2(MinDamageNode.EvalToFloat(formulaInterpreterContext), MaxDamageNode.EvalToFloat(formulaInterpreterContext));
 		}
 		return Vector2.zero;
 	}

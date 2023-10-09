@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.Trait;
 
-public class UnitTraitDefinition : Definition
+public class UnitTraitDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public static class Constants
 	{
@@ -116,7 +116,7 @@ public class UnitTraitDefinition : Definition
 
 
 	public UnitTraitDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
@@ -124,14 +124,14 @@ public class UnitTraitDefinition : Definition
 	{
 		XElement val = (XElement)(object)((container is XElement) ? container : null);
 		XAttribute val2 = val.Attribute(XName.op_Implicit("Id"));
-		if (XDocumentExtensions.IsNullOrEmpty(val2))
+		if (val2.IsNullOrEmpty())
 		{
 			Debug.LogError((object)"UnitTraitDefinition must have Id!");
 			return;
 		}
 		Id = val2.Value;
 		XAttribute val3 = val.Attribute(XName.op_Implicit("IsBackgroundTrait"));
-		if (!XDocumentExtensions.IsNullOrEmpty(val3))
+		if (!val3.IsNullOrEmpty())
 		{
 			if (!bool.TryParse(val3.Value, out var result))
 			{
@@ -147,7 +147,7 @@ public class UnitTraitDefinition : Definition
 			return;
 		}
 		XAttribute val5 = val4.Attribute(XName.op_Implicit("Value"));
-		if (XDocumentExtensions.IsNullOrEmpty(val5))
+		if (val5.IsNullOrEmpty())
 		{
 			Debug.LogError((object)("UnitTraitDefinition " + Id + " Cost must have an attribute Value"));
 			return;
@@ -176,7 +176,7 @@ public class UnitTraitDefinition : Definition
 		foreach (XElement item2 in ((XContainer)val).Elements(XName.op_Implicit("AddSlot")))
 		{
 			XAttribute val8 = item2.Attribute(XName.op_Implicit("Slot"));
-			if (XDocumentExtensions.IsNullOrEmpty(val8))
+			if (val8.IsNullOrEmpty())
 			{
 				Debug.LogError((object)"The unitTraitDefinition AddSlot has no slot!");
 				continue;
@@ -195,7 +195,7 @@ public class UnitTraitDefinition : Definition
 		foreach (XElement item3 in ((XContainer)val).Elements(XName.op_Implicit("RemoveSlot")))
 		{
 			XAttribute val11 = item3.Attribute(XName.op_Implicit("Slot"));
-			if (XDocumentExtensions.IsNullOrEmpty(val11))
+			if (val11.IsNullOrEmpty())
 			{
 				Debug.LogError((object)"The unitTraitDefinition RemoveSlots has no slot!");
 				continue;

@@ -17,7 +17,7 @@ public class RepelFogBuildingActionEffectDefinition : BuildingActionEffectDefini
 	{
 		XElement val = ((xContainer is XElement) ? xContainer : null).Element(XName.op_Implicit("Amount"));
 		int result;
-		if (XDocumentExtensions.IsNullOrEmpty(val))
+		if (val.IsNullOrEmpty())
 		{
 			Debug.LogError((object)"A RepelFog Building ActionEffect must have an Amount element");
 		}

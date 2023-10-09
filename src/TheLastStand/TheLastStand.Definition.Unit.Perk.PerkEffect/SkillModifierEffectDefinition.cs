@@ -4,7 +4,6 @@ using System.Xml.Linq;
 using TPLib.Log;
 using TheLastStand.Definition.Unit.Perk.PerkDataCondition;
 using TheLastStand.Framework.ExpressionInterpreter;
-using TheLastStand.Framework.Serialization;
 using TheLastStand.Model.Skill;
 using UnityEngine;
 
@@ -43,9 +42,9 @@ public class SkillModifierEffectDefinition : APerkEffectDefinition
 			CLoggerManager.Log((object)("Could not parse ComputationStat attribute into an E_ComputationStat : " + val2.Value + "."), (LogType)0, (CLogLevel)2, true, "SkillModifierEffectDefinition", false);
 		}
 		XAttribute val3 = val.Attribute(XName.op_Implicit("Value"));
-		ValueExpression = Parser.Parse(val3.Value, ((Definition)this).TokenVariables);
+		ValueExpression = Parser.Parse(val3.Value, base.TokenVariables);
 		XAttribute val4 = val.Attribute(XName.op_Implicit("AffectBase"));
 		AffectBase = val4 != null && bool.Parse(val4.Value);
-		PerkDataConditionsDefinition = new PerkDataConditionsDefinition((XContainer)(object)((XContainer)val).Element(XName.op_Implicit("Conditions")), ((Definition)this).TokenVariables);
+		PerkDataConditionsDefinition = new PerkDataConditionsDefinition((XContainer)(object)((XContainer)val).Element(XName.op_Implicit("Conditions")), base.TokenVariables);
 	}
 }

@@ -4,7 +4,6 @@ using System.Xml.Linq;
 using TPLib;
 using TPLib.Localization;
 using TheLastStand.Definition.CastFx;
-using TheLastStand.Framework.Automaton;
 using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Framework.Extensions;
 using TheLastStand.Framework.Serialization;
@@ -13,7 +12,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Building.BuildingAction;
 
-public class BuildingActionDefinition : Definition
+public class BuildingActionDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public static class Constants
 	{
@@ -67,11 +66,11 @@ public class BuildingActionDefinition : Definition
 		{
 			if (WorkersExpression != null)
 			{
-				if (!(((StateMachine)ApplicationManager.Application).State.GetName() == "Game"))
+				if (!(ApplicationManager.Application.State.GetName() == "Game"))
 				{
 					return -1;
 				}
-				return WorkersExpression.EvalToInt((object)TPSingleton<GameManager>.Instance);
+				return WorkersExpression.EvalToInt(TPSingleton<GameManager>.Instance);
 			}
 			return workersCost;
 		}
@@ -80,7 +79,7 @@ public class BuildingActionDefinition : Definition
 	public Node WorkersExpression { get; private set; }
 
 	public BuildingActionDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
@@ -91,7 +90,7 @@ public class BuildingActionDefinition : Definition
 
 	public virtual BuildingActionDefinition Clone()
 	{
-		return ((object)this).MemberwiseClone() as BuildingActionDefinition;
+		return MemberwiseClone() as BuildingActionDefinition;
 	}
 
 	public override void Deserialize(XContainer container)
@@ -119,7 +118,7 @@ public class BuildingActionDefinition : Definition
 		if (val3 != null)
 		{
 			XElement val4 = ((XContainer)val3).Element(XName.op_Implicit("Production"));
-			if (!XDocumentExtensions.IsNullOrEmpty(val4))
+			if (!val4.IsNullOrEmpty())
 			{
 				if (!Enum.TryParse<PhaseStates.E_PhaseState>(val4.Value, out var result2))
 				{
@@ -129,7 +128,7 @@ public class BuildingActionDefinition : Definition
 				PhaseStates.ProductionState = result2;
 			}
 			XElement val5 = ((XContainer)val3).Element(XName.op_Implicit("Deployment"));
-			if (!XDocumentExtensions.IsNullOrEmpty(val5))
+			if (!val5.IsNullOrEmpty())
 			{
 				if (!Enum.TryParse<PhaseStates.E_PhaseState>(val5.Value, out var result3))
 				{
@@ -139,7 +138,7 @@ public class BuildingActionDefinition : Definition
 				PhaseStates.DeploymentState = result3;
 			}
 			XElement val6 = ((XContainer)val3).Element(XName.op_Implicit("Night"));
-			if (!XDocumentExtensions.IsNullOrEmpty(val6))
+			if (!val6.IsNullOrEmpty())
 			{
 				if (!Enum.TryParse<PhaseStates.E_PhaseState>(val6.Value, out var result4))
 				{
@@ -158,7 +157,7 @@ public class BuildingActionDefinition : Definition
 			}
 			else
 			{
-				WorkersExpression = Parser.Parse(val7.Value, (Dictionary<string, string>)null);
+				WorkersExpression = Parser.Parse(val7.Value);
 			}
 		}
 		XElement val8 = ((XContainer)val).Element(XName.op_Implicit("ActionEffects"));

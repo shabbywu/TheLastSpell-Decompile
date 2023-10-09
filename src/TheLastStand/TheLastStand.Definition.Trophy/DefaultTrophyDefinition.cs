@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Trophy;
 
-public class DefaultTrophyDefinition : Definition
+public class DefaultTrophyDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public string Id { get; protected set; }
 
@@ -20,7 +20,7 @@ public class DefaultTrophyDefinition : Definition
 	public string BackgroundPath { get; private set; }
 
 	public DefaultTrophyDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
@@ -42,11 +42,11 @@ public class DefaultTrophyDefinition : Definition
 				}
 				if (MultiplierPerDay.ContainsKey(result))
 				{
-					MultiplierPerDay[result] = Parser.Parse(item.Value, (Dictionary<string, string>)null);
+					MultiplierPerDay[result] = Parser.Parse(item.Value);
 				}
 				else
 				{
-					MultiplierPerDay.Add(result, Parser.Parse(item.Value, (Dictionary<string, string>)null));
+					MultiplierPerDay.Add(result, Parser.Parse(item.Value));
 				}
 			}
 		}

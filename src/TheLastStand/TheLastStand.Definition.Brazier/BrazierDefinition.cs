@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Brazier;
 
-public class BrazierDefinition : Definition
+public class BrazierDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	private static class Constants
 	{

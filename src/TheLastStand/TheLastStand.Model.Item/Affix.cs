@@ -35,7 +35,7 @@ public class Affix : IAffix
 	public Affix(SerializedAffix container, AffixController affixController)
 	{
 		AffixController = affixController;
-		Deserialize((ISerializedData)(object)container);
+		Deserialize(container);
 	}
 
 	public Affix(AffixDefinition affixDefinition, AffixController affixController)
@@ -71,7 +71,7 @@ public class Affix : IAffix
 
 	public ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedAffix
+		return new SerializedAffix
 		{
 			Id = AffixDefinition.Id,
 			IsEpic = IsEpic,

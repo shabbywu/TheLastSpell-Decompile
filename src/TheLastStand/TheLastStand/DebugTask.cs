@@ -14,13 +14,13 @@ public class DebugTask : Task
 
 	public override void StartTask()
 	{
-		((Task)this).StartTask();
+		base.StartTask();
 		Debug.Log((object)debugString);
-		((Task)this).Complete();
+		Complete();
 	}
 
 	public override string ToString()
 	{
-		return ((Task)this).ToString() + ": " + debugString;
+		return base.ToString() + ": " + debugString;
 	}
 }

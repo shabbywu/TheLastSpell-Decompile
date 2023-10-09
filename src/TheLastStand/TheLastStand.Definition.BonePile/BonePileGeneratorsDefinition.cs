@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.BonePile;
 
-public class BonePileGeneratorsDefinition : Definition
+public class BonePileGeneratorsDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public Dictionary<string, int> Buildings { get; } = new Dictionary<string, int>();
 

@@ -73,7 +73,7 @@ public class CameraLUTView : MonoBehaviour, ISerializable, IDeserializable
 		lutPillar = GetLutTexture("View/Sprites/VFX/LUT/{0}/LUT_{0}_Pillar");
 		Texture GetLutTexture(string path)
 		{
-			return ResourcePooler.LoadOnce<Texture>($"{string.Format(path, cityId)}_{dayNumber}", true) ?? ResourcePooler.LoadOnce<Texture>(string.Format(path, cityId) ?? "", true) ?? ResourcePooler.LoadOnce<Texture>(string.Format(path, "Default") ?? "", true);
+			return ResourcePooler.LoadOnce<Texture>($"{string.Format(path, cityId)}_{dayNumber}", failSilently: true) ?? ResourcePooler.LoadOnce<Texture>(string.Format(path, cityId) ?? "", failSilently: true) ?? ResourcePooler.LoadOnce<Texture>(string.Format(path, "Default") ?? "", failSilently: true);
 		}
 	}
 
@@ -111,9 +111,9 @@ public class CameraLUTView : MonoBehaviour, ISerializable, IDeserializable
 				if (dawnStartRemainingEnemies > -1)
 				{
 					val = lutDawn;
-					float num2 = Maths.Normalize01((float)num, (float)dawnStartRemainingEnemies, 0f);
-					num2 = Maths.NormalizeClamped(num2, 0f, 1f, lutDawnStartPercentage, 1f);
-					targetBlendAmount = Mathf.Min(num2, lutDawnTransitionMaxPercentage);
+					float x = Maths.Normalize01(num, dawnStartRemainingEnemies, 0f);
+					x = x.NormalizeClamped(0f, 1f, lutDawnStartPercentage, 1f);
+					targetBlendAmount = Mathf.Min(x, lutDawnTransitionMaxPercentage);
 				}
 				else
 				{
@@ -190,7 +190,7 @@ public class CameraLUTView : MonoBehaviour, ISerializable, IDeserializable
 
 	public ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedLUT
+		return new SerializedLUT
 		{
 			DawnStartRemainingEnemies = ((TPSingleton<GameManager>.Instance.Game.Cycle == Game.E_Cycle.Night) ? dawnStartRemainingEnemies : (-1)),
 			TargetBlendAmount = ((TPSingleton<GameManager>.Instance.Game.Cycle == Game.E_Cycle.Night) ? targetBlendAmount : 1f)

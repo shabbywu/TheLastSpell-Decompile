@@ -6,7 +6,6 @@ using TPLib.Log;
 using TheLastStand.Definition.Meta.Glyphs.GlyphEffects;
 using TheLastStand.Definition.Unit.Perk;
 using TheLastStand.Framework.ExpressionInterpreter;
-using TheLastStand.Framework.Serialization;
 using UnityEngine;
 
 namespace TheLastStand.Definition.Meta.Glyphs;
@@ -50,7 +49,7 @@ public class GlyphDefinition : LocalizableDefinition
 		XAttribute val2 = val.Attribute(XName.op_Implicit("Id"));
 		AssertIsTrue(val2 != null, "Id attribute is missing in GlyphDefinition.");
 		Id = val2.Value;
-		((Definition)this).DeserializeTokenVariables(((XContainer)val).Element(XName.op_Implicit("TokenVariables")));
+		DeserializeTokenVariables(((XContainer)val).Element(XName.op_Implicit("TokenVariables")));
 		base.Deserialize((XContainer)(object)((XContainer)val).Element(XName.op_Implicit("LocArguments")));
 		XAttribute val3 = val.Attribute(XName.op_Implicit("Cost"));
 		AssertIsTrue(val3 != null, "Cost attribute is missing in GlyphDefinition.");
@@ -106,33 +105,33 @@ public class GlyphDefinition : LocalizableDefinition
 	{
 		return name switch
 		{
-			"AddBuildingPassive" => new GlyphAddBuildingPassiveEffectDefinition((XContainer)(object)xGlyphEffect, ((Definition)this).TokenVariables), 
-			"AdditionalRewardReroll" => new GlyphAdditionalRewardRerollEffectDefinition((XContainer)(object)xGlyphEffect, ((Definition)this).TokenVariables), 
-			"BonusUnits" => new GlyphBonusUnitsEffectDefinition((XContainer)(object)xGlyphEffect, ((Definition)this).TokenVariables), 
-			"BonusSellingRatio" => new GlyphBonusSellingRatioEffectDefinition((XContainer)(object)xGlyphEffect, ((Definition)this).TokenVariables), 
-			"DamnedSoulsPercentageModifier" => new GlyphDamnedSoulsPercentageModifierEffectDefinition((XContainer)(object)xGlyphEffect, ((Definition)this).TokenVariables), 
-			"DamnedSoulsScavengingPercentageModifier" => new GlyphDamnedSoulsScavengingPercentageModifierEffectDefinition((XContainer)(object)xGlyphEffect, ((Definition)this).TokenVariables), 
-			"DecreaseEnemiesCount" => new GlyphDecreaseEnemiesCountEffectDefinition((XContainer)(object)xGlyphEffect, ((Definition)this).TokenVariables), 
-			"FreeTrapUsageChances" => new GlyphFreeTrapUsageChancesEffectDefinition((XContainer)(object)xGlyphEffect, ((Definition)this).TokenVariables), 
-			"GoldScavengingPercentageModifier" => new GlyphGoldScavengingPercentageModifierEffectDefinition((XContainer)(object)xGlyphEffect, ((Definition)this).TokenVariables), 
-			"IncreaseBuildingHealth" => new GlyphIncreaseBuildingHealthEffectDefinition((XContainer)(object)xGlyphEffect, ((Definition)this).TokenVariables), 
-			"IncreaseDefensesDamages" => new GlyphIncreaseDefensesDamagesEffectDefinition((XContainer)(object)xGlyphEffect, ((Definition)this).TokenVariables), 
-			"IncreaseLevelupRerolls" => new GlyphIncreaseLevelupRerollsEffectDefinition((XContainer)(object)xGlyphEffect, ((Definition)this).TokenVariables), 
-			"IncreaseStartingGearLevel" => new GlyphIncreaseStartingGearLevelEffectDefinition((XContainer)(object)xGlyphEffect, ((Definition)this).TokenVariables), 
-			"IncreaseStartingResources" => new GlyphIncreaseStartingResourcesEffectDefinition((XContainer)(object)xGlyphEffect, ((Definition)this).TokenVariables), 
-			"MaterialScavengingPercentageModifier" => new GlyphMaterialScavengingPercentageModifierEffectDefinition((XContainer)(object)xGlyphEffect, ((Definition)this).TokenVariables), 
-			"ModifyBuildingActionsCost" => new GlyphModifyBuildingActionsCostEffectDefinition((XContainer)(object)xGlyphEffect, ((Definition)this).TokenVariables), 
-			"ModifyBuildLimit" => new GlyphModifyBuildLimitEffectDefinition((XContainer)(object)xGlyphEffect, ((Definition)this).TokenVariables), 
-			"ModifyCosts" => new GlyphModifyCostsEffectDefinition((XContainer)(object)xGlyphEffect, ((Definition)this).TokenVariables), 
-			"ModifyLevelProbabilityTree" => new GlyphModifyLevelProbabilityTreeEffectDefinition((XContainer)(object)xGlyphEffect, ((Definition)this).TokenVariables), 
-			"ModifyPlayableUnitsStats" => new GlyphModifyPlayableUnitsStatsEffectDefinition((XContainer)(object)xGlyphEffect, ((Definition)this).TokenVariables), 
-			"ModifyRarityProbabilityTree" => new GlyphModifyRarityProbabilityTreeEffectDefinition((XContainer)(object)xGlyphEffect, ((Definition)this).TokenVariables), 
-			"ModifyRewardsCount" => new GlyphModifyRewardsCountEffectDefinition((XContainer)(object)xGlyphEffect, ((Definition)this).TokenVariables), 
-			"MultiplyItemWeight" => new GlyphMultiplyItemWeightEffectDefinition((XContainer)(object)xGlyphEffect, ((Definition)this).TokenVariables), 
-			"NativePerk" => new GlyphNativePerkEffectDefinition((XContainer)(object)xGlyphEffect, ((Definition)this).TokenVariables), 
-			"NativePerkPointsBonus" => new GlyphNativePerkPointsBonusEffectDefinition((XContainer)(object)xGlyphEffect, ((Definition)this).TokenVariables), 
-			"SetFogCap" => new GlyphSetFogCapEffectDefinition((XContainer)(object)xGlyphEffect, ((Definition)this).TokenVariables), 
-			"ToggleSkillProgressionFlag" => new GlyphToggleSkillProgressionFlagEffectDefinition((XContainer)(object)xGlyphEffect, ((Definition)this).TokenVariables), 
+			"AddBuildingPassive" => new GlyphAddBuildingPassiveEffectDefinition((XContainer)(object)xGlyphEffect, base.TokenVariables), 
+			"AdditionalRewardReroll" => new GlyphAdditionalRewardRerollEffectDefinition((XContainer)(object)xGlyphEffect, base.TokenVariables), 
+			"BonusUnits" => new GlyphBonusUnitsEffectDefinition((XContainer)(object)xGlyphEffect, base.TokenVariables), 
+			"BonusSellingRatio" => new GlyphBonusSellingRatioEffectDefinition((XContainer)(object)xGlyphEffect, base.TokenVariables), 
+			"DamnedSoulsPercentageModifier" => new GlyphDamnedSoulsPercentageModifierEffectDefinition((XContainer)(object)xGlyphEffect, base.TokenVariables), 
+			"DamnedSoulsScavengingPercentageModifier" => new GlyphDamnedSoulsScavengingPercentageModifierEffectDefinition((XContainer)(object)xGlyphEffect, base.TokenVariables), 
+			"DecreaseEnemiesCount" => new GlyphDecreaseEnemiesCountEffectDefinition((XContainer)(object)xGlyphEffect, base.TokenVariables), 
+			"FreeTrapUsageChances" => new GlyphFreeTrapUsageChancesEffectDefinition((XContainer)(object)xGlyphEffect, base.TokenVariables), 
+			"GoldScavengingPercentageModifier" => new GlyphGoldScavengingPercentageModifierEffectDefinition((XContainer)(object)xGlyphEffect, base.TokenVariables), 
+			"IncreaseBuildingHealth" => new GlyphIncreaseBuildingHealthEffectDefinition((XContainer)(object)xGlyphEffect, base.TokenVariables), 
+			"IncreaseDefensesDamages" => new GlyphIncreaseDefensesDamagesEffectDefinition((XContainer)(object)xGlyphEffect, base.TokenVariables), 
+			"IncreaseLevelupRerolls" => new GlyphIncreaseLevelupRerollsEffectDefinition((XContainer)(object)xGlyphEffect, base.TokenVariables), 
+			"IncreaseStartingGearLevel" => new GlyphIncreaseStartingGearLevelEffectDefinition((XContainer)(object)xGlyphEffect, base.TokenVariables), 
+			"IncreaseStartingResources" => new GlyphIncreaseStartingResourcesEffectDefinition((XContainer)(object)xGlyphEffect, base.TokenVariables), 
+			"MaterialScavengingPercentageModifier" => new GlyphMaterialScavengingPercentageModifierEffectDefinition((XContainer)(object)xGlyphEffect, base.TokenVariables), 
+			"ModifyBuildingActionsCost" => new GlyphModifyBuildingActionsCostEffectDefinition((XContainer)(object)xGlyphEffect, base.TokenVariables), 
+			"ModifyBuildLimit" => new GlyphModifyBuildLimitEffectDefinition((XContainer)(object)xGlyphEffect, base.TokenVariables), 
+			"ModifyCosts" => new GlyphModifyCostsEffectDefinition((XContainer)(object)xGlyphEffect, base.TokenVariables), 
+			"ModifyLevelProbabilityTree" => new GlyphModifyLevelProbabilityTreeEffectDefinition((XContainer)(object)xGlyphEffect, base.TokenVariables), 
+			"ModifyPlayableUnitsStats" => new GlyphModifyPlayableUnitsStatsEffectDefinition((XContainer)(object)xGlyphEffect, base.TokenVariables), 
+			"ModifyRarityProbabilityTree" => new GlyphModifyRarityProbabilityTreeEffectDefinition((XContainer)(object)xGlyphEffect, base.TokenVariables), 
+			"ModifyRewardsCount" => new GlyphModifyRewardsCountEffectDefinition((XContainer)(object)xGlyphEffect, base.TokenVariables), 
+			"MultiplyItemWeight" => new GlyphMultiplyItemWeightEffectDefinition((XContainer)(object)xGlyphEffect, base.TokenVariables), 
+			"NativePerk" => new GlyphNativePerkEffectDefinition((XContainer)(object)xGlyphEffect, base.TokenVariables), 
+			"NativePerkPointsBonus" => new GlyphNativePerkPointsBonusEffectDefinition((XContainer)(object)xGlyphEffect, base.TokenVariables), 
+			"SetFogCap" => new GlyphSetFogCapEffectDefinition((XContainer)(object)xGlyphEffect, base.TokenVariables), 
+			"ToggleSkillProgressionFlag" => new GlyphToggleSkillProgressionFlagEffectDefinition((XContainer)(object)xGlyphEffect, base.TokenVariables), 
 			_ => null, 
 		};
 	}

@@ -8,13 +8,13 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Modding.ModuleConfig.Perks;
 
-public class ModdedPerksDefinition : Definition
+public class ModdedPerksDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public Dictionary<string, PerkDefinition> PerkDefinitions { get; } = new Dictionary<string, PerkDefinition>();
 
 
 	public ModdedPerksDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

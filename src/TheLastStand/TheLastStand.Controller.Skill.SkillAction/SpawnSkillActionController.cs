@@ -9,8 +9,6 @@ using TheLastStand.Definition.Skill.SkillAction;
 using TheLastStand.Definition.Skill.SkillEffect;
 using TheLastStand.Definition.TileMap;
 using TheLastStand.Definition.Unit;
-using TheLastStand.Definition.Unit.Enemy;
-using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Framework.Extensions;
 using TheLastStand.Manager;
 using TheLastStand.Manager.Building;
@@ -88,7 +86,7 @@ public class SpawnSkillActionController : SkillActionController
 		}
 		if (SpawnSkillAction.UnitToSpawnByWeight != null)
 		{
-			UnitTemplateDefinition unitTemplateDefinition = DictionaryExtensions.GetValueOrDefault<string, EliteEnemyUnitTemplateDefinition>(EnemyUnitDatabase.EliteEnemyUnitTemplateDefinitions, SpawnSkillAction.UnitToSpawnByWeight.Item1) ?? DictionaryExtensions.GetValueOrDefault<string, EnemyUnitTemplateDefinition>(EnemyUnitDatabase.EnemyUnitTemplateDefinitions, SpawnSkillAction.UnitToSpawnByWeight.Item1);
+			UnitTemplateDefinition unitTemplateDefinition = EnemyUnitDatabase.EliteEnemyUnitTemplateDefinitions.GetValueOrDefault(SpawnSkillAction.UnitToSpawnByWeight.Item1) ?? EnemyUnitDatabase.EnemyUnitTemplateDefinitions.GetValueOrDefault(SpawnSkillAction.UnitToSpawnByWeight.Item1);
 			if (CanDestroyBuilding(candidateTargetTile.Building))
 			{
 				return unitTemplateDefinition?.CanSpawnOn(candidateTargetTile, isPhaseActor: false, ignoreUnits: false, ignoreBuildings: true) ?? false;
@@ -146,7 +144,7 @@ public class SpawnSkillActionController : SkillActionController
 
 	private Tile GetSpawnTile(EnemySpawnData enemySpawnData, SkillActionResultDatas resultData)
 	{
-		UnitTemplateDefinition unitTemplateDefinition = DictionaryExtensions.GetValueOrDefault<string, EliteEnemyUnitTemplateDefinition>(EnemyUnitDatabase.EliteEnemyUnitTemplateDefinitions, enemySpawnData.Id) ?? EnemyUnitDatabase.EnemyUnitTemplateDefinitions[enemySpawnData.Id];
+		UnitTemplateDefinition unitTemplateDefinition = EnemyUnitDatabase.EliteEnemyUnitTemplateDefinitions.GetValueOrDefault(enemySpawnData.Id) ?? EnemyUnitDatabase.EnemyUnitTemplateDefinitions[enemySpawnData.Id];
 		if (enemySpawnData.TileFlag == TileFlagDefinition.E_TileFlagTag.None)
 		{
 			if (base.SkillAction.SkillActionExecution.TargetTiles.Count <= 0)
@@ -169,7 +167,7 @@ public class SpawnSkillActionController : SkillActionController
 	private void SpawnRandomEnemiesByAmount(ISkillCaster caster, ref SkillActionResultDatas resultData)
 	{
 		int count = SpawnSkillAction.SpawnSkillActionDefinition.RandomEnemies.Count;
-		int num = SpawnSkillAction.SpawnSkillActionDefinition.RandomEnemiesAmount.EvalToInt((InterpreterContext)(object)GameManager.FormulaInterpreterContext);
+		int num = SpawnSkillAction.SpawnSkillActionDefinition.RandomEnemiesAmount.EvalToInt(GameManager.FormulaInterpreterContext);
 		if (count == 0 && num > 0)
 		{
 			((CLogger<SkillManager>)TPSingleton<SkillManager>.Instance).LogError((object)("Trying to spawn random enemies by amount with an empty enemies list! Skill Id: " + base.SkillAction.Skill.SkillDefinition.Id), (CLogLevel)1, true, true);
@@ -204,7 +202,7 @@ public class SpawnSkillActionController : SkillActionController
 	{
 		if (SpawnSkillAction.SpawnSkillActionDefinition.EnemiesByAmount.Count == 0)
 		{
-			if (SpawnSkillAction.SpawnSkillActionDefinition.RandomEnemiesAmount.EvalToInt((InterpreterContext)(object)GameManager.FormulaInterpreterContext) == 0)
+			if (SpawnSkillAction.SpawnSkillActionDefinition.RandomEnemiesAmount.EvalToInt(GameManager.FormulaInterpreterContext) == 0)
 			{
 				((CLogger<SkillManager>)TPSingleton<SkillManager>.Instance).LogError((object)("Trying to spawn enemies by amount with an empty enemies list and no random enemies to compensate! Skill Id: " + base.SkillAction.Skill.SkillDefinition.Id), (CLogLevel)1, true, true);
 			}
@@ -213,7 +211,7 @@ public class SpawnSkillActionController : SkillActionController
 		for (int i = 0; i < SpawnSkillAction.SpawnSkillActionDefinition.EnemiesByAmount.Count; i++)
 		{
 			EnemySpawnData enemySpawnData = SpawnSkillAction.SpawnSkillActionDefinition.EnemiesByAmount[i];
-			int num = enemySpawnData.Amount.EvalToInt((InterpreterContext)(object)GameManager.FormulaInterpreterContext);
+			int num = enemySpawnData.Amount.EvalToInt(GameManager.FormulaInterpreterContext);
 			for (int j = 0; j < num; j++)
 			{
 				Tile spawnTile = GetSpawnTile(enemySpawnData, resultData);
@@ -256,7 +254,7 @@ public class SpawnSkillActionController : SkillActionController
 			int sectorIndexForTile = TPSingleton<SectorManager>.Instance.GetSectorIndexForTile(tile);
 			if (TPSingleton<BossManager>.Instance.RecentlySpawnedUnitsBySector[sectorIndexForTile].ContainsKey(base.SkillAction.Skill))
 			{
-				DictionaryExtensions.AddAtKey<(string, UnitCreationSettings), Tile>(TPSingleton<BossManager>.Instance.RecentlySpawnedUnitsBySector[sectorIndexForTile][base.SkillAction.Skill].Item2, (enemySpawnData.Id, enemySpawnData.UnitCreationSettings), tile);
+				TPSingleton<BossManager>.Instance.RecentlySpawnedUnitsBySector[sectorIndexForTile][base.SkillAction.Skill].Item2.AddAtKey((enemySpawnData.Id, enemySpawnData.UnitCreationSettings), tile);
 				return;
 			}
 			TPSingleton<BossManager>.Instance.RecentlySpawnedUnitsBySector[sectorIndexForTile].Add(base.SkillAction.Skill, new Tuple<ISkillCaster, Dictionary<(string, UnitCreationSettings), List<Tile>>>(caster, new Dictionary<(string, UnitCreationSettings), List<Tile>> { 

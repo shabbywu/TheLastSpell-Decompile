@@ -3,7 +3,6 @@ using TPLib;
 using TheLastStand.DRM.Achievements;
 using TheLastStand.Database.Unit;
 using TheLastStand.Definition.Unit;
-using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Manager;
 using TheLastStand.Manager.Achievements;
 using TheLastStand.Manager.Building;
@@ -103,7 +102,7 @@ public static class RecruitmentController
 	public static int ComputeUnitCost(PlayableUnit unitToRecruit)
 	{
 		int num = ResourceManager.ComputeExtraPercentageForCost(ResourceManager.E_PriceModifierType.Recruitment);
-		int num2 = PlayableUnitDatabase.RecruitmentDefinition.UnitCost.EvalToInt((InterpreterContext)(object)unitToRecruit);
+		int num2 = PlayableUnitDatabase.RecruitmentDefinition.UnitCost.EvalToInt(unitToRecruit);
 		return Mathf.RoundToInt((float)num2 + (float)num2 * ((float)num * 0.01f));
 	}
 
@@ -131,7 +130,7 @@ public static class RecruitmentController
 		{
 			if (PlayableUnitDatabase.RecruitmentDefinition.UnitsToGenerate[j] != null)
 			{
-				int unitLevel = PlayableUnitDatabase.RecruitmentDefinition.UnitsToGenerate[j].UnitGenerationLevelDefinition.SealDefinitions[0].Level.EvalToInt((object)TPSingleton<PlayableUnitManager>.Instance.Recruitment);
+				int unitLevel = PlayableUnitDatabase.RecruitmentDefinition.UnitsToGenerate[j].UnitGenerationLevelDefinition.SealDefinitions[0].Level.EvalToInt(TPSingleton<PlayableUnitManager>.Instance.Recruitment);
 				string archetypeId = PlayableUnitDatabase.RecruitmentDefinition.UnitsToGenerate[j].PlayableUnitGenerationDefinitionArchetypeIds[RandomManager.GetRandomRange(typeof(RecruitmentController).Name, 0, PlayableUnitDatabase.RecruitmentDefinition.UnitsToGenerate[j].PlayableUnitGenerationDefinitionArchetypeIds.Count)];
 				string name = typeof(RecruitmentController).Name;
 				Vector2Int unitTraitPointBoundariesWithModifiers = PlayableUnitDatabase.UnitTraitGenerationDefinition.UnitTraitPointBoundariesWithModifiers;

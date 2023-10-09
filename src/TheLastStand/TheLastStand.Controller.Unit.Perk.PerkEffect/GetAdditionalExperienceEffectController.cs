@@ -1,6 +1,5 @@
 using TPLib;
 using TheLastStand.Definition.Unit.Perk.PerkEffect;
-using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Manager.Unit;
 using TheLastStand.Model.Unit.Perk;
 using TheLastStand.Model.Unit.Perk.PerkEffect;
@@ -26,7 +25,7 @@ public class GetAdditionalExperienceEffectController : APerkEffectController
 	{
 		base.Trigger(data);
 		TPSingleton<PlayableUnitManager>.Instance.ShouldClearUndoStack = true;
-		float num = GetAdditionalExperienceEffect.GetAdditionalExperienceEffectDefinition.ValueExpression.EvalToFloat((InterpreterContext)(object)base.PerkEffect.APerkModule.Perk);
+		float num = GetAdditionalExperienceEffect.GetAdditionalExperienceEffectDefinition.ValueExpression.EvalToFloat(base.PerkEffect.APerkModule.Perk);
 		base.PerkEffect.APerkModule.Perk.Owner.AdditionalNightExperience += num;
 	}
 }

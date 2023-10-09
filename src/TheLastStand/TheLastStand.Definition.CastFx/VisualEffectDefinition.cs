@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.CastFx;
 
-public abstract class VisualEffectDefinition : Definition
+public abstract class VisualEffectDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public enum E_Depth
 	{
@@ -26,23 +26,22 @@ public abstract class VisualEffectDefinition : Definition
 	public Node Delay { get; private set; }
 
 	public VisualEffectDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
 	public override void Deserialize(XContainer container)
 	{
-		//IL_022a: Unknown result type (might be due to invalid IL or missing references)
 		XElement val = container.Element(XName.op_Implicit("Paths"));
-		if (!XDocumentExtensions.IsNullOrEmpty(val))
+		if (!val.IsNullOrEmpty())
 		{
 			foreach (XElement item in ((XContainer)val).Elements(XName.op_Implicit("Path")))
 			{
-				if (!XDocumentExtensions.IsNullOrEmpty(item))
+				if (!item.IsNullOrEmpty())
 				{
 					XAttribute val2 = item.Attribute(XName.op_Implicit("Orientation"));
 					string value = item.Value;
-					if (XDocumentExtensions.IsNullOrEmpty(val2))
+					if (val2.IsNullOrEmpty())
 					{
 						if (value.EndsWith("_", StringComparison.OrdinalIgnoreCase))
 						{
@@ -89,7 +88,7 @@ public abstract class VisualEffectDefinition : Definition
 				return;
 			}
 			XElement val3 = container.Element(XName.op_Implicit("Delay"));
-			Delay = (Node)((val3 != null) ? ((object)Parser.Parse(val3.Value, (Dictionary<string, string>)null)) : ((object)new NodeNumber(0.0)));
+			Delay = ((val3 != null) ? Parser.Parse(val3.Value) : new NodeNumber(0.0));
 			XElement val4 = container.Element(XName.op_Implicit("SortingDepth"));
 			if (val4 != null)
 			{

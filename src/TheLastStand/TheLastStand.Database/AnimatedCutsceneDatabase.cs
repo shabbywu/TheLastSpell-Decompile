@@ -16,7 +16,7 @@ public class AnimatedCutsceneDatabase : Database<AnimatedCutsceneDatabase>
 
 	public override void Deserialize(XContainer container = null)
 	{
-		Queue<XElement> queue = base.GatherElements((IEnumerable<TextAsset>)null, (IEnumerable<TextAsset>)animatedCutsceneDefinitionTextAsset, "AnimatedCutsceneDefinition", (string)null);
+		Queue<XElement> queue = GatherElements(null, animatedCutsceneDefinitionTextAsset, "AnimatedCutsceneDefinition");
 		while (queue.Count > 0)
 		{
 			AnimatedCutsceneDefinition animatedCutsceneDefinition = new AnimatedCutsceneDefinition((XContainer)(object)queue.Dequeue());

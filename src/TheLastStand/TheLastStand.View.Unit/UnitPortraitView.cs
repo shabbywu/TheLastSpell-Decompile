@@ -104,8 +104,8 @@ public class UnitPortraitView : MonoBehaviour, IPointerEnterHandler, IEventSyste
 			GameView.TopScreenPanel.UnitPortraitsPanel.ToggleSelectedUnit(unit);
 			return;
 		}
-		BetterToggle obj = unitportraitToggle;
-		if ((obj == null || ((Toggle)obj).isOn) && TPSingleton<GameManager>.Instance.Game.State != Game.E_State.BuildingPreparingAction && TPSingleton<GameManager>.Instance.Game.State != Game.E_State.BuildingExecutingAction)
+		BetterToggle betterToggle = unitportraitToggle;
+		if ((betterToggle == null || ((Toggle)betterToggle).isOn) && TPSingleton<GameManager>.Instance.Game.State != Game.E_State.BuildingPreparingAction && TPSingleton<GameManager>.Instance.Game.State != Game.E_State.BuildingExecutingAction)
 		{
 			if (TileObjectSelectionManager.SelectedUnit != PlayableUnit)
 			{
@@ -139,8 +139,8 @@ public class UnitPortraitView : MonoBehaviour, IPointerEnterHandler, IEventSyste
 		}
 		else
 		{
-			BetterToggle obj2 = unitportraitToggle;
-			if ((obj2 == null || !((Toggle)obj2).group.AnyTogglesOn()) && TileObjectSelectionManager.HasUnitSelected && TPSingleton<GameManager>.Instance.Game.State != Game.E_State.BuildingPreparingAction && TPSingleton<GameManager>.Instance.Game.State != Game.E_State.BuildingExecutingAction)
+			BetterToggle betterToggle2 = unitportraitToggle;
+			if ((betterToggle2 == null || !((Toggle)betterToggle2).group.AnyTogglesOn()) && TileObjectSelectionManager.HasUnitSelected && TPSingleton<GameManager>.Instance.Game.State != Game.E_State.BuildingPreparingAction && TPSingleton<GameManager>.Instance.Game.State != Game.E_State.BuildingExecutingAction)
 			{
 				TileObjectSelectionManager.DeselectUnit();
 			}

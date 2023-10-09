@@ -97,10 +97,10 @@ public class SkillActionEstimationView : MonoBehaviour
 		{
 			((Behaviour)canvas).enabled = true;
 		}
-		float num = (SkillManager.IsSelectedSkillValid ? 1f : invalidSkillAlpha);
-		((Graphic)((ImageAnimator)multipleImageAnimator).Image).color = ColorExtensions.WithA(((Graphic)((ImageAnimator)multipleImageAnimator).Image).color, num);
-		((Graphic)mainEstimationImageAnimator.Image).color = ColorExtensions.WithA(((Graphic)mainEstimationImageAnimator.Image).color, num);
-		((Graphic)secondEstimationImage).color = ColorExtensions.WithA(((Graphic)secondEstimationImage).color, num);
+		float a = (SkillManager.IsSelectedSkillValid ? 1f : invalidSkillAlpha);
+		((Graphic)multipleImageAnimator.Image).color = ((Graphic)multipleImageAnimator.Image).color.WithA(a);
+		((Graphic)mainEstimationImageAnimator.Image).color = ((Graphic)mainEstimationImageAnimator.Image).color.WithA(a);
+		((Graphic)secondEstimationImage).color = ((Graphic)secondEstimationImage).color.WithA(a);
 		mainIconHasBeenSet = false;
 		secondaryIconHasBeenSet = false;
 		mainEffectSprites.Clear();
@@ -189,9 +189,9 @@ public class SkillActionEstimationView : MonoBehaviour
 		{
 			((Behaviour)canvas).enabled = true;
 		}
-		float num = (buildingAction.BuildingActionController.CanExecuteActionOnTile(affectedUnit.OriginTile) ? 1f : invalidSkillAlpha);
-		((Graphic)((ImageAnimator)multipleImageAnimator).Image).color = ColorExtensions.WithA(((Graphic)((ImageAnimator)multipleImageAnimator).Image).color, num);
-		((Graphic)mainEstimationImageAnimator.Image).color = ColorExtensions.WithA(((Graphic)mainEstimationImageAnimator.Image).color, num);
+		float a = (buildingAction.BuildingActionController.CanExecuteActionOnTile(affectedUnit.OriginTile) ? 1f : invalidSkillAlpha);
+		((Graphic)multipleImageAnimator.Image).color = ((Graphic)multipleImageAnimator.Image).color.WithA(a);
+		((Graphic)mainEstimationImageAnimator.Image).color = ((Graphic)mainEstimationImageAnimator.Image).color.WithA(a);
 		mainIconHasBeenSet = false;
 		secondaryIconHasBeenSet = false;
 		mainEffectSprites.Clear();
@@ -256,9 +256,9 @@ public class SkillActionEstimationView : MonoBehaviour
 		}
 		if (mainIconHasBeenSet)
 		{
-			float num = (flag ? 1f : invalidSkillAlpha);
-			((Graphic)((ImageAnimator)multipleImageAnimator).Image).color = ColorExtensions.WithA(((Graphic)((ImageAnimator)multipleImageAnimator).Image).color, num);
-			((Graphic)mainEstimationImageAnimator.Image).color = ColorExtensions.WithA(((Graphic)mainEstimationImageAnimator.Image).color, num);
+			float a = (flag ? 1f : invalidSkillAlpha);
+			((Graphic)multipleImageAnimator.Image).color = ((Graphic)multipleImageAnimator.Image).color.WithA(a);
+			((Graphic)mainEstimationImageAnimator.Image).color = ((Graphic)mainEstimationImageAnimator.Image).color.WithA(a);
 			OnSpritesPathsComputed();
 		}
 		else
@@ -278,7 +278,7 @@ public class SkillActionEstimationView : MonoBehaviour
 		{
 			((Behaviour)canvas).enabled = false;
 		}
-		((ImageAnimator)multipleImageAnimator).Stop();
+		multipleImageAnimator.Stop();
 		((Component)multipleImageAnimator).gameObject.SetActive(false);
 		mainEstimationImageAnimator.Stop();
 		((Component)mainEstimationImageAnimator).gameObject.SetActive(false);
@@ -435,7 +435,7 @@ public class SkillActionEstimationView : MonoBehaviour
 		{
 			((Component)multipleImageAnimator).gameObject.SetActive(true);
 			multipleImageAnimator.AllSpritesPath = mainEffectSprites;
-			((ImageAnimator)multipleImageAnimator).Refresh();
+			multipleImageAnimator.Refresh();
 		}
 		else
 		{
@@ -443,7 +443,7 @@ public class SkillActionEstimationView : MonoBehaviour
 			mainEstimationImageAnimator.SpritesPath = mainSpritesPath;
 			mainEstimationImageAnimator.Refresh();
 		}
-		secondEstimationImage.sprite = ResourcePooler<Sprite>.LoadOnce(secondarySpritesPath, true);
+		secondEstimationImage.sprite = ResourcePooler<Sprite>.LoadOnce(secondarySpritesPath, failSilently: true);
 	}
 
 	private void SetIcon(string effectName)

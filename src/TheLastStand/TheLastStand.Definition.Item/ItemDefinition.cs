@@ -13,7 +13,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Item;
 
-public class ItemDefinition : Definition
+public class ItemDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	[Flags]
 	public enum E_Category
@@ -161,7 +161,7 @@ public class ItemDefinition : Definition
 
 
 	public ItemDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
@@ -176,7 +176,7 @@ public class ItemDefinition : Definition
 		//IL_0414: Unknown result type (might be due to invalid IL or missing references)
 		XElement val = (XElement)(object)((container is XElement) ? container : null);
 		XAttribute val2 = val.Attribute(XName.op_Implicit("Id"));
-		if (XDocumentExtensions.IsNullOrEmpty(val2))
+		if (val2.IsNullOrEmpty())
 		{
 			CLoggerManager.Log((object)"An item hasn't an Id !", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 			return;
@@ -208,7 +208,7 @@ public class ItemDefinition : Definition
 				{
 					if (!Enum.TryParse<E_Hands>(val5.Value, out var result2))
 					{
-						CLoggerManager.Log((object)("Item " + Id + "'s Hands " + ((Definition)this).HasAnInvalid("E_Hands", val5.Value)), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+						CLoggerManager.Log((object)("Item " + Id + "'s Hands " + HasAnInvalid("E_Hands", val5.Value)), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 						return;
 					}
 					Hands = result2;
@@ -216,7 +216,7 @@ public class ItemDefinition : Definition
 				XElement val6 = ((XContainer)val).Element(XName.op_Implicit(UnitStatDefinition.E_Stat.Resistance.ToString()));
 				if (val6 != null)
 				{
-					Resistance = XDocumentExtensions.ParseMinMax(val6);
+					Resistance = val6.ParseMinMax();
 				}
 				XElement obj = ((XContainer)val).Element(XName.op_Implicit("LevelVariations"));
 				Vector2 value2 = Vector2.zero;
@@ -232,7 +232,7 @@ public class ItemDefinition : Definition
 						XAttribute val7 = item2.Attribute(XName.op_Implicit("Id"));
 						if (!int.TryParse(val7.Value, out var result3))
 						{
-							CLoggerManager.Log((object)("Item " + Id + "'s Level " + ((Definition)this).HasAnInvalidInt(val7.Value)), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+							CLoggerManager.Log((object)("Item " + Id + "'s Level " + HasAnInvalidInt(val7.Value)), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 							continue;
 						}
 						definedLevels.Add(result3);
@@ -240,25 +240,25 @@ public class ItemDefinition : Definition
 						if (val8 != null)
 						{
 							XAttribute val9 = val8.Attribute(XName.op_Implicit("Min"));
-							if (XDocumentExtensions.IsNullOrEmpty(val9))
+							if (val9.IsNullOrEmpty())
 							{
-								CLoggerManager.Log((object)("The BaseDamage " + ((Definition)this).OfTheItem(Id, result3) + " hasn't a Min !"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+								CLoggerManager.Log((object)("The BaseDamage " + OfTheItem(Id, result3) + " hasn't a Min !"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 								break;
 							}
 							if (!int.TryParse(val9.Value, out var result4))
 							{
-								CLoggerManager.Log((object)$"Item {Id}(Level : {result3})'s BaseDamage Min {((Definition)this).HasAnInvalidInt(val9.Value)}", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+								CLoggerManager.Log((object)$"Item {Id}(Level : {result3})'s BaseDamage Min {HasAnInvalidInt(val9.Value)}", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 								break;
 							}
 							XAttribute val10 = val8.Attribute(XName.op_Implicit("Max"));
-							if (XDocumentExtensions.IsNullOrEmpty(val10))
+							if (val10.IsNullOrEmpty())
 							{
-								CLoggerManager.Log((object)("The BaseDamage " + ((Definition)this).OfTheItem(Id, result3) + " hasn't a Max !"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+								CLoggerManager.Log((object)("The BaseDamage " + OfTheItem(Id, result3) + " hasn't a Max !"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 								break;
 							}
 							if (!int.TryParse(val10.Value, out var result5))
 							{
-								CLoggerManager.Log((object)$"Item {Id}(Level : {result3})'s BaseDamage Max {((Definition)this).HasAnInvalidInt(val10.Value)}", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+								CLoggerManager.Log((object)$"Item {Id}(Level : {result3})'s BaseDamage Max {HasAnInvalidInt(val10.Value)}", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 								break;
 							}
 							((Vector2)(ref val11))._002Ector((float)result4, (float)result5);
@@ -274,7 +274,7 @@ public class ItemDefinition : Definition
 						{
 							if (!float.TryParse(val12.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var result6))
 							{
-								CLoggerManager.Log((object)$"Item {Id}(Level : {result3})'s Price {((Definition)this).HasAnInvalidFloat(val12.Value)}", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+								CLoggerManager.Log((object)$"Item {Id}(Level : {result3})'s Price {HasAnInvalidFloat(val12.Value)}", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 								break;
 							}
 							value3 = result6;
@@ -293,21 +293,21 @@ public class ItemDefinition : Definition
 								XAttribute val14 = item3.Attribute(XName.op_Implicit("Stat"));
 								UnitStatDefinition.E_Stat result7;
 								float result8;
-								if (XDocumentExtensions.IsNullOrEmpty(val14))
+								if (val14.IsNullOrEmpty())
 								{
-									CLoggerManager.Log((object)("A BaseStatBonus " + ((Definition)this).OfTheItem(Id, result3) + " hasn't a Stat!"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+									CLoggerManager.Log((object)("A BaseStatBonus " + OfTheItem(Id, result3) + " hasn't a Stat!"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 								}
 								else if (!Enum.TryParse<UnitStatDefinition.E_Stat>(val14.Value, out result7))
 								{
-									CLoggerManager.Log((object)("A BaseStatBonus " + ((Definition)this).OfTheItem(Id, result3) + " " + ((Definition)this).HasAnInvalidStat(val14.Value)), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+									CLoggerManager.Log((object)("A BaseStatBonus " + OfTheItem(Id, result3) + " " + HasAnInvalidStat(val14.Value)), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 								}
-								else if (XDocumentExtensions.IsNullOrEmpty(item3))
+								else if (item3.IsNullOrEmpty())
 								{
-									CLoggerManager.Log((object)("A BaseStatBonus (" + result7.ToString() + ") " + ((Definition)this).OfTheItem(Id, result3) + " is empty !"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+									CLoggerManager.Log((object)("A BaseStatBonus (" + result7.ToString() + ") " + OfTheItem(Id, result3) + " is empty !"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 								}
 								else if (!float.TryParse(item3.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out result8))
 								{
-									CLoggerManager.Log((object)("A BaseStatBonus (" + result7.ToString() + ") " + ((Definition)this).OfTheItem(Id, result3) + " " + ((Definition)this).HasAnInvalidFloat(item3.Value)), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+									CLoggerManager.Log((object)("A BaseStatBonus (" + result7.ToString() + ") " + OfTheItem(Id, result3) + " " + HasAnInvalidFloat(item3.Value)), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 								}
 								else
 								{
@@ -321,16 +321,16 @@ public class ItemDefinition : Definition
 							BaseStatBonusesByLevel[result3] = value4;
 						}
 						XElement val15 = ((XContainer)item2).Element(XName.op_Implicit("MainStatBonus"));
-						if (!XDocumentExtensions.IsNullOrEmpty(val15))
+						if (!val15.IsNullOrEmpty())
 						{
 							XAttribute val16 = val15.Attribute(XName.op_Implicit("Stat"));
 							if (!Enum.TryParse<UnitStatDefinition.E_Stat>(val16.Value, out var result9))
 							{
-								CLoggerManager.Log((object)("The MainStatBonus " + ((Definition)this).OfTheItem(Id, result3) + " " + ((Definition)this).HasAnInvalidStat(val16.Value)), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+								CLoggerManager.Log((object)("The MainStatBonus " + OfTheItem(Id, result3) + " " + HasAnInvalidStat(val16.Value)), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 							}
 							if (!float.TryParse(val15.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var result10))
 							{
-								CLoggerManager.Log((object)("The MainStatBonus " + ((Definition)this).OfTheItem(Id, result3) + " " + ((Definition)this).HasAnInvalidFloat(val15.Value)), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+								CLoggerManager.Log((object)("The MainStatBonus " + OfTheItem(Id, result3) + " " + HasAnInvalidFloat(val15.Value)), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 								break;
 							}
 							MainStatBonusByLevel.Add(result3, new Tuple<UnitStatDefinition.E_Stat, float>(result9, result10));
@@ -347,16 +347,16 @@ public class ItemDefinition : Definition
 							SkillsByLevel[result3] = new Dictionary<string, int>();
 							foreach (XElement item4 in ((XContainer)val17).Elements())
 							{
-								if (XDocumentExtensions.IsNullOrEmpty(item4))
+								if (item4.IsNullOrEmpty())
 								{
-									CLoggerManager.Log((object)("A skill " + ((Definition)this).OfTheItem(Id, result3) + " is Empty !"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+									CLoggerManager.Log((object)("A skill " + OfTheItem(Id, result3) + " is Empty !"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 									continue;
 								}
 								int result11 = -1;
 								XAttribute val18 = item4.Attribute(XName.op_Implicit("OverallUsesCount"));
 								if (val18 != null && !int.TryParse(val18.Value, out result11))
 								{
-									CLoggerManager.Log((object)("The skill " + item4.Value + " " + ((Definition)this).OfTheItem(Id, result3) + " " + ((Definition)this).HasAnInvalidInt(val18.Value)), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+									CLoggerManager.Log((object)("The skill " + item4.Value + " " + OfTheItem(Id, result3) + " " + HasAnInvalidInt(val18.Value)), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 								}
 								else
 								{
@@ -373,7 +373,7 @@ public class ItemDefinition : Definition
 					return;
 				}
 			}
-			CLoggerManager.Log((object)("Item " + Id + "'s Category " + ((Definition)this).HasAnInvalid("E_Category", val3.Value)), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+			CLoggerManager.Log((object)("Item " + Id + "'s Category " + HasAnInvalid("E_Category", val3.Value)), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 		}
 		else
 		{
@@ -385,7 +385,7 @@ public class ItemDefinition : Definition
 	{
 		XContainer obj = ((container is XElement) ? container : null);
 		XElement val = obj.Element(XName.op_Implicit("ArtId"));
-		if (!XDocumentExtensions.IsNullOrEmpty(val))
+		if (!val.IsNullOrEmpty())
 		{
 			artId = val.Value;
 		}

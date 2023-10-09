@@ -17,7 +17,7 @@ public class EasyModeDatabase : Database<EasyModeDatabase>
 	public override void Deserialize(XContainer container = null)
 	{
 		XElement val = ((XContainer)XDocument.Parse(easyModeDefinitionTextAsset.text, (LoadOptions)2)).Element(XName.op_Implicit("EasyModeDefinition"));
-		if (XDocumentExtensions.IsNullOrEmpty(val))
+		if (val.IsNullOrEmpty())
 		{
 			CLoggerManager.Log((object)("The document " + ((Object)easyModeDefinitionTextAsset).name + " must have an EasyModeDefinition!"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 		}

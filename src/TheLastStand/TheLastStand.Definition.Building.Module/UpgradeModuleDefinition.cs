@@ -40,7 +40,7 @@ public class UpgradeModuleDefinition : BuildingModuleDefinition
 		XElement val2 = ((XContainer)val).Element(XName.op_Implicit("UpgradeOf"));
 		if (val2 != null)
 		{
-			if (XDocumentExtensions.IsNullOrEmpty(val2))
+			if (val2.IsNullOrEmpty())
 			{
 				Debug.LogError((object)("Building " + BuildingDefinition.Id + " has an invalid UpgradeOf !"));
 				return;
@@ -56,7 +56,7 @@ public class UpgradeModuleDefinition : BuildingModuleDefinition
 		foreach (XElement item in ((XContainer)val3).Elements(XName.op_Implicit("BuildingUpgradeDefinition")))
 		{
 			XAttribute val4 = item.Attribute(XName.op_Implicit("Id"));
-			if (XDocumentExtensions.IsNullOrEmpty(val4))
+			if (val4.IsNullOrEmpty())
 			{
 				Debug.LogError((object)("BuildingDefinition " + BuildingDefinition.Id + " BuildingUpgradeDefinition must have an attribute Id"));
 			}

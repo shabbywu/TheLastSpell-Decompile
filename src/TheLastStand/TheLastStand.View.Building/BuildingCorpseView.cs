@@ -48,14 +48,14 @@ public class BuildingCorpseView : MonoBehaviour
 
 	public void Init(BuildingDefinition building)
 	{
-		Sprite val = ResourcePooler<Sprite>.LoadOnce(string.Format("View\\Sprites\\Buildings\\Destroyed\\{0}\\TLS_Buildings_{0}Remains", building.Id) ?? "", false);
+		Sprite val = ResourcePooler<Sprite>.LoadOnce(string.Format("View\\Sprites\\Buildings\\Destroyed\\{0}\\TLS_Buildings_{0}Remains", building.Id) ?? "");
 		if ((Object)(object)val == (Object)null)
 		{
 			List<Sprite> list = new List<Sprite>();
 			for (int i = 1; i < 99; i++)
 			{
 				string text = i.ToString("00");
-				val = ResourcePooler<Sprite>.LoadOnce(string.Format("View\\Sprites\\Buildings\\Destroyed\\{0}\\TLS_Buildings_{0}Remains", building.Id) + text, false);
+				val = ResourcePooler<Sprite>.LoadOnce(string.Format("View\\Sprites\\Buildings\\Destroyed\\{0}\\TLS_Buildings_{0}Remains", building.Id) + text);
 				if ((Object)(object)val == (Object)null)
 				{
 					break;

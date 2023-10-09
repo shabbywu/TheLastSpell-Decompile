@@ -1,4 +1,3 @@
-using System;
 using TPLib;
 using TheLastStand.Framework;
 using TheLastStand.Framework.Extensions;
@@ -51,7 +50,7 @@ public class PoisonStatusController : StatusController
 			TargetDamageable = base.Status.Unit,
 			TargetTile = base.Status.Unit.OriginTile
 		};
-		DictionaryExtensions.GetValueOrDefault<E_EffectTime, Action<PerkDataContainer>>(base.Status.Unit.Events, E_EffectTime.OnAttackDataComputed)?.Invoke(perkDataContainer);
+		base.Status.Unit.Events.GetValueOrDefault(E_EffectTime.OnAttackDataComputed)?.Invoke(perkDataContainer);
 		base.Status.Unit.UnitController.LoseHealth(attackSkillActionExecutionTileData.HealthDamage, PoisonStatus.Source, refreshHud: false);
 		TPSingleton<EffectTimeEventManager>.Instance.InvokeEvent(E_EffectTime.OnPoisonProc, perkDataContainer);
 		if (base.Status.Unit.IsDeadOrDeathRattling)
@@ -68,7 +67,7 @@ public class PoisonStatusController : StatusController
 
 	public override bool CreateEffectDisplay(IDamageableController damageableController)
 	{
-		StyledKeyDisplay pooledComponent = ObjectPooler.GetPooledComponent<StyledKeyDisplay>("StyledKeyDisplay", ResourcePooler.LoadOnce<StyledKeyDisplay>("Prefab/Displayable Effect/UI Effect Displays/StyledKeyDisplay", false), EffectManager.EffectDisplaysParent, false);
+		StyledKeyDisplay pooledComponent = ObjectPooler.GetPooledComponent<StyledKeyDisplay>("StyledKeyDisplay", ResourcePooler.LoadOnce<StyledKeyDisplay>("Prefab/Displayable Effect/UI Effect Displays/StyledKeyDisplay", failSilently: false), EffectManager.EffectDisplaysParent, dontSetParent: false);
 		pooledComponent.Init(base.Status.StatusType);
 		damageableController.AddEffectDisplay(pooledComponent);
 		return true;

@@ -22,7 +22,7 @@ public class UpgradeStatGaugeEffectController : BuildingGaugeEffectController
 	{
 		base.BuildingGaugeEffect = new UpgradeStatGaugeEffect(productionBuilding, definition, this, new UpgradeStatView());
 		base.BuildingGaugeEffect.BuildingGaugeEffectView.BuildingGaugeEffect = base.BuildingGaugeEffect;
-		base.BuildingGaugeEffect.Deserialize((ISerializedData)(object)container);
+		base.BuildingGaugeEffect.Deserialize(container);
 	}
 
 	public UpgradeStatGaugeEffectController(ProductionModule productionBuilding, BuildingGaugeEffectDefinition definition)
@@ -37,7 +37,7 @@ public class UpgradeStatGaugeEffectController : BuildingGaugeEffectController
 		UpgradeStatGaugeEffect upgradeStatGaugeEffect = base.BuildingGaugeEffect as UpgradeStatGaugeEffect;
 		foreach (PlayableUnit playableUnit in TPSingleton<PlayableUnitManager>.Instance.PlayableUnits)
 		{
-			UpgradeStatDisplay pooledComponent = ObjectPooler.GetPooledComponent<UpgradeStatDisplay>("UpgradeStatDisplay", ResourcePooler.LoadOnce<UpgradeStatDisplay>("Prefab/Displayable Effect/UI Effect Displays/UpgradeStatDisplay", false), EffectManager.EffectDisplaysParent, false);
+			UpgradeStatDisplay pooledComponent = ObjectPooler.GetPooledComponent<UpgradeStatDisplay>("UpgradeStatDisplay", ResourcePooler.LoadOnce<UpgradeStatDisplay>("Prefab/Displayable Effect/UI Effect Displays/UpgradeStatDisplay", failSilently: false), EffectManager.EffectDisplaysParent, dontSetParent: false);
 			pooledComponent.Init(upgradeStatGaugeEffect.UpgradeStatGaugeEffectDefinition.UpgradeStatDefinition.Stat, upgradeStatGaugeEffect.UpgradeStatGaugeEffectDefinition.UpgradeStatDefinition.Bonus);
 			playableUnit.PlayableUnitController.AddEffectDisplay(pooledComponent);
 			list.Add(playableUnit.PlayableUnitController);

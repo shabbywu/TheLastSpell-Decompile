@@ -157,33 +157,33 @@ public class AttackTooltip : SkillActionTooltip
 			Vector2Int finalDamageRange = damageRangeData.FinalDamageRange;
 			float num8 = ((Vector2Int)(ref finalDamageRange)).x;
 			finalDamageRange = damageRangeData.FinalDamageRange;
-			Vector2Int val = VectorExtensions.RoundToInt(new Vector2(num8, (float)((Vector2Int)(ref finalDamageRange)).y) * (unit.GetClampedStatValue(UnitStatDefinition.E_Stat.CriticalPower) + num7) / 100f);
-			criticalValueDisplay.Refresh("AttackTooltip_Critical", VectorExtensions.GetSimplifiedRange(val, "-", (Func<int, int>)null), "", num6);
+			Vector2Int v = (new Vector2(num8, (float)((Vector2Int)(ref finalDamageRange)).y) * (unit.GetClampedStatValue(UnitStatDefinition.E_Stat.CriticalPower) + num7) / 100f).RoundToInt();
+			criticalValueDisplay.Refresh("AttackTooltip_Critical", v.GetSimplifiedRange(), "", num6);
 		}
 		criticalValueDisplay.Display(flag);
 		if ((float)num > 0f || ((Vector2Int)(ref damageRangeData.ResistanceReductionRange)).magnitude != 0f || ((Vector2Int)(ref damageRangeData.IsolatedDamageRange)).magnitude != 0f || ((Vector2Int)(ref damageRangeData.MomentumDamageRange)).magnitude != 0f || ((Vector2Int)(ref damageRangeData.OpportunismDamageRange)).magnitude != 0f || ((Vector2Int)(ref damageRangeData.PerksDamageRange)).magnitude != 0f)
 		{
-			attackValueDisplay.Refresh("AttackTooltip_AttackValue", VectorExtensions.GetSimplifiedRange(damageRangeData.BaseDamageRange, "-", (Func<int, int>)null));
+			attackValueDisplay.Refresh("AttackTooltip_AttackValue", damageRangeData.BaseDamageRange.GetSimplifiedRange());
 			attackValueDisplay.Display(show: true);
 			bool flag2 = ((Vector2Int)(ref damageRangeData.IsolatedDamageRange)).magnitude != 0f;
 			if (flag2)
 			{
 				Vector2Int isolatedDamageRange = damageRangeData.IsolatedDamageRange;
 				string overrideSign = (((float)((Vector2Int)(ref isolatedDamageRange)).x < 0f && (float)((Vector2Int)(ref isolatedDamageRange)).y < 0f) ? "-" : "+");
-				isolatedDisplay.Refresh("AttackTooltip_Isolated", VectorExtensions.GetSimplifiedRange(isolatedDamageRange, "-", (Func<int, int>)Mathf.Abs) ?? "", overrideSign);
+				isolatedDisplay.Refresh("AttackTooltip_Isolated", isolatedDamageRange.GetSimplifiedRange("-", (Func<int, int>)Mathf.Abs) ?? "", overrideSign);
 			}
 			bool flag3 = ((Vector2Int)(ref damageRangeData.OpportunismDamageRange)).magnitude != 0f;
 			if (flag3)
 			{
 				Vector2Int opportunismDamageRange = damageRangeData.OpportunismDamageRange;
 				string overrideSign2 = (((float)((Vector2Int)(ref opportunismDamageRange)).x < 0f && (float)((Vector2Int)(ref opportunismDamageRange)).y < 0f) ? "-" : "+");
-				opportunityDisplay.Refresh("AttackTooltip_Opportunistic", VectorExtensions.GetSimplifiedRange(opportunismDamageRange, "-", (Func<int, int>)Mathf.Abs) ?? "", overrideSign2);
+				opportunityDisplay.Refresh("AttackTooltip_Opportunistic", opportunismDamageRange.GetSimplifiedRange("-", (Func<int, int>)Mathf.Abs) ?? "", overrideSign2);
 			}
 			bool flag4 = ((Vector2Int)(ref damageRangeData.MomentumDamageRange)).magnitude > 0f;
 			if (flag4)
 			{
 				Vector2Int momentumDamageRange = damageRangeData.MomentumDamageRange;
-				momentumDisplay.Refresh("AttackTooltip_Momentum", VectorExtensions.GetSimplifiedRange(momentumDamageRange, "-", (Func<int, int>)null) ?? "");
+				momentumDisplay.Refresh("AttackTooltip_Momentum", momentumDamageRange.GetSimplifiedRange() ?? "");
 			}
 			bool flag5 = ((Vector2Int)(ref damageRangeData.PerksDamageRange)).magnitude != 0f;
 			if (flag5)
@@ -195,13 +195,13 @@ public class AttackTooltip : SkillActionTooltip
 					overrideSign3 = "-";
 					((Vector2Int)(ref perksDamageRange))._002Ector(Mathf.Abs(((Vector2Int)(ref perksDamageRange)).x), Mathf.Abs(((Vector2Int)(ref perksDamageRange)).y));
 				}
-				perkDamageDisplay.Refresh("AttackTooltip_Perks", VectorExtensions.GetSimplifiedRange(perksDamageRange, "-", (Func<int, int>)null) ?? "", overrideSign3);
+				perkDamageDisplay.Refresh("AttackTooltip_Perks", perksDamageRange.GetSimplifiedRange() ?? "", overrideSign3);
 			}
 			bool flag6 = ((Vector2Int)(ref damageRangeData.ResistanceReductionRange)).magnitude != 0f;
 			if (flag6)
 			{
 				Vector2Int resistanceReductionRange = damageRangeData.ResistanceReductionRange;
-				resistanceDisplay.Refresh("AttackTooltip_Resistance", VectorExtensions.GetSimplifiedRange(resistanceReductionRange, "-", (Func<int, int>)Mathf.Abs) ?? "", (num2 < 0f) ? "+" : "-");
+				resistanceDisplay.Refresh("AttackTooltip_Resistance", resistanceReductionRange.GetSimplifiedRange("-", (Func<int, int>)Mathf.Abs) ?? "", (num2 < 0f) ? "+" : "-");
 			}
 			bool flag7 = num > 0;
 			if (flag7)
@@ -236,7 +236,7 @@ public class AttackTooltip : SkillActionTooltip
 		}
 		DataColorDictionary obj = damageTypeColor;
 		Color? valueColor = ((obj != null) ? new Color?(obj.GetColorById(attackSkillAction.AttackType.ToString()).Value) : null);
-		finalValueDisplay.Refresh("AttackTooltip_FinalDamage", VectorExtensions.GetSimplifiedRange(damageRangeData.FinalDamageRange, "-", (Func<int, int>)null), valueColor);
+		finalValueDisplay.Refresh("AttackTooltip_FinalDamage", damageRangeData.FinalDamageRange.GetSimplifiedRange(), valueColor);
 		LayoutRebuilder.ForceRebuildLayoutImmediate(skillDetailsParent);
 		skillDetailsRectTransform.sizeDelta = new Vector2(skillDetailsRectTransform.sizeDelta.x, skillDetailsParent.sizeDelta.y);
 		((Transform)skillEffectsRectTransform).localPosition = new Vector3(((Transform)skillEffectsRectTransform).localPosition.x, ((Transform)skillDetailsRectTransform).localPosition.y - skillDetailsRectTransform.sizeDelta.y, ((Transform)skillEffectsRectTransform).localPosition.z);

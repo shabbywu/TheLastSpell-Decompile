@@ -10,7 +10,7 @@ using TheLastStand.Model.Status;
 
 namespace TheLastStand.Definition;
 
-public abstract class LocalizableDefinition : Definition
+public abstract class LocalizableDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public List<LocArgument> LocArguments { get; private set; }
 
@@ -43,11 +43,11 @@ public abstract class LocalizableDefinition : Definition
 			{
 				_ = item2.Name.LocalName != "AttackTypeArgument";
 			}
-			string text = ((obj != null) ? StringExtensions.Replace(obj.Value, ((Definition)this).TokenVariables) : null);
+			string text = ((obj != null) ? obj.Value.Replace(base.TokenVariables) : null);
 			Node valueExpression = null;
 			if (!string.IsNullOrEmpty((val != null) ? val.Value : null) && bool.Parse(val.Value) && !string.IsNullOrEmpty(text))
 			{
-				valueExpression = Parser.Parse(text, (Dictionary<string, string>)null);
+				valueExpression = Parser.Parse(text);
 			}
 			LocArgument item = null;
 			switch (item2.Name.LocalName)
@@ -59,7 +59,7 @@ public abstract class LocalizableDefinition : Definition
 			{
 				XAttribute val12 = item2.Attribute(XName.op_Implicit("AttackType"));
 				XAttribute val13 = item2.Attribute(XName.op_Implicit("InterpretedAttackType"));
-				Node attackTypeExpression = ((!string.IsNullOrEmpty((val13 != null) ? val13.Value : null)) ? Parser.Parse(val13.Value, (Dictionary<string, string>)null) : null);
+				Node attackTypeExpression = ((!string.IsNullOrEmpty((val13 != null) ? val13.Value : null)) ? Parser.Parse(val13.Value) : null);
 				item = new AttackTypeArgument(text, valueExpression, (val4 != null) ? val4.Value : null, (val2 != null) ? val2.Value : null, (val3 != null) ? val3.Value : null, attackTypeExpression, (val12 != null) ? val12.Value : null);
 				break;
 			}
@@ -71,7 +71,7 @@ public abstract class LocalizableDefinition : Definition
 				XAttribute val9 = item2.Attribute(XName.op_Implicit("Stat"));
 				XAttribute val10 = item2.Attribute(XName.op_Implicit("DisplaySign"));
 				XAttribute val11 = item2.Attribute(XName.op_Implicit("InterpretedStat"));
-				Node statExpression = ((!string.IsNullOrEmpty((val11 != null) ? val11.Value : null)) ? Parser.Parse(val11.Value, (Dictionary<string, string>)null) : null);
+				Node statExpression = ((!string.IsNullOrEmpty((val11 != null) ? val11.Value : null)) ? Parser.Parse(val11.Value) : null);
 				bool displaySign = string.IsNullOrEmpty((val10 != null) ? val10.Value : null) || bool.Parse(val10.Value);
 				UnitStatDefinition.E_Stat result3 = UnitStatDefinition.E_Stat.Undefined;
 				if (!string.IsNullOrEmpty((val9 != null) ? val9.Value : null))
@@ -101,23 +101,23 @@ public abstract class LocalizableDefinition : Definition
 				XAttribute val6 = item2.Attribute(XName.op_Implicit("Chance"));
 				XAttribute val7 = item2.Attribute(XName.op_Implicit("ModifiedValue"));
 				XAttribute val8 = item2.Attribute(XName.op_Implicit("Stat"));
-				Enum.TryParse<Status.E_StatusType>(StringExtensions.Replace(obj2.Value, ((Definition)this).TokenVariables), out var result);
+				Enum.TryParse<Status.E_StatusType>(obj2.Value.Replace(base.TokenVariables), out var result);
 				UnitStatDefinition.E_Stat result2 = UnitStatDefinition.E_Stat.Undefined;
 				if (!string.IsNullOrEmpty((val8 != null) ? val8.Value : null))
 				{
-					Enum.TryParse<UnitStatDefinition.E_Stat>(StringExtensions.Replace(val8.Value, ((Definition)this).TokenVariables), out result2);
+					Enum.TryParse<UnitStatDefinition.E_Stat>(val8.Value.Replace(base.TokenVariables), out result2);
 				}
 				Node turnsCountExpression = null;
-				string text2 = ((val5 != null) ? StringExtensions.Replace(val5.Value, ((Definition)this).TokenVariables) : null);
+				string text2 = ((val5 != null) ? val5.Value.Replace(base.TokenVariables) : null);
 				if (!string.IsNullOrEmpty(text2))
 				{
-					turnsCountExpression = Parser.Parse(text2, (Dictionary<string, string>)null);
+					turnsCountExpression = Parser.Parse(text2);
 				}
 				Node chanceExpression = null;
-				string text3 = ((val6 != null) ? StringExtensions.Replace(val6.Value, ((Definition)this).TokenVariables) : null);
+				string text3 = ((val6 != null) ? val6.Value.Replace(base.TokenVariables) : null);
 				if (!string.IsNullOrEmpty(text3))
 				{
-					chanceExpression = Parser.Parse(text3, (Dictionary<string, string>)null);
+					chanceExpression = Parser.Parse(text3);
 				}
 				bool modifiedValue = !string.IsNullOrEmpty((val7 != null) ? val7.Value : null) && bool.Parse(val7.Value);
 				item = new StatusArgument(text, valueExpression, (val4 != null) ? val4.Value : null, (val2 != null) ? val2.Value : null, (val3 != null) ? val3.Value : null, result, turnsCountExpression, chanceExpression, modifiedValue, result2);

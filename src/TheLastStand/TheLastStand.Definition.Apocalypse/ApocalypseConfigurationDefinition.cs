@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Apocalypse;
 
-public class ApocalypseConfigurationDefinition : Definition
+public class ApocalypseConfigurationDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public Dictionary<UnitStatDefinition.E_Stat, string> StatWithModifierTypes { get; } = new Dictionary<UnitStatDefinition.E_Stat, string>(UnitStatDefinition.SharedStatComparer);
 
@@ -20,7 +20,7 @@ public class ApocalypseConfigurationDefinition : Definition
 	public uint DamnedSoulsPercentagePerLevel { get; private set; }
 
 	public ApocalypseConfigurationDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
@@ -36,7 +36,7 @@ public class ApocalypseConfigurationDefinition : Definition
 					XAttribute val2 = item2.Attribute(XName.op_Implicit("Type"));
 					if (!Enum.TryParse<UnitStatDefinition.E_Stat>(val.Value, out var result))
 					{
-						Debug.LogError((object)("StatWithModifierType " + val.Value + " " + ((Definition)this).HasAnInvalidStat(val.Value)));
+						Debug.LogError((object)("StatWithModifierType " + val.Value + " " + HasAnInvalidStat(val.Value)));
 					}
 					StatWithModifierTypes.Add(result, val2.Value);
 				}

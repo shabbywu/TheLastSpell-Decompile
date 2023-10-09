@@ -118,8 +118,8 @@ public abstract class ItemSlotView : MonoBehaviour, IPointerClickHandler, IEvent
 		//IL_00d3: Unknown result type (might be due to invalid IL or missing references)
 		if (!((Object)(object)BackgroundImage == (Object)null))
 		{
-			Sprite val = ((rarity == ItemDefinition.E_Rarity.None) ? null : ResourcePooler.LoadOnce<Sprite>(string.Format("{0}{1}{2}_Off", "View/Sprites/UI/Items/Rarity/ItemBox_0", (int)rarity, isSmallSlot ? "_Small" : string.Empty), false));
-			Sprite val2 = ((rarity == ItemDefinition.E_Rarity.None) ? null : ResourcePooler.LoadOnce<Sprite>(string.Format("{0}{1}{2}_On", "View/Sprites/UI/Items/Rarity/ItemBox_0", (int)rarity, isSmallSlot ? "_Small" : string.Empty), false));
+			Sprite val = ((rarity == ItemDefinition.E_Rarity.None) ? null : ResourcePooler.LoadOnce<Sprite>(string.Format("{0}{1}{2}_Off", "View/Sprites/UI/Items/Rarity/ItemBox_0", (int)rarity, isSmallSlot ? "_Small" : string.Empty), failSilently: false));
+			Sprite val2 = ((rarity == ItemDefinition.E_Rarity.None) ? null : ResourcePooler.LoadOnce<Sprite>(string.Format("{0}{1}{2}_On", "View/Sprites/UI/Items/Rarity/ItemBox_0", (int)rarity, isSmallSlot ? "_Small" : string.Empty), failSilently: false));
 			((Behaviour)BackgroundImage).enabled = (Object)(object)val != (Object)null;
 			BackgroundImage.sprite = val;
 			if ((Object)(object)val2 == (Object)null)

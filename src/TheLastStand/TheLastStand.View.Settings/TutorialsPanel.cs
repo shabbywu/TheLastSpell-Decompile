@@ -71,7 +71,7 @@ public class TutorialsPanel : SettingsPageView
 			categoryToggle.Key.Init(categoryToggle.Value, this);
 		}
 		categoriesLayoutNavigationInitializer.InitNavigation();
-		SelectableExtensions.SetSelectOnDown((Selectable)(object)categoryToggles.Last((KeyValuePair<TutorialCategoryToggle, E_TutorialCategory> o) => ((Component)o.Key).gameObject.activeSelf).Key.Toggle, selectableBelowCategories);
+		((Selectable)(object)categoryToggles.Last((KeyValuePair<TutorialCategoryToggle, E_TutorialCategory> o) => ((Component)o.Key).gameObject.activeSelf).Key.Toggle).SetSelectOnDown(selectableBelowCategories);
 		foreach (KeyValuePair<TutorialCategoryToggle, E_TutorialCategory> categoryToggle2 in categoryToggles)
 		{
 			categoryToggle2.Key.DynamicNavigationMode.RefreshNavigationMode(InputManager.IsLastControllerJoystick);
@@ -114,7 +114,7 @@ public class TutorialsPanel : SettingsPageView
 	{
 		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0030: Expected O, but got Unknown
-		GUIHelpers.AdjustScrollViewToFocusedItem((RectTransform)((Component)categoryToggle).transform, categoryTogglesViewport, categoryTogglesScrollbar, 0.01f, 0.01f, (float?)0.5f);
+		GUIHelpers.AdjustScrollViewToFocusedItem((RectTransform)((Component)categoryToggle).transform, categoryTogglesViewport, categoryTogglesScrollbar, 0.01f, 0.01f, 0.5f);
 	}
 
 	private TutorialTextBox AddTextBox()

@@ -26,7 +26,7 @@ public class SelectGroundPanel : MonoBehaviour
 		//IL_006e: Expected O, but got Unknown
 		//IL_00a8: Unknown result type (might be due to invalid IL or missing references)
 		//IL_00b2: Expected O, but got Unknown
-		TransformExtensions.DestroyChildren(((Component)this).transform);
+		((Component)this).transform.DestroyChildren();
 		List<string> list = TileDatabase.GroundDefinitions.Keys.ToList();
 		list.Sort();
 		foreach (string groundId in list)

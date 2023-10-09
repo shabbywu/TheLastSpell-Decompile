@@ -32,13 +32,13 @@ public class GameDatabase : Database<GameDatabase>
 
 	private void DeserializeVictorySequenceDefinitions()
 	{
-		Queue<XElement> queue = base.GatherElements((IEnumerable<TextAsset>)cutsceneDefinitionsTextAssets, (IEnumerable<TextAsset>)null, "CutsceneDefinition", (string)null);
-		Queue<XElement> queue2 = base.GatherElements((IEnumerable<TextAsset>)cutsceneDefinitionsTextAssets, (IEnumerable<TextAsset>)null, "UnitCutsceneDefinition", "CutsceneDefinitions");
+		Queue<XElement> queue = GatherElements(cutsceneDefinitionsTextAssets, null, "CutsceneDefinition");
+		Queue<XElement> queue2 = GatherElements(cutsceneDefinitionsTextAssets, null, "UnitCutsceneDefinition", "CutsceneDefinitions");
 		while (queue2.Count > 0)
 		{
 			queue.Enqueue(queue2.Dequeue());
 		}
-		foreach (XElement item in base.SortElementsByDependencies((IEnumerable<XElement>)queue))
+		foreach (XElement item in SortElementsByDependencies(queue))
 		{
 			CutsceneDefinition cutsceneDefinition = new CutsceneDefinition((XContainer)(object)item);
 			CutsceneDefinitions.Add(cutsceneDefinition.Id, cutsceneDefinition);
@@ -48,7 +48,7 @@ public class GameDatabase : Database<GameDatabase>
 	private void DeserializeNightReportRankDefinition()
 	{
 		XElement val = ((XContainer)XDocument.Parse(nightReportRankDefinitionTextAsset.text, (LoadOptions)2)).Element(XName.op_Implicit("NightReportRankDefinitions"));
-		if (XDocumentExtensions.IsNullOrEmpty(val))
+		if (val.IsNullOrEmpty())
 		{
 			CLoggerManager.Log((object)("The document " + ((Object)nightReportRankDefinitionTextAsset).name + " must have a NightReportRankDefinitions element!"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 			return;

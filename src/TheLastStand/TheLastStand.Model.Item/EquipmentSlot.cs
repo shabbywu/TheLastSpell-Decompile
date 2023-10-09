@@ -55,7 +55,7 @@ public class EquipmentSlot : ItemSlot
 		: base(itemSlotDefinition, equipmentSlotController, equipmentSlotView)
 	{
 		PlayableUnit = unit;
-		Deserialize((ISerializedData)(object)container);
+		Deserialize(container);
 	}
 
 	public EquipmentSlot(ItemSlotDefinition itemSlotDefinition, EquipmentSlotController equipmentSlotController, EquipmentSlotView equipmentSlotView, PlayableUnit unit)

@@ -36,9 +36,7 @@ public class BuildingToRestore : ISerializable, IDeserializable
 	public ISerializedData Serialize()
 	{
 		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		return (ISerializedData)(object)new SerializedBuildingToRestore
+		return new SerializedBuildingToRestore
 		{
 			TilePosition = new SerializableVector2Int(Tile.Position),
 			BuildingId = BuildingId,

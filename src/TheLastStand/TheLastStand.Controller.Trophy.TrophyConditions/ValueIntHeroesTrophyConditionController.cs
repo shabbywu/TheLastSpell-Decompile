@@ -182,7 +182,7 @@ public abstract class ValueIntHeroesTrophyConditionController : HeroesTrophyCond
 
 	public override ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedValueIntHeroesTrophy
+		return new SerializedValueIntHeroesTrophy
 		{
 			Name = Name,
 			ValuePerUnitId = ProgressionPerUnitId.Select(delegate(KeyValuePair<int, int> p)

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TPLib.Log;
 using TheLastStand.Definition.TileMap;
@@ -9,7 +8,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.Enemy.Boss;
 
-public class ActorDefinition : Definition
+public class ActorDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public string ActorId { get; private set; }
 
@@ -21,7 +20,7 @@ public class ActorDefinition : Definition
 	public string UnitId { get; private set; }
 
 	public ActorDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

@@ -128,13 +128,13 @@ public class JoystickSelectable : Selectable, ISelectHandler, IEventSystemHandle
 		{
 			if ((int)controllerType == 2)
 			{
-				SelectableExtensions.SetMode((Selectable)(object)this, (Mode)4);
+				((Selectable)(object)this).SetMode((Mode)4);
 				return;
 			}
 			if ((int)controllerType == 20)
 			{
 			}
 		}
-		SelectableExtensions.SetMode((Selectable)(object)this, (Mode)0);
+		((Selectable)(object)this).SetMode((Mode)0);
 	}
 }

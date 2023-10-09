@@ -150,8 +150,8 @@ public class CameraUIMasksHandler : SerializedMonoBehaviour
 				}
 				CornersWorldSpace[i] = Vector2.op_Implicit(camera.ScreenToWorldPoint(cornersTransforms[i].position));
 			}
-			centre = Maths.ComputePolygonCentre((IEnumerable<Vector2>)CornersWorldSpace);
-			Vector2 val = centre - Maths.GetClosestPointOnPolygon((IEnumerable<Vector2>)CornersWorldSpace, centre);
+			centre = Maths.ComputePolygonCentre(CornersWorldSpace);
+			Vector2 val = centre - Maths.GetClosestPointOnPolygon(CornersWorldSpace, centre);
 			boundingCircleInSqr = ((Vector2)(ref val)).sqrMagnitude;
 			boundingCircleOutSqr = GetFurthestCornerToCenterSqr(CornersWorldSpace, Vector2.op_Implicit(centre));
 		}

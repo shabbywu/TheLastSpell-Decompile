@@ -296,7 +296,7 @@ public class NightReportPanel : TPSingleton<NightReportPanel>, IOverlayUser
 				rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, 0f);
 			}
 			isOpened = false;
-			moveTween = (Tween)(object)TweenSettingsExtensions.OnComplete<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenExtensions.SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosY(rectTransform, posYInit, 0.25f, false), (Ease)26), "NightReportPanelClose", (Component)(object)this), (TweenCallback)delegate
+			moveTween = (Tween)(object)TweenSettingsExtensions.OnComplete<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosY(rectTransform, posYInit, 0.25f, false), (Ease)26).SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>("NightReportPanelClose", (Component)(object)this), (TweenCallback)delegate
 			{
 				((Behaviour)canvas).enabled = false;
 				GameView.TopScreenPanel.TurnPanel.Refresh();
@@ -483,14 +483,14 @@ public class NightReportPanel : TPSingleton<NightReportPanel>, IOverlayUser
 		{
 			TweenExtensions.Kill(obj, false);
 		}
-		sharedXPTextTween = (Tween)(object)TweenExtensions.SetFullId<TweenerCore<int, int, NoOptions>>(DOTween.To((DOGetter<int>)(() => tweenSharedXP), (DOSetter<int>)delegate(int x)
+		sharedXPTextTween = (Tween)(object)DOTween.To((DOGetter<int>)(() => tweenSharedXP), (DOSetter<int>)delegate(int x)
 		{
 			tweenSharedXP = x;
 			((TMP_Text)TPSingleton<NightReportPanel>.Instance.sharedXPText).text = $"{tweenSharedXP}";
-		}, totalXP, waitBetweenEachKillsReportAppear), "SharedXPTransfer", (Component)(object)this);
+		}, totalXP, waitBetweenEachKillsReportAppear).SetFullId<TweenerCore<int, int, NoOptions>>("SharedXPTransfer", (Component)(object)this);
 		if (!PlayableUnitManager.DebugForceSkipNightReport)
 		{
-			TweenExtensions.SetFullId<Tweener>(ShortcutExtensions.DOPunchScale(((TMP_Text)TPSingleton<NightReportPanel>.Instance.sharedXPText).transform, Vector3.one * TPSingleton<NightReportPanel>.Instance.sharedXPPunchStrength, TPSingleton<NightReportPanel>.Instance.sharedXPPunchTweenDuration, 1, 0.1f), "SharedXPPunchScale", (Component)(object)this);
+			ShortcutExtensions.DOPunchScale(((TMP_Text)TPSingleton<NightReportPanel>.Instance.sharedXPText).transform, Vector3.one * TPSingleton<NightReportPanel>.Instance.sharedXPPunchStrength, TPSingleton<NightReportPanel>.Instance.sharedXPPunchTweenDuration, 1, 0.1f).SetFullId<Tweener>("SharedXPPunchScale", (Component)(object)this);
 		}
 	}
 
@@ -585,7 +585,7 @@ public class NightReportPanel : TPSingleton<NightReportPanel>, IOverlayUser
 			{
 				((Component)killReports[i]).gameObject.SetActive(false);
 			}
-			moveTween = (Tween)(object)TweenSettingsExtensions.OnComplete<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenExtensions.SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosY(rectTransform, panelDeltaPosY, 0.25f, false), (Ease)27), "NightReportPanelOpen", (Component)(object)this), (TweenCallback)delegate
+			moveTween = (Tween)(object)TweenSettingsExtensions.OnComplete<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosY(rectTransform, panelDeltaPosY, 0.25f, false), (Ease)27).SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>("NightReportPanelOpen", (Component)(object)this), (TweenCallback)delegate
 			{
 				titleAnimator.SetTrigger("FadeIn");
 				((MonoBehaviour)this).StartCoroutine(ShowKills());
@@ -661,16 +661,16 @@ public class NightReportPanel : TPSingleton<NightReportPanel>, IOverlayUser
 
 	private IEnumerator ShowBattleReportPanel()
 	{
-		TweenExtensions.SetFullId<TweenerCore<float, float, FloatOptions>>(DOTweenModuleUI.DOFade(battleReportCanvasGroup, 1f, PlayableUnitManager.DebugForceSkipNightReport ? 0f : 1f), "BattleReportFadeIn", (Component)(object)this);
+		DOTweenModuleUI.DOFade(battleReportCanvasGroup, 1f, PlayableUnitManager.DebugForceSkipNightReport ? 0f : 1f).SetFullId<TweenerCore<float, float, FloatOptions>>("BattleReportFadeIn", (Component)(object)this);
 		battleReportCanvasGroup.blocksRaycasts = true;
 		((TMP_Text)unitAliveValueText).text = TPSingleton<PlayableUnitManager>.Instance.PlayableUnits.Count.ToString();
 		((TMP_Text)hpLostValueText).text = Mathf.FloorToInt(TPSingleton<PlayableUnitManager>.Instance.NightReport.TonightHpLost).ToString();
 		((TMP_Text)deadUnitValueText).text = (TPSingleton<PlayableUnitManager>.Instance.DeadPlayableUnits.ContainsKey(TPSingleton<GameManager>.Instance.DayNumber) ? TPSingleton<PlayableUnitManager>.Instance.DeadPlayableUnits[TPSingleton<GameManager>.Instance.DayNumber].Count.ToString() : "0");
-		TweenExtensions.SetFullId<TweenerCore<Color, Color, ColorOptions>>(DOTweenModuleUI.DOFade(battleReportRankStamp, 1f, PlayableUnitManager.DebugForceSkipNightReport ? 0f : stampFadeTweenDuration), "BattleReportRankStampFadeIn", (Component)(object)this);
-		TweenExtensions.SetFullId<Tweener>(ShortcutExtensions.DOPunchScale((Transform)(object)((Graphic)battleReportRankStamp).rectTransform, Vector3.one * stampPunchStrength, PlayableUnitManager.DebugForceSkipNightReport ? 0f : stampPunchTweenDuration, 1, 0.1f), "BattleReportRankStampFadeIn", (Component)(object)this);
+		DOTweenModuleUI.DOFade(battleReportRankStamp, 1f, PlayableUnitManager.DebugForceSkipNightReport ? 0f : stampFadeTweenDuration).SetFullId<TweenerCore<Color, Color, ColorOptions>>("BattleReportRankStampFadeIn", (Component)(object)this);
+		ShortcutExtensions.DOPunchScale((Transform)(object)((Graphic)battleReportRankStamp).rectTransform, Vector3.one * stampPunchStrength, PlayableUnitManager.DebugForceSkipNightReport ? 0f : stampPunchTweenDuration, 1, 0.1f).SetFullId<Tweener>("BattleReportRankStampFadeIn", (Component)(object)this);
 		PlayAudioClip(stampAudioClip);
 		yield return SharedYields.WaitForSeconds(PlayableUnitManager.DebugForceSkipNightReport ? 0f : waitAfterBottomCanvasAppear);
-		TweenExtensions.SetFullId<TweenerCore<float, float, FloatOptions>>(DOTweenModuleUI.DOFade(page1ContinueCanvasGroup, 1f, PlayableUnitManager.DebugForceSkipNightReport ? 0f : 1f), "BattleReportContinueFadeIn", (Component)(object)this);
+		DOTweenModuleUI.DOFade(page1ContinueCanvasGroup, 1f, PlayableUnitManager.DebugForceSkipNightReport ? 0f : 1f).SetFullId<TweenerCore<float, float, FloatOptions>>("BattleReportContinueFadeIn", (Component)(object)this);
 		page1ContinueCanvasGroup.blocksRaycasts = true;
 		page1SkipCanvasGroup.alpha = 0f;
 		page1SkipCanvasGroup.blocksRaycasts = false;
@@ -693,7 +693,7 @@ public class NightReportPanel : TPSingleton<NightReportPanel>, IOverlayUser
 	private IEnumerator ShowKills()
 	{
 		yield return SharedYields.WaitForSeconds(PlayableUnitManager.DebugForceSkipNightReport ? 0f : waitAfterTitleAppear);
-		TweenExtensions.SetFullId<TweenerCore<float, float, FloatOptions>>(DOTweenModuleUI.DOFade(xpPanelCanvasGroup, 1f, PlayableUnitManager.DebugForceSkipNightReport ? 0f : 0.5f), "XPPanelFadeIn", (Component)(object)this);
+		DOTweenModuleUI.DOFade(xpPanelCanvasGroup, 1f, PlayableUnitManager.DebugForceSkipNightReport ? 0f : 0.5f).SetFullId<TweenerCore<float, float, FloatOptions>>("XPPanelFadeIn", (Component)(object)this);
 		xpPanelCanvasGroup.blocksRaycasts = true;
 		yield return SharedYields.WaitForSeconds(PlayableUnitManager.DebugForceSkipNightReport ? 0f : waitBeforeShowingAllKillsReports);
 		int index = 0;
@@ -749,7 +749,7 @@ public class NightReportPanel : TPSingleton<NightReportPanel>, IOverlayUser
 			((Component)playableReports[k]).gameObject.SetActive(false);
 		}
 		PlayAudioClip(characterAppearAudioClip);
-		TweenExtensions.SetFullId<TweenerCore<float, float, FloatOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(DOTweenModuleUI.DOFade(playableReportCanvasGroup, 1f, 1f), (Ease)9), "PlayableReportFadeIn", (Component)(object)this);
+		TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(DOTweenModuleUI.DOFade(playableReportCanvasGroup, 1f, 1f), (Ease)9).SetFullId<TweenerCore<float, float, FloatOptions>>("PlayableReportFadeIn", (Component)(object)this);
 		yield return SharedYields.WaitForSeconds(PlayableUnitManager.DebugForceSkipNightReport ? 0f : waitBeforePlayableXPAnimation);
 		TPSingleton<PlayableUnitManager>.Instance.DistributeDailyExperience();
 		PlayAudioClip(gainXPAudioClip);
@@ -763,13 +763,13 @@ public class NightReportPanel : TPSingleton<NightReportPanel>, IOverlayUser
 
 	private IEnumerator ShowNightRewardPanel()
 	{
-		TweenExtensions.SetFullId<TweenerCore<float, float, FloatOptions>>(DOTweenModuleUI.DOFade(nightRewardCanvasGroup, 1f, PlayableUnitManager.DebugForceSkipNightReport ? 0f : 1f), "NightRewardFadeIn", (Component)(object)this);
+		DOTweenModuleUI.DOFade(nightRewardCanvasGroup, 1f, PlayableUnitManager.DebugForceSkipNightReport ? 0f : 1f).SetFullId<TweenerCore<float, float, FloatOptions>>("NightRewardFadeIn", (Component)(object)this);
 		nightRewardCanvasGroup.blocksRaycasts = true;
 		yield return SharedYields.WaitForSeconds(PlayableUnitManager.DebugForceSkipNightReport ? 0f : waitAfterNightRwardCanvasAppear);
 		panicRewardIndicator.Refresh(PanicManager.Panic, PlayableUnitManager.DebugForceSkipNightReport);
 		yield return (object)new WaitWhile((Func<bool>)(() => panicRewardIndicator.IsMoving));
-		TweenExtensions.SetFullId<TweenerCore<Color, Color, ColorOptions>>(DOTweenModuleUI.DOFade(panicRankStamp, 1f, PlayableUnitManager.DebugForceSkipNightReport ? 0f : stampFadeTweenDuration), "PanicRankStampFadeIn", (Component)(object)this);
-		TweenExtensions.SetFullId<Tweener>(ShortcutExtensions.DOPunchScale((Transform)(object)((Graphic)panicRankStamp).rectTransform, Vector3.one * stampPunchStrength, PlayableUnitManager.DebugForceSkipNightReport ? 0f : stampPunchTweenDuration, 1, 0.1f), "PanicRankStampFadeIn", (Component)(object)this);
+		DOTweenModuleUI.DOFade(panicRankStamp, 1f, PlayableUnitManager.DebugForceSkipNightReport ? 0f : stampFadeTweenDuration).SetFullId<TweenerCore<Color, Color, ColorOptions>>("PanicRankStampFadeIn", (Component)(object)this);
+		ShortcutExtensions.DOPunchScale((Transform)(object)((Graphic)panicRankStamp).rectTransform, Vector3.one * stampPunchStrength, PlayableUnitManager.DebugForceSkipNightReport ? 0f : stampPunchTweenDuration, 1, 0.1f).SetFullId<Tweener>("PanicRankStampFadeIn", (Component)(object)this);
 		PlayAudioClip(stampAudioClip);
 		yield return (object)new WaitForSeconds(stampFadeTweenDuration);
 		CollectGoldReward();
@@ -781,10 +781,10 @@ public class NightReportPanel : TPSingleton<NightReportPanel>, IOverlayUser
 	private IEnumerator ShowNightRatingPanel()
 	{
 		yield return null;
-		TweenExtensions.SetFullId<TweenerCore<float, float, FloatOptions>>(DOTweenModuleUI.DOFade(nightRatingCanvasGroup, 1f, PlayableUnitManager.DebugForceSkipNightReport ? 0f : 1f), "NightRatingFadeIn", (Component)(object)this);
+		DOTweenModuleUI.DOFade(nightRatingCanvasGroup, 1f, PlayableUnitManager.DebugForceSkipNightReport ? 0f : 1f).SetFullId<TweenerCore<float, float, FloatOptions>>("NightRatingFadeIn", (Component)(object)this);
 		nightRatingCanvasGroup.blocksRaycasts = true;
-		TweenExtensions.SetFullId<TweenerCore<Color, Color, ColorOptions>>(DOTweenModuleUI.DOFade(nightRankStamp, 1f, PlayableUnitManager.DebugForceSkipNightReport ? 0f : stampFadeTweenDuration), "NightRankStampFadeIn", (Component)(object)this);
-		TweenExtensions.SetFullId<Tweener>(ShortcutExtensions.DOPunchScale((Transform)(object)((Graphic)nightRankStamp).rectTransform, Vector3.one * stampPunchStrength, PlayableUnitManager.DebugForceSkipNightReport ? 0f : stampPunchTweenDuration, 1, 0.1f), "NightRankStampFadeIn", (Component)(object)this);
+		DOTweenModuleUI.DOFade(nightRankStamp, 1f, PlayableUnitManager.DebugForceSkipNightReport ? 0f : stampFadeTweenDuration).SetFullId<TweenerCore<Color, Color, ColorOptions>>("NightRankStampFadeIn", (Component)(object)this);
+		ShortcutExtensions.DOPunchScale((Transform)(object)((Graphic)nightRankStamp).rectTransform, Vector3.one * stampPunchStrength, PlayableUnitManager.DebugForceSkipNightReport ? 0f : stampPunchTweenDuration, 1, 0.1f).SetFullId<Tweener>("NightRankStampFadeIn", (Component)(object)this);
 		PlayAudioClip(finalStampAudioClip);
 		page2SkipCanvasGroup.alpha = 0f;
 		page2SkipCanvasGroup.blocksRaycasts = false;

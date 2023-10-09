@@ -84,7 +84,7 @@ public class WorldMapCityManager : Manager<WorldMapCityManager>, ISerializable, 
 				SerializedCity cityElement = serializedCities?.Cities.FirstOrDefault((SerializedCity city) => city.Id == cityDefinition.Key);
 				CreateCity(cityDefinition.Value, saveVersion, cityElement);
 			}
-			catch (MissingAssetException<CityDatabase> arg)
+			catch (Database<CityDatabase>.MissingAssetException arg)
 			{
 				((CLogger<WorldMapCityManager>)this).LogError((object)$"{arg}\nThis asset will be skipped.", (CLogLevel)1, true, true);
 			}
@@ -256,7 +256,7 @@ public class WorldMapCityManager : Manager<WorldMapCityManager>, ISerializable, 
 
 	private void Update()
 	{
-		if (!(((StateMachine)ApplicationManager.Application).State.GetName() == "WorldMap"))
+		if (!(ApplicationManager.Application.State.GetName() == "WorldMap"))
 		{
 			return;
 		}
@@ -336,7 +336,7 @@ public class WorldMapCityManager : Manager<WorldMapCityManager>, ISerializable, 
 		{
 			serializedCities.Cities.Add(city.Serialize() as SerializedCity);
 		}
-		return (ISerializedData)(object)serializedCities;
+		return serializedCities;
 	}
 
 	[DevConsoleCommand("ShowAllCities")]

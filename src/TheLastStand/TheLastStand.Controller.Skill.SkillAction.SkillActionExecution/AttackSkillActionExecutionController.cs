@@ -7,7 +7,6 @@ using TheLastStand.Controller.Trophy.TrophyConditions;
 using TheLastStand.Controller.Unit.Pathfinding;
 using TheLastStand.Database.Unit;
 using TheLastStand.Framework;
-using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Manager;
 using TheLastStand.Manager.Skill;
 using TheLastStand.Manager.Unit;
@@ -70,15 +69,15 @@ public class AttackSkillActionExecutionController : SkillActionExecutionControll
 		{
 			if (attackSkillAction.HeroHitsEnemyCount >= SkillManager.HitHardAudioClip.Item1 && (Object)(object)SkillManager.HitHardAudioClip.Item2 != (Object)null)
 			{
-				ObjectPooler.GetPooledGameObject("Skill SFX Spatialized", ResourcePooler.LoadOnce<GameObject>("Prefab/Skills SFXs/Skill SFX Spatialized", false), (Transform)null, false).GetComponent<OneShotSound>().PlaySpatialized(SkillManager.HitHardAudioClip.Item2, currentTargetTile);
+				ObjectPooler.GetPooledGameObject("Skill SFX Spatialized", ResourcePooler.LoadOnce<GameObject>("Prefab/Skills SFXs/Skill SFX Spatialized", failSilently: false)).GetComponent<OneShotSound>().PlaySpatialized(SkillManager.HitHardAudioClip.Item2, currentTargetTile);
 			}
 			else if (attackSkillAction.HeroHitsEnemyCount >= SkillManager.HitMediumAudioClip.Item1 && (Object)(object)SkillManager.HitMediumAudioClip.Item2 != (Object)null)
 			{
-				ObjectPooler.GetPooledGameObject("Skill SFX Spatialized", ResourcePooler.LoadOnce<GameObject>("Prefab/Skills SFXs/Skill SFX Spatialized", false), (Transform)null, false).GetComponent<OneShotSound>().PlaySpatialized(SkillManager.HitMediumAudioClip.Item2, currentTargetTile);
+				ObjectPooler.GetPooledGameObject("Skill SFX Spatialized", ResourcePooler.LoadOnce<GameObject>("Prefab/Skills SFXs/Skill SFX Spatialized", failSilently: false)).GetComponent<OneShotSound>().PlaySpatialized(SkillManager.HitMediumAudioClip.Item2, currentTargetTile);
 			}
 			else if (attackSkillAction.HeroHitsEnemyCount >= SkillManager.HitSoftAudioClip.Item1 && (Object)(object)SkillManager.HitSoftAudioClip.Item2 != (Object)null)
 			{
-				ObjectPooler.GetPooledGameObject("Skill SFX Spatialized", ResourcePooler.LoadOnce<GameObject>("Prefab/Skills SFXs/Skill SFX Spatialized", false), (Transform)null, false).GetComponent<OneShotSound>().PlaySpatialized(SkillManager.HitSoftAudioClip.Item2, currentTargetTile);
+				ObjectPooler.GetPooledGameObject("Skill SFX Spatialized", ResourcePooler.LoadOnce<GameObject>("Prefab/Skills SFXs/Skill SFX Spatialized", failSilently: false)).GetComponent<OneShotSound>().PlaySpatialized(SkillManager.HitSoftAudioClip.Item2, currentTargetTile);
 			}
 		}
 		if (attackSkillAction.HeroHitsHeroCount > 0)
@@ -86,7 +85,7 @@ public class AttackSkillActionExecutionController : SkillActionExecutionControll
 			if (EnemyUnitDatabase.HitByEnemySoundDefinitions.TryGetValue("PlayableUnits", out var value))
 			{
 				string soundId = value.GetSoundId(attackSkillAction.HeroHitsHeroCount);
-				ObjectPooler.GetPooledComponent<OneShotSound>("HitsSFX", TPSingleton<PlayableUnitManager>.Instance.HitSFXPrefab, (Transform)null, false).Play(ResourcePooler.LoadOnce<AudioClip>("Sounds/SFX/PlayableUnitHits/" + soundId, false));
+				ObjectPooler.GetPooledComponent<OneShotSound>("HitsSFX", TPSingleton<PlayableUnitManager>.Instance.HitSFXPrefab, (Transform)null, dontSetParent: false).Play(ResourcePooler.LoadOnce<AudioClip>("Sounds/SFX/PlayableUnitHits/" + soundId, failSilently: false));
 			}
 			else
 			{
@@ -98,7 +97,7 @@ public class AttackSkillActionExecutionController : SkillActionExecutionControll
 			if (EnemyUnitDatabase.HitByEnemySoundDefinitions.TryGetValue("Buildings", out var value2))
 			{
 				string soundId2 = value2.GetSoundId(attackSkillAction.HeroHitsBuildings.Count);
-				ObjectPooler.GetPooledComponent<OneShotSound>("HitsSFX Spatialized", TPSingleton<PlayableUnitManager>.Instance.HitSFXSpatializedPrefab, (Transform)null, false).PlaySpatialized(ResourcePooler.LoadOnce<AudioClip>("Sounds/SFX/BuildingHits/" + soundId2, false), currentTargetTile);
+				ObjectPooler.GetPooledComponent<OneShotSound>("HitsSFX Spatialized", TPSingleton<PlayableUnitManager>.Instance.HitSFXSpatializedPrefab, (Transform)null, dontSetParent: false).PlaySpatialized(ResourcePooler.LoadOnce<AudioClip>("Sounds/SFX/BuildingHits/" + soundId2, failSilently: false), currentTargetTile);
 			}
 			else
 			{
@@ -168,7 +167,7 @@ public class AttackSkillActionExecutionController : SkillActionExecutionControll
 						});
 						playableUnit.PlayableUnitController.AddCrossedTiles(TileMapController.DistanceBetweenTiles(caster.OriginTile, currentTargetTile), skill.HasNoMomentum);
 					}
-					caster.UnitController.PrepareForMovement(playWalkAnim: true, followPathOrientation: false, skill.SkillDefinition.SkillCastFxDefinition.FollowFxDefinition.Speed.EvalToFloat((InterpreterContext)(object)base.SkillActionExecution.CastFx.CastFXInterpreterContext), skill.SkillDefinition.SkillCastFxDefinition.FollowFxDefinition.Delay.EvalToFloat((InterpreterContext)(object)base.SkillActionExecution.CastFx.CastFXInterpreterContext)).StartTask();
+					caster.UnitController.PrepareForMovement(playWalkAnim: true, followPathOrientation: false, skill.SkillDefinition.SkillCastFxDefinition.FollowFxDefinition.Speed.EvalToFloat(base.SkillActionExecution.CastFx.CastFXInterpreterContext), skill.SkillDefinition.SkillCastFxDefinition.FollowFxDefinition.Delay.EvalToFloat(base.SkillActionExecution.CastFx.CastFXInterpreterContext)).StartTask();
 					return;
 				}
 			}

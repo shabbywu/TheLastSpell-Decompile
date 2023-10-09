@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using TPLib;
@@ -176,10 +175,10 @@ public class Building : ISerializable, IDeserializable, IBossPhaseActor, ITileOb
 			{
 				if (BossPhaseActorId != null)
 				{
-					DictionaryExtensions.TryRemoveAtKey<string, IBossPhaseActor>(TPSingleton<BossManager>.Instance.BossPhaseActors, BossPhaseActorId, (IBossPhaseActor)this);
+					TPSingleton<BossManager>.Instance.BossPhaseActors.TryRemoveAtKey(BossPhaseActorId, this);
 				}
 				bossPhaseActorId = value;
-				DictionaryExtensions.AddAtKey<string, IBossPhaseActor>(TPSingleton<BossManager>.Instance.BossPhaseActors, BossPhaseActorId, (IBossPhaseActor)this);
+				TPSingleton<BossManager>.Instance.BossPhaseActors.AddAtKey(BossPhaseActorId, (IBossPhaseActor)this);
 			}
 		}
 	}
@@ -227,7 +226,7 @@ public class Building : ISerializable, IDeserializable, IBossPhaseActor, ITileOb
 	{
 		BuildingController = buildingController;
 		BuildingView = buildingView;
-		Deserialize((ISerializedData)(object)container);
+		Deserialize(container);
 	}
 
 	public Building(BuildingDefinition buildingDefinition, BuildingController buildingController, BuildingView buildingView, Tile tile)
@@ -248,7 +247,7 @@ public class Building : ISerializable, IDeserializable, IBossPhaseActor, ITileOb
 	public virtual void Init(SerializedBuilding container)
 	{
 		CreateModules();
-		DeserializeModules((ISerializedData)(object)container);
+		DeserializeModules(container);
 		if (IsTrap)
 		{
 			TPSingleton<TileMapView>.Instance.DisplayBuildingInstantly(this, OriginTile, (BattleModule.RemainingTrapCharges == 0) ? "_Disabled" : string.Empty);
@@ -268,7 +267,7 @@ public class Building : ISerializable, IDeserializable, IBossPhaseActor, ITileOb
 	{
 		if (!BossActorDeathPrepared)
 		{
-			DictionaryExtensions.AddValueOrCreateKey<string, int>(TPSingleton<BossManager>.Instance.BossPhaseActorsKills, BossPhaseActorId, 1, (Func<int, int, int>)((int a, int b) => a + b));
+			TPSingleton<BossManager>.Instance.BossPhaseActorsKills.AddValueOrCreateKey(BossPhaseActorId, 1, (int a, int b) => a + b);
 			BossActorDeathPrepared = true;
 		}
 	}
@@ -406,8 +405,6 @@ public class Building : ISerializable, IDeserializable, IBossPhaseActor, ITileOb
 	public virtual ISerializedData Serialize()
 	{
 		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
 		SerializedBuilding serializedBuilding = new SerializedBuilding
 		{
 			BossPhaseActorId = BossPhaseActorId,
@@ -421,6 +418,6 @@ public class Building : ISerializable, IDeserializable, IBossPhaseActor, ITileOb
 		BattleModule?.Serialize(serializedBuilding);
 		ProductionModule?.Serialize(serializedBuilding);
 		BrazierModule?.Serialize(serializedBuilding);
-		return (ISerializedData)(object)serializedBuilding;
+		return serializedBuilding;
 	}
 }

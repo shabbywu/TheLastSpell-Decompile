@@ -93,7 +93,7 @@ public class TrophyDisplay : MonoBehaviour
 		{
 			genericTooltipDisplayer.LocaKey = description;
 		}
-		backgroundImage.sprite = ResourcePooler.LoadOnce<Sprite>(backgroundPath, false);
+		backgroundImage.sprite = ResourcePooler.LoadOnce<Sprite>(backgroundPath, failSilently: false);
 		((Behaviour)jewelImage).enabled = !ignoreGem;
 		if (!ignoreGem)
 		{

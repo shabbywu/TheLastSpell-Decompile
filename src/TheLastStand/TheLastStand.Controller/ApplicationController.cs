@@ -26,13 +26,13 @@ public class ApplicationController
 
 	public void BackToPreviousState()
 	{
-		if (((PushdownAutomata)Application).PreviousStatesStack.Count == 0)
+		if (Application.PreviousStatesStack.Count == 0)
 		{
-			((CLogger<ApplicationManager>)TPSingleton<ApplicationManager>.Instance).LogError((object)$"Trying to back to a previous state (currently {((StateMachine)Application).State}) but no previous state found!", (CLogLevel)2, true, true);
+			((CLogger<ApplicationManager>)TPSingleton<ApplicationManager>.Instance).LogError((object)$"Trying to back to a previous state (currently {Application.State}) but no previous state found!", (CLogLevel)2, true, true);
 		}
 		else
 		{
-			((StateMachine)Application).SetState(((PushdownAutomata)Application).PreviousStatesStack.Pop());
+			Application.SetState(Application.PreviousStatesStack.Pop());
 		}
 	}
 
@@ -43,49 +43,49 @@ public class ApplicationController
 			switch (stateName)
 			{
 			case "ExitApp":
-				value = (State)(object)new ExitAppState();
+				value = new ExitAppState();
 				break;
 			case "Game":
-				value = (State)(object)new GameState();
+				value = new GameState();
 				break;
 			case "GameLobby":
-				value = (State)(object)new GameLobbyState();
+				value = new GameLobbyState();
 				break;
 			case "LoadGame":
-				value = (State)(object)new LoadGameState();
+				value = new LoadGameState();
 				break;
 			case "ReloadGame":
-				value = (State)(object)new ReloadGameState();
+				value = new ReloadGameState();
 				break;
 			case "LoadWorldMap":
-				value = (State)(object)new LoadWorldMapState();
+				value = new LoadWorldMapState();
 				break;
 			case "WorldMap":
-				value = (State)(object)new WorldMapState();
+				value = new WorldMapState();
 				break;
 			case "MetaShops":
-				value = (State)(object)new MetaShopsState();
+				value = new MetaShopsState();
 				break;
 			case "NewGame":
-				value = (State)(object)new NewGameState();
+				value = new NewGameState();
 				break;
 			case "Settings":
-				value = (State)(object)new SettingsState();
+				value = new SettingsState();
 				break;
 			case "LevelEditor":
-				value = (State)(object)new LevelEditorState();
+				value = new LevelEditorState();
 				break;
 			case "Credits":
-				value = (State)(object)new CreditsState();
+				value = new CreditsState();
 				break;
 			case "AnimatedCutscene":
-				value = (State)(object)new AnimatedCutsceneState();
+				value = new AnimatedCutsceneState();
 				break;
 			case "ModList":
-				value = (State)(object)new ModListState();
+				value = new ModListState();
 				break;
 			case "SplashScreen":
-				value = (State)(object)new TheLastStand.Controller.ApplicationState.SplashScreen();
+				value = new TheLastStand.Controller.ApplicationState.SplashScreen();
 				break;
 			default:
 				((CLogger<ApplicationManager>)TPSingleton<ApplicationManager>.Instance).LogError((object)("Unknown state " + stateName), (CLogLevel)2, true, true);
@@ -109,7 +109,7 @@ public class ApplicationController
 		case "MetaShops":
 		case "NewGame":
 		case "WorldMap":
-			if (((StateMachine)Application).State == null)
+			if (Application.State == null)
 			{
 				SetState(value);
 			}
@@ -124,10 +124,10 @@ public class ApplicationController
 
 	public void SetState(State newState, params object[] args)
 	{
-		((CLogger<ApplicationManager>)TPSingleton<ApplicationManager>.Instance).Log((object)$"State transition : {((StateMachine)Application).State} -> {newState}", (CLogLevel)0, false, false);
-		((StateMachine)Application).SetState(newState);
-		ApplicationManager.CurrentStateName = ((StateMachine)Application).State.GetName();
-		this.ApplicationStateChangeEvent?.Invoke(((StateMachine)Application).State);
+		((CLogger<ApplicationManager>)TPSingleton<ApplicationManager>.Instance).Log((object)$"State transition : {Application.State} -> {newState}", (CLogLevel)0, false, false);
+		Application.SetState(newState);
+		ApplicationManager.CurrentStateName = Application.State.GetName();
+		this.ApplicationStateChangeEvent?.Invoke(Application.State);
 	}
 
 	public IEnumerator SetStateCoroutine(State newState)

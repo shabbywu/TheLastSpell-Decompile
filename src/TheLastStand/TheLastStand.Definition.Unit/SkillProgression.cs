@@ -20,7 +20,7 @@ public class SkillProgression
 		{
 			if (skillDefinitionCache == null)
 			{
-				skillDefinitionCache = DictionaryExtensions.GetValueOrDefault<string, SkillDefinition>(SkillDatabase.SkillDefinitions, Id);
+				skillDefinitionCache = SkillDatabase.SkillDefinitions.GetValueOrDefault(Id);
 			}
 			return skillDefinitionCache;
 		}

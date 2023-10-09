@@ -92,59 +92,59 @@ public class TurnPanel : MonoBehaviour
 	private void RefreshJoystickNavigation()
 	{
 		Selectable val = (((Component)dayEndTurnButton).gameObject.activeSelf ? dayEndTurnButton : nightEndTurnButton);
-		SelectableExtensions.SetSelectOnUp(goldSelectable, val);
-		SelectableExtensions.SetSelectOnUp(materialsSelectable, val);
-		SelectableExtensions.SetSelectOnUp(workersSelectable, goldSelectable);
-		SelectableExtensions.SetSelectOnDown(goldSelectable, workersSelectable);
-		SelectableExtensions.SetSelectOnDown(materialsSelectable, workersSelectable);
-		SelectableExtensions.SetSelectOnRight(goldSelectable, materialsSelectable);
-		SelectableExtensions.SetSelectOnLeft(materialsSelectable, goldSelectable);
+		goldSelectable.SetSelectOnUp(val);
+		materialsSelectable.SetSelectOnUp(val);
+		workersSelectable.SetSelectOnUp(goldSelectable);
+		goldSelectable.SetSelectOnDown(workersSelectable);
+		materialsSelectable.SetSelectOnDown(workersSelectable);
+		goldSelectable.SetSelectOnRight(materialsSelectable);
+		materialsSelectable.SetSelectOnLeft(goldSelectable);
 		if (((Component)damnedSoulsSelectable).gameObject.activeSelf)
 		{
-			SelectableExtensions.SetSelectOnDown(val, damnedSoulsSelectable);
-			SelectableExtensions.SetSelectOnUp(damnedSoulsSelectable, val);
-			SelectableExtensions.SetSelectOnLeft(damnedSoulsSelectable, materialsSelectable);
-			SelectableExtensions.SetSelectOnRight(materialsSelectable, damnedSoulsSelectable);
-			SelectableExtensions.SetSelectOnDown(damnedSoulsSelectable, workersSelectable);
+			val.SetSelectOnDown(damnedSoulsSelectable);
+			damnedSoulsSelectable.SetSelectOnUp(val);
+			damnedSoulsSelectable.SetSelectOnLeft(materialsSelectable);
+			materialsSelectable.SetSelectOnRight(damnedSoulsSelectable);
+			damnedSoulsSelectable.SetSelectOnDown(workersSelectable);
 		}
 		else
 		{
-			SelectableExtensions.SetSelectOnDown(val, materialsSelectable);
+			val.SetSelectOnDown(materialsSelectable);
 		}
 		if (PhasePanel.RemainingEnemiesTextEnabled)
 		{
 			if (((Component)damnedSoulsSelectable).gameObject.activeSelf)
 			{
-				SelectableExtensions.SetSelectOnUp(enemiesLeftSelectable, damnedSoulsSelectable);
-				SelectableExtensions.SetSelectOnDown(damnedSoulsSelectable, enemiesLeftSelectable);
+				enemiesLeftSelectable.SetSelectOnUp(damnedSoulsSelectable);
+				damnedSoulsSelectable.SetSelectOnDown(enemiesLeftSelectable);
 			}
 			else
 			{
-				SelectableExtensions.SetSelectOnUp(enemiesLeftSelectable, materialsSelectable);
-				SelectableExtensions.SetSelectOnLeft(enemiesLeftSelectable, workersSelectable);
-				SelectableExtensions.SetSelectOnRight(workersSelectable, enemiesLeftSelectable);
+				enemiesLeftSelectable.SetSelectOnUp(materialsSelectable);
+				enemiesLeftSelectable.SetSelectOnLeft(workersSelectable);
+				workersSelectable.SetSelectOnRight(enemiesLeftSelectable);
 			}
 		}
 		else
 		{
-			SelectableExtensions.SetSelectOnRight(workersSelectable, (Selectable)null);
+			workersSelectable.SetSelectOnRight(null);
 		}
-		SelectableExtensions.SetMode(apocalypseSelectable, (Mode)4);
-		SelectableExtensions.SetMode(glyphsSelectable, (Mode)4);
-		SelectableExtensions.SetSelectOnRight(val, ((Component)glyphsSelectable).gameObject.activeSelf ? glyphsSelectable : apocalypseSelectable);
-		SelectableExtensions.SetSelectOnRight(enemiesLeftSelectable, ((Component)glyphsSelectable).gameObject.activeSelf ? glyphsSelectable : apocalypseSelectable);
-		SelectableExtensions.SetSelectOnLeft(apocalypseSelectable, ((Component)glyphsSelectable).gameObject.activeSelf ? glyphsSelectable : val);
-		SelectableExtensions.SetSelectOnLeft(glyphsSelectable, val);
-		SelectableExtensions.SetSelectOnRight(glyphsSelectable, apocalypseSelectable);
+		apocalypseSelectable.SetMode((Mode)4);
+		glyphsSelectable.SetMode((Mode)4);
+		val.SetSelectOnRight(((Component)glyphsSelectable).gameObject.activeSelf ? glyphsSelectable : apocalypseSelectable);
+		enemiesLeftSelectable.SetSelectOnRight(((Component)glyphsSelectable).gameObject.activeSelf ? glyphsSelectable : apocalypseSelectable);
+		apocalypseSelectable.SetSelectOnLeft(((Component)glyphsSelectable).gameObject.activeSelf ? glyphsSelectable : val);
+		glyphsSelectable.SetSelectOnLeft(val);
+		glyphsSelectable.SetSelectOnRight(apocalypseSelectable);
 		if (TPSingleton<GameManager>.Instance.Game.Cycle == Game.E_Cycle.Day)
 		{
 			Selectable foldButton = TPSingleton<ToDoListView>.Instance.GetFoldButton();
-			SelectableExtensions.SetSelectOnDown(workersSelectable, foldButton);
-			SelectableExtensions.SetSelectOnUp(foldButton, workersSelectable);
+			workersSelectable.SetSelectOnDown(foldButton);
+			foldButton.SetSelectOnUp(workersSelectable);
 		}
 		else
 		{
-			SelectableExtensions.SetSelectOnDown(workersSelectable, (Selectable)null);
+			workersSelectable.SetSelectOnDown(null);
 		}
 	}
 
@@ -162,7 +162,7 @@ public class TurnPanel : MonoBehaviour
 		if (ApocalypseManager.CurrentApocalypseIndex > 0)
 		{
 			apocalypseObject.SetActive(true);
-			apocalypseNumber.sprite = ResourcePooler<Sprite>.LoadOnce("View/Sprites/UI/WorldMap/ApocalypseLevels/ApocalypseLevel_" + ApocalypseManager.CurrentApocalypseIndex.ToString("00"), false);
+			apocalypseNumber.sprite = ResourcePooler<Sprite>.LoadOnce("View/Sprites/UI/WorldMap/ApocalypseLevels/ApocalypseLevel_" + ApocalypseManager.CurrentApocalypseIndex.ToString("00"));
 			apocalypseFlameAnimator.Play("WorldMapFlamesIdle");
 			apocalypseTooltip.SetApocalypsesToDisplay(ApocalypseManager.CurrentApocalypseIndex);
 		}

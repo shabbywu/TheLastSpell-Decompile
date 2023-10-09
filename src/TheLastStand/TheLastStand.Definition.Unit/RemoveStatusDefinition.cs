@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Xml.Linq;
 using TPLib.Log;
@@ -9,7 +8,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit;
 
-public class RemoveStatusDefinition : Definition
+public class RemoveStatusDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public static class Constants
 	{
@@ -29,7 +28,7 @@ public class RemoveStatusDefinition : Definition
 	public Status.E_StatusType Status { get; private set; }
 
 	public RemoveStatusDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

@@ -343,7 +343,7 @@ public class EnemyUnitTemplateDefinition : UnitTemplateDefinition
 			foreach (XElement item in ((XContainer)((XContainer)val).Element(XName.op_Implicit("VisualVariants"))).Elements(XName.op_Implicit("VisualVariant")))
 			{
 				XAttribute val6 = item.Attribute(XName.op_Implicit("Id"));
-				if (XDocumentExtensions.IsNullOrEmpty(val6))
+				if (val6.IsNullOrEmpty())
 				{
 					CLoggerManager.Log((object)("EnemyUnitTemplateDefinition " + Id + " VisualVariant must have a valid Id"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 				}
@@ -361,7 +361,7 @@ public class EnemyUnitTemplateDefinition : UnitTemplateDefinition
 		if (val7 != null)
 		{
 			XAttribute val8 = val7.Attribute(XName.op_Implicit("Value"));
-			if (XDocumentExtensions.IsNullOrEmpty(val8))
+			if (val8.IsNullOrEmpty())
 			{
 				CLoggerManager.Log((object)("EnemyUnitTemplateDefinition " + Id + " has an Element DeathSoundFolderName but without a valid Value attribute"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 				return;
@@ -376,7 +376,7 @@ public class EnemyUnitTemplateDefinition : UnitTemplateDefinition
 		if (val9 != null)
 		{
 			XAttribute val10 = val9.Attribute(XName.op_Implicit("Value"));
-			if (XDocumentExtensions.IsNullOrEmpty(val10))
+			if (val10.IsNullOrEmpty())
 			{
 				CLoggerManager.Log((object)("EnemyUnitTemplateDefinition " + Id + " has an Element MoveSoundFolderName but without a valid Value attribute"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 				return;
@@ -558,7 +558,7 @@ public class EnemyUnitTemplateDefinition : UnitTemplateDefinition
 			Panic = value.Panic;
 		}
 		XElement val27 = ((XContainer)val).Element(XName.op_Implicit("Behavior"));
-		if (XDocumentExtensions.IsNullOrEmpty(val27) && value == null)
+		if (val27.IsNullOrEmpty() && value == null)
 		{
 			CLoggerManager.Log((object)("Enemy " + Id + " must have a valid Behavior element or a template to take it from!"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 			return;
@@ -640,7 +640,7 @@ public class EnemyUnitTemplateDefinition : UnitTemplateDefinition
 			foreach (XElement item5 in ((XContainer)((XContainer)val).Element(XName.op_Implicit("VisualEvolutions"))).Elements(XName.op_Implicit("VisualId")))
 			{
 				XAttribute val30 = item5.Attribute(XName.op_Implicit("Id"));
-				if (XDocumentExtensions.IsNullOrEmpty(val30))
+				if (val30.IsNullOrEmpty())
 				{
 					CLoggerManager.Log((object)("EnemyUnitTemplateDefinition " + Id + " VisualId must have a valid Id"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 				}

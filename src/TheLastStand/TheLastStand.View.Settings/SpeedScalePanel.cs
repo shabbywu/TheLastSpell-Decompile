@@ -39,13 +39,13 @@ public class SpeedScalePanel : SettingsFieldPanel
 		base.Awake();
 		slider.minValue = SettingsManager.GameAccelerationMinValue;
 		slider.maxValue = SettingsManager.GameAccelerationMaxValue;
-		((UnityEvent<float>)(object)slider.onValueChanged).AddListener((UnityAction<float>)OnSliderValueChanged);
+		((UnityEvent<float>)slider.onValueChanged).AddListener((UnityAction<float>)OnSliderValueChanged);
 	}
 
 	protected override void OnDestroy()
 	{
 		base.OnDestroy();
-		((UnityEvent<float>)(object)slider.onValueChanged).RemoveListener((UnityAction<float>)OnSliderValueChanged);
+		((UnityEvent<float>)slider.onValueChanged).RemoveListener((UnityAction<float>)OnSliderValueChanged);
 	}
 
 	private void OnSliderValueChanged(float newSpeedScale)

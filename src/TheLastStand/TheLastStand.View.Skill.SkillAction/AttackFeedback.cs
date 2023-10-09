@@ -47,7 +47,7 @@ public class AttackFeedback : SerializedMonoBehaviour, IDisplayableEffect
 		{
 			if ((Object)(object)damageDisplayPrefab == (Object)null)
 			{
-				damageDisplayPrefab = ResourcePooler.LoadOnce<DamageDisplay>("Prefab/Displayable Effect/UI Effect Displays/DamageDisplay", false);
+				damageDisplayPrefab = ResourcePooler.LoadOnce<DamageDisplay>("Prefab/Displayable Effect/UI Effect Displays/DamageDisplay", failSilently: false);
 			}
 			return damageDisplayPrefab;
 		}
@@ -59,7 +59,7 @@ public class AttackFeedback : SerializedMonoBehaviour, IDisplayableEffect
 		{
 			if ((Object)(object)impactFxPrefab == (Object)null)
 			{
-				impactFxPrefab = ResourcePooler.LoadOnce<GameObject>("Prefab/Displayable Effect/Impact FX", false);
+				impactFxPrefab = ResourcePooler.LoadOnce<GameObject>("Prefab/Displayable Effect/Impact FX", failSilently: false);
 			}
 			return impactFxPrefab;
 		}
@@ -99,7 +99,7 @@ public class AttackFeedback : SerializedMonoBehaviour, IDisplayableEffect
 		{
 			AttackSkillActionExecutionTileData attackSkillActionExecutionTileData = damageInstancesBeingDisplayed.Dequeue();
 			CLoggerManager.Log((object)$"Displaying damageInstance {attackSkillActionExecutionTileData.TotalDamage}", (Object)(object)this, (LogType)3, (CLogLevel)0, true, "Feedbacks", false);
-			DamageDisplay pooledComponent = ObjectPooler.GetPooledComponent<DamageDisplay>("DamageDisplay", DamageDisplayPrefab, EffectManager.EffectDisplaysParent, false);
+			DamageDisplay pooledComponent = ObjectPooler.GetPooledComponent<DamageDisplay>("DamageDisplay", DamageDisplayPrefab, EffectManager.EffectDisplaysParent, dontSetParent: false);
 			((Object)pooledComponent).name = "DamageDisplay - " + ((Object)DamageableView.GameObject).name;
 			pooledComponent.FollowElement.ChangeTarget(DamageableView.DamageableHUD.Transform);
 			pooledComponent.Init(attackSkillActionExecutionTileData);

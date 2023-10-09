@@ -5,7 +5,6 @@ using DG.Tweening;
 using TPLib;
 using TPLib.Log;
 using TPLib.Yield;
-using TheLastStand.Framework.Automaton;
 using TheLastStand.Model;
 using TheLastStand.Model.Item;
 using TheLastStand.View.HUD;
@@ -54,7 +53,7 @@ public class HUDJoystickNavigationManager : Manager<HUDJoystickNavigationManager
 
 	public bool CanOpenHUDNavigationMode()
 	{
-		if (((StateMachine)ApplicationManager.Application).State.GetName() != "Game")
+		if (ApplicationManager.Application.State.GetName() != "Game")
 		{
 			return false;
 		}
@@ -68,7 +67,7 @@ public class HUDJoystickNavigationManager : Manager<HUDJoystickNavigationManager
 
 	public bool CanExitHUDNavigationMode()
 	{
-		if (((StateMachine)ApplicationManager.Application).State.GetName() == "Game")
+		if (ApplicationManager.Application.State.GetName() == "Game")
 		{
 			return TPSingleton<GameManager>.Instance.Game.State switch
 			{
@@ -77,7 +76,7 @@ public class HUDJoystickNavigationManager : Manager<HUDJoystickNavigationManager
 				_ => false, 
 			};
 		}
-		if (((StateMachine)ApplicationManager.Application).State.GetName() == "Settings" || ((StateMachine)ApplicationManager.Application).State.GetName() == "GameLobby")
+		if (ApplicationManager.Application.State.GetName() == "Settings" || ApplicationManager.Application.State.GetName() == "GameLobby")
 		{
 			return false;
 		}
@@ -163,7 +162,7 @@ public class HUDJoystickNavigationManager : Manager<HUDJoystickNavigationManager
 
 	public void OnPopupExitToWorld()
 	{
-		if (InputManager.JoystickConfig.HUDNavigation.StayInHUDOnPopupExit && (((StateMachine)ApplicationManager.Application).State.GetName() != "Game" || TPSingleton<GameManager>.Instance.Game.State != Game.E_State.PlaceUnit))
+		if (InputManager.JoystickConfig.HUDNavigation.StayInHUDOnPopupExit && (ApplicationManager.Application.State.GetName() != "Game" || TPSingleton<GameManager>.Instance.Game.State != Game.E_State.PlaceUnit))
 		{
 			TPSingleton<HUDJoystickNavigationManager>.Instance.SelectHUDDefaultPanel();
 		}
@@ -218,7 +217,7 @@ public class HUDJoystickNavigationManager : Manager<HUDJoystickNavigationManager
 	protected override void Awake()
 	{
 		base.Awake();
-		if ((Object)(object)firstHUDJoystickTarget == (Object)null && ((StateMachine)ApplicationManager.Application).State.GetName() == "Game")
+		if ((Object)(object)firstHUDJoystickTarget == (Object)null && ApplicationManager.Application.State.GetName() == "Game")
 		{
 			((CLogger<HUDJoystickNavigationManager>)this).LogError((object)"Missing firstHUDJoystickTarget reference! Trying to get it dynamically even though it may be a wrong panel!", (Object)(object)((Component)this).gameObject, (CLogLevel)1, true, true);
 			firstHUDJoystickTarget = Object.FindObjectOfType<HUDJoystickTarget>();

@@ -23,7 +23,7 @@ public class TemplateDemoDatabase : Database<TemplateDemoDatabase>
 		DeserializeUsingGenericTopologicSortMethod();
 		foreach (KeyValuePair<string, TemplateDemoDefinition> demoDefinition in DemoDefinitions)
 		{
-			CLoggerManager.Log((object)((object)demoDefinition.Value).ToString(), (LogType)3, (CLogLevel)1, true, "StaticLog", false);
+			CLoggerManager.Log((object)demoDefinition.Value.ToString(), (LogType)3, (CLogLevel)1, true, "StaticLog", false);
 		}
 	}
 
@@ -34,7 +34,7 @@ public class TemplateDemoDatabase : Database<TemplateDemoDatabase>
 			TemplateDemoDefinition templateDemoDefinition = new TemplateDemoDefinition((XContainer)(object)item);
 			DemoDefinitions.Add(templateDemoDefinition.Id, templateDemoDefinition);
 		}
-		foreach (TemplateDemoDefinition item2 in TopologicSorter.Sort<TemplateDemoDefinition>((IEnumerable<TemplateDemoDefinition>)DemoDefinitions.Values).ToList())
+		foreach (TemplateDemoDefinition item2 in TopologicSorter.Sort(DemoDefinitions.Values).ToList())
 		{
 			item2.DeserializeAfterTemplatesOrdering();
 		}
@@ -42,8 +42,8 @@ public class TemplateDemoDatabase : Database<TemplateDemoDatabase>
 
 	private void DeserializeUsingGenericTopologicSortMethod()
 	{
-		IEnumerable<XElement> enumerable = ((XContainer)((XContainer)XDocument.Parse(demoTextAsset.text, (LoadOptions)2)).Element(XName.op_Implicit("TemplateDemoDefinitions"))).Elements(XName.op_Implicit("DemoDefinition"));
-		foreach (XElement item in base.SortElementsByDependencies(enumerable))
+		IEnumerable<XElement> elements = ((XContainer)((XContainer)XDocument.Parse(demoTextAsset.text, (LoadOptions)2)).Element(XName.op_Implicit("TemplateDemoDefinitions"))).Elements(XName.op_Implicit("DemoDefinition"));
+		foreach (XElement item in SortElementsByDependencies(elements))
 		{
 			TemplateDemoDefinition templateDemoDefinition = new TemplateDemoDefinition((XContainer)(object)item);
 			DemoDefinitions.Add(templateDemoDefinition.Id, templateDemoDefinition);

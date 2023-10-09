@@ -5,7 +5,7 @@ using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Unit.Enemy.Boss;
 
-public class BossPhaseDefinition : Definition
+public class BossPhaseDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public string Id { get; }
 
@@ -22,7 +22,7 @@ public class BossPhaseDefinition : Definition
 
 
 	public BossPhaseDefinition(XContainer container, string id)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 		Id = id;
 	}

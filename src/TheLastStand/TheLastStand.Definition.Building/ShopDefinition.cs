@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Building;
 
-public class ShopDefinition : Definition
+public class ShopDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public float SellingMultiplier { get; private set; }
 
@@ -16,7 +16,7 @@ public class ShopDefinition : Definition
 	public Dictionary<string, ShopEvolutionDefinition> ShopEvolutionDefinitions { get; private set; }
 
 	public ShopDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

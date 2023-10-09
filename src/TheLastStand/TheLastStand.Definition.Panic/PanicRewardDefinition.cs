@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Panic;
 
-public class PanicRewardDefinition : Definition
+public class PanicRewardDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public class DayGenerationDatas
 	{
@@ -28,7 +28,7 @@ public class PanicRewardDefinition : Definition
 	public Node Materials { get; private set; }
 
 	public PanicRewardDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
@@ -36,9 +36,9 @@ public class PanicRewardDefinition : Definition
 	{
 		XContainer obj = ((container is XElement) ? container : null);
 		XAttribute val = obj.Element(XName.op_Implicit("Gold")).Attribute(XName.op_Implicit("Value"));
-		Gold = Parser.Parse(val.Value, (Dictionary<string, string>)null);
+		Gold = Parser.Parse(val.Value);
 		XAttribute val2 = obj.Element(XName.op_Implicit("Materials")).Attribute(XName.op_Implicit("Value"));
-		Materials = Parser.Parse(val2.Value, (Dictionary<string, string>)null);
+		Materials = Parser.Parse(val2.Value);
 		XElement val3 = obj.Element(XName.op_Implicit("ItemsLists"));
 		if (val3 == null)
 		{

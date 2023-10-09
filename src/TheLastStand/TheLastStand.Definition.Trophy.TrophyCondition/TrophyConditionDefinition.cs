@@ -1,15 +1,14 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Trophy.TrophyCondition;
 
-public abstract class TrophyConditionDefinition : Definition
+public abstract class TrophyConditionDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public virtual object[] DescriptionLocalizationParameters { get; }
 
 	public TrophyConditionDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

@@ -13,7 +13,7 @@ using UnityEngine;
 namespace TheLastStand.Definition.Unit;
 
 [Serializable]
-public class UnitStatDefinition : Definition
+public class UnitStatDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public enum E_Stat
 	{
@@ -113,7 +113,7 @@ public class UnitStatDefinition : Definition
 	public string ShortName => Localizer.Get(string.Format("{0}{1}", "UnitStat_ShortName_", Id));
 
 	public UnitStatDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
@@ -122,7 +122,7 @@ public class UnitStatDefinition : Definition
 		//IL_01ec: Unknown result type (might be due to invalid IL or missing references)
 		XElement val = (XElement)(object)((container is XElement) ? container : null);
 		XAttribute val2 = val.Attribute(XName.op_Implicit("Id"));
-		if (XDocumentExtensions.IsNullOrEmpty(val2))
+		if (val2.IsNullOrEmpty())
 		{
 			CLoggerManager.Log((object)"The unit stat has no Id!", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 			return;

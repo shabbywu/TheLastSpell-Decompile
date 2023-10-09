@@ -259,10 +259,10 @@ public class SoulsRewardPanel : MonoBehaviour
 	public IEnumerator ShowTrophiesPanel(bool isDefeat)
 	{
 		((TMP_Text)damnedSoulsTotalText).text = $"{Mathf.Max(0f, (float)(ApplicationManager.Application.DamnedSouls - TPSingleton<TrophyManager>.Instance.ComputedDamnedSoulsEarnedThisNight))}";
-		TweenExtensions.SetFullId<TweenerCore<float, float, FloatOptions>>(DOTweenModuleUI.DOFade(soulsRewardCanvasGroup, 1f, PlayableUnitManager.DebugForceSkipNightReport ? 0f : 1f), "SoulsRewardFadeIn", (Component)(object)this);
+		DOTweenModuleUI.DOFade(soulsRewardCanvasGroup, 1f, PlayableUnitManager.DebugForceSkipNightReport ? 0f : 1f).SetFullId<TweenerCore<float, float, FloatOptions>>("SoulsRewardFadeIn", (Component)(object)this);
 		soulsRewardCanvasGroup.blocksRaycasts = true;
 		int nightTotal = 0;
-		TrophyDisplay pooledComponent = ObjectPooler.GetPooledComponent<TrophyDisplay>("TrophyDisplays", trophyPrefab, (Transform)(object)trophyParent, false);
+		TrophyDisplay pooledComponent = ObjectPooler.GetPooledComponent<TrophyDisplay>("TrophyDisplays", trophyPrefab, (Transform)(object)trophyParent, dontSetParent: false);
 		pooledComponent.Init(trophyParent, scrollViewport);
 		string name = Localizer.Get("TrophyName_" + TrophyDatabase.DefaultTrophyDefinition.Id);
 		string description = "TrophyDescription_" + TrophyDatabase.DefaultTrophyDefinition.Id;
@@ -273,11 +273,11 @@ public class SoulsRewardPanel : MonoBehaviour
 		nightTotal += (int)TPSingleton<TrophyManager>.Instance.DamnedSoulsEarnedThisNightWithMultiplier;
 		((TMP_Text)damnedSoulsNightTotalText).text = $"{nightTotal}";
 		((TMP_Text)damnedSoulsNightTotalTransparentText).text = $"{nightTotal}";
-		TweenSettingsExtensions.OnComplete<Tweener>(TweenExtensions.SetFullId<Tweener>(ShortcutExtensions.DOPunchScale((Transform)(object)((TMP_Text)damnedSoulsNightTotalText).rectTransform, Vector3.one * damnedSoulsNightPunchStrength, damnedSoulsNightPunchDuration, 1, 0.1f), "NightTotalPunchScale", (Component)(object)this), (TweenCallback)delegate
+		TweenSettingsExtensions.OnComplete<Tweener>(ShortcutExtensions.DOPunchScale((Transform)(object)((TMP_Text)damnedSoulsNightTotalText).rectTransform, Vector3.one * damnedSoulsNightPunchStrength, damnedSoulsNightPunchDuration, 1, 0.1f).SetFullId<Tweener>("NightTotalPunchScale", (Component)(object)this), (TweenCallback)delegate
 		{
 			canContinue = true;
 		});
-		TweenSettingsExtensions.OnComplete<Tweener>(TweenExtensions.SetFullId<Tweener>(ShortcutExtensions.DOPunchScale((Transform)(object)((TMP_Text)damnedSoulsNightTotalTransparentText).rectTransform, Vector3.one * damnedSoulsNightPunchStrength, damnedSoulsNightPunchDuration, 1, 0.1f), "NightTotalPunchScale", (Component)(object)this), (TweenCallback)delegate
+		TweenSettingsExtensions.OnComplete<Tweener>(ShortcutExtensions.DOPunchScale((Transform)(object)((TMP_Text)damnedSoulsNightTotalTransparentText).rectTransform, Vector3.one * damnedSoulsNightPunchStrength, damnedSoulsNightPunchDuration, 1, 0.1f).SetFullId<Tweener>("NightTotalPunchScale", (Component)(object)this), (TweenCallback)delegate
 		{
 			canContinue = true;
 		});
@@ -288,14 +288,14 @@ public class SoulsRewardPanel : MonoBehaviour
 		canContinue = false;
 		yield return SharedYields.WaitForSeconds(PlayableUnitManager.DebugForceSkipNightReport ? 0f : waitBetweenEachTrophyAppear);
 		LayoutRebuilder.ForceRebuildLayoutImmediate(trophyParent);
-		ListExtensions.Shuffle<AudioClip>((IList<AudioClip>)trophyAudioClips);
+		trophyAudioClips.Shuffle();
 		List<TheLastStand.Model.Trophy.Trophy> trophies = TPSingleton<TrophyManager>.Instance.GetSuccessfulTrophies(isDefeat);
 		int trophyIndex = 0;
 		int trophyCount = trophies.Count;
 		while (trophyIndex < trophyCount)
 		{
 			TheLastStand.Model.Trophy.Trophy trophy = trophies[trophyIndex];
-			TrophyDisplay pooledComponent2 = ObjectPooler.GetPooledComponent<TrophyDisplay>("TrophyDisplays", trophyPrefab, (Transform)(object)trophyParent, false);
+			TrophyDisplay pooledComponent2 = ObjectPooler.GetPooledComponent<TrophyDisplay>("TrophyDisplays", trophyPrefab, (Transform)(object)trophyParent, dontSetParent: false);
 			pooledComponent2.Init(trophyParent, scrollViewport);
 			pooledComponent2.Refresh(trophy);
 			pooledComponent2.Show();
@@ -304,11 +304,11 @@ public class SoulsRewardPanel : MonoBehaviour
 			nightTotal += (int)trophy.TrophyDefinition.DamnedSoulsEarned;
 			((TMP_Text)damnedSoulsNightTotalText).text = $"{nightTotal}";
 			((TMP_Text)damnedSoulsNightTotalTransparentText).text = $"{nightTotal}";
-			TweenSettingsExtensions.OnComplete<Tweener>(TweenExtensions.SetFullId<Tweener>(ShortcutExtensions.DOPunchScale((Transform)(object)((TMP_Text)damnedSoulsNightTotalText).rectTransform, Vector3.one * damnedSoulsNightPunchStrength, damnedSoulsNightPunchDuration, 1, 0.1f), "NightTotalPunchScale", (Component)(object)this), (TweenCallback)delegate
+			TweenSettingsExtensions.OnComplete<Tweener>(ShortcutExtensions.DOPunchScale((Transform)(object)((TMP_Text)damnedSoulsNightTotalText).rectTransform, Vector3.one * damnedSoulsNightPunchStrength, damnedSoulsNightPunchDuration, 1, 0.1f).SetFullId<Tweener>("NightTotalPunchScale", (Component)(object)this), (TweenCallback)delegate
 			{
 				canContinue = true;
 			});
-			TweenSettingsExtensions.OnComplete<Tweener>(TweenExtensions.SetFullId<Tweener>(ShortcutExtensions.DOPunchScale((Transform)(object)((TMP_Text)damnedSoulsNightTotalTransparentText).rectTransform, Vector3.one * damnedSoulsNightPunchStrength, damnedSoulsNightPunchDuration, 1, 0.1f), "NightTotalTransparentPunchScale", (Component)(object)this), (TweenCallback)delegate
+			TweenSettingsExtensions.OnComplete<Tweener>(ShortcutExtensions.DOPunchScale((Transform)(object)((TMP_Text)damnedSoulsNightTotalTransparentText).rectTransform, Vector3.one * damnedSoulsNightPunchStrength, damnedSoulsNightPunchDuration, 1, 0.1f).SetFullId<Tweener>("NightTotalTransparentPunchScale", (Component)(object)this), (TweenCallback)delegate
 			{
 				canContinue = true;
 			});
@@ -354,10 +354,10 @@ public class SoulsRewardPanel : MonoBehaviour
 		num += (float)num2 * soulGainIdleLoopDurationMultiplier;
 		((Behaviour)soulGainImage).enabled = true;
 		soulGainAnimator.SetTrigger("FadeIn");
-		TweenExtensions.SetFullId<TweenerCore<int, int, NoOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<int, int, NoOptions>>(DOTween.To((DOGetter<int>)(() => nightTotal), (DOSetter<int>)delegate(int x)
+		TweenSettingsExtensions.SetEase<TweenerCore<int, int, NoOptions>>(DOTween.To((DOGetter<int>)(() => nightTotal), (DOSetter<int>)delegate(int x)
 		{
 			((TMP_Text)damnedSoulsTotalText).text = $"{ApplicationManager.Application.DamnedSouls - x}";
-		}, 0, PlayableUnitManager.DebugForceSkipNightReport ? 0f : num), damnedSoulsTransferEasing), "TransferDamnedSouls", (Component)(object)this);
+		}, 0, PlayableUnitManager.DebugForceSkipNightReport ? 0f : num), damnedSoulsTransferEasing).SetFullId<TweenerCore<int, int, NoOptions>>("TransferDamnedSouls", (Component)(object)this);
 		DOGetter<float> obj = () => ((Transform)damnedSoulsNightTotalMask).localPosition.x;
 		DOSetter<float> obj2 = delegate(float x)
 		{
@@ -370,8 +370,8 @@ public class SoulsRewardPanel : MonoBehaviour
 		};
 		Rect rect = damnedSoulsNightTotalMask.rect;
 		TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(DOTween.To(obj, obj2, ((Rect)(ref rect)).width, PlayableUnitManager.DebugForceSkipNightReport ? 0f : num), (Ease)1);
-		damnedSoulsBlinkTween = (Tween)(object)TweenExtensions.SetFullId<TweenerCore<Color, Color, ColorOptions>>(TweenSettingsExtensions.SetLoops<TweenerCore<Color, Color, ColorOptions>>(DOTweenModuleUI.DOFade((Graphic)(object)damnedSoulsTotalText, damnedSoulsTotalBlinkFadeTo, damnedSoulsTotalBlinkDuration), -1, (LoopType)1), "DamnedSoulsBlink", (Component)(object)this);
-		damnedSoulsNightTotalBlinkTween = (Tween)(object)TweenExtensions.SetFullId<TweenerCore<Color, Color, ColorOptions>>(TweenSettingsExtensions.SetLoops<TweenerCore<Color, Color, ColorOptions>>(DOTweenModuleUI.DOFade((Graphic)(object)damnedSoulsNightTotalText, damnedSoulsTotalBlinkFadeTo, damnedSoulsTotalBlinkDuration), -1, (LoopType)1), "DamnedSoulsNightTotalBlink", (Component)(object)this);
+		damnedSoulsBlinkTween = (Tween)(object)TweenSettingsExtensions.SetLoops<TweenerCore<Color, Color, ColorOptions>>(DOTweenModuleUI.DOFade((Graphic)(object)damnedSoulsTotalText, damnedSoulsTotalBlinkFadeTo, damnedSoulsTotalBlinkDuration), -1, (LoopType)1).SetFullId<TweenerCore<Color, Color, ColorOptions>>("DamnedSoulsBlink", (Component)(object)this);
+		damnedSoulsNightTotalBlinkTween = (Tween)(object)TweenSettingsExtensions.SetLoops<TweenerCore<Color, Color, ColorOptions>>(DOTweenModuleUI.DOFade((Graphic)(object)damnedSoulsNightTotalText, damnedSoulsTotalBlinkFadeTo, damnedSoulsTotalBlinkDuration), -1, (LoopType)1).SetFullId<TweenerCore<Color, Color, ColorOptions>>("DamnedSoulsNightTotalBlink", (Component)(object)this);
 		yield return SharedYields.WaitForSeconds(PlayableUnitManager.DebugForceSkipNightReport ? 0f : (soulGainFadeInDuration + (float)num2 * soulGainIdleLoopDurationMultiplier));
 		soulGainAnimator.SetTrigger("FadeOut");
 		soulsHitAudioSource.Play();
@@ -382,6 +382,6 @@ public class SoulsRewardPanel : MonoBehaviour
 		TweenExtensions.Kill(damnedSoulsNightTotalBlinkTween, false);
 		((TMP_Text)damnedSoulsNightTotalText).alpha = 1f;
 		((TMP_Text)damnedSoulsTotalText).alpha = 1f;
-		TweenExtensions.SetFullId<Tweener>(ShortcutExtensions.DOPunchScale((Transform)(object)((TMP_Text)damnedSoulsTotalText).rectTransform, Vector3.one * damnedSoulsTotalPunchStrength, damnedSoulsTotalPunchDuration, 1, 0.1f), "DamnedSoulsTotalPunchScale", (Component)(object)this);
+		ShortcutExtensions.DOPunchScale((Transform)(object)((TMP_Text)damnedSoulsTotalText).rectTransform, Vector3.one * damnedSoulsTotalPunchStrength, damnedSoulsTotalPunchDuration, 1, 0.1f).SetFullId<Tweener>("DamnedSoulsTotalPunchScale", (Component)(object)this);
 	}
 }

@@ -326,7 +326,7 @@ public class UnitStatGaugeDisplay : MonoBehaviour
 			{
 				DisplayValueLabel();
 			}
-			decreaseDisplayPhaseOneTweener = (Tweener)(object)TweenSettingsExtensions.OnKill<TweenerCore<float, float, FloatOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(TweenExtensions.SetFullId<TweenerCore<float, float, FloatOptions>>(DOTween.To((DOGetter<float>)(() => normalizedValue), (DOSetter<float>)delegate(float v)
+			decreaseDisplayPhaseOneTweener = (Tweener)(object)TweenSettingsExtensions.OnKill<TweenerCore<float, float, FloatOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(DOTween.To((DOGetter<float>)(() => normalizedValue), (DOSetter<float>)delegate(float v)
 			{
 				normalizedValue = v;
 				if ((Object)(object)statGauge != (Object)null)
@@ -337,11 +337,11 @@ public class UnitStatGaugeDisplay : MonoBehaviour
 				{
 					gaugeMarkersDisplayer.RefreshEnabledMarkers(normalizedValue);
 				}
-			}, targetNormalizedValue, decreasePhaseOneDuration), "HealthDisplay DamageDisplayPhase1", (Component)(object)this), decreasePhaseOneEasing), (TweenCallback)delegate
+			}, targetNormalizedValue, decreasePhaseOneDuration).SetFullId<TweenerCore<float, float, FloatOptions>>("HealthDisplay DamageDisplayPhase1", (Component)(object)this), decreasePhaseOneEasing), (TweenCallback)delegate
 			{
 				decreaseDisplayPhaseOneTweener = null;
 			});
-			decreaseColorPhaseOneTweener = (Tween)(object)TweenSettingsExtensions.OnKill<Sequence>(TweenExtensions.SetFullId<Sequence>(DOTweenModuleUI.DOGradientColor(hitGaugeImage, decreaseGradient, decreasePhaseOneDuration + decreaseDelayBetweenPhases + decreasePhaseTwoDuration), "HealthDisplay DamageColor", (Component)(object)this), (TweenCallback)delegate
+			decreaseColorPhaseOneTweener = (Tween)(object)TweenSettingsExtensions.OnKill<Sequence>(DOTweenModuleUI.DOGradientColor(hitGaugeImage, decreaseGradient, decreasePhaseOneDuration + decreaseDelayBetweenPhases + decreasePhaseTwoDuration).SetFullId<Sequence>("HealthDisplay DamageColor", (Component)(object)this), (TweenCallback)delegate
 			{
 				decreaseColorPhaseOneTweener = null;
 			});
@@ -360,7 +360,7 @@ public class UnitStatGaugeDisplay : MonoBehaviour
 		float normalizedValue = hitGauge.normalizedValue;
 		if (decreaseDisplayPhaseTwoTweener == null)
 		{
-			decreaseDisplayPhaseTwoTweener = (Tweener)(object)TweenSettingsExtensions.OnComplete<TweenerCore<float, float, FloatOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(TweenExtensions.SetFullId<TweenerCore<float, float, FloatOptions>>(DOTween.To((DOGetter<float>)(() => normalizedValue), (DOSetter<float>)delegate(float v)
+			decreaseDisplayPhaseTwoTweener = (Tweener)(object)TweenSettingsExtensions.OnComplete<TweenerCore<float, float, FloatOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(DOTween.To((DOGetter<float>)(() => normalizedValue), (DOSetter<float>)delegate(float v)
 			{
 				normalizedValue = v;
 				if ((Object)(object)hitGauge != (Object)null)
@@ -371,7 +371,7 @@ public class UnitStatGaugeDisplay : MonoBehaviour
 				{
 					((TMP_Text)healthValueLbl).text = Mathf.RoundToInt(normalizedValue * GetReferenceValue(useTotal: true)).ToString();
 				}
-			}, targetNormalizedValue, decreasePhaseTwoDuration), "UnitHUD DamageDisplayPhase2", (Component)(object)this), decreasePhaseTwoEasing), (TweenCallback)delegate
+			}, targetNormalizedValue, decreasePhaseTwoDuration).SetFullId<TweenerCore<float, float, FloatOptions>>("UnitHUD DamageDisplayPhase2", (Component)(object)this), decreasePhaseTwoEasing), (TweenCallback)delegate
 			{
 				decreaseDisplayPhaseTwoTweener = null;
 				decreaseDisplayPhaseTwoCoroutine = null;
@@ -402,14 +402,14 @@ public class UnitStatGaugeDisplay : MonoBehaviour
 			{
 				DisplayValueLabel();
 			}
-			increaseDisplayPhaseOneTweener = (Tweener)(object)TweenSettingsExtensions.OnKill<TweenerCore<float, float, FloatOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(TweenExtensions.SetFullId<TweenerCore<float, float, FloatOptions>>(DOTween.To((DOGetter<float>)(() => normalizedValue), (DOSetter<float>)delegate(float v)
+			increaseDisplayPhaseOneTweener = (Tweener)(object)TweenSettingsExtensions.OnKill<TweenerCore<float, float, FloatOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(DOTween.To((DOGetter<float>)(() => normalizedValue), (DOSetter<float>)delegate(float v)
 			{
 				normalizedValue = v;
 				if ((Object)(object)hitGauge != (Object)null)
 				{
 					hitGauge.normalizedValue = normalizedValue;
 				}
-			}, targetNormalizedValue, increasePhaseOneDuration), "HealthDisplay HealDisplayPhase1", (Component)(object)this), increasePhaseOneEasing), (TweenCallback)delegate
+			}, targetNormalizedValue, increasePhaseOneDuration).SetFullId<TweenerCore<float, float, FloatOptions>>("HealthDisplay HealDisplayPhase1", (Component)(object)this), increasePhaseOneEasing), (TweenCallback)delegate
 			{
 				increaseDisplayPhaseOneTweener = null;
 			});
@@ -431,7 +431,7 @@ public class UnitStatGaugeDisplay : MonoBehaviour
 		float normalizedValue = statGauge.normalizedValue;
 		if (increaseDisplayPhaseTwoTweener == null)
 		{
-			increaseDisplayPhaseTwoTweener = (Tweener)(object)TweenSettingsExtensions.OnComplete<TweenerCore<float, float, FloatOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(TweenExtensions.SetFullId<TweenerCore<float, float, FloatOptions>>(DOTween.To((DOGetter<float>)(() => normalizedValue), (DOSetter<float>)delegate(float v)
+			increaseDisplayPhaseTwoTweener = (Tweener)(object)TweenSettingsExtensions.OnComplete<TweenerCore<float, float, FloatOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(DOTween.To((DOGetter<float>)(() => normalizedValue), (DOSetter<float>)delegate(float v)
 			{
 				normalizedValue = v;
 				if ((Object)(object)hitGauge != (Object)null)
@@ -446,7 +446,7 @@ public class UnitStatGaugeDisplay : MonoBehaviour
 				{
 					gaugeMarkersDisplayer.RefreshEnabledMarkers(normalizedValue);
 				}
-			}, targetNormalizedValue, increasePhaseTwoDuration), "UnitHUD HealDisplayPhase2", (Component)(object)this), increasePhaseTwoEasing), (TweenCallback)delegate
+			}, targetNormalizedValue, increasePhaseTwoDuration).SetFullId<TweenerCore<float, float, FloatOptions>>("UnitHUD HealDisplayPhase2", (Component)(object)this), increasePhaseTwoEasing), (TweenCallback)delegate
 			{
 				increaseDisplayPhaseTwoTweener = null;
 				increaseDisplayPhaseTwoCoroutine = null;

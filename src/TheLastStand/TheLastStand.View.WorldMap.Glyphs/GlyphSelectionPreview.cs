@@ -70,12 +70,12 @@ public class GlyphSelectionPreview : MonoBehaviour
 			Navigation navigation = ((Selectable)glyphDisplay.JoystickSelectable).navigation;
 			if ((Object)(object)((Navigation)(ref navigation)).selectOnUp == (Object)null)
 			{
-				SelectableExtensions.SetSelectOnUp((Selectable)(object)glyphDisplay.JoystickSelectable, (Selectable)(object)EditButton);
+				((Selectable)(object)glyphDisplay.JoystickSelectable).SetSelectOnUp((Selectable)(object)EditButton);
 			}
 			navigation = ((Selectable)glyphDisplay.JoystickSelectable).navigation;
 			if ((Object)(object)((Navigation)(ref navigation)).selectOnDown == (Object)null)
 			{
-				SelectableExtensions.SetSelectOnDown((Selectable)(object)glyphDisplay.JoystickSelectable, (Selectable)(object)((TPSingleton<GameConfigurationsView>.Instance.ApocalypseLines.Count > 0) ? TPSingleton<GameConfigurationsView>.Instance.ApocalypseLines[0].JoystickSelectable : null));
+				((Selectable)(object)glyphDisplay.JoystickSelectable).SetSelectOnDown((Selectable)(object)((TPSingleton<GameConfigurationsView>.Instance.ApocalypseLines.Count > 0) ? TPSingleton<GameConfigurationsView>.Instance.ApocalypseLines[0].JoystickSelectable : null));
 			}
 		}
 	}

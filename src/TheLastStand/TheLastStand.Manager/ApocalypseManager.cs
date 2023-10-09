@@ -135,7 +135,7 @@ public sealed class ApocalypseManager : Manager<ApocalypseManager>, ISerializabl
 
 	public ISerializedData GlobalSerialize()
 	{
-		return (ISerializedData)(object)new SerializedGlobalApocalypse
+		return new SerializedGlobalApocalypse
 		{
 			MaxAvailableApocalypseIndex = MaxApocalypseIndexAvailable
 		};
@@ -143,7 +143,7 @@ public sealed class ApocalypseManager : Manager<ApocalypseManager>, ISerializabl
 
 	public ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedApocalypse
+		return new SerializedApocalypse
 		{
 			ApocalypseIndex = CurrentApocalypseIndex
 		};

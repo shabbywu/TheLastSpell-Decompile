@@ -20,12 +20,12 @@ public class EliteEnemyUnitStats : EnemyUnitStats
 	public override void Deserialize(ISerializedData container = null, int saveVersion = -1)
 	{
 		SerializedEliteEnemyUnitStats serializedEliteEnemyUnitStats = container as SerializedEliteEnemyUnitStats;
-		base.Deserialize((ISerializedData)(object)serializedEliteEnemyUnitStats.Base, -1);
+		base.Deserialize((ISerializedData)serializedEliteEnemyUnitStats.Base, -1);
 	}
 
 	public override ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedEliteEnemyUnitStats
+		return new SerializedEliteEnemyUnitStats
 		{
 			Base = (base.Serialize() as SerializedEnemyUnitStats)
 		};

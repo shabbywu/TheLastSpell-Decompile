@@ -134,7 +134,7 @@ public class LevelEditorManager : Manager<LevelEditorManager>
 
 	private E_State state = E_State.Default;
 
-	private readonly CompensationConversation compensationConversation = new CompensationConversation(true);
+	private readonly CompensationConversation compensationConversation = new CompensationConversation();
 
 	private GroundDefinition currentGround;
 
@@ -180,13 +180,13 @@ public class LevelEditorManager : Manager<LevelEditorManager>
 
 	public static void DecreaseLevelSize()
 	{
-		((Conversation<ICompensableCommand, ICompensableCommand>)(object)CompensationConversation).Execute((ICompensableCommand)(object)new DecreaseLevelSizeCommand());
+		CompensationConversation.Execute(new DecreaseLevelSizeCommand());
 		TPSingleton<LevelEditorManager>.Instance.levelEditorPanel.Refresh();
 	}
 
 	public static void IncreaseLevelSize()
 	{
-		((Conversation<ICompensableCommand, ICompensableCommand>)(object)CompensationConversation).Execute((ICompensableCommand)(object)new IncreaseLevelSizeCommand());
+		CompensationConversation.Execute(new IncreaseLevelSizeCommand());
 		TPSingleton<LevelEditorManager>.Instance.levelEditorPanel.Refresh();
 	}
 
@@ -202,7 +202,7 @@ public class LevelEditorManager : Manager<LevelEditorManager>
 
 	public static void Redo()
 	{
-		((Conversation<ICompensableCommand, ICompensableCommand>)(object)CompensationConversation).Redo();
+		CompensationConversation.Redo();
 		TPSingleton<LevelEditorManager>.Instance.levelEditorPanel.Refresh();
 	}
 
@@ -240,7 +240,7 @@ public class LevelEditorManager : Manager<LevelEditorManager>
 	public static void SetGroundColor(Color color)
 	{
 		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		((Conversation<ICompensableCommand, ICompensableCommand>)(object)CompensationConversation).Execute((ICompensableCommand)(object)new SetGroundColorCommand(TPSingleton<LevelEditorManager>.Instance.currentGround, color));
+		CompensationConversation.Execute(new SetGroundColorCommand(TPSingleton<LevelEditorManager>.Instance.currentGround, color));
 	}
 
 	public static void SelectTileFlag(TileFlagDefinition.E_TileFlagTag tileFlag)
@@ -272,7 +272,7 @@ public class LevelEditorManager : Manager<LevelEditorManager>
 
 	public static void Undo()
 	{
-		((Conversation<ICompensableCommand, ICompensableCommand>)(object)CompensationConversation).Undo();
+		CompensationConversation.Undo();
 		TPSingleton<LevelEditorManager>.Instance.levelEditorPanel.Refresh();
 	}
 
@@ -461,12 +461,12 @@ public class LevelEditorManager : Manager<LevelEditorManager>
 			{
 				if (Input.GetKey(bucketFillKey))
 				{
-					((Conversation<ICompensableCommand, ICompensableCommand>)(object)CompensationConversation).Execute((ICompensableCommand)(object)new PlaceGroundCommand(currentGround, tile, useBucketTool: true));
+					CompensationConversation.Execute(new PlaceGroundCommand(currentGround, tile, useBucketTool: true));
 					TPSingleton<LevelEditorManager>.Instance.levelEditorPanel.Refresh();
 				}
 				else if (!Input.GetKey(rectFillKey))
 				{
-					((Conversation<ICompensableCommand, ICompensableCommand>)(object)CompensationConversation).Execute((ICompensableCommand)(object)new PlaceGroundCommand(currentGround, tile));
+					CompensationConversation.Execute(new PlaceGroundCommand(currentGround, tile));
 					TPSingleton<LevelEditorManager>.Instance.levelEditorPanel.Refresh();
 				}
 				else if (RectFillTileSource == null)
@@ -477,7 +477,7 @@ public class LevelEditorManager : Manager<LevelEditorManager>
 			else if (InputManager.GetButtonUp(24) && tile != null && RectFillTileSource != null)
 			{
 				Tile[] tilesInRect2 = TileMapController.GetTilesInRect(TileMapController.GetRectFromTileToTile(RectFillTileSource, tile));
-				((Conversation<ICompensableCommand, ICompensableCommand>)(object)CompensationConversation).Execute((ICompensableCommand)(object)new PlaceGroundCommand(currentGround, tilesInRect2));
+				CompensationConversation.Execute(new PlaceGroundCommand(currentGround, tilesInRect2));
 				TPSingleton<LevelEditorManager>.Instance.levelEditorPanel.Refresh();
 				ClearRectFill();
 			}
@@ -494,7 +494,7 @@ public class LevelEditorManager : Manager<LevelEditorManager>
 			}
 			if (InputManager.GetButton(24) && tile != null && (key2 || TileMapController.CanPlaceBuilding(currentBuilding, tile)))
 			{
-				((Conversation<ICompensableCommand, ICompensableCommand>)(object)CompensationConversation).Execute((ICompensableCommand)(object)new PlaceBuildingCommand(currentBuilding, tile));
+				CompensationConversation.Execute(new PlaceBuildingCommand(currentBuilding, tile));
 				TPSingleton<LevelEditorManager>.Instance.levelEditorPanel.Refresh();
 			}
 			if (TPSingleton<GameManager>.Instance.Game.Cursor.TileHasChanged)
@@ -515,7 +515,7 @@ public class LevelEditorManager : Manager<LevelEditorManager>
 		case E_State.DestroyBuilding:
 			if (InputManager.GetButton(24) && tile?.Building != null)
 			{
-				((Conversation<ICompensableCommand, ICompensableCommand>)(object)CompensationConversation).Execute((ICompensableCommand)(object)new DestroyBuildingCommand(tile));
+				CompensationConversation.Execute(new DestroyBuildingCommand(tile));
 				TPSingleton<LevelEditorManager>.Instance.levelEditorPanel.Refresh();
 			}
 			break;
@@ -538,7 +538,7 @@ public class LevelEditorManager : Manager<LevelEditorManager>
 				{
 					if (lastFlagTile != tile || key != lastFlagEraseState)
 					{
-						((Conversation<ICompensableCommand, ICompensableCommand>)(object)CompensationConversation).Execute((ICompensableCommand)(object)new SetTileFlagCommand(TileMapManager.TileFlagDefinitions.FirstOrDefault((TileFlagDefinition o) => o.TileFlagTag == CurrentTileFlag), tile, key));
+						CompensationConversation.Execute(new SetTileFlagCommand(TileMapManager.TileFlagDefinitions.FirstOrDefault((TileFlagDefinition o) => o.TileFlagTag == CurrentTileFlag), tile, key));
 						TPSingleton<LevelEditorManager>.Instance.levelEditorPanel.Refresh();
 						lastFlagTile = tile;
 						lastFlagEraseState = key;
@@ -552,7 +552,7 @@ public class LevelEditorManager : Manager<LevelEditorManager>
 			else if (InputManager.GetButtonUp(24) && tile != null && RectFillTileSource != null)
 			{
 				Tile[] tilesInRect = TileMapController.GetTilesInRect(TileMapController.GetRectFromTileToTile(RectFillTileSource, tile));
-				((Conversation<ICompensableCommand, ICompensableCommand>)(object)CompensationConversation).Execute((ICompensableCommand)(object)new SetTileFlagCommand(TileMapManager.TileFlagDefinitions.FirstOrDefault((TileFlagDefinition o) => o.TileFlagTag == CurrentTileFlag), tilesInRect, key));
+				CompensationConversation.Execute(new SetTileFlagCommand(TileMapManager.TileFlagDefinitions.FirstOrDefault((TileFlagDefinition o) => o.TileFlagTag == CurrentTileFlag), tilesInRect, key));
 				TPSingleton<LevelEditorManager>.Instance.levelEditorPanel.Refresh();
 				lastFlagTile = tile;
 				lastFlagEraseState = key;

@@ -137,10 +137,10 @@ public class JoystickHighlight : MonoBehaviour
 		{
 			TweenExtensions.Kill(obj2, false);
 		}
-		Rect val = RectTransformExtensions.GetWorldRect(currentHighlighter.RectTransform);
+		Rect val = currentHighlighter.RectTransform.GetWorldRect();
 		Vector3 targetPosition = Vector2.op_Implicit(((Rect)(ref val)).center);
 		GamepadButtonsDisplayLayout obj3 = gamepadButtonsDisplayLayout;
-		val = RectTransformExtensions.GetWorldRect(currentHighlighter.RectTransform);
+		val = currentHighlighter.RectTransform.GetWorldRect();
 		obj3.TargetPosition = Vector2.op_Implicit(((Rect)(ref val)).min);
 		val = currentHighlighter.RectTransform.rect;
 		Vector3 val2 = Vector2.op_Implicit(((Rect)(ref val)).size + SizeDeltaIncrement);
@@ -157,7 +157,7 @@ public class JoystickHighlight : MonoBehaviour
 			{
 				return targetPosition;
 			}
-			Rect worldRect = RectTransformExtensions.GetWorldRect(currentHighlighter.RectTransform);
+			Rect worldRect = currentHighlighter.RectTransform.GetWorldRect();
 			return Vector2.op_Implicit(((Rect)(ref worldRect)).center);
 		};
 		highlightPositionTween = (Tween)(object)TweenSettingsExtensions.SetEase<TweenerCore<Vector3, Vector3, VectorOptions>>(ShortcutExtensions.DOMove(((Component)this).transform, func(), InputManager.JoystickConfig.HUDNavigation.HighlightTweenDuration, false), InputManager.JoystickConfig.HUDNavigation.HighlightTweenEase);
@@ -177,7 +177,7 @@ public class JoystickHighlight : MonoBehaviour
 		if ((Object)(object)currentHighlighter != (Object)null)
 		{
 			Transform transform = ((Component)this).transform;
-			Rect worldRect = RectTransformExtensions.GetWorldRect(currentHighlighter.RectTransform);
+			Rect worldRect = currentHighlighter.RectTransform.GetWorldRect();
 			transform.position = Vector2.op_Implicit(((Rect)(ref worldRect)).center);
 		}
 	}

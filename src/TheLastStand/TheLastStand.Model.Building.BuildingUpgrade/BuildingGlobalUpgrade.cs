@@ -46,7 +46,7 @@ public class BuildingGlobalUpgrade : BuildingUpgrade
 
 	public override ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedGlobalUpgrade
+		return new SerializedGlobalUpgrade
 		{
 			Id = base.BuildingUpgradeDefinition.Id,
 			UpgradeLevel = UpgradeLevel

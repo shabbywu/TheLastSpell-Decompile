@@ -21,7 +21,7 @@ public class ProductionReport : ISerializable, IDeserializable
 	{
 		ProductionReportController = controller;
 		ProductionReportPanel = view;
-		Deserialize((ISerializedData)(object)container);
+		Deserialize(container);
 	}
 
 	public ProductionReport(ProductionReportController controller, ProductionReportPanel view)
@@ -37,7 +37,7 @@ public class ProductionReport : ISerializable, IDeserializable
 		{
 			foreach (SerializedProductionItems productionItem2 in serializedProductionReport.ProductionItems)
 			{
-				ProductionItems productionItem = new ProductionItemController((ISerializedData)(object)productionItem2).ProductionItem;
+				ProductionItems productionItem = new ProductionItemController(productionItem2).ProductionItem;
 				ProducedObjects.Add(productionItem);
 			}
 			PanicManager.Panic.PanicReward.BaseNbRerollReward = serializedProductionReport.BaseRewardReroll;
@@ -77,6 +77,6 @@ public class ProductionReport : ISerializable, IDeserializable
 				serializedProductionReport.ProductionItems.Add(productionItems.Serialize() as SerializedProductionItems);
 			}
 		}
-		return (ISerializedData)(object)serializedProductionReport;
+		return serializedProductionReport;
 	}
 }

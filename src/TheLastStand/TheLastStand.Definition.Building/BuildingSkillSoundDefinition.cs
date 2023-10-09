@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Building;
 
-public class BuildingSkillSoundDefinition : Definition
+public class BuildingSkillSoundDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public List<string> SoundsIds = new List<string>();
 
@@ -18,13 +18,12 @@ public class BuildingSkillSoundDefinition : Definition
 	public int MaximumSimultaneousSounds { get; private set; }
 
 	public BuildingSkillSoundDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
 	public override void Deserialize(XContainer container)
 	{
-		//IL_0128: Unknown result type (might be due to invalid IL or missing references)
 		XContainer obj = ((container is XElement) ? container : null);
 		XElement val = obj.Element(XName.op_Implicit("BuildingTemplateDefinitionId"));
 		XElement val2 = obj.Element(XName.op_Implicit("MaximumSimultaneousSounds"));
@@ -54,6 +53,6 @@ public class BuildingSkillSoundDefinition : Definition
 			}
 		}
 		XAttribute val4 = val3.Attribute(XName.op_Implicit("Delay"));
-		Delay = (Node)((val4 != null) ? ((object)Parser.Parse(val4.Value, (Dictionary<string, string>)null)) : ((object)new NodeNumber(0.0)));
+		Delay = ((val4 != null) ? Parser.Parse(val4.Value) : new NodeNumber(0.0));
 	}
 }

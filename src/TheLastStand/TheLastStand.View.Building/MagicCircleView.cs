@@ -7,7 +7,6 @@ using TheLastStand.Controller;
 using TheLastStand.Controller.Settings;
 using TheLastStand.Database.WorldMap;
 using TheLastStand.Framework;
-using TheLastStand.Framework.Automaton;
 using TheLastStand.Manager;
 using TheLastStand.Manager.Building;
 using TheLastStand.Manager.SDK;
@@ -187,10 +186,10 @@ public class MagicCircleView : BuildingView
 	{
 		//IL_00b3: Unknown result type (might be due to invalid IL or missing references)
 		//IL_00ba: Expected O, but got Unknown
-		AnimationClip val = ResourcePooler.LoadOnce<AnimationClip>("Animation/MagicCircle/MagicCircle_Idle/MagicCircle_" + TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.Id + "_Idle", false);
-		AnimationClip val2 = ResourcePooler.LoadOnce<AnimationClip>("Animation/MagicCircle/MagicCircle_Hit/MagicCircle_" + TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.Id + "_Hit", false);
-		AnimationClip val3 = ResourcePooler.LoadOnce<AnimationClip>("Animation/MagicCircle/MagicCircle_Destruction/MagicCircle_" + TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.Id + "_Destruction", true);
-		AnimationClip val4 = ResourcePooler.LoadOnce<AnimationClip>("Animation/MagicCircle/MagicCircle_IdleDestroyed/MagicCircle_" + TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.Id + "_IdleDestroyed", true);
+		AnimationClip val = ResourcePooler.LoadOnce<AnimationClip>("Animation/MagicCircle/MagicCircle_Idle/MagicCircle_" + TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.Id + "_Idle", failSilently: false);
+		AnimationClip val2 = ResourcePooler.LoadOnce<AnimationClip>("Animation/MagicCircle/MagicCircle_Hit/MagicCircle_" + TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.Id + "_Hit", failSilently: false);
+		AnimationClip val3 = ResourcePooler.LoadOnce<AnimationClip>("Animation/MagicCircle/MagicCircle_Destruction/MagicCircle_" + TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.Id + "_Destruction", failSilently: true);
+		AnimationClip val4 = ResourcePooler.LoadOnce<AnimationClip>("Animation/MagicCircle/MagicCircle_IdleDestroyed/MagicCircle_" + TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.Id + "_IdleDestroyed", failSilently: true);
 		AnimatorOverrideController val5 = new AnimatorOverrideController(animator.runtimeAnimatorController);
 		if ((Object)(object)val != (Object)null)
 		{
@@ -240,7 +239,7 @@ public class MagicCircleView : BuildingView
 		{
 			TPSingleton<BuildingManager>.Instance.Buildings[num].BuildingView.BuildingHUD.DisplayHealthIfNeeded();
 		}
-		ObjectPooler.GetPooledComponent<OneShotSound>("HitsSFX", TPSingleton<PlayableUnitManager>.Instance.HitSFXPrefab, (Transform)null, false).Play(TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.IsTutorialMap ? GameManager.TutorialDefeatAudioClip : GameManager.DefeatAudioClip);
+		ObjectPooler.GetPooledComponent<OneShotSound>("HitsSFX", TPSingleton<PlayableUnitManager>.Instance.HitSFXPrefab, (Transform)null, dontSetParent: false).Play(TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.IsTutorialMap ? GameManager.TutorialDefeatAudioClip : GameManager.DefeatAudioClip);
 		((MonoBehaviour)this).StartCoroutine(StartDestructionAnimation());
 	}
 
@@ -290,7 +289,7 @@ public class MagicCircleView : BuildingView
 		while (true)
 		{
 			yield return SharedYields.WaitForSeconds(timeIntervalBetweenIdleAnimations);
-			if ((((StateMachine)ApplicationManager.Application).State.GetName() == "LevelEditor" && BuildingManager.MagicCircle != base.BuildingController.Building) || base.BuildingController.Building.DamageableModule.IsDead)
+			if ((ApplicationManager.Application.State.GetName() == "LevelEditor" && BuildingManager.MagicCircle != base.BuildingController.Building) || base.BuildingController.Building.DamageableModule.IsDead)
 			{
 				break;
 			}

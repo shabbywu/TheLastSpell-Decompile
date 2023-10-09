@@ -24,12 +24,12 @@ public class ColorHandler : Handler
 
 	public E_ColorTypes ColorType => colorType;
 
-	public override bool IsDropdownOpen => ((TMP_BetterDropdown)colorDropdown).IsExpanded;
+	public override bool IsDropdownOpen => colorDropdown.IsExpanded;
 
 	public override void ChangeCurrentValue()
 	{
 		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
-		TPSingleton<PlayableUnitCustomisationPanel>.Instance.ChangeIndexOfColorType(ColorType, ((TMP_BetterDropdown)colorDropdown).value);
+		TPSingleton<PlayableUnitCustomisationPanel>.Instance.ChangeIndexOfColorType(ColorType, colorDropdown.value);
 	}
 
 	public override void DecreaseCurrentValue()
@@ -186,25 +186,23 @@ public class ColorHandler : Handler
 		//IL_009a: Unknown result type (might be due to invalid IL or missing references)
 		//IL_009f: Unknown result type (might be due to invalid IL or missing references)
 		//IL_00d9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00de: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e8: Expected O, but got Unknown
 		//IL_0121: Unknown result type (might be due to invalid IL or missing references)
-		((UnityEvent<int>)(object)((TMP_BetterDropdown)colorDropdown).onValueChanged).RemoveListener(onValueChanged);
-		if (((TMP_BetterDropdown)colorDropdown).options != null)
+		((UnityEvent<int>)colorDropdown.onValueChanged).RemoveListener(onValueChanged);
+		if (colorDropdown.options != null)
 		{
-			((TMP_BetterDropdown)colorDropdown).ClearOptions();
+			colorDropdown.ClearOptions();
 		}
-		List<ColorOptionData> list = new List<ColorOptionData>();
+		List<ColorDropdown.ColorOptionData> list = new List<ColorDropdown.ColorOptionData>();
 		foreach (DataColor portraitBackgroundColor in portraitBackgroundColors)
 		{
-			Sprite val = Sprite.Create(colorTexture, new Rect(new Vector2(0f, 0f), new Vector2((float)((Texture)colorTexture).width, (float)((Texture)colorTexture).height)), new Vector2(0.5f, 0.5f));
-			E_ColorTypes val2 = ColorType;
-			string text = Localizer.Get("HeroCustomization_ColorDropdownItem_" + ((object)(E_ColorTypes)(ref val2)).ToString() + "_" + ((Object)portraitBackgroundColor).name.Replace(" ", string.Empty));
-			list.Add(new ColorOptionData(text, val, portraitBackgroundColor._Color));
+			Sprite image = Sprite.Create(colorTexture, new Rect(new Vector2(0f, 0f), new Vector2((float)((Texture)colorTexture).width, (float)((Texture)colorTexture).height)), new Vector2(0.5f, 0.5f));
+			E_ColorTypes val = ColorType;
+			string text = Localizer.Get("HeroCustomization_ColorDropdownItem_" + ((object)(E_ColorTypes)(ref val)).ToString() + "_" + ((Object)portraitBackgroundColor).name.Replace(" ", string.Empty));
+			list.Add(new ColorDropdown.ColorOptionData(text, image, portraitBackgroundColor._Color));
 		}
 		colorDropdown.AddOptions(list);
-		((TMP_BetterDropdown)colorDropdown).value = TPSingleton<PlayableUnitCustomisationPanel>.Instance.CurrentIndexByColorType[ColorType].Index;
-		((UnityEvent<int>)(object)((TMP_BetterDropdown)colorDropdown).onValueChanged).AddListener(onValueChanged);
+		colorDropdown.value = TPSingleton<PlayableUnitCustomisationPanel>.Instance.CurrentIndexByColorType[ColorType].Index;
+		((UnityEvent<int>)colorDropdown.onValueChanged).AddListener(onValueChanged);
 	}
 
 	public void Refresh()
@@ -217,26 +215,24 @@ public class ColorHandler : Handler
 		//IL_00a8: Unknown result type (might be due to invalid IL or missing references)
 		//IL_00af: Expected O, but got Unknown
 		//IL_00c8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00eb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f5: Expected O, but got Unknown
 		//IL_012e: Unknown result type (might be due to invalid IL or missing references)
-		((UnityEvent<int>)(object)((TMP_BetterDropdown)colorDropdown).onValueChanged).RemoveListener(onValueChanged);
-		if (((TMP_BetterDropdown)colorDropdown).options != null)
+		((UnityEvent<int>)colorDropdown.onValueChanged).RemoveListener(onValueChanged);
+		if (colorDropdown.options != null)
 		{
-			((TMP_BetterDropdown)colorDropdown).ClearOptions();
+			colorDropdown.ClearOptions();
 		}
-		List<ColorOptionData> list = new List<ColorOptionData>();
+		List<ColorDropdown.ColorOptionData> list = new List<ColorDropdown.ColorOptionData>();
 		foreach (KeyValuePair<string, Texture2D> item in TPSingleton<PlayableUnitCustomisationPanel>.Instance.TexturesByColorType[ColorType])
 		{
-			Sprite val = Sprite.Create(colorTexture, new Rect(Vector2.zero, new Vector2((float)((Texture)colorTexture).width, (float)((Texture)colorTexture).height)), new Vector2(0.5f, 0.5f));
-			Material val2 = new Material(TPSingleton<PlayableUnitCustomisationPanel>.Instance.ColorSwapMaterial);
-			val2.SetTexture("_SwapTex", (Texture)(object)item.Value);
+			Sprite image = Sprite.Create(colorTexture, new Rect(Vector2.zero, new Vector2((float)((Texture)colorTexture).width, (float)((Texture)colorTexture).height)), new Vector2(0.5f, 0.5f));
+			Material val = new Material(TPSingleton<PlayableUnitCustomisationPanel>.Instance.ColorSwapMaterial);
+			val.SetTexture("_SwapTex", (Texture)(object)item.Value);
 			string text = Localizer.Get($"HeroCustomization_ColorDropdownItem_{ColorType}_{item.Key}");
-			list.Add(new ColorOptionData(text, val, val2));
+			list.Add(new ColorDropdown.ColorOptionData(text, image, val));
 		}
 		colorDropdown.AddOptions(list);
-		((TMP_BetterDropdown)colorDropdown).value = TPSingleton<PlayableUnitCustomisationPanel>.Instance.CurrentIndexByColorType[ColorType].Index;
-		((UnityEvent<int>)(object)((TMP_BetterDropdown)colorDropdown).onValueChanged).AddListener(onValueChanged);
+		colorDropdown.value = TPSingleton<PlayableUnitCustomisationPanel>.Instance.CurrentIndexByColorType[ColorType].Index;
+		((UnityEvent<int>)colorDropdown.onValueChanged).AddListener(onValueChanged);
 	}
 
 	private void Start()

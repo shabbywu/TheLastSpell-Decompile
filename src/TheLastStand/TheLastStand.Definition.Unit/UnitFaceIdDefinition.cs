@@ -1,17 +1,16 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Unit;
 
-public class UnitFaceIdDefinition : Definition
+public class UnitFaceIdDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public int Weight { get; private set; }
 
 	public string FaceId { get; private set; }
 
 	public UnitFaceIdDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

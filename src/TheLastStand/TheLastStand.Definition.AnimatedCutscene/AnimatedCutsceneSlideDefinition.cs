@@ -6,14 +6,14 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.AnimatedCutscene;
 
-public class AnimatedCutsceneSlideDefinition : Definition
+public class AnimatedCutsceneSlideDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public string Id { get; private set; }
 
 	public List<AnimatedCutsceneSlideItemDefinition> SlideElementsDefinitions { get; private set; }
 
 	public AnimatedCutsceneSlideDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

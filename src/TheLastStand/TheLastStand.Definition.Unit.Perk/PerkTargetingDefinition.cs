@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.Perk;
 
-public class PerkTargetingDefinition : Definition
+public class PerkTargetingDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public enum E_TargetingMethod
 	{
@@ -58,10 +58,10 @@ public class PerkTargetingDefinition : Definition
 		XAttribute val2 = val.Attribute(XName.op_Implicit("Amount"));
 		if (!string.IsNullOrEmpty((val2 != null) ? val2.Value : null))
 		{
-			string text = StringExtensions.Replace(val2.Value, ((Definition)this).TokenVariables);
+			string text = val2.Value.Replace(base.TokenVariables);
 			if (!string.IsNullOrEmpty(text))
 			{
-				AmountExpression = Parser.Parse(text, (Dictionary<string, string>)null);
+				AmountExpression = Parser.Parse(text);
 			}
 			else
 			{
@@ -71,10 +71,10 @@ public class PerkTargetingDefinition : Definition
 		XAttribute val3 = val.Attribute(XName.op_Implicit("Range"));
 		if (!string.IsNullOrEmpty((val3 != null) ? val3.Value : null))
 		{
-			string text2 = StringExtensions.Replace(val3.Value, ((Definition)this).TokenVariables);
+			string text2 = val3.Value.Replace(base.TokenVariables);
 			if (!string.IsNullOrEmpty(text2))
 			{
-				RangeExpression = Parser.Parse(text2, (Dictionary<string, string>)null);
+				RangeExpression = Parser.Parse(text2);
 			}
 			else
 			{

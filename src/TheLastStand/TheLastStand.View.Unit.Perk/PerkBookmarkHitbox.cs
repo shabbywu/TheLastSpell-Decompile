@@ -1,6 +1,5 @@
 using TPLib;
 using TheLastStand.Controller.ApplicationState;
-using TheLastStand.Framework.Automaton;
 using TheLastStand.Manager;
 using TheLastStand.Model;
 using TheLastStand.Model.Unit.Perk;
@@ -27,7 +26,7 @@ public class PerkBookmarkHitbox : MonoBehaviour, IPointerClickHandler, IEventSys
 
 	private void Update()
 	{
-		if (!(((StateMachine)ApplicationManager.Application).State is GameState) || TPSingleton<GameManager>.Instance.Game.State != Game.E_State.CharacterSheet || !InputManager.GetButtonDown(138))
+		if (!(ApplicationManager.Application.State is GameState) || TPSingleton<GameManager>.Instance.Game.State != Game.E_State.CharacterSheet || !InputManager.GetButtonDown(138))
 		{
 			return;
 		}

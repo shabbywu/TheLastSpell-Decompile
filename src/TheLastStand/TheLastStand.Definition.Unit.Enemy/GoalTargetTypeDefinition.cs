@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Definition.Unit.Enemy.GoalCondition;
 using TheLastStand.Definition.Unit.Enemy.GoalCondition.GoalTargetCondition;
@@ -8,7 +7,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.Enemy;
 
-public class GoalTargetTypeDefinition : Definition
+public class GoalTargetTypeDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public enum E_TargetType
 	{
@@ -35,7 +34,7 @@ public class GoalTargetTypeDefinition : Definition
 	public bool? IsTileContentAccepted { get; private set; }
 
 	public GoalTargetTypeDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Xml.Linq;
 using TPLib.Log;
 using TheLastStand.Framework.ExpressionInterpreter;
-using TheLastStand.Framework.Serialization;
 using TheLastStand.Model.Skill.SkillAction.SkillActionExecution.SkillActionExecutionTileData;
 using UnityEngine;
 
@@ -37,6 +36,6 @@ public class AttackDataModifierEffectDefinition : APerkEffectDefinition
 			CLoggerManager.Log((object)"Could not parse AttackDataParameter attribute into an E_AttackDataParameter", (LogType)3, (CLogLevel)1, true, "StaticLog", false);
 		}
 		XAttribute val = ((XElement)obj).Attribute(XName.op_Implicit("Value"));
-		ValueExpression = Parser.Parse(val.Value, ((Definition)this).TokenVariables);
+		ValueExpression = Parser.Parse(val.Value, base.TokenVariables);
 	}
 }

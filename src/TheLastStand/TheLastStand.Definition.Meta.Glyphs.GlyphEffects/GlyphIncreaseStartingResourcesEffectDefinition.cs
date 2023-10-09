@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.ExpressionInterpreter;
-using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Meta.Glyphs.GlyphEffects;
 
@@ -23,8 +22,8 @@ public class GlyphIncreaseStartingResourcesEffectDefinition : GlyphEffectDefinit
 		XContainer obj = ((container is XElement) ? container : null);
 		GlyphDefinition.AssertIsTrue(obj != null, "Received null element in GlyphIncreaseStartingResourcesEffectDefinition.");
 		XElement val = obj.Element(XName.op_Implicit("GoldBonus"));
-		GoldBonusExpression = ((val != null) ? Parser.Parse(val.Value, ((Definition)this).TokenVariables) : null);
+		GoldBonusExpression = ((val != null) ? Parser.Parse(val.Value, base.TokenVariables) : null);
 		XElement val2 = obj.Element(XName.op_Implicit("MaterialsBonus"));
-		MaterialsBonusExpression = ((val2 != null) ? Parser.Parse(val2.Value, ((Definition)this).TokenVariables) : null);
+		MaterialsBonusExpression = ((val2 != null) ? Parser.Parse(val2.Value, base.TokenVariables) : null);
 	}
 }

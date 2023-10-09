@@ -11,7 +11,7 @@ public class ItemView
 		{
 			return null;
 		}
-		Sprite val = ResourcePooler.LoadOnce<Sprite>("View/Sprites/Items/Weapon_" + itemDefinitionId, false);
+		Sprite val = ResourcePooler.LoadOnce<Sprite>("View/Sprites/Items/Weapon_" + itemDefinitionId, failSilently: false);
 		if ((Object)(object)val != (Object)null)
 		{
 			return val;
@@ -25,6 +25,6 @@ public class ItemView
 		{
 			return null;
 		}
-		return ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Items/Icons/" + (isBG ? "Background" : "Foreground") + "/UI_Icon_Items_" + itemDefinitionId + "_" + (isBG ? "BG" : "FG"), false);
+		return ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Items/Icons/" + (isBG ? "Background" : "Foreground") + "/UI_Icon_Items_" + itemDefinitionId + "_" + (isBG ? "BG" : "FG"), failSilently: false);
 	}
 }

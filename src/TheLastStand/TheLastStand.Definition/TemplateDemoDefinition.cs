@@ -8,7 +8,7 @@ using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition;
 
-public class TemplateDemoDefinition : Definition, ITopologicSortItem<TemplateDemoDefinition>
+public class TemplateDemoDefinition : TheLastStand.Framework.Serialization.Definition, ITopologicSortItem<TemplateDemoDefinition>
 {
 	private XElement demoElement;
 
@@ -23,7 +23,7 @@ public class TemplateDemoDefinition : Definition, ITopologicSortItem<TemplateDem
 	public string TestString { get; private set; }
 
 	public TemplateDemoDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

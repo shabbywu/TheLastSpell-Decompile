@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Tutorial;
 
-public class TutorialDefinition : Definition
+public class TutorialDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public class StringToTutorialIdConverter : StringToStringCollectionEntryConverter
 	{
@@ -32,7 +32,7 @@ public class TutorialDefinition : Definition
 	public bool HiddenUntilReadOnce { get; private set; }
 
 	public TutorialDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

@@ -5,7 +5,6 @@ using TPLib;
 using TPLib.Log;
 using TheLastStand.Database.Unit;
 using TheLastStand.Framework.ExpressionInterpreter;
-using TheLastStand.Framework.Serialization;
 using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.Enemy.Affix;
@@ -31,7 +30,7 @@ public class EnemyAuraAffixEffectDefinition : EnemyAffixEffectDefinition
 	{
 		XElement val = (XElement)(object)((container is XElement) ? container : null);
 		XElement val2 = ((XContainer)val).Element(XName.op_Implicit("Range"));
-		Range = Parser.Parse(val2.Value, ((Definition)this).TokenVariables);
+		Range = Parser.Parse(val2.Value, base.TokenVariables);
 		IncludeSelf = ((XContainer)val).Element(XName.op_Implicit("IncludeSelf")) != null;
 		XElement obj = ((XContainer)val).Element(XName.op_Implicit("StatModifiers"));
 		XAttribute val3 = obj.Attribute(XName.op_Implicit("TurnsCount"));
@@ -57,7 +56,7 @@ public class EnemyAuraAffixEffectDefinition : EnemyAffixEffectDefinition
 				continue;
 			}
 			XAttribute val5 = item.Attribute(XName.op_Implicit("Value"));
-			StatModifiers.Add(result2, Parser.Parse(val5.Value, ((Definition)this).TokenVariables));
+			StatModifiers.Add(result2, Parser.Parse(val5.Value, base.TokenVariables));
 		}
 	}
 }

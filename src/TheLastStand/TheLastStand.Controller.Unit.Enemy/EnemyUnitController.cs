@@ -59,7 +59,7 @@ public class EnemyUnitController : UnitController, IBehaviorController
 		{
 			State = TheLastStand.Model.Unit.Unit.E_State.Ready
 		};
-		base.Unit.DeserializeAfterInit((ISerializedData)(object)serializedUnit, saveVersion);
+		base.Unit.DeserializeAfterInit(serializedUnit, saveVersion);
 		Init(serializedUnit, unitView, base.Unit.OriginTile, saveVersion);
 	}
 
@@ -69,7 +69,7 @@ public class EnemyUnitController : UnitController, IBehaviorController
 
 	public static float ComputeExperienceGain(float baseExperience)
 	{
-		float num = SpawnWaveManager.SpawnDefinition.SpawnsCountPerWave.EvalToFloat((object)TPSingleton<SpawnWaveManager>.Instance.SpawnWaveInterpreterObject) * SpawnWaveManager.CurrentSpawnWave.SpawnWaveDefinition.SpawnsCountMultiplier;
+		float num = SpawnWaveManager.SpawnDefinition.SpawnsCountPerWave.EvalToFloat(TPSingleton<SpawnWaveManager>.Instance.SpawnWaveInterpreterObject) * SpawnWaveManager.CurrentSpawnWave.SpawnWaveDefinition.SpawnsCountMultiplier;
 		int spawnsCount = SpawnWaveManager.CurrentSpawnWave.SpawnsCount;
 		return Mathf.Round(baseExperience * (num / (float)spawnsCount));
 	}
@@ -562,10 +562,10 @@ public class EnemyUnitController : UnitController, IBehaviorController
 		if (EnemyUnit.EnemyUnitTemplateDefinition.DeathSoundFolderName != "None")
 		{
 			string text = ((EnemyUnit.EnemyUnitTemplateDefinition.DeathSoundFolderName != string.Empty) ? EnemyUnit.EnemyUnitTemplateDefinition.DeathSoundFolderName : "Clawer");
-			AudioClip[] array = ResourcePooler<AudioClip>.LoadAllOnce("Sounds/SFX/Enemy/Deaths/" + text, false);
+			AudioClip[] array = ResourcePooler<AudioClip>.LoadAllOnce("Sounds/SFX/Enemy/Deaths/" + text);
 			if (array != null && array.Length != 0)
 			{
-				ObjectPooler.GetPooledComponent<OneShotSound>("Enemies Death Spatialized", EnemyUnitManager.EnemyDeathSpatializedSFXPrefab, (Transform)null, false).PlaySpatialized(TPHelpers.RandomElement<AudioClip>(array), EnemyUnit.OriginTile, TPHelpers.RandomFloatInRange(EnemyUnitManager.DelayBetweenDeathAndSound));
+				ObjectPooler.GetPooledComponent<OneShotSound>("Enemies Death Spatialized", EnemyUnitManager.EnemyDeathSpatializedSFXPrefab, (Transform)null, dontSetParent: false).PlaySpatialized(TPHelpers.RandomElement<AudioClip>(array), EnemyUnit.OriginTile, TPHelpers.RandomFloatInRange(EnemyUnitManager.DelayBetweenDeathAndSound));
 			}
 			else
 			{

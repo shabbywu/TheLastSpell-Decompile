@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TPLib;
 using TPLib.Log;
@@ -10,7 +9,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Trophy;
 
-public class TrophyDefinition : Definition
+public class TrophyDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	private uint damnedSoulsEarnedBase;
 
@@ -40,7 +39,7 @@ public class TrophyDefinition : Definition
 	public TrophyConditionDefinition Condition { get; private set; }
 
 	public TrophyDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
@@ -64,7 +63,7 @@ public class TrophyDefinition : Definition
 		{
 			if (!uint.TryParse(val3.Value, out var result))
 			{
-				CLoggerManager.Log((object)("Trophy Definition " + Id + "'s DamnedSoulsEarned " + ((Definition)this).HasAnInvalid("uint", val3.Value)), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+				CLoggerManager.Log((object)("Trophy Definition " + Id + "'s DamnedSoulsEarned " + HasAnInvalid("uint", val3.Value)), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 			}
 			damnedSoulsEarnedBase = result;
 		}

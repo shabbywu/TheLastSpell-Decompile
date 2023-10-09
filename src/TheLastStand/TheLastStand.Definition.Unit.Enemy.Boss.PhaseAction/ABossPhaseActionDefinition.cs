@@ -5,7 +5,7 @@ using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Unit.Enemy.Boss.PhaseAction;
 
-public abstract class ABossPhaseActionDefinition : Definition
+public abstract class ABossPhaseActionDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public Node DelayExpression { get; private set; }
 
@@ -19,7 +19,7 @@ public abstract class ABossPhaseActionDefinition : Definition
 		XAttribute val = ((XElement)((container is XElement) ? container : null)).Attribute(XName.op_Implicit("Delay"));
 		if (!string.IsNullOrEmpty((val != null) ? val.Value : null))
 		{
-			DelayExpression = Parser.Parse(val.Value, (Dictionary<string, string>)null);
+			DelayExpression = Parser.Parse(val.Value);
 		}
 	}
 }

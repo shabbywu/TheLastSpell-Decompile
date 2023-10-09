@@ -8,7 +8,6 @@ using Rewired;
 using TPLib;
 using TPLib.Yield;
 using TheLastStand.Definition.Meta;
-using TheLastStand.Framework.Automaton;
 using TheLastStand.Framework.Extensions;
 using TheLastStand.Manager;
 using TheLastStand.Manager.Meta;
@@ -228,7 +227,7 @@ public class OraculumView : OraculumHub<OraculumView>
 			CurrentShop = (isDarkShop ? TPSingleton<DarkShopManager>.Instance.MetaShopView : TPSingleton<LightShopManager>.Instance.MetaShopView);
 			CurrentShop.GoddessView.Refresh();
 			CurrentShop.EnableCanvas(base.HideGoddesses || CurrentShop.GoddessView.IdleContainer.activeSelf || !CurrentShop.NarrationView.HasNarrationToPlay);
-			bool worldMapState = ((StateMachine)ApplicationManager.Application).State.GetName() == "WorldMap";
+			bool worldMapState = ApplicationManager.Application.State.GetName() == "WorldMap";
 			AudioClip audioClip;
 			if (base.HideGoddesses)
 			{
@@ -320,7 +319,7 @@ public class OraculumView : OraculumHub<OraculumView>
 				TPSingleton<HUDJoystickNavigationManager>.Instance.ExitHUDNavigationMode();
 			}
 		}
-		else if (((StateMachine)ApplicationManager.Application).State.GetName() == "Game")
+		else if (ApplicationManager.Application.State.GetName() == "Game")
 		{
 			TPSingleton<ToDoListView>.Instance.RefreshMetaShopsNotification();
 		}
@@ -367,23 +366,23 @@ public class OraculumView : OraculumHub<OraculumView>
 		TPSingleton<LightShopManager>.Instance.MetaShopView.NarrationView.MetaNarration = MetaNarrationsManager.LightNarration;
 		TPSingleton<LightShopManager>.Instance.MetaShopView.AddBackButtonListener(new UnityAction(OnBackToHubButtonClicked));
 		TPSingleton<DarkShopManager>.Instance.MetaShopView.AddBackButtonListener(new UnityAction(OnBackToHubButtonClicked));
-		if (((StateMachine)ApplicationManager.Application).State.GetName() != "Credits")
+		if (ApplicationManager.Application.State.GetName() != "Credits")
 		{
 			TPSingleton<DarkShopManager>.Instance.InitTooltips(metaUpgradeLineTooltipPackage);
 			TPSingleton<LightShopManager>.Instance.InitTooltips(metaUpgradeLineTooltipPackage);
-			if (((StateMachine)ApplicationManager.Application).State.GetName() == "MetaShops")
+			if (ApplicationManager.Application.State.GetName() == "MetaShops")
 			{
 				RefreshLeaveButton();
 			}
 			TPSingleton<DarkShopManager>.Instance.Init();
 			TPSingleton<LightShopManager>.Instance.Init();
 		}
-		if (((StateMachine)ApplicationManager.Application).State.GetName() == "MetaShops" && InputManager.IsLastControllerJoystick)
+		if (ApplicationManager.Application.State.GetName() == "MetaShops" && InputManager.IsLastControllerJoystick)
 		{
 			cursorView.Enable(isOn: true);
 		}
 		base.Start();
-		if (((StateMachine)ApplicationManager.Application).State.GetName() != "MetaShops" && ((StateMachine)ApplicationManager.Application).State.GetName() != "Credits")
+		if (ApplicationManager.Application.State.GetName() != "MetaShops" && ApplicationManager.Application.State.GetName() != "Credits")
 		{
 			SetActiveShops(toggle: false);
 		}
@@ -403,7 +402,7 @@ public class OraculumView : OraculumHub<OraculumView>
 
 	private IEnumerator DelayGoddessAppearance(MetaShopView shop)
 	{
-		bool flag = ((StateMachine)ApplicationManager.Application).State.GetName() == "WorldMap";
+		bool flag = ApplicationManager.Application.State.GetName() == "WorldMap";
 		List<MetaReplica> replicas;
 		bool playNarration = shop.NarrationView.MetaNarration.MetaNarrationController.TryGetValidMandatoryReplica(1, out replicas) && !flag;
 		if (shop.GoddessView.IdleContainer.activeSelf && !playNarration)
@@ -561,7 +560,7 @@ public class OraculumView : OraculumHub<OraculumView>
 		//IL_0022: Invalid comparison between Unknown and I4
 		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0027: Invalid comparison between Unknown and I4
-		if (((StateMachine)ApplicationManager.Application).State.GetName() == "Credits")
+		if (ApplicationManager.Application.State.GetName() == "Credits")
 		{
 			return;
 		}
@@ -619,7 +618,7 @@ public class OraculumView : OraculumHub<OraculumView>
 
 	private void RefreshLeaveButton()
 	{
-		bool num = ((StateMachine)ApplicationManager.Application).State.GetName() == "WorldMap";
+		bool num = ApplicationManager.Application.State.GetName() == "WorldMap";
 		bool anyValidMandatoryNarration = MetaNarrationsManager.AnyValidMandatoryNarration;
 		bool anyAvailableMandatoryUpgrade = MetaUpgradesManager.AnyAvailableMandatoryUpgrade;
 		bool flag = !num && (anyValidMandatoryNarration || anyAvailableMandatoryUpgrade);
@@ -653,8 +652,8 @@ public class OraculumView : OraculumHub<OraculumView>
 		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
 		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
 		TransitionRunning = true;
-		RectTransformExtensions.SetAnchors(globalRect, pivot);
-		RectTransformExtensions.SetPivot(globalRect, pivot);
+		globalRect.SetAnchors(pivot);
+		globalRect.SetPivot(pivot);
 		Tween val = (Tween)(object)TweenSettingsExtensions.OnComplete<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenSettingsExtensions.OnUpdate<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosX(globalRect, 0f, duration, false), animationCurve), new TweenCallback(CurrentShop.SnapShopPosition)), (TweenCallback)delegate
 		{
 			TransitionRunning = false;

@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TPLib.Log;
 using TheLastStand.Database;
@@ -9,7 +8,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Item;
 
-public class CreateItemDefinition : Definition
+public class CreateItemDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public static int All => -1;
 
@@ -26,7 +25,7 @@ public class CreateItemDefinition : Definition
 	public ProbabilityTreeEntriesDefinition ItemRaritiesListDefinition { get; private set; }
 
 	public CreateItemDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
@@ -55,7 +54,7 @@ public class CreateItemDefinition : Definition
 			return;
 		}
 		XAttribute val5 = val4.Attribute(XName.op_Implicit("Id"));
-		if (XDocumentExtensions.IsNullOrEmpty(val5) || !ItemDatabase.ItemRaritiesListDefinitions.ContainsKey(val5.Value))
+		if (val5.IsNullOrEmpty() || !ItemDatabase.ItemRaritiesListDefinitions.ContainsKey(val5.Value))
 		{
 			CLoggerManager.Log((object)"CreateItem ItemRarities Id is not valid or does not exist in ItemRaritiesListDefinitions", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 			return;
@@ -67,6 +66,6 @@ public class CreateItemDefinition : Definition
 		}
 		ItemRaritiesListDefinition = value2;
 		XElement val6 = ((XContainer)val).Element(XName.op_Implicit("Count"));
-		Count = (XDocumentExtensions.IsNullOrEmpty(val6) ? Parser.Parse("1", (Dictionary<string, string>)null) : Parser.Parse(val6.Value, (Dictionary<string, string>)null));
+		Count = (val6.IsNullOrEmpty() ? Parser.Parse("1") : Parser.Parse(val6.Value));
 	}
 }

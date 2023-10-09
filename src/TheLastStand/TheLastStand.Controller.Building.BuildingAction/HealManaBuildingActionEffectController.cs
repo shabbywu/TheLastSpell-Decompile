@@ -66,7 +66,7 @@ public class HealManaBuildingActionEffectController : BuildingActionEffectContro
 		float num = playableUnit.PlayableUnitController.GainMana(amount);
 		if (!(num <= 0f))
 		{
-			RestoreStatDisplay pooledComponent = ObjectPooler.GetPooledComponent<RestoreStatDisplay>("RestoreStatDisplay", ResourcePooler.LoadOnce<RestoreStatDisplay>("Prefab/Displayable Effect/UI Effect Displays/RestoreStatDisplay", false), EffectManager.EffectDisplaysParent, false);
+			RestoreStatDisplay pooledComponent = ObjectPooler.GetPooledComponent<RestoreStatDisplay>("RestoreStatDisplay", ResourcePooler.LoadOnce<RestoreStatDisplay>("Prefab/Displayable Effect/UI Effect Displays/RestoreStatDisplay", failSilently: false), EffectManager.EffectDisplaysParent, dontSetParent: false);
 			pooledComponent.Init(UnitStatDefinition.E_Stat.Mana, (int)num);
 			playableUnit.PlayableUnitController.AddEffectDisplay(pooledComponent);
 			GameView.TopScreenPanel.UnitPortraitsPanel.RefreshPortraitsStats();

@@ -4,7 +4,6 @@ using System.Xml.Linq;
 using TPLib.Log;
 using TheLastStand.Database;
 using TheLastStand.Definition.Unit;
-using TheLastStand.Framework.Serialization;
 using UnityEngine;
 
 namespace TheLastStand.Definition.Apocalypse.ApocalypseEffects;
@@ -30,12 +29,12 @@ public class EnemiesStatModifierApocalyseEffectDefinition : ApocalypseEffectDefi
 		XAttribute val3 = val.Attribute(XName.op_Implicit("Value"));
 		if (!Enum.TryParse<UnitStatDefinition.E_Stat>(val2.Value, out var result))
 		{
-			CLoggerManager.Log((object)("An Apocalypse EnemyStatModifier Effect's " + ((Definition)this).HasAnInvalidStat(val2.Value) + "!"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+			CLoggerManager.Log((object)("An Apocalypse EnemyStatModifier Effect's " + HasAnInvalidStat(val2.Value) + "!"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 			return;
 		}
 		if (!int.TryParse(val3.Value, out var result2))
 		{
-			CLoggerManager.Log((object)("An Apocalypse EnemyStatModifier Effect's " + ((Definition)this).HasAnInvalidInt(val3.Value)), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+			CLoggerManager.Log((object)("An Apocalypse EnemyStatModifier Effect's " + HasAnInvalidInt(val3.Value)), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 			return;
 		}
 		AffectedEnemies = new List<string>();

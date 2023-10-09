@@ -14,7 +14,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit;
 
-public class InjuryDefinition : Definition
+public class InjuryDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public enum E_ValueMultiplier
 	{
@@ -97,7 +97,7 @@ public class InjuryDefinition : Definition
 
 
 	public InjuryDefinition(XContainer container, float baseHealth)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 		BaseHealth = baseHealth;
 	}
@@ -106,7 +106,7 @@ public class InjuryDefinition : Definition
 	{
 		XElement val = (XElement)(object)((container is XElement) ? container : null);
 		XElement val2 = ((XContainer)val).Element(XName.op_Implicit("BaseRatio"));
-		if (XDocumentExtensions.IsNullOrEmpty(val2))
+		if (val2.IsNullOrEmpty())
 		{
 			CLoggerManager.Log((object)"Injury definition must have a BaseRatio element.", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 			return;
@@ -118,7 +118,7 @@ public class InjuryDefinition : Definition
 		}
 		BaseRatio = result;
 		XElement val3 = ((XContainer)val).Element(XName.op_Implicit("RatioMultiplier"));
-		if (XDocumentExtensions.IsNullOrEmpty(val3))
+		if (val3.IsNullOrEmpty())
 		{
 			CLoggerManager.Log((object)"Injury definition must have a RatioMultiplier element.", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 			return;
@@ -135,7 +135,7 @@ public class InjuryDefinition : Definition
 			foreach (XElement item9 in ((XContainer)val4).Elements(XName.op_Implicit("StatModifier")))
 			{
 				XAttribute val5 = item9.Attribute(XName.op_Implicit("Id"));
-				if (XDocumentExtensions.IsNullOrEmpty(val5))
+				if (val5.IsNullOrEmpty())
 				{
 					CLoggerManager.Log((object)"StatModifier must have an Id attribute.", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 					continue;
@@ -151,7 +151,7 @@ public class InjuryDefinition : Definition
 				if (val6 != null)
 				{
 					float result4;
-					if (XDocumentExtensions.IsNullOrEmpty(val6))
+					if (val6.IsNullOrEmpty())
 					{
 						CLoggerManager.Log((object)"StatModifier must have an Offset attribute.", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 					}
@@ -164,7 +164,7 @@ public class InjuryDefinition : Definition
 						StatModifiers.Add(result3, result4);
 					}
 				}
-				else if (XDocumentExtensions.IsNullOrEmpty(val7))
+				else if (val7.IsNullOrEmpty())
 				{
 					CLoggerManager.Log((object)"StatModifier must have a Multiplier attribute.", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 				}

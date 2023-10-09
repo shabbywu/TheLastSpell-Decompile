@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Definition.Unit;
 using TheLastStand.Framework.ExpressionInterpreter;
-using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Meta.Glyphs.GlyphEffects;
 
@@ -28,7 +27,7 @@ public class GlyphModifyPlayableUnitsStatsEffectDefinition : GlyphEffectDefiniti
 			GlyphDefinition.AssertIsTrue(Enum.TryParse<UnitStatDefinition.E_Stat>(item.Attribute(XName.op_Implicit("Stat")).Value, out var result), "Could not parse Stat attribute in ModifyPlayableUnitsStats or the attribute is missing.");
 			XAttribute val = item.Attribute(XName.op_Implicit("Value"));
 			GlyphDefinition.AssertIsTrue(val != null, "The Value attribute in ModifyPlayableUnitsStats is missing.");
-			StatsToModify.Add(result, Parser.Parse(val.Value, ((Definition)this).TokenVariables));
+			StatsToModify.Add(result, Parser.Parse(val.Value, base.TokenVariables));
 		}
 	}
 }

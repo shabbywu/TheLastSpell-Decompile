@@ -74,7 +74,7 @@ public class ScavengeBuildingActionEffectDefinition : BuildingActionEffectDefini
 	{
 		XElement val = (XElement)(object)((xContainer is XElement) ? xContainer : null);
 		XElement val2 = ((XContainer)val).Element(XName.op_Implicit("GainGold"));
-		if (!XDocumentExtensions.IsNullOrEmpty(val2))
+		if (!val2.IsNullOrEmpty())
 		{
 			if (!int.TryParse(val2.Value, out var result))
 			{
@@ -84,7 +84,7 @@ public class ScavengeBuildingActionEffectDefinition : BuildingActionEffectDefini
 			gainGold = result;
 		}
 		XElement val3 = ((XContainer)val).Element(XName.op_Implicit("GainMaterials"));
-		if (!XDocumentExtensions.IsNullOrEmpty(val3))
+		if (!val3.IsNullOrEmpty())
 		{
 			if (!int.TryParse(val3.Value, out var result2))
 			{
@@ -94,7 +94,7 @@ public class ScavengeBuildingActionEffectDefinition : BuildingActionEffectDefini
 			gainMaterials = result2;
 		}
 		XElement val4 = ((XContainer)val).Element(XName.op_Implicit("GainDamnedSouls"));
-		if (!XDocumentExtensions.IsNullOrEmpty(val4))
+		if (!val4.IsNullOrEmpty())
 		{
 			if (!int.TryParse(val4.Value, out var result3))
 			{
@@ -109,7 +109,7 @@ public class ScavengeBuildingActionEffectDefinition : BuildingActionEffectDefini
 		}
 		XElement val5 = ((XContainer)val).Element(XName.op_Implicit("Damage"));
 		int result4;
-		if (XDocumentExtensions.IsNullOrEmpty(val5))
+		if (val5.IsNullOrEmpty())
 		{
 			Debug.LogError((object)"A ScavengeGold Building ActionEffect must have a Damage element");
 		}

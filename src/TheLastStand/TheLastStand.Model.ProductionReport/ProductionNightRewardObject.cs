@@ -58,6 +58,6 @@ public class ProductionNightRewardObject : ProductionObject, ISerializable, IDes
 		{
 			serializedProductionItems.Items.Add(Items[i].Serialize() as SerializedItem);
 		}
-		return (ISerializedData)(object)serializedProductionItems;
+		return serializedProductionItems;
 	}
 }

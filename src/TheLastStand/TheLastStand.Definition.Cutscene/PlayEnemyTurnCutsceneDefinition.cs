@@ -4,7 +4,7 @@ using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Cutscene;
 
-public class PlayEnemyTurnCutsceneDefinition : Definition, ICutsceneDefinition
+public class PlayEnemyTurnCutsceneDefinition : TheLastStand.Framework.Serialization.Definition, ICutsceneDefinition
 {
 	public static class Constants
 	{

@@ -22,7 +22,7 @@ public class EliteEnemyUnitStatsController : EnemyUnitStatsController
 		: base(eliteEnemyUnit)
 	{
 		eliteEnemyUnit.EliteEnemyUnitController.TriggerAffixes(E_EffectTime.OnStatsLoadStart, this);
-		EliteEnemyUnitStats.Deserialize((ISerializedData)(object)serializedUnitStats, saveVersion);
+		EliteEnemyUnitStats.Deserialize(serializedUnitStats, saveVersion);
 	}
 
 	public override void Init()

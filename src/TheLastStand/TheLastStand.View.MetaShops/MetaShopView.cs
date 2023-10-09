@@ -164,7 +164,7 @@ public class MetaShopView : MonoBehaviour
 
 	public void OnSlotViewJoystickSelect(RectTransform item)
 	{
-		GUIHelpers.AdjustScrollViewToFocusedItem(item, scrollViewport, scrollbar, 0.01f, 0.01f, (float?)null);
+		GUIHelpers.AdjustScrollViewToFocusedItem(item, scrollViewport, scrollbar, 0.01f, 0.01f);
 	}
 
 	public void ResetScrollbar(bool forceRefresh = false)
@@ -223,7 +223,7 @@ public class MetaShopView : MonoBehaviour
 				navigation = filter.Selectable.navigation;
 				if ((Object)(object)((Navigation)(ref navigation)).selectOnUp == (Object)null)
 				{
-					SelectableExtensions.SetSelectOnUp(filter.Selectable, (Selectable)(object)filtersToUpgradeNavigation);
+					filter.Selectable.SetSelectOnUp((Selectable)(object)filtersToUpgradeNavigation);
 				}
 			}
 			else
@@ -231,7 +231,7 @@ public class MetaShopView : MonoBehaviour
 				navigation = filter.Selectable.navigation;
 				if ((Object)(object)((Navigation)(ref navigation)).selectOnUp == (Object)(object)filtersToUpgradeNavigation)
 				{
-					SelectableExtensions.SetSelectOnUp(filter.Selectable, (Selectable)null);
+					filter.Selectable.SetSelectOnUp(null);
 				}
 			}
 		}

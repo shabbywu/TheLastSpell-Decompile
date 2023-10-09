@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using TPLib;
 using TPLib.Log;
@@ -124,15 +123,14 @@ public sealed class LevelProbabilitiesTreeController
 	private Dictionary<int, int> ComputeProbablyTree()
 	{
 		Dictionary<int, int> dictionary = new Dictionary<int, int>(probabilityTreeDefinition.ProbabilityLevels);
-		Dictionary<int, int> dictionary2 = DictionaryExtensions.GetValueOrDefault<string, Dictionary<int, int>>(TPSingleton<GlyphManager>.Instance.StartingGearLevelModifiers, probabilityTreeDefinition.Id) ?? new Dictionary<int, int>();
+		Dictionary<int, int> dictionary2 = TPSingleton<GlyphManager>.Instance.StartingGearLevelModifiers.GetValueOrDefault(probabilityTreeDefinition.Id) ?? new Dictionary<int, int>();
 		if (TPSingleton<GlyphManager>.Instance.LevelProbabilityTreeModifiers.TryGetValue(probabilityTreeDefinition.Id, out var value))
 		{
-			dictionary = DictionaryExtensions.Add(dictionary, value);
+			dictionary = dictionary.Add(value);
 		}
-		ItemLevelProbabilityMetaEffectDefinition itemLevelProbabilityMetaEffectDefinition = default(ItemLevelProbabilityMetaEffectDefinition);
-		if (MetaUpgradeEffectsController.TryGetEffectsOfType<ItemLevelProbabilityMetaEffectDefinition>(out var effects, MetaUpgradesManager.E_MetaState.Activated) && ListExtensions.TryFind<ItemLevelProbabilityMetaEffectDefinition>((IEnumerable<ItemLevelProbabilityMetaEffectDefinition>)effects, (Func<ItemLevelProbabilityMetaEffectDefinition, bool>)((ItemLevelProbabilityMetaEffectDefinition x) => x.LevelTreeId == probabilityTreeDefinition.Id), ref itemLevelProbabilityMetaEffectDefinition))
+		if (MetaUpgradeEffectsController.TryGetEffectsOfType<ItemLevelProbabilityMetaEffectDefinition>(out var effects, MetaUpgradesManager.E_MetaState.Activated) && effects.TryFind((ItemLevelProbabilityMetaEffectDefinition x) => x.LevelTreeId == probabilityTreeDefinition.Id, out var value2))
 		{
-			foreach (KeyValuePair<int, int> item in itemLevelProbabilityMetaEffectDefinition.WeightBonusByLevelProbability)
+			foreach (KeyValuePair<int, int> item in value2.WeightBonusByLevelProbability)
 			{
 				if (dictionary2.ContainsKey(item.Key))
 				{
@@ -144,6 +142,6 @@ public sealed class LevelProbabilitiesTreeController
 				}
 			}
 		}
-		return DictionaryExtensions.Add(dictionary, dictionary2);
+		return dictionary.Add(dictionary2);
 	}
 }

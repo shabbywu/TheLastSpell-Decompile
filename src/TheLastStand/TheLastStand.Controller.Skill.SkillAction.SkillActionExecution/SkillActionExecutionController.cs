@@ -15,7 +15,6 @@ using TheLastStand.Definition.Item;
 using TheLastStand.Definition.Skill;
 using TheLastStand.Definition.Skill.SkillAction;
 using TheLastStand.Definition.Skill.SkillEffect;
-using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Framework.Extensions;
 using TheLastStand.Framework.Maths;
 using TheLastStand.Manager;
@@ -526,7 +525,7 @@ public abstract class SkillActionExecutionController
 		SkillActionExecution.PreCastFx.TargetTile = SkillActionExecution.SkillSourceTile;
 		SetCastFxAffectedTiles(SkillActionExecution.PreCastFx, null, null, TileObjectSelectionManager.E_Orientation.NONE, includeSkillEffects: false);
 		SkillActionExecution.PreCastFx.CastFxController.PlayCastFxs(TileObjectSelectionManager.E_Orientation.NONE, (SkillActionExecution.Caster as EnemyUnit)?.EnemyUnitTemplateDefinition.VisualOffset ?? Vector2.zero, SkillActionExecution.Caster);
-		return SkillActionExecution.PreCastFx.CastFxDefinition.CastTotalDuration.EvalToFloat((InterpreterContext)(object)SkillActionExecution.PreCastFx.CastFXInterpreterContext);
+		return SkillActionExecution.PreCastFx.CastFxDefinition.CastTotalDuration.EvalToFloat(SkillActionExecution.PreCastFx.CastFXInterpreterContext);
 	}
 
 	public void PrepareSkill(ISkillCaster caster, Tile originTile = null)
@@ -692,7 +691,7 @@ public abstract class SkillActionExecutionController
 				specificOrientation = TileObjectSelectionManager.GetOrientationFromDirection(enemyUnit.EnemyUnitTemplateDefinition.LockedOrientation);
 			}
 			castFx.CastFxController.PlayCastFxs(specificOrientation, offset, skill.SkillAction.SkillActionExecution.Caster);
-			float num = castFx.CastFxDefinition.CastTotalDuration.EvalToFloat((InterpreterContext)(object)castFx.CastFXInterpreterContext);
+			float num = castFx.CastFxDefinition.CastTotalDuration.EvalToFloat(castFx.CastFXInterpreterContext);
 			if (includeSkillEffects && skill.HasPropagation && skill.SkillAction.SkillActionExecution.PropagationAffectedUnits != null && skill.SkillAction.SkillActionExecution.PropagationAffectedUnits.TryGetValue(skill.SkillAction.SkillActionExecution.HitIndex, out var value))
 			{
 				SkillCastFxDefinition skillCastFxDefinition = castFx.CastFxDefinition as SkillCastFxDefinition;
@@ -921,7 +920,7 @@ public abstract class SkillActionExecutionController
 				TrophyManager.AppendValueToTrophiesConditions<TilesMovedUsingSkillsTrophyConditionController>(new object[2] { playableUnit.RandomId, num });
 			}
 		}
-		caster.UnitController.PrepareForMovement(playWalkAnim: false, followPathOrientation: false, skill.SkillDefinition.SkillCastFxDefinition.ManeuverFxDefinition.Speed.EvalToFloat((InterpreterContext)(object)SkillActionExecution.CastFx.CastFXInterpreterContext), skill.SkillDefinition.SkillCastFxDefinition.ManeuverFxDefinition.Delay.EvalToFloat((InterpreterContext)(object)SkillActionExecution.CastFx.CastFXInterpreterContext)).StartTask();
+		caster.UnitController.PrepareForMovement(playWalkAnim: false, followPathOrientation: false, skill.SkillDefinition.SkillCastFxDefinition.ManeuverFxDefinition.Speed.EvalToFloat(SkillActionExecution.CastFx.CastFXInterpreterContext), skill.SkillDefinition.SkillCastFxDefinition.ManeuverFxDefinition.Delay.EvalToFloat(SkillActionExecution.CastFx.CastFXInterpreterContext)).StartTask();
 	}
 
 	private IEnumerator MultiHitSkillExecutionCoroutine(ISkillCaster caster, TheLastStand.Model.Skill.Skill skill)
@@ -976,7 +975,7 @@ public abstract class SkillActionExecutionController
 			TPSingleton<EnemyUnitManager>.Instance.ApplyContagionToDyingEnemies();
 			if (!(skill.SkillContainer is Perk) && caster is PlayableUnit playableUnit)
 			{
-				DictionaryExtensions.GetValueOrDefault<E_EffectTime, Action<PerkDataContainer>>(playableUnit.Events, E_EffectTime.OnSkillNextHit)?.Invoke(SkillActionExecution.Skill.SkillAction.PerkDataContainer);
+				playableUnit.Events.GetValueOrDefault(E_EffectTime.OnSkillNextHit)?.Invoke(SkillActionExecution.Skill.SkillAction.PerkDataContainer);
 			}
 			TPSingleton<EnemyUnitManager>.Instance.ApplyContagionToDyingEnemies();
 			EffectManager.DisplayEffects();
@@ -1081,14 +1080,14 @@ public abstract class SkillActionExecutionController
 		SkillActionExecution.Skill.SkillAction.SkillActionController.EnsurePerkData(null, null, null, skill.SkillContainer is Perk);
 		if (playableUnitCaster != null && !(skill.SkillContainer is Perk))
 		{
-			DictionaryExtensions.GetValueOrDefault<E_EffectTime, Action<PerkDataContainer>>(playableUnitCaster.Events, E_EffectTime.OnSkillCastBegin)?.Invoke(SkillActionExecution.Skill.SkillAction.PerkDataContainer);
+			playableUnitCaster.Events.GetValueOrDefault(E_EffectTime.OnSkillCastBegin)?.Invoke(SkillActionExecution.Skill.SkillAction.PerkDataContainer);
 		}
 		yield return MultiHitSkillExecutionCoroutine(caster, skill);
 		if (playableUnitCaster != null)
 		{
 			if (!(skill.SkillContainer is Perk))
 			{
-				DictionaryExtensions.GetValueOrDefault<E_EffectTime, Action<PerkDataContainer>>(playableUnitCaster.Events, E_EffectTime.OnSkillCastEnd)?.Invoke(SkillActionExecution.Skill.SkillAction.PerkDataContainer);
+				playableUnitCaster.Events.GetValueOrDefault(E_EffectTime.OnSkillCastEnd)?.Invoke(SkillActionExecution.Skill.SkillAction.PerkDataContainer);
 				EffectManager.DisplayEffects();
 				TPSingleton<TutorialManager>.Instance.OnTrigger(E_TutorialTrigger.OnSkillExecutionOver);
 			}

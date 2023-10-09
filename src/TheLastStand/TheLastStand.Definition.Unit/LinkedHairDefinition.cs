@@ -1,17 +1,16 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Unit;
 
-public class LinkedHairDefinition : Definition
+public class LinkedHairDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public string Name { get; private set; }
 
 	public int Weight { get; private set; }
 
 	public LinkedHairDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

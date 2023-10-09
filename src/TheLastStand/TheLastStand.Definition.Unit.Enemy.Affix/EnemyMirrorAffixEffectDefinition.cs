@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.ExpressionInterpreter;
-using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Unit.Enemy.Affix;
 
@@ -19,6 +18,6 @@ public class EnemyMirrorAffixEffectDefinition : EnemyAffixEffectDefinition
 	public override void Deserialize(XContainer container)
 	{
 		XAttribute val = ((XElement)((container is XElement) ? container : null)).Attribute(XName.op_Implicit("DamageValue"));
-		DamageValue = Parser.Parse(val.Value, ((Definition)this).TokenVariables);
+		DamageValue = Parser.Parse(val.Value, base.TokenVariables);
 	}
 }

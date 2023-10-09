@@ -32,7 +32,7 @@ public class EliteEnemyUnitController : EnemyUnitController
 		{
 			State = TheLastStand.Model.Unit.Unit.E_State.Ready
 		};
-		base.Unit.DeserializeAfterInit((ISerializedData)(object)serializedUnit, saveVersion);
+		base.Unit.DeserializeAfterInit(serializedUnit, saveVersion);
 		Init(serializedUnit, unitView, base.Unit.OriginTile, saveVersion);
 	}
 

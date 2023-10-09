@@ -282,7 +282,7 @@ public class ToDoListView : TPSingleton<ToDoListView>
 	public void OnNotificationButtonSelected(BetterButton button)
 	{
 		Transform transform = ((Component)button).transform;
-		GUIHelpers.AdjustScrollViewToFocusedItem((RectTransform)(object)((transform is RectTransform) ? transform : null), scrollViewRectTransform, scrollbar, 0.01f, 0.01f, (float?)null);
+		GUIHelpers.AdjustScrollViewToFocusedItem((RectTransform)(object)((transform is RectTransform) ? transform : null), scrollViewRectTransform, scrollbar, 0.01f, 0.01f);
 	}
 
 	public void OnWorkersButtonClick()
@@ -636,13 +636,13 @@ public class ToDoListView : TPSingleton<ToDoListView>
 		{
 			TweenExtensions.Kill(obj2, false);
 		}
-		todoListFoldTween = (Tween)(object)TweenExtensions.SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosX(toDoListRectTransform, foldedPosition, foldDuration, false), foldEasing), "FoldTween", (Component)(object)this);
+		todoListFoldTween = (Tween)(object)TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosX(toDoListRectTransform, foldedPosition, foldDuration, false), foldEasing).SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>("FoldTween", (Component)(object)this);
 		if (displacedRectTransforms != null && displacedRectTransforms.Length != 0)
 		{
 			foldDisplacementPosition = displacedRectTransforms[0].anchoredPosition.x;
 		}
 		TPSingleton<HUDJoystickNavigationManager>.Instance.JoystickHighlight.ToggleAlwaysFollow(state: true);
-		TweenerCore<float, float, FloatOptions> obj3 = TweenExtensions.SetFullId<TweenerCore<float, float, FloatOptions>>(DOTween.To((DOGetter<float>)(() => foldDisplacementPosition), (DOSetter<float>)delegate(float x)
+		TweenerCore<float, float, FloatOptions> obj3 = DOTween.To((DOGetter<float>)(() => foldDisplacementPosition), (DOSetter<float>)delegate(float x)
 		{
 			//IL_0015: Unknown result type (might be due to invalid IL or missing references)
 			//IL_001f: Unknown result type (might be due to invalid IL or missing references)
@@ -650,7 +650,7 @@ public class ToDoListView : TPSingleton<ToDoListView>
 			{
 				displacedRectTransforms[i].anchoredPosition = new Vector2(x, displacedRectTransforms[i].anchoredPosition.y);
 			}
-		}, displacedFoldRectTransformsDestination, foldDuration), "DisplacedFoldTween", (Component)(object)this);
+		}, displacedFoldRectTransformsDestination, foldDuration).SetFullId<TweenerCore<float, float, FloatOptions>>("DisplacedFoldTween", (Component)(object)this);
 		object obj4 = _003C_003Ec._003C_003E9__81_2;
 		if (obj4 == null)
 		{
@@ -724,25 +724,25 @@ public class ToDoListView : TPSingleton<ToDoListView>
 		}
 		for (int j = 0; j < list.Count; j++)
 		{
-			SelectableExtensions.SetMode(list[j], (Mode)4);
+			list[j].SetMode((Mode)4);
 			if (j > 0)
 			{
-				SelectableExtensions.SetSelectOnUp(list[j], list[j - 1]);
+				list[j].SetSelectOnUp(list[j - 1]);
 			}
 			if (j < list.Count - 1)
 			{
-				SelectableExtensions.SetSelectOnDown(list[j], list[j + 1]);
+				list[j].SetSelectOnDown(list[j + 1]);
 			}
 		}
-		SelectableExtensions.SetMode((Selectable)(object)foldButton, (Mode)4);
+		((Selectable)(object)foldButton).SetMode((Mode)4);
 		if (list.Count > 0)
 		{
-			SelectableExtensions.SetSelectOnDown((Selectable)(object)foldButton, list[0]);
-			SelectableExtensions.SetSelectOnUp(list[0], (Selectable)(object)foldButton);
+			((Selectable)(object)foldButton).SetSelectOnDown(list[0]);
+			list[0].SetSelectOnUp((Selectable)(object)foldButton);
 		}
 		else
 		{
-			SelectableExtensions.SetSelectOnDown((Selectable)(object)foldButton, (Selectable)null);
+			((Selectable)(object)foldButton).SetSelectOnDown(null);
 		}
 	}
 
@@ -827,13 +827,13 @@ public class ToDoListView : TPSingleton<ToDoListView>
 		{
 			TweenExtensions.Kill(obj2, false);
 		}
-		todoListFoldTween = (Tween)(object)TweenExtensions.SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosX(toDoListRectTransform, 0f, unfoldDuration, false), unfoldEasing), "UnfoldTween", (Component)(object)this);
+		todoListFoldTween = (Tween)(object)TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosX(toDoListRectTransform, 0f, unfoldDuration, false), unfoldEasing).SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>("UnfoldTween", (Component)(object)this);
 		if (displacedRectTransforms != null && displacedRectTransforms.Length != 0)
 		{
 			foldDisplacementPosition = displacedRectTransforms[0].anchoredPosition.x;
 		}
 		TPSingleton<HUDJoystickNavigationManager>.Instance.JoystickHighlight.ToggleAlwaysFollow(state: true);
-		TweenerCore<float, float, FloatOptions> obj3 = TweenExtensions.SetFullId<TweenerCore<float, float, FloatOptions>>(DOTween.To((DOGetter<float>)(() => foldDisplacementPosition), (DOSetter<float>)delegate(float x)
+		TweenerCore<float, float, FloatOptions> obj3 = DOTween.To((DOGetter<float>)(() => foldDisplacementPosition), (DOSetter<float>)delegate(float x)
 		{
 			//IL_0015: Unknown result type (might be due to invalid IL or missing references)
 			//IL_001f: Unknown result type (might be due to invalid IL or missing references)
@@ -841,7 +841,7 @@ public class ToDoListView : TPSingleton<ToDoListView>
 			{
 				displacedRectTransforms[i].anchoredPosition = new Vector2(x, displacedRectTransforms[i].anchoredPosition.y);
 			}
-		}, displacedFoldRectTransformsOrigin, foldDuration), "DisplacedUnfoldTween", (Component)(object)this);
+		}, displacedFoldRectTransformsOrigin, foldDuration).SetFullId<TweenerCore<float, float, FloatOptions>>("DisplacedUnfoldTween", (Component)(object)this);
 		object obj4 = _003C_003Ec._003C_003E9__91_2;
 		if (obj4 == null)
 		{

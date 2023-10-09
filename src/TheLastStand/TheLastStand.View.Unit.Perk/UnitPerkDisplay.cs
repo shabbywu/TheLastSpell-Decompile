@@ -6,7 +6,6 @@ using TMPro;
 using TPLib;
 using TPLib.Yield;
 using TheLastStand.Definition.Unit.Perk;
-using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Manager;
 using TheLastStand.Manager.Sound;
 using TheLastStand.Model;
@@ -142,7 +141,7 @@ public class UnitPerkDisplay : MonoBehaviour
 		}
 		if ((Object)(object)perkDescription != (Object)null)
 		{
-			((TMP_Text)perkDescription).text = PerkDefinition.GetDescription((InterpreterContext)(object)Perk);
+			((TMP_Text)perkDescription).text = PerkDefinition.GetDescription(Perk);
 		}
 		if ((Object)(object)descriptionAdditionalValues != (Object)null)
 		{
@@ -150,7 +149,7 @@ public class UnitPerkDisplay : MonoBehaviour
 			{
 				((Component)descriptionAdditionalValues).gameObject.SetActive(true);
 				separator.SetActive(true);
-				((TMP_Text)descriptionAdditionalValues).text = PerkDefinition.GetAdditionDescription((InterpreterContext)(object)Perk);
+				((TMP_Text)descriptionAdditionalValues).text = PerkDefinition.GetAdditionDescription(Perk);
 			}
 			else if (((Component)descriptionAdditionalValues).gameObject.activeInHierarchy || separator.activeInHierarchy)
 			{

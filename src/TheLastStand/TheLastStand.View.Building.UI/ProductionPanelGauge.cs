@@ -40,16 +40,16 @@ public class ProductionPanelGauge : GraduatedGauge
 		{
 			return;
 		}
-		int num = ((GraduatedGauge)this).Units;
+		int num = base.Units;
 		for (int i = 0; i < amount; i++)
 		{
-			if (num > ((GraduatedGauge)this).MaxUnits - 1)
+			if (num > MaxUnits - 1)
 			{
-				if (!base.clearOnCapacityExceeded)
+				if (!clearOnCapacityExceeded)
 				{
 					break;
 				}
-				((GraduatedGauge)this).Clear();
+				Clear();
 				num = 0;
 			}
 			Transform val = unitsTransforms[num];
@@ -58,7 +58,7 @@ public class ProductionPanelGauge : GraduatedGauge
 			{
 				((Graphic)unitsImages[val]).color = new Color(1f, 1f, 1f, 0f);
 				TweenSettingsExtensions.SetEase<TweenerCore<Color, Color, ColorOptions>>(DOTweenModuleUI.DOFade(unitsImages[val], 1f, 0.15f), (Ease)14);
-				val.localScale = Vector3.one * (float)((num == ((GraduatedGauge)this).MaxUnits - 1) ? 7 : 3);
+				val.localScale = Vector3.one * (float)((num == MaxUnits - 1) ? 7 : 3);
 				TweenSettingsExtensions.SetEase<TweenerCore<Vector3, Vector3, VectorOptions>>(ShortcutExtensions.DOScale(val, 1f, 0.2f), (Ease)14);
 			}
 			else
@@ -72,16 +72,16 @@ public class ProductionPanelGauge : GraduatedGauge
 		Transform obj = unitsParent;
 		LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)(object)((obj is RectTransform) ? obj : null));
 		((Behaviour)unitsLayoutGroup).enabled = false;
-		((GraduatedGauge)this).Units = num;
+		base.Units = num;
 	}
 
 	public override void Clear()
 	{
-		for (int num = ((GraduatedGauge)this).MaxUnits - 1; num >= 0; num--)
+		for (int num = MaxUnits - 1; num >= 0; num--)
 		{
 			((Component)unitsTransforms[num]).gameObject.SetActive(false);
 		}
-		((GraduatedGauge)this).Units = 0;
+		base.Units = 0;
 	}
 
 	public void SetUnitsCount(int count)
@@ -91,18 +91,18 @@ public class ProductionPanelGauge : GraduatedGauge
 		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0051: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0056: Unknown result type (might be due to invalid IL or missing references)
-		if (((GraduatedGauge)this).MaxUnits == count)
+		if (MaxUnits == count)
 		{
 			return;
 		}
 		Transform obj = unitsTransforms[0];
 		Rect rect = ((RectTransform)((obj is RectTransform) ? obj : null)).rect;
-		float num = (((Rect)(ref rect)).width + ((HorizontalOrVerticalLayoutGroup)unitsLayoutGroup).spacing) * (float)(count - ((GraduatedGauge)this).MaxUnits);
+		float num = (((Rect)(ref rect)).width + ((HorizontalOrVerticalLayoutGroup)unitsLayoutGroup).spacing) * (float)(count - MaxUnits);
 		RectTransform obj2 = unitsBox;
 		obj2.sizeDelta += new Vector2(num, 0f);
-		if (((GraduatedGauge)this).MaxUnits < count)
+		if (MaxUnits < count)
 		{
-			while (((GraduatedGauge)this).MaxUnits < count)
+			while (MaxUnits < count)
 			{
 				Transform item = Object.Instantiate<Transform>(unitsTransforms[0], unitsParent);
 				unitsTransforms.Add(item);
@@ -110,7 +110,7 @@ public class ProductionPanelGauge : GraduatedGauge
 		}
 		else
 		{
-			while (((GraduatedGauge)this).MaxUnits > count)
+			while (MaxUnits > count)
 			{
 				Transform val = unitsTransforms[unitsTransforms.Count - 1];
 				unitsTransforms.Remove(val);
@@ -122,7 +122,7 @@ public class ProductionPanelGauge : GraduatedGauge
 
 	protected override void Awake()
 	{
-		((GraduatedGauge)this).Awake();
+		base.Awake();
 		RefreshUnitsImagesDictionary();
 	}
 

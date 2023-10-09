@@ -27,7 +27,7 @@ public class PoisonStatus : Status
 
 	public override ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedUnitStatus
+		return new SerializedUnitStatus
 		{
 			StatusSourceInfo = ((base.Source is IEntity entity) ? new StatusSourceInfo(entity.RandomId, base.Source.GetDamageableType()) : null),
 			RemainingTurns = base.RemainingTurnsCount,

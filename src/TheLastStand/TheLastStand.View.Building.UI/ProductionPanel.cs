@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using TPLib;
 using TPLib.Yield;
-using TheLastStand.Framework.UI;
 using TheLastStand.Manager;
 using TheLastStand.Manager.Building;
 using TheLastStand.Model;
@@ -84,7 +83,7 @@ public class ProductionPanel : MonoBehaviour
 		{
 			if ((Object)(object)unitsGauge != (Object)null)
 			{
-				((GraduatedGauge)unitsGauge).SetUnits(buildingHUD.Building.ProductionModule.BuildingGaugeEffect.Units, false);
+				unitsGauge.SetUnits(buildingHUD.Building.ProductionModule.BuildingGaugeEffect.Units, tween: false);
 			}
 			if (TPSingleton<BuildingManager>.Instance.WaitBuildingGauges.Contains(buildingHUD.Building))
 			{
@@ -117,12 +116,12 @@ public class ProductionPanel : MonoBehaviour
 			while (buildingGaugeValueToGive > 0)
 			{
 				buildingGaugeValueToGive--;
-				((GraduatedGauge)unitsGauge).AddUnits(1, true);
-				if (((GraduatedGauge)unitsGauge).IsFull)
+				unitsGauge.AddUnits(1);
+				if (unitsGauge.IsFull)
 				{
 					yield return SharedYields.WaitForSeconds(delayBetweenGaugeUnits);
 					EffectManager.DisplayEffects();
-					((GraduatedGauge)unitsGauge).Clear();
+					unitsGauge.Clear();
 				}
 				yield return SharedYields.WaitForSeconds(delayBetweenGaugeUnits);
 			}

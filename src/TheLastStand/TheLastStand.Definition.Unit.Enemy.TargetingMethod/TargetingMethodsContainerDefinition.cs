@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.Enemy.TargetingMethod;
 
-public class TargetingMethodsContainerDefinition : Definition
+public class TargetingMethodsContainerDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public bool AvoidOverkill { get; private set; }
 
@@ -14,7 +14,7 @@ public class TargetingMethodsContainerDefinition : Definition
 
 
 	public TargetingMethodsContainerDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

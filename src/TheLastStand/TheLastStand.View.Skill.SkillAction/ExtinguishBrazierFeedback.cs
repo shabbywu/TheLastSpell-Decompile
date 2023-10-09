@@ -47,7 +47,7 @@ public class ExtinguishBrazierFeedback : SerializedMonoBehaviour, IDisplayableEf
 	private IEnumerator DisplayCoroutine()
 	{
 		CLoggerManager.Log((object)$"Displaying ExtinguishBrazier Feedback {brazierLoss}", (Object)(object)this, (LogType)3, (CLogLevel)0, true, "Feedbacks", false);
-		DamageDisplay pooledComponent = ObjectPooler.GetPooledComponent<DamageDisplay>("DamageDisplay", ResourcePooler.LoadOnce<DamageDisplay>("Prefab/Displayable Effect/UI Effect Displays/DamageDisplay", false), EffectManager.EffectDisplaysParent, false);
+		DamageDisplay pooledComponent = ObjectPooler.GetPooledComponent<DamageDisplay>("DamageDisplay", ResourcePooler.LoadOnce<DamageDisplay>("Prefab/Displayable Effect/UI Effect Displays/DamageDisplay", failSilently: false), EffectManager.EffectDisplaysParent, dontSetParent: false);
 		((Object)pooledComponent).name = "DamageDisplay - " + ((Object)BuildingView.GameObject).name;
 		pooledComponent.FollowElement.ChangeTarget(BuildingView.DamageableHUD.Transform);
 		pooledComponent.Init(brazierLoss);

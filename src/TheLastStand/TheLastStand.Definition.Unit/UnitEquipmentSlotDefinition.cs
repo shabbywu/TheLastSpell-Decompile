@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TPLib.Log;
 using TheLastStand.Definition.Item;
@@ -9,7 +8,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit;
 
-public class UnitEquipmentSlotDefinition : Definition
+public class UnitEquipmentSlotDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public ItemSlotDefinition.E_ItemSlotId Id { get; set; }
 
@@ -20,7 +19,7 @@ public class UnitEquipmentSlotDefinition : Definition
 	public int Base { get; set; }
 
 	public UnitEquipmentSlotDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
@@ -35,7 +34,7 @@ public class UnitEquipmentSlotDefinition : Definition
 		Id = result;
 		XAttribute val3 = val.Attribute(XName.op_Implicit("Min"));
 		int result2;
-		if (XDocumentExtensions.IsNullOrEmpty(val3))
+		if (val3.IsNullOrEmpty())
 		{
 			Debug.LogError((object)"UniEquipmentSlotDefinition must have a Min");
 		}
@@ -44,7 +43,7 @@ public class UnitEquipmentSlotDefinition : Definition
 			Min = result2;
 			XAttribute val4 = val.Attribute(XName.op_Implicit("Max"));
 			int result3;
-			if (XDocumentExtensions.IsNullOrEmpty(val4))
+			if (val4.IsNullOrEmpty())
 			{
 				Debug.LogError((object)"UniEquipmentSlotDefinition must have a Max");
 			}
@@ -53,7 +52,7 @@ public class UnitEquipmentSlotDefinition : Definition
 				Max = result3;
 				XAttribute val5 = val.Attribute(XName.op_Implicit("Base"));
 				int result4;
-				if (XDocumentExtensions.IsNullOrEmpty(val5))
+				if (val5.IsNullOrEmpty())
 				{
 					Debug.LogError((object)"UniEquipmentSlotDefinition must have a Base");
 				}

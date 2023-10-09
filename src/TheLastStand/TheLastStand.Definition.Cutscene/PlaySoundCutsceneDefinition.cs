@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Globalization;
 using System.Xml.Linq;
 using TPLib.Log;
@@ -7,7 +6,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Cutscene;
 
-public class PlaySoundCutsceneDefinition : Definition, ICutsceneDefinition
+public class PlaySoundCutsceneDefinition : TheLastStand.Framework.Serialization.Definition, ICutsceneDefinition
 {
 	public static class Constants
 	{
@@ -19,7 +18,7 @@ public class PlaySoundCutsceneDefinition : Definition, ICutsceneDefinition
 	public float Delay { get; private set; }
 
 	public PlaySoundCutsceneDefinition(XContainer xContainer)
-		: base(xContainer, (Dictionary<string, string>)null)
+		: base(xContainer)
 	{
 	}
 

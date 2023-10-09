@@ -27,8 +27,8 @@ public class PanicRewardController
 	public void GetReward()
 	{
 		int level = PanicReward.Panic.Level;
-		PanicReward.Gold = PanicReward.Panic.PanicDefinition.PanicLevelDefinitions[level].PanicRewardDefinition.Gold.EvalToInt((object)PanicReward.Panic.PanicEvalGoldContext);
-		PanicReward.Materials = PanicReward.Panic.PanicDefinition.PanicLevelDefinitions[level].PanicRewardDefinition.Materials.EvalToInt((object)PanicReward.Panic.PanicEvalMaterialContext);
+		PanicReward.Gold = PanicReward.Panic.PanicDefinition.PanicLevelDefinitions[level].PanicRewardDefinition.Gold.EvalToInt(PanicReward.Panic.PanicEvalGoldContext);
+		PanicReward.Materials = PanicReward.Panic.PanicDefinition.PanicLevelDefinitions[level].PanicRewardDefinition.Materials.EvalToInt(PanicReward.Panic.PanicEvalMaterialContext);
 		if (PanicReward.Panic.PanicDefinition.PanicLevelDefinitions[level].PanicRewardDefinition.ItemsListsPerDay == null)
 		{
 			return;

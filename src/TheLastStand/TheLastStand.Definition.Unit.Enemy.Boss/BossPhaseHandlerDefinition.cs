@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.Enemy.Boss;
 
-public class BossPhaseHandlerDefinition : Definition
+public class BossPhaseHandlerDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public static class Constants
 	{

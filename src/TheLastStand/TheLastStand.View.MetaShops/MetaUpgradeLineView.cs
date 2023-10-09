@@ -532,7 +532,7 @@ public abstract class MetaUpgradeLineView : MonoBehaviour, IPointerEnterHandler,
 		}
 		if (((Behaviour)upgradeIcon).enabled && (Object)(object)upgradeIcon.sprite == (Object)null)
 		{
-			upgradeIcon.sprite = ResourcePooler.LoadOnce<Sprite>(MetaUpgrade.MetaUpgradeDefinition.DamnedSoulsShop ? ("View/Sprites/UI/Meta/DarkShop/Icon_DarkShop_" + MetaUpgrade.MetaUpgradeDefinition.IconName) : ("View/Sprites/UI/Meta/LightShop/Icon_LightShop_" + MetaUpgrade.MetaUpgradeDefinition.IconName), false);
+			upgradeIcon.sprite = ResourcePooler.LoadOnce<Sprite>(MetaUpgrade.MetaUpgradeDefinition.DamnedSoulsShop ? ("View/Sprites/UI/Meta/DarkShop/Icon_DarkShop_" + MetaUpgrade.MetaUpgradeDefinition.IconName) : ("View/Sprites/UI/Meta/LightShop/Icon_LightShop_" + MetaUpgrade.MetaUpgradeDefinition.IconName), failSilently: false);
 		}
 		else if (currentState == E_State.Locked)
 		{

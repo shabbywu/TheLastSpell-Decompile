@@ -17,7 +17,7 @@ public class EquipmentSlotController : ItemSlotController
 	public EquipmentSlot EquipmentSlot => base.ItemSlot as EquipmentSlot;
 
 	public EquipmentSlotController(SerializedItemSlot itemEquipmentSlot, EquipmentSlotView equipmentSlotView, PlayableUnit unit)
-		: base((ISerializedData)(object)itemEquipmentSlot)
+		: base(itemEquipmentSlot)
 	{
 		ItemSlotDefinition itemSlotDefinition = ItemDatabase.ItemSlotDefinitions[itemEquipmentSlot.Id];
 		base.ItemSlot = new EquipmentSlot(itemEquipmentSlot, itemSlotDefinition, this, equipmentSlotView, unit);

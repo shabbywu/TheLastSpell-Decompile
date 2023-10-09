@@ -148,7 +148,7 @@ public class ProductionReportPanel : TPSingleton<ProductionReportPanel>, IOverla
 
 	public void AdjustScrollView(RectTransform focusedRect)
 	{
-		GUIHelpers.AdjustScrollViewToFocusedItem(focusedRect, viewPort, scrollBar, 0.01f, 0.01f, (float?)null);
+		GUIHelpers.AdjustScrollViewToFocusedItem(focusedRect, viewPort, scrollBar, 0.01f, 0.01f);
 	}
 
 	public static void RefreshTitle()

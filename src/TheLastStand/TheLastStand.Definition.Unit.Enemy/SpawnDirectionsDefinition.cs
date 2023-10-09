@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.Enemy;
 
-public class SpawnDirectionsDefinition : Definition
+public class SpawnDirectionsDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public enum E_Direction
 	{
@@ -78,7 +78,7 @@ public class SpawnDirectionsDefinition : Definition
 
 
 	public SpawnDirectionsDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
@@ -86,7 +86,7 @@ public class SpawnDirectionsDefinition : Definition
 	{
 		XElement val = (XElement)(object)((container is XElement) ? container : null);
 		XAttribute val2 = val.Attribute(XName.op_Implicit("Id"));
-		if (XDocumentExtensions.IsNullOrEmpty(val2))
+		if (val2.IsNullOrEmpty())
 		{
 			CLoggerManager.Log((object)"SpawnDirectionsDefinition must have a Id!", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 			return;
@@ -95,7 +95,7 @@ public class SpawnDirectionsDefinition : Definition
 		foreach (XElement item in ((XContainer)val).Elements(XName.op_Implicit("Direction")))
 		{
 			XAttribute val3 = item.Attribute(XName.op_Implicit("Id"));
-			if (XDocumentExtensions.IsNullOrEmpty(val3))
+			if (val3.IsNullOrEmpty())
 			{
 				CLoggerManager.Log((object)("Direction of SpawnDirectionsDefinition " + Id + " must have an Id!"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 				continue;
@@ -122,7 +122,7 @@ public class SpawnDirectionsDefinition : Definition
 				CLoggerManager.Log((object)("Could not parse SpawnDirectionsDefinition " + Id + " equidistant BordersMargin to a valid int value!"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 				continue;
 			}
-			DictionaryExtensions.AddAtKey<E_Direction, SpawnDirectionInfo, SpawnDirectionInfoContainer>(SpawnDirectionsInfo, result, new SpawnDirectionInfo
+			SpawnDirectionsInfo.AddAtKey(result, new SpawnDirectionInfo
 			{
 				Proportion = result2,
 				EquidistantSpawnPoints = (val4 != null),

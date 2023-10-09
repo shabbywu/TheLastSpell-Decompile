@@ -113,11 +113,11 @@ public class ProductionObjectDisplay : MonoBehaviour, ISubmitHandler, IEventSyst
 		Sprite val = null;
 		if (ProductionObject.ProductionBuildingDefinition != null)
 		{
-			val = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/ProductionReportPanel/Production_" + ProductionObject.ProductionBuildingDefinition.Id, false);
+			val = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/ProductionReportPanel/Production_" + ProductionObject.ProductionBuildingDefinition.Id, failSilently: false);
 		}
 		else if (ProductionObject is ProductionItems productionItems && productionItems.IsNightProduction)
 		{
-			val = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/ProductionReportPanel/Production_NightItemReward", false);
+			val = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/ProductionReportPanel/Production_NightItemReward", failSilently: false);
 		}
 		if ((Object)(object)val != (Object)null)
 		{

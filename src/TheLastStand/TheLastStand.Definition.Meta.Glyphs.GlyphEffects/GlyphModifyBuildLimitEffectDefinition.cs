@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.Extensions;
-using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Meta.Glyphs.GlyphEffects;
 
@@ -21,6 +20,6 @@ public class GlyphModifyBuildLimitEffectDefinition : GlyphIntValueBasedEffectDef
 		base.Deserialize(container);
 		XAttribute val = ((XElement)((container is XElement) ? container : null)).Attribute(XName.op_Implicit("BuildLimitId"));
 		GlyphDefinition.AssertIsTrue(val != null, "BuildLimitId attribute is missing in ModifyBuildLimit");
-		BuildLimitId = StringExtensions.Replace(val.Value, ((Definition)this).TokenVariables);
+		BuildLimitId = val.Value.Replace(base.TokenVariables);
 	}
 }

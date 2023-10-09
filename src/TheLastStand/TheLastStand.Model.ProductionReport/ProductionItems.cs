@@ -88,7 +88,7 @@ public class ProductionItems : ProductionObject, ISerializable, IDeserializable
 		{
 			serializedProductionItems.Items.Add(Items[i].Serialize() as SerializedItem);
 		}
-		return (ISerializedData)(object)serializedProductionItems;
+		return serializedProductionItems;
 	}
 
 	private void InitProduction()

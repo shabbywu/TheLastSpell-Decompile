@@ -62,7 +62,7 @@ public class LifetimeStatsController
 		{
 			return;
 		}
-		TierDefinition valueOrDefault = DictionaryExtensions.GetValueOrDefault<int, TierDefinition>(EnemyUnitDatabase.TierDefinitions, enemyUnit.EnemyUnitTemplateDefinition.Tier);
+		TierDefinition valueOrDefault = EnemyUnitDatabase.TierDefinitions.GetValueOrDefault(enemyUnit.EnemyUnitTemplateDefinition.Tier);
 		if (valueOrDefault == null)
 		{
 			((CLogger<EnemyUnitManager>)TPSingleton<EnemyUnitManager>.Instance).LogError((object)$"Tried to IncreaseDamagesInflictedToEnemyType with enemy {enemyUnit.Id}, but its tier ({enemyUnit.EnemyUnitTemplateDefinition.Tier}) isn't defined in EnemyUnitDatabase.TierDefinitions, Skipping.", (CLogLevel)1, true, true);

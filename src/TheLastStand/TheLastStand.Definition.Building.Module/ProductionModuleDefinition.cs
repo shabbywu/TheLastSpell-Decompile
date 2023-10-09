@@ -6,7 +6,6 @@ using TheLastStand.Definition.Building.BuildingGaugeEffect;
 using TheLastStand.Definition.Item;
 using TheLastStand.Definition.Unit;
 using TheLastStand.Framework.Extensions;
-using TheLastStand.Framework.Serialization;
 using UnityEngine;
 
 namespace TheLastStand.Definition.Building.Module;
@@ -40,14 +39,14 @@ public class ProductionModuleDefinition : BuildingModuleDefinition
 		XElement val2 = ((XContainer)val).Element(XName.op_Implicit("Level"));
 		if (val2 != null)
 		{
-			if (XDocumentExtensions.IsNullOrEmpty(val2))
+			if (val2.IsNullOrEmpty())
 			{
 				Debug.LogError((object)("Building " + BuildingDefinition.Id + " has an invalid Level !"));
 				return;
 			}
 			if (!int.TryParse(val2.Value, out var result))
 			{
-				Debug.LogError((object)("Building " + BuildingDefinition.Id + "'s Level " + ((Definition)this).HasAnInvalidInt(val2.Value)));
+				Debug.LogError((object)("Building " + BuildingDefinition.Id + "'s Level " + HasAnInvalidInt(val2.Value)));
 				return;
 			}
 			Level = result;
@@ -92,7 +91,7 @@ public class ProductionModuleDefinition : BuildingModuleDefinition
 		foreach (XElement item2 in ((XContainer)val5).Elements(XName.op_Implicit("BuildingActionDefinition")))
 		{
 			XAttribute val6 = item2.Attribute(XName.op_Implicit("Id"));
-			if (XDocumentExtensions.IsNullOrEmpty(val6))
+			if (val6.IsNullOrEmpty())
 			{
 				Debug.LogError((object)("BuildingDefinition " + BuildingDefinition.Id + " BuildingActionDefinition must have a valid string"));
 			}

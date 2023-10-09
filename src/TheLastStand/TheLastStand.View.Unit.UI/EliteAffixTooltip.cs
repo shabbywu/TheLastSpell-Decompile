@@ -1,6 +1,5 @@
 using TMPro;
 using TheLastStand.Framework;
-using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Model.Unit.Enemy.Affix;
 using TheLastStand.View.Generic;
 using UnityEngine;
@@ -38,9 +37,9 @@ public class EliteAffixTooltip : TooltipBase
 	protected override void RefreshContent()
 	{
 		((TMP_Text)titleText).text = Affix.EnemyAffixDefinition.GetTitle();
-		((TMP_Text)descriptionText).text = Affix.EnemyAffixDefinition.GetDescription((InterpreterContext)(object)Affix.Interpreter);
-		iconImage.sprite = ResourcePooler.LoadOnce<Sprite>($"View/Sprites/UI/Units/EnemiesAffixes/Icons/EnemyAffix_Icon_{Affix.EnemyAffixDefinition.EnemyAffixEffectDefinition.EnemyAffixEffect.ToString()}", false);
-		string additionalDescription = Affix.EnemyAffixDefinition.GetAdditionalDescription((InterpreterContext)(object)Affix.Interpreter);
+		((TMP_Text)descriptionText).text = Affix.EnemyAffixDefinition.GetDescription(Affix.Interpreter);
+		iconImage.sprite = ResourcePooler.LoadOnce<Sprite>($"View/Sprites/UI/Units/EnemiesAffixes/Icons/EnemyAffix_Icon_{Affix.EnemyAffixDefinition.EnemyAffixEffectDefinition.EnemyAffixEffect.ToString()}", failSilently: false);
+		string additionalDescription = Affix.EnemyAffixDefinition.GetAdditionalDescription(Affix.Interpreter);
 		bool flag = additionalDescription != null;
 		descriptionSeparator.SetActive(flag);
 		((Component)additionalDescriptionText).gameObject.SetActive(flag);

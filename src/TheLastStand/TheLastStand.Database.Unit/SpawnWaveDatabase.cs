@@ -37,8 +37,8 @@ public class SpawnWaveDatabase : Database<SpawnWaveDatabase>
 		{
 			return;
 		}
-		Queue<XElement> queue = base.GatherElements((IEnumerable<TextAsset>)spawnDefinitionsTextAssets, (IEnumerable<TextAsset>)null, "SpawnDefinition", (string)null);
-		IEnumerable<XElement> enumerable = base.SortElementsByDependencies((IEnumerable<XElement>)queue);
+		Queue<XElement> elements = GatherElements(spawnDefinitionsTextAssets, null, "SpawnDefinition");
+		IEnumerable<XElement> enumerable = SortElementsByDependencies(elements);
 		SpawnDefinitions = new Dictionary<string, SpawnDefinition>();
 		foreach (XElement item in enumerable)
 		{
@@ -71,7 +71,7 @@ public class SpawnWaveDatabase : Database<SpawnWaveDatabase>
 	{
 		if (WaveDefinitions == null)
 		{
-			Queue<XElement> queue = base.GatherElements((IEnumerable<TextAsset>)waveDefinitionsTextAssets, (IEnumerable<TextAsset>)null, "SpawnWaveDefinition", (string)null);
+			Queue<XElement> queue = GatherElements(waveDefinitionsTextAssets, null, "SpawnWaveDefinition");
 			WaveDefinitions = new Dictionary<string, SpawnWaveDefinition>();
 			while (queue.Count > 0)
 			{

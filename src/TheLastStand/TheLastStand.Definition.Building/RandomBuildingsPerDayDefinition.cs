@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Building;
 
-public class RandomBuildingsPerDayDefinition : Definition
+public class RandomBuildingsPerDayDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public string Id { get; private set; }
 
@@ -28,7 +28,7 @@ public class RandomBuildingsPerDayDefinition : Definition
 		foreach (XElement item in obj.Elements(XName.op_Implicit("RandomBuildingsDirectionsDefinitions")))
 		{
 			XAttribute val2 = item.Attribute(XName.op_Implicit("DayNumber"));
-			if (XDocumentExtensions.IsNullOrEmpty(val2))
+			if (val2.IsNullOrEmpty())
 			{
 				CLoggerManager.Log((object)"RandomBuildingsDirectionsPerDayDefinition must have a DayNumber attribute!", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 				continue;

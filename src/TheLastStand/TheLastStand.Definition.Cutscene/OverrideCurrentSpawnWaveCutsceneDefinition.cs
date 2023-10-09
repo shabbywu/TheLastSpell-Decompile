@@ -4,7 +4,7 @@ using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Cutscene;
 
-public class OverrideCurrentSpawnWaveCutsceneDefinition : Definition, ICutsceneDefinition
+public class OverrideCurrentSpawnWaveCutsceneDefinition : TheLastStand.Framework.Serialization.Definition, ICutsceneDefinition
 {
 	public static class Constants
 	{

@@ -5,12 +5,12 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Meta;
 
-public class MetaNarrationConditionsDefinition : Definition
+public class MetaNarrationConditionsDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public List<MetaReplicaConditionDefinition> Conditions { get; private set; }
 
 	public MetaNarrationConditionsDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

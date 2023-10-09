@@ -85,7 +85,7 @@ public class ResupplySkillActionController : SkillActionController
 					if (skill != null && skill.OverallUses != 0 && skill.OverallUsesRemaining < skill.OverallUses)
 					{
 						skill.OverallUsesRemaining = Mathf.Min(skill.OverallUsesRemaining + resupplyOverallUsesSkillEffectDefinition.Amount, skill.ComputeTotalUses());
-						GainOverallUsesDisplay pooledComponent = ObjectPooler.GetPooledComponent<GainOverallUsesDisplay>("GainOverallUsesDisplay", ResourcePooler.LoadOnce<GainOverallUsesDisplay>("Prefab/Displayable Effect/UI Effect Displays/GainOverallUsesDisplay", false), EffectManager.EffectDisplaysParent, false);
+						GainOverallUsesDisplay pooledComponent = ObjectPooler.GetPooledComponent<GainOverallUsesDisplay>("GainOverallUsesDisplay", ResourcePooler.LoadOnce<GainOverallUsesDisplay>("Prefab/Displayable Effect/UI Effect Displays/GainOverallUsesDisplay", failSilently: false), EffectManager.EffectDisplaysParent, dontSetParent: false);
 						pooledComponent.Init(resupplyOverallUsesSkillEffectDefinition.Amount);
 						targetBuilding.BuildingController.BlueprintModuleController.AddEffectDisplay(pooledComponent);
 						targetBuilding.BuildingController.BlueprintModuleController.DisplayEffects();
@@ -107,7 +107,7 @@ public class ResupplySkillActionController : SkillActionController
 				if (targetBuilding.BattleModule.RemainingTrapCharges < targetBuilding.BuildingDefinition.BattleModuleDefinition.MaximumTrapCharges)
 				{
 					trapDamageableModule.TrapDamageableModuleController.Repair(resupplyChargesSkillEffectDefinition.Amount);
-					GainUsesDisplay pooledComponent2 = ObjectPooler.GetPooledComponent<GainUsesDisplay>("GainUsesDisplay", ResourcePooler.LoadOnce<GainUsesDisplay>("Prefab/Displayable Effect/UI Effect Displays/GainUsesDisplay", false), EffectManager.EffectDisplaysParent, false);
+					GainUsesDisplay pooledComponent2 = ObjectPooler.GetPooledComponent<GainUsesDisplay>("GainUsesDisplay", ResourcePooler.LoadOnce<GainUsesDisplay>("Prefab/Displayable Effect/UI Effect Displays/GainUsesDisplay", failSilently: false), EffectManager.EffectDisplaysParent, dontSetParent: false);
 					pooledComponent2.Init(resupplyChargesSkillEffectDefinition.Amount);
 					targetBuilding.BuildingController.BlueprintModuleController.AddEffectDisplay(pooledComponent2);
 					targetBuilding.BuildingController.BlueprintModuleController.DisplayEffects();

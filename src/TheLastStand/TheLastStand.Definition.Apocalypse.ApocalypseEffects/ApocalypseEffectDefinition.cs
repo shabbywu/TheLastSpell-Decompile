@@ -1,10 +1,9 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Apocalypse.ApocalypseEffects;
 
-public class ApocalypseEffectDefinition : Definition
+public class ApocalypseEffectDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public static class Consts
 	{
@@ -24,7 +23,7 @@ public class ApocalypseEffectDefinition : Definition
 	}
 
 	public ApocalypseEffectDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

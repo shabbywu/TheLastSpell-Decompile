@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.ExpressionInterpreter;
-using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Unit.Enemy.Affix;
 
@@ -19,6 +18,6 @@ public class EnemyRegenerativeAffixEffectDefinition : EnemyAffixEffectDefinition
 	public override void Deserialize(XContainer container)
 	{
 		XElement val = ((container is XElement) ? container : null).Element(XName.op_Implicit("Percentage"));
-		HealthTotalPercentage = Parser.Parse(val.Value, ((Definition)this).TokenVariables);
+		HealthTotalPercentage = Parser.Parse(val.Value, base.TokenVariables);
 	}
 }

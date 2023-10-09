@@ -261,8 +261,8 @@ public class MetaConditionsDebugView : TPSingleton<MetaConditionsDebugView>
 			serializedMetaState = (SerializedMetaState)new BinaryFormatter().Deserialize(serializationStream);
 		}
 		MetaConditionManager.DebugClearConditionControllers();
-		TPSingleton<MetaUpgradesManager>.Instance.Deserialize((ISerializedData)(object)serializedMetaState.MetaUpgrades);
-		TPSingleton<MetaConditionManager>.Instance.DeserializeFromAppSave((ISerializedData)(object)serializedMetaState.MetaConditions);
+		TPSingleton<MetaUpgradesManager>.Instance.Deserialize(serializedMetaState.MetaUpgrades);
+		TPSingleton<MetaConditionManager>.Instance.DeserializeFromAppSave(serializedMetaState.MetaConditions);
 		ClearUpgrades();
 		CreateUpgrades();
 		Refresh();

@@ -7,12 +7,12 @@ using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.SpawnFx;
 
-public class SpawnFxDefinition : Definition
+public class SpawnFxDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public List<CastFxDefinition.CamShakeDefinition> CamShakeDefinitions { get; private set; } = new List<CastFxDefinition.CamShakeDefinition>();
 
 
-	public Node CastTotalDuration { get; private set; } = (Node)new NodeNumber(0.20000000298023224);
+	public Node CastTotalDuration { get; private set; } = new NodeNumber(0.20000000298023224);
 
 
 	public List<SoundEffectDefinition> SoundEffectDefinitions { get; private set; } = new List<SoundEffectDefinition>();
@@ -22,19 +22,17 @@ public class SpawnFxDefinition : Definition
 
 
 	public SpawnFxDefinition(XContainer xContainer)
-		: base(xContainer, (Dictionary<string, string>)null)
+		: base(xContainer)
 	{
-	}//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-	//IL_001f: Expected O, but got Unknown
-
+	}
 
 	public override void Deserialize(XContainer xContainer)
 	{
 		XElement val = (XElement)(object)((xContainer is XElement) ? xContainer : null);
 		XAttribute val2 = val.Attribute(XName.op_Implicit("TotalDuration"));
-		if (!XDocumentExtensions.IsNullOrEmpty(val2))
+		if (!val2.IsNullOrEmpty())
 		{
-			CastTotalDuration = Parser.Parse(val2.Value, (Dictionary<string, string>)null);
+			CastTotalDuration = Parser.Parse(val2.Value);
 		}
 		SpawnVisualEffectDefinition = new List<SpawnVisualEffectDefinition>();
 		foreach (XElement item in ((XContainer)val).Elements(XName.op_Implicit("SpawnVisualEffect")))

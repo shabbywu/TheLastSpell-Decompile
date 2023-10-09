@@ -78,8 +78,8 @@ public class BuildingUpgradePanel : BuildingCapacityPanel
 			object obj2 = ((obj != null) ? ((Component)obj).transform : null);
 			if (obj2 == null)
 			{
-				BetterButton obj3 = confirmButton;
-				obj2 = ((obj3 != null) ? ((Component)obj3).transform : null);
+				BetterButton betterButton = confirmButton;
+				obj2 = ((betterButton != null) ? ((Component)betterButton).transform : null);
 			}
 			buildingUpgradeTooltip.FollowTarget = (Transform)obj2;
 			BuildingManager.BuildingUpgradeTooltip.Display();
@@ -144,10 +144,10 @@ public class BuildingUpgradePanel : BuildingCapacityPanel
 			RefreshUpgradeLevelIcon();
 			((Behaviour)maxLevelIcon).enabled = flag;
 			button.Interactable = !flag && TPSingleton<GameManager>.Instance.Game.Cycle != Game.E_Cycle.Night && TPSingleton<ResourceManager>.Instance.Gold >= BuildingUpgrade.BuildingUpgradeDefinition.LeveledBuildingUpgradeDefinitions[num].GoldCost && TPSingleton<ResourceManager>.Instance.Materials >= BuildingUpgrade.BuildingUpgradeDefinition.LeveledBuildingUpgradeDefinitions[num].MaterialCost;
-			upgradeIcon.sprite = ResourcePooler<Sprite>.LoadOnce(string.Format("{0}{1}{2}", "View/Sprites/UI/Buildings/Upgrades/", BuildingUpgrade.BuildingUpgradeDefinition.Id, flag ? BuildingUpgrade.UpgradeLevel : num), false);
+			upgradeIcon.sprite = ResourcePooler<Sprite>.LoadOnce(string.Format("{0}{1}{2}", "View/Sprites/UI/Buildings/Upgrades/", BuildingUpgrade.BuildingUpgradeDefinition.Id, flag ? BuildingUpgrade.UpgradeLevel : num));
 			if ((Object)(object)upgradeIcon.sprite == (Object)null)
 			{
-				upgradeIcon.sprite = ResourcePooler<Sprite>.LoadOnce("View/Sprites/UI/Buildings/Upgrades/Default", false);
+				upgradeIcon.sprite = ResourcePooler<Sprite>.LoadOnce("View/Sprites/UI/Buildings/Upgrades/Default");
 			}
 		}
 	}

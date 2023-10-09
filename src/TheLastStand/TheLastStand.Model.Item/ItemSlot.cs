@@ -25,7 +25,7 @@ public abstract class ItemSlot : ISerializable, IDeserializable
 	{
 		ItemSlotController = itemSlotController;
 		ItemSlotView = itemSlotView;
-		Deserialize((ISerializedData)(object)container);
+		Deserialize(container);
 	}
 
 	public ItemSlot(ItemSlotDefinition itemSlotDefinition, ItemSlotController itemSlotController, ItemSlotView itemSlotView)
@@ -47,7 +47,7 @@ public abstract class ItemSlot : ISerializable, IDeserializable
 
 	public virtual ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedItemSlot
+		return new SerializedItemSlot
 		{
 			Id = ItemSlotDefinition.Id,
 			Item = (Item?.Serialize() as SerializedItem)

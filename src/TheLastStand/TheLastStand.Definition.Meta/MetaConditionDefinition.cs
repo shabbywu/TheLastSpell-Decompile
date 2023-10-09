@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Meta;
 
-public class MetaConditionDefinition : Definition
+public class MetaConditionDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public List<string> Arguments { get; private set; } = new List<string>();
 
@@ -27,7 +27,7 @@ public class MetaConditionDefinition : Definition
 
 
 	public MetaConditionDefinition(XContainer container, bool hidden, int conditionsGroupIndex)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 		ConditionsGroupIndex = conditionsGroupIndex;
 		Hidden = hidden;

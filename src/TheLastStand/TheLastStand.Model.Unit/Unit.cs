@@ -436,10 +436,6 @@ public abstract class Unit : FormulaInterpreterContext, ITileObject, ISkillCaste
 
 	public virtual void Deserialize(ISerializedData container = null, int saveVersion = -1)
 	{
-		//IL_0053: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0063: Unknown result type (might be due to invalid IL or missing references)
-		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
 		SerializedUnit serializedUnit = container as SerializedUnit;
 		RandomId = serializedUnit.RandomId;
 		if (serializedUnit.Position.HasValue)
@@ -471,8 +467,7 @@ public abstract class Unit : FormulaInterpreterContext, ITileObject, ISkillCaste
 	public virtual ISerializedData Serialize()
 	{
 		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		return (ISerializedData)(object)new SerializedUnit
+		return new SerializedUnit
 		{
 			RandomId = RandomId,
 			Position = ((OriginTile == null) ? null : new SerializableVector2Int?(new SerializableVector2Int(OriginTile.Position))),

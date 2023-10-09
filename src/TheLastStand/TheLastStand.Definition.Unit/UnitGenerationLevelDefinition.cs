@@ -8,7 +8,7 @@ using UnityEngine;
 namespace TheLastStand.Definition.Unit;
 
 [Serializable]
-public class UnitGenerationLevelDefinition : Definition
+public class UnitGenerationLevelDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public string Id { get; set; }
 
@@ -16,7 +16,7 @@ public class UnitGenerationLevelDefinition : Definition
 
 
 	public UnitGenerationLevelDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
@@ -24,7 +24,7 @@ public class UnitGenerationLevelDefinition : Definition
 	{
 		XElement val = (XElement)(object)((container is XElement) ? container : null);
 		XAttribute val2 = val.Attribute(XName.op_Implicit("Id"));
-		if (XDocumentExtensions.IsNullOrEmpty(val2))
+		if (val2.IsNullOrEmpty())
 		{
 			Debug.LogError((object)"The UnitGenerationDefinition has no Id!");
 			return;

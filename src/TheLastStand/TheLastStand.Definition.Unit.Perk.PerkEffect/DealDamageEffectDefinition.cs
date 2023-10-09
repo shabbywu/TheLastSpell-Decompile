@@ -3,7 +3,6 @@ using System.Xml.Linq;
 using TPLib.Log;
 using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Framework.Extensions;
-using TheLastStand.Framework.Serialization;
 using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.Perk.PerkEffect;
@@ -41,12 +40,12 @@ public class DealDamageEffectDefinition : APerkEffectDefinition
 				CLoggerManager.Log((object)("Could not parse IgnoreDefense attribute into a bool : " + val2.Value + "."), (LogType)0, (CLogLevel)2, true, "DealDamageEffectDefinition", false);
 			}
 		}
-		PerkTargetingDefinition = new PerkTargetingDefinition((XContainer)(object)((XContainer)val).Element(XName.op_Implicit("PerkTargeting")), ((Definition)this).TokenVariables);
+		PerkTargetingDefinition = new PerkTargetingDefinition((XContainer)(object)((XContainer)val).Element(XName.op_Implicit("PerkTargeting")), base.TokenVariables);
 		XAttribute val3 = val.Attribute(XName.op_Implicit("Value"));
-		string text = StringExtensions.Replace(val3.Value, ((Definition)this).TokenVariables);
+		string text = val3.Value.Replace(base.TokenVariables);
 		if (!string.IsNullOrEmpty(text))
 		{
-			Value = Parser.Parse(text, (Dictionary<string, string>)null);
+			Value = Parser.Parse(text);
 		}
 		else
 		{

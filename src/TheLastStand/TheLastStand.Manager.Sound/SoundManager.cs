@@ -397,14 +397,13 @@ public class SoundManager : Manager<SoundManager>
 
 	public void ChangeMusic(bool instant = false)
 	{
-		//IL_0067: Unknown result type (might be due to invalid IL or missing references)
 		int victoryDaysCount = TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.VictoryDaysCount;
 		bool flag = TPSingleton<GameManager>.Instance.Game.Cycle == Game.E_Cycle.Night;
 		Playlist playlist = null;
 		SpawnWave currentSpawnWave = SpawnWaveManager.CurrentSpawnWave;
 		if (currentSpawnWave != null && currentSpawnWave.SpawnWaveDefinition.IsBossWave)
 		{
-			playlist = ((IEnumerable<SerializablePair<string, Playlist>>)specificPlaylists).FirstOrDefault((Func<SerializablePair<string, Playlist>, bool>)((SerializablePair<string, Playlist> x) => x.Key == SpawnWaveManager.CurrentSpawnWave.SpawnWaveDefinition.BossWaveSettings.SpecificPlaylistId)).Value;
+			playlist = specificPlaylists.FirstOrDefault((SerializablePair<string, Playlist> x) => x.Key == SpawnWaveManager.CurrentSpawnWave.SpawnWaveDefinition.BossWaveSettings.SpecificPlaylistId).Value;
 		}
 		if (playlist == null)
 		{

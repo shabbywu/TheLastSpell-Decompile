@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TPLib;
 using TheLastStand.Framework.ExpressionInterpreter;
@@ -25,20 +24,20 @@ public class ImprovePassiveDefinition : BuildingUpgradeEffectDefinition
 		base.Deserialize(xContainer);
 		XElement val = (XElement)(object)((xContainer is XElement) ? xContainer : null);
 		XAttribute val2 = val.Attribute(XName.op_Implicit("PassiveId"));
-		if (XDocumentExtensions.IsNullOrEmpty(val2))
+		if (val2.IsNullOrEmpty())
 		{
 			TPDebug.LogError((object)"ImprovePassiveDefinition must have a PassiveId", (Object)null);
 			return;
 		}
 		PassiveId = val2.Value;
 		XAttribute val3 = val.Attribute(XName.op_Implicit("UpgradedBonusValue"));
-		if (XDocumentExtensions.IsNullOrEmpty(val3))
+		if (val3.IsNullOrEmpty())
 		{
 			TPDebug.LogError((object)(base.Id + " UpgradeEffect must have an Attribute UpgradedBonusValue"), (Object)null);
 		}
 		else
 		{
-			Value = Parser.Parse(val3.Value, (Dictionary<string, string>)null);
+			Value = Parser.Parse(val3.Value);
 		}
 	}
 }

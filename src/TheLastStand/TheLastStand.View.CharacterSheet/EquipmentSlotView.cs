@@ -167,22 +167,22 @@ public class EquipmentSlotView : ItemSlotView
 			Navigation value = slotNavigationBackup.Value;
 			if (!IsSelectableSlotValid(((Navigation)(ref value)).selectOnDown))
 			{
-				SelectableExtensions.SetSelectOnDown((Selectable)(object)joystickSelectable, (Selectable)null);
+				((Selectable)(object)joystickSelectable).SetSelectOnDown(null);
 			}
 			value = slotNavigationBackup.Value;
 			if (!IsSelectableSlotValid(((Navigation)(ref value)).selectOnUp))
 			{
-				SelectableExtensions.SetSelectOnUp((Selectable)(object)joystickSelectable, (Selectable)null);
+				((Selectable)(object)joystickSelectable).SetSelectOnUp(null);
 			}
 			value = slotNavigationBackup.Value;
 			if (!IsSelectableSlotValid(((Navigation)(ref value)).selectOnRight))
 			{
-				SelectableExtensions.SetSelectOnRight((Selectable)(object)joystickSelectable, (Selectable)null);
+				((Selectable)(object)joystickSelectable).SetSelectOnRight(null);
 			}
 			value = slotNavigationBackup.Value;
 			if (!IsSelectableSlotValid(((Navigation)(ref value)).selectOnLeft))
 			{
-				SelectableExtensions.SetSelectOnLeft((Selectable)(object)joystickSelectable, (Selectable)null);
+				((Selectable)(object)joystickSelectable).SetSelectOnLeft(null);
 			}
 		}
 	}

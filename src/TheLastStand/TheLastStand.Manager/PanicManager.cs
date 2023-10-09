@@ -56,7 +56,7 @@ public class PanicManager : Manager<PanicManager>, ISerializable, IDeserializabl
 
 	public ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedPanic
+		return new SerializedPanic
 		{
 			Value = panic.Value
 		};

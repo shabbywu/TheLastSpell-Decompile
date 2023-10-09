@@ -10,7 +10,7 @@ public class ShopSlotController : ItemSlotController
 	public ShopSlot ShopSlot => base.ItemSlot as ShopSlot;
 
 	public ShopSlotController(SerializedItemShopSlot container, ShopSlotView shopSlotView)
-		: base((ISerializedData)(object)container)
+		: base(container)
 	{
 		base.ItemSlot = new ShopSlot(container, this, shopSlotView);
 	}

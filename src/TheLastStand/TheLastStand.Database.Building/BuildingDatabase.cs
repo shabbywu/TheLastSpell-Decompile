@@ -133,7 +133,7 @@ public class BuildingDatabase : Database<BuildingDatabase>
 
 	public TileBase LoadTileFromResourcesOnce(string path)
 	{
-		return ResourcePooler<TileBase>.LoadOnce(path, false);
+		return ResourcePooler<TileBase>.LoadOnce(path);
 	}
 
 	private void ComputeShopItemsByCategory()
@@ -298,7 +298,7 @@ public class BuildingDatabase : Database<BuildingDatabase>
 		{
 			BuildingGaugeEffectDefinition buildingGaugeEffectDefinition = null;
 			XAttribute val2 = item.Attribute(XName.op_Implicit("Id"));
-			if (XDocumentExtensions.IsNullOrEmpty(val2))
+			if (val2.IsNullOrEmpty())
 			{
 				CLoggerManager.Log((object)"BuildingGaugeEffectDefinition must have Id", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 				continue;

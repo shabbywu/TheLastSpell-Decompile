@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Xml.Linq;
 using TPLib.Log;
 using TheLastStand.Framework.ExpressionInterpreter;
-using TheLastStand.Framework.Serialization;
 using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.Perk.PerkEffect;
@@ -39,7 +38,7 @@ public class RestoreStatEffectDefinition : APerkEffectDefinition
 			CLoggerManager.Log((object)("Could not parse Stat attribute into an E_Stat : " + val.Value + "."), (LogType)0, (CLogLevel)2, true, "RestoreStatEffectDefinition", false);
 		}
 		XAttribute val2 = ((XElement)obj).Attribute(XName.op_Implicit("Value"));
-		ValueExpression = Parser.Parse(val2.Value, ((Definition)this).TokenVariables);
+		ValueExpression = Parser.Parse(val2.Value, base.TokenVariables);
 		XAttribute val3 = ((XElement)obj).Attribute(XName.op_Implicit("HideDisplayEffect"));
 		if (val3 != null)
 		{

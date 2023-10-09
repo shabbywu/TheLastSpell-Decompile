@@ -1,10 +1,9 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition;
 
-public class GameDefinition : Definition
+public class GameDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public enum E_Direction
 	{
@@ -16,7 +15,7 @@ public class GameDefinition : Definition
 	}
 
 	public GameDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

@@ -189,10 +189,10 @@ public class CameraView : ACameraView
 		{
 			TweenExtensions.Kill((Tween)(object)uiBlurTweener, false);
 		}
-		uiBlurTweener = (Tweener)(object)TweenSettingsExtensions.OnKill<TweenerCore<float, float, FloatOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(TweenExtensions.SetFullId<TweenerCore<float, float, FloatOptions>>(DOTween.To((DOGetter<float>)(() => blurPostProcessVolume.weight), (DOSetter<float>)delegate(float v)
+		uiBlurTweener = (Tweener)(object)TweenSettingsExtensions.OnKill<TweenerCore<float, float, FloatOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(DOTween.To((DOGetter<float>)(() => blurPostProcessVolume.weight), (DOSetter<float>)delegate(float v)
 		{
 			blurPostProcessVolume.weight = v;
-		}, num, blurTransitionDuration), "CameraBlur", (Component)(object)this), doBlur ? blurInEasing : blurOutEasing), (TweenCallback)delegate
+		}, num, blurTransitionDuration).SetFullId<TweenerCore<float, float, FloatOptions>>("CameraBlur", (Component)(object)this), doBlur ? blurInEasing : blurOutEasing), (TweenCallback)delegate
 		{
 			uiBlurTweener = null;
 		});
@@ -297,11 +297,11 @@ public class CameraView : ACameraView
 		{
 			TweenExtensions.Kill((Tween)(object)obj, false);
 		}
-		dayNightPostProcessTweener = (Tweener)(object)TweenSettingsExtensions.OnKill<TweenerCore<float, float, FloatOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(TweenExtensions.SetFullId<TweenerCore<float, float, FloatOptions>>(DOTween.To((DOGetter<float>)(() => vignetteNightPostProcessVolume.weight), (DOSetter<float>)delegate(float v)
+		dayNightPostProcessTweener = (Tweener)(object)TweenSettingsExtensions.OnKill<TweenerCore<float, float, FloatOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(DOTween.To((DOGetter<float>)(() => vignetteNightPostProcessVolume.weight), (DOSetter<float>)delegate(float v)
 		{
 			vignetteNightPostProcessVolume.weight = v;
 			bloomNightPostProcessVolume.weight = v;
-		}, num, dayNightTransitionDuration), "NightPostProcess", (Component)(object)this), dayNightTransitionEasing), (TweenCallback)delegate
+		}, num, dayNightTransitionDuration).SetFullId<TweenerCore<float, float, FloatOptions>>("NightPostProcess", (Component)(object)this), dayNightTransitionEasing), (TweenCallback)delegate
 		{
 			dayNightPostProcessTweener = null;
 		});

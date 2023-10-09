@@ -5,7 +5,7 @@ using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition;
 
-public abstract class InterpretedValue<T> : Definition
+public abstract class InterpretedValue<T> : TheLastStand.Framework.Serialization.Definition
 {
 	private T tValue;
 
@@ -30,7 +30,7 @@ public abstract class InterpretedValue<T> : Definition
 		}
 		else if (!TryDeserializeTValue(val, out tValue))
 		{
-			tExpression = Parser.Parse(val.Value, ((Definition)this).TokenVariables);
+			tExpression = Parser.Parse(val.Value, base.TokenVariables);
 		}
 	}
 

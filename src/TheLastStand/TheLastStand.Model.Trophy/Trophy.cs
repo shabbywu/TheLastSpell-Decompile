@@ -33,7 +33,7 @@ public class Trophy
 
 	private void CreateConditionController()
 	{
-		TrophyConditionController = ((object)TrophyDefinition.Condition).ToString() switch
+		TrophyConditionController = TrophyDefinition.Condition.ToString() switch
 		{
 			"HealthLost" => new HealthLostTrophyConditionController(TrophyDefinition.Condition, this), 
 			"EnemiesKilled" => new EnemiesKilledTrophyConditionController(TrophyDefinition.Condition, this), 

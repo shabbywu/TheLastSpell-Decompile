@@ -15,7 +15,6 @@ using TheLastStand.Controller.ApplicationState;
 using TheLastStand.Definition.Building;
 using TheLastStand.Definition.Fog;
 using TheLastStand.Framework;
-using TheLastStand.Framework.Automaton;
 using TheLastStand.Framework.Encryption;
 using TheLastStand.Framework.Serialization;
 using TheLastStand.Manager.Achievements;
@@ -431,7 +430,7 @@ public sealed class GameManager : Manager<GameManager>, ISerializable, IDeserial
 
 	public static void Load()
 	{
-		if (((StateMachine)ApplicationManager.Application).State.GetName() == "LevelEditor")
+		if (ApplicationManager.Application.State.GetName() == "LevelEditor")
 		{
 			TPSingleton<GameManager>.Instance.Game = new GameController().Game;
 			TPSingleton<GlyphManager>.Instance.InitGlyphEffects();
@@ -444,7 +443,7 @@ public sealed class GameManager : Manager<GameManager>, ISerializable, IDeserial
 			try
 			{
 				SerializedContainer serializedContainer = TPSingleton<SaveManager>.Instance.PreloadedGameSave?.LoadedContainer;
-				TPSingleton<GameManager>.Instance.Deserialize((ISerializedData)(object)serializedContainer, ((int?)serializedContainer?.SaveVersion) ?? (-1));
+				TPSingleton<GameManager>.Instance.Deserialize(serializedContainer, ((int?)serializedContainer?.SaveVersion) ?? (-1));
 			}
 			catch (Exception e)
 			{
@@ -452,7 +451,7 @@ public sealed class GameManager : Manager<GameManager>, ISerializable, IDeserial
 				if ((preloadedGameSave == null || !preloadedGameSave.FailedLoadsInfo[0].Reason.HasValue) && File.Exists(SaveManager.GameSaveBackupFilePath))
 				{
 					SerializedContainer serializedContainer2 = TPSingleton<GameManager>.Instance.TryLoadBackup(e);
-					TPSingleton<GameManager>.Instance.Deserialize((ISerializedData)(object)serializedContainer2, ((int?)serializedContainer2?.SaveVersion) ?? (-1));
+					TPSingleton<GameManager>.Instance.Deserialize(serializedContainer2, ((int?)serializedContainer2?.SaveVersion) ?? (-1));
 					return;
 				}
 				throw;
@@ -494,8 +493,8 @@ public sealed class GameManager : Manager<GameManager>, ISerializable, IDeserial
 		SerializedGameState serializedGameState = container as SerializedGameState;
 		currentGameIsLoaded = serializedGameState != null;
 		BackwardCompatibilityBeforeDeserialize(serializedGameState, saveVersion);
-		TPSingleton<ApocalypseManager>.Instance.Deserialize((ISerializedData)(object)serializedGameState?.Apocalypse);
-		TPSingleton<MetaConditionManager>.Instance.DeserializeFromGameSave((ISerializedData)(object)serializedGameState?.MetaConditionsRunContext);
+		TPSingleton<ApocalypseManager>.Instance.Deserialize(serializedGameState?.Apocalypse);
+		TPSingleton<MetaConditionManager>.Instance.DeserializeFromGameSave(serializedGameState?.MetaConditionsRunContext);
 		TPSingleton<GlyphManager>.Instance.InitGlyphEffects();
 		TPSingleton<GlyphManager>.Instance.Deserialize(serializedGameState?.SerializedGlyphsContainer, ((int?)serializedGameState?.SaveVersion) ?? (-1));
 		Game = new GameController(serializedGameState?.Game).Game;
@@ -503,10 +502,10 @@ public sealed class GameManager : Manager<GameManager>, ISerializable, IDeserial
 		previousTimeSpent = serializedGameState?.TotalTimeSpent ?? 0f;
 		timeAtGameStart = Time.unscaledTime;
 		TPSingleton<InputManager>.Instance.Init();
-		TPSingleton<RandomManager>.Instance.Deserialize((ISerializedData)(object)serializedGameState?.Random);
+		TPSingleton<RandomManager>.Instance.Deserialize(serializedGameState?.Random);
 		TPSingleton<PathfindingManager>.Instance.Init();
 		TPSingleton<TileObjectSelectionManager>.Instance.Init();
-		TPSingleton<FogManager>.Instance.Deserialize((ISerializedData)(object)serializedGameState?.Fog);
+		TPSingleton<FogManager>.Instance.Deserialize(serializedGameState?.Fog);
 		CharacterSheetPanel.Init();
 		TPSingleton<UnitLevelUpView>.Instance.Init();
 		TPSingleton<PanicManager>.Instance.Init();
@@ -515,16 +514,16 @@ public sealed class GameManager : Manager<GameManager>, ISerializable, IDeserial
 		TPSingleton<ShopManager>.Instance.Init();
 		if (currentGameIsLoaded)
 		{
-			TPSingleton<BuildingManager>.Instance.Deserialize((ISerializedData)(object)serializedGameState?.Buildings, ((int?)serializedGameState?.SaveVersion) ?? (-1));
+			TPSingleton<BuildingManager>.Instance.Deserialize(serializedGameState?.Buildings, ((int?)serializedGameState?.SaveVersion) ?? (-1));
 		}
 		else
 		{
 			TPSingleton<BuildingManager>.Instance.Deserialize(null);
 		}
-		TPSingleton<InventoryManager>.Instance.Deserialize((ISerializedData)(object)serializedGameState?.Inventory);
+		TPSingleton<InventoryManager>.Instance.Deserialize(serializedGameState?.Inventory);
 		TPSingleton<ItemManager>.Instance.Init();
-		TPSingleton<ResourceManager>.Instance.Deserialize((ISerializedData)(object)serializedGameState?.Resources);
-		TPSingleton<SpawnWaveManager>.Instance.Deserialize((ISerializedData)(object)serializedGameState?.SpawnWaveContainer);
+		TPSingleton<ResourceManager>.Instance.Deserialize(serializedGameState?.Resources);
+		TPSingleton<SpawnWaveManager>.Instance.Deserialize(serializedGameState?.SpawnWaveContainer);
 		TPSingleton<SpawnWaveManager>.Instance.Init();
 		if (serializedGameState?.SpawnWaveContainer?.CurrentSpawnWave == null)
 		{
@@ -534,20 +533,20 @@ public sealed class GameManager : Manager<GameManager>, ISerializable, IDeserial
 		{
 			SpawnWaveManager.DeserializeSpawnWave(serializedGameState.SpawnWaveContainer, serializedGameState.SaveVersion);
 		}
-		CameraView.CameraLutView.Deserialize((ISerializedData)(object)serializedGameState?.SerializedLut);
+		CameraView.CameraLutView.Deserialize(serializedGameState?.SerializedLut);
 		TPSingleton<EnemyUnitManager>.Instance.Init();
 		TPSingleton<PlayableUnitManagementView>.Instance.Init();
-		TPSingleton<PlayableUnitManager>.Instance.Deserialize((ISerializedData)(object)serializedGameState?.PlayableUnits, ((int?)serializedGameState?.SaveVersion) ?? (-1));
-		TPSingleton<PlayableUnitManager>.Instance.NightReport.Deserialize((ISerializedData)(object)serializedGameState?.SerializedNightReport, ((int?)serializedGameState?.SaveVersion) ?? (-1));
-		TPSingleton<EnemyUnitManager>.Instance.Deserialize((ISerializedData)(object)serializedGameState?.EnemyUnits, ((int?)serializedGameState?.SaveVersion) ?? (-1));
-		TPSingleton<BossManager>.Instance.Deserialize((ISerializedData)(object)serializedGameState?.BossData, ((int?)serializedGameState?.SaveVersion) ?? (-1));
+		TPSingleton<PlayableUnitManager>.Instance.Deserialize(serializedGameState?.PlayableUnits, ((int?)serializedGameState?.SaveVersion) ?? (-1));
+		TPSingleton<PlayableUnitManager>.Instance.NightReport.Deserialize(serializedGameState?.SerializedNightReport, ((int?)serializedGameState?.SaveVersion) ?? (-1));
+		TPSingleton<EnemyUnitManager>.Instance.Deserialize(serializedGameState?.EnemyUnits, ((int?)serializedGameState?.SaveVersion) ?? (-1));
+		TPSingleton<BossManager>.Instance.Deserialize(serializedGameState?.BossData, ((int?)serializedGameState?.SaveVersion) ?? (-1));
 		if (TPSingleton<PlayableUnitManager>.Instance.PlayableUnits.Count == 0)
 		{
 			PlayableUnitManager.CreateStartUnits();
 		}
 		TPSingleton<ConstructionView>.Instance.Init();
-		TPSingleton<PanicManager>.Instance.Deserialize((ISerializedData)(object)serializedGameState?.Panic, ((int?)serializedGameState?.SaveVersion) ?? (-1));
-		TPSingleton<TrophyManager>.Instance.Deserialize((ISerializedData)(object)serializedGameState?.Trophies, ((int?)serializedGameState?.SaveVersion) ?? (-1));
+		TPSingleton<PanicManager>.Instance.Deserialize(serializedGameState?.Panic, ((int?)serializedGameState?.SaveVersion) ?? (-1));
+		TPSingleton<TrophyManager>.Instance.Deserialize(serializedGameState?.Trophies, ((int?)serializedGameState?.SaveVersion) ?? (-1));
 		this.FinalizeDeserialize?.Invoke();
 		((CLogger<GameManager>)TPSingleton<GameManager>.Instance).Log((object)((serializedGameState != null) ? "Game loaded!" : "New game!"), (CLogLevel)2, false, false);
 		BackwardCompatibilityAfterDeserialize(serializedGameState, saveVersion);
@@ -559,26 +558,26 @@ public sealed class GameManager : Manager<GameManager>, ISerializable, IDeserial
 
 	public ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedGameState
+		return new SerializedGameState
 		{
-			Resources = (SerializedResources)(object)TPSingleton<ResourceManager>.Instance.Serialize(),
-			Game = (SerializedGame)(object)Game.Serialize(),
-			Random = (SerializedRandoms)(object)TPSingleton<RandomManager>.Instance.Serialize(),
-			PlayableUnits = (SerializedPlayableUnits)(object)TPSingleton<PlayableUnitManager>.Instance.Serialize(),
-			EnemyUnits = ((Game.Cycle == Game.E_Cycle.Night) ? ((SerializedEnemyUnits)(object)TPSingleton<EnemyUnitManager>.Instance.Serialize()) : null),
-			BossData = (SerializedBossData)(object)TPSingleton<BossManager>.Instance.Serialize(),
-			Buildings = (SerializedBuildings)(object)TPSingleton<BuildingManager>.Instance.Serialize(),
-			Inventory = (SerializedItems)(object)TPSingleton<InventoryManager>.Instance.Serialize(),
-			Apocalypse = (SerializedApocalypse)(object)TPSingleton<ApocalypseManager>.Instance.Serialize(),
-			Fog = (SerializedFog)(object)TPSingleton<FogManager>.Instance.Serialize(),
-			Panic = ((Game.Cycle == Game.E_Cycle.Night) ? ((SerializedPanic)(object)TPSingleton<PanicManager>.Instance.Serialize()) : null),
-			MetaConditionsRunContext = (SerializedMetaConditionsContext)(object)TPSingleton<MetaConditionManager>.Instance.SerializeToGameSave(),
-			SpawnWaveContainer = (SerializedSpawnWaveContainer)(object)TPSingleton<SpawnWaveManager>.Instance.Serialize(),
+			Resources = (SerializedResources)TPSingleton<ResourceManager>.Instance.Serialize(),
+			Game = (SerializedGame)Game.Serialize(),
+			Random = (SerializedRandoms)TPSingleton<RandomManager>.Instance.Serialize(),
+			PlayableUnits = (SerializedPlayableUnits)TPSingleton<PlayableUnitManager>.Instance.Serialize(),
+			EnemyUnits = ((Game.Cycle == Game.E_Cycle.Night) ? ((SerializedEnemyUnits)TPSingleton<EnemyUnitManager>.Instance.Serialize()) : null),
+			BossData = (SerializedBossData)TPSingleton<BossManager>.Instance.Serialize(),
+			Buildings = (SerializedBuildings)TPSingleton<BuildingManager>.Instance.Serialize(),
+			Inventory = (SerializedItems)TPSingleton<InventoryManager>.Instance.Serialize(),
+			Apocalypse = (SerializedApocalypse)TPSingleton<ApocalypseManager>.Instance.Serialize(),
+			Fog = (SerializedFog)TPSingleton<FogManager>.Instance.Serialize(),
+			Panic = ((Game.Cycle == Game.E_Cycle.Night) ? ((SerializedPanic)TPSingleton<PanicManager>.Instance.Serialize()) : null),
+			MetaConditionsRunContext = (SerializedMetaConditionsContext)TPSingleton<MetaConditionManager>.Instance.SerializeToGameSave(),
+			SpawnWaveContainer = (SerializedSpawnWaveContainer)TPSingleton<SpawnWaveManager>.Instance.Serialize(),
 			TotalTimeSpent = TotalTimeSpent,
 			ModsInUse = new List<string>(ModManager.ModIdsInUse),
-			SerializedLut = ((Game.Cycle == Game.E_Cycle.Night) ? ((SerializedLUT)(object)CameraView.CameraLutView.Serialize()) : null),
-			Trophies = ((Game.Cycle == Game.E_Cycle.Night) ? ((SerializedTrophies)(object)TPSingleton<TrophyManager>.Instance.Serialize()) : null),
-			SerializedNightReport = ((Game.Cycle == Game.E_Cycle.Night) ? ((SerializedNightReport)(object)TPSingleton<PlayableUnitManager>.Instance.NightReport.Serialize()) : null),
+			SerializedLut = ((Game.Cycle == Game.E_Cycle.Night) ? ((SerializedLUT)CameraView.CameraLutView.Serialize()) : null),
+			Trophies = ((Game.Cycle == Game.E_Cycle.Night) ? ((SerializedTrophies)TPSingleton<TrophyManager>.Instance.Serialize()) : null),
+			SerializedNightReport = ((Game.Cycle == Game.E_Cycle.Night) ? ((SerializedNightReport)TPSingleton<PlayableUnitManager>.Instance.NightReport.Serialize()) : null),
 			SerializedGlyphsContainer = TPSingleton<GlyphManager>.Instance.SerializeGlyphs()
 		};
 	}
@@ -752,7 +751,7 @@ public sealed class GameManager : Manager<GameManager>, ISerializable, IDeserial
 
 	private void Start()
 	{
-		if (((StateMachine)ApplicationManager.Application).State.GetName() == "NewGame")
+		if (ApplicationManager.Application.State.GetName() == "NewGame")
 		{
 			TryToSaveAuto();
 		}
@@ -813,7 +812,7 @@ public sealed class GameManager : Manager<GameManager>, ISerializable, IDeserial
 		{
 			ConstructionManager.OpenConstructionMode(BuildingDefinition.E_ConstructionCategory.Production);
 		}
-		if (!(((StateMachine)ApplicationManager.Application).State is GameState))
+		if (!(ApplicationManager.Application.State is GameState))
 		{
 			return;
 		}
@@ -854,7 +853,7 @@ public sealed class GameManager : Manager<GameManager>, ISerializable, IDeserial
 	private void StartAmbientSounds()
 	{
 		string text = $"Sounds/SFX/Ambient/AMB_Towns/AMB_{TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.Id}";
-		AudioClip val = ResourcePooler.LoadOnce<AudioClip>(text, false);
+		AudioClip val = ResourcePooler.LoadOnce<AudioClip>(text, failSilently: false);
 		if ((Object)(object)val != (Object)null)
 		{
 			SoundManager.PlayFadeInAudioClip(ambienceAudioSource, ref ambientSoundFadeTween, val, ambientSoundsFadeInDuration);

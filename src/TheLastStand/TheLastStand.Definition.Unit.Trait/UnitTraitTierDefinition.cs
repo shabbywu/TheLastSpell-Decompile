@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.Trait;
 
-public class UnitTraitTierDefinition : Definition
+public class UnitTraitTierDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public static class Constants
 	{
@@ -20,7 +20,7 @@ public class UnitTraitTierDefinition : Definition
 	public bool IsBackground { get; private set; }
 
 	public UnitTraitTierDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

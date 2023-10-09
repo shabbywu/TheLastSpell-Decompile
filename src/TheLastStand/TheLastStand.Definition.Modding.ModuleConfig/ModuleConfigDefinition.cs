@@ -1,10 +1,9 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Modding.ModuleConfig;
 
-public class ModuleConfigDefinition : Definition
+public class ModuleConfigDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public static class Constants
 	{
@@ -12,7 +11,7 @@ public class ModuleConfigDefinition : Definition
 	}
 
 	public ModuleConfigDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

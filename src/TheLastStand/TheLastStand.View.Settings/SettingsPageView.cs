@@ -1,7 +1,6 @@
 using TheLastStand.Framework;
 using TheLastStand.Framework.UI;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace TheLastStand.View.Settings;
@@ -23,13 +22,13 @@ public class SettingsPageView : TabbedPageView
 		SelectionEvents[] array = selectables;
 		for (int i = 0; i < array.Length; i++)
 		{
-			array[i].AddSelectListener((UnityAction<RectTransform>)AdjustScroll);
+			array[i].AddSelectListener(AdjustScroll);
 		}
 	}
 
 	private void AdjustScroll(RectTransform rectTransform)
 	{
-		GUIHelpers.AdjustScrollViewToFocusedItem(rectTransform, viewport, scrollbar, 0.01f, 0.01f, (float?)null);
+		GUIHelpers.AdjustScrollViewToFocusedItem(rectTransform, viewport, scrollbar, 0.01f, 0.01f);
 	}
 
 	private void OnDestroy()
@@ -37,7 +36,7 @@ public class SettingsPageView : TabbedPageView
 		SelectionEvents[] array = selectables;
 		for (int i = 0; i < array.Length; i++)
 		{
-			array[i].RemoveSelectListener((UnityAction<RectTransform>)AdjustScroll);
+			array[i].RemoveSelectListener(AdjustScroll);
 		}
 	}
 }

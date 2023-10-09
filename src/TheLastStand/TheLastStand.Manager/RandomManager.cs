@@ -246,7 +246,7 @@ public class RandomManager : Manager<RandomManager>, ISerializable, IDeserializa
 
 	public ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedRandoms
+		return new SerializedRandoms
 		{
 			BaseSeed = baseSeed,
 			RandomLibrary = randomLibrary.Select((KeyValuePair<string, System.Random> o) => new SerializedRandom

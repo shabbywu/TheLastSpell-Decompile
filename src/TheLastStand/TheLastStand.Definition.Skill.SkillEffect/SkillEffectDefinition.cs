@@ -4,7 +4,7 @@ using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Skill.SkillEffect;
 
-public abstract class SkillEffectDefinition : Definition
+public abstract class SkillEffectDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public abstract string Id { get; }
 

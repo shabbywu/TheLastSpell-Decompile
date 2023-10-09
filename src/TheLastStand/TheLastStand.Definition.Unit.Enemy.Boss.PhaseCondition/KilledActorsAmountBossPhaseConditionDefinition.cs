@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.Enemy.Boss.PhaseCondition;
 
-public class KilledActorsAmountBossPhaseConditionDefinition : Definition, IBossPhaseConditionDefinition
+public class KilledActorsAmountBossPhaseConditionDefinition : TheLastStand.Framework.Serialization.Definition, IBossPhaseConditionDefinition
 {
 	public string ActorId { get; private set; }
 

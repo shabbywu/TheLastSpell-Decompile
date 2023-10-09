@@ -60,12 +60,12 @@ public class StandardVisualEffectDefinition : VisualEffectDefinition
 			}
 			Vector2Int zero = Vector2Int.zero;
 			XAttribute val3 = val.Attribute(XName.op_Implicit("XTileOffset"));
-			if (!XDocumentExtensions.IsNullOrEmpty(val3))
+			if (!val3.IsNullOrEmpty())
 			{
 				((Vector2Int)(ref zero)).x = int.Parse(val3.Value, CultureInfo.InvariantCulture);
 			}
 			XAttribute val4 = val.Attribute(XName.op_Implicit("YTileOffset"));
-			if (!XDocumentExtensions.IsNullOrEmpty(val4))
+			if (!val4.IsNullOrEmpty())
 			{
 				((Vector2Int)(ref zero)).y = int.Parse(val4.Value, CultureInfo.InvariantCulture);
 			}

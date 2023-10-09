@@ -4,7 +4,7 @@ using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Cutscene;
 
-public class PlayMageDeathStepCutsceneDefinition : Definition, ICutsceneDefinition
+public class PlayMageDeathStepCutsceneDefinition : TheLastStand.Framework.Serialization.Definition, ICutsceneDefinition
 {
 	public static class Constants
 	{

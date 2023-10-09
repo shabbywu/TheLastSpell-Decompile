@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.BonePile;
 
-public class BoneZoneDefinition : Definition
+public class BoneZoneDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public string Id { get; private set; }
 

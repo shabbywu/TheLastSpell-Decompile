@@ -4,7 +4,6 @@ using TPLib;
 using TPLib.Localization;
 using TheLastStand.Definition.Building.BuildingGaugeEffect;
 using TheLastStand.Definition.CastFx;
-using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Framework.Extensions;
 using TheLastStand.Framework.Serialization;
 using TheLastStand.Manager;
@@ -16,9 +15,9 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Building.BuildingUpgrade;
 
-public class BuildingUpgradeDefinition : Definition
+public class BuildingUpgradeDefinition : TheLastStand.Framework.Serialization.Definition
 {
-	public class LeveledBuildingUpgradeDefinition : Definition
+	public class LeveledBuildingUpgradeDefinition : TheLastStand.Framework.Serialization.Definition
 	{
 		private int goldCost;
 
@@ -59,7 +58,7 @@ public class BuildingUpgradeDefinition : Definition
 		public CastFxDefinition OverrideCastFxDefinition { get; set; }
 
 		public LeveledBuildingUpgradeDefinition(XContainer container)
-			: base(container, (Dictionary<string, string>)null)
+			: base(container)
 		{
 		}
 
@@ -67,7 +66,7 @@ public class BuildingUpgradeDefinition : Definition
 		{
 			XElement val = (XElement)(object)((container is XElement) ? container : null);
 			XElement val2 = ((XContainer)val).Element(XName.op_Implicit("GoldCost"));
-			if (!XDocumentExtensions.IsNullOrEmpty(val2))
+			if (!val2.IsNullOrEmpty())
 			{
 				if (!int.TryParse(val2.Value, out var result))
 				{
@@ -77,7 +76,7 @@ public class BuildingUpgradeDefinition : Definition
 				GoldCost = result;
 			}
 			XElement val3 = ((XContainer)val).Element(XName.op_Implicit("MaterialCost"));
-			if (!XDocumentExtensions.IsNullOrEmpty(val3))
+			if (!val3.IsNullOrEmpty())
 			{
 				if (!int.TryParse(val3.Value, out var result2))
 				{
@@ -96,7 +95,7 @@ public class BuildingUpgradeDefinition : Definition
 			foreach (XElement item12 in ((XContainer)val4).Elements(XName.op_Implicit("UpgradeEffect")))
 			{
 				XAttribute val5 = item12.Attribute(XName.op_Implicit("Id"));
-				if (XDocumentExtensions.IsNullOrEmpty(val5))
+				if (val5.IsNullOrEmpty())
 				{
 					TPDebug.LogError((object)"BuildingUpgradeEffectDefinition must have an Id", (Object)null);
 					return;
@@ -192,7 +191,7 @@ public class BuildingUpgradeDefinition : Definition
 	public string LoreDescription => string.Empty;
 
 	public BuildingUpgradeDefinition(XContainer xContainer)
-		: base(xContainer, (Dictionary<string, string>)null)
+		: base(xContainer)
 	{
 	}
 
@@ -200,14 +199,14 @@ public class BuildingUpgradeDefinition : Definition
 	{
 		XElement val = (XElement)(object)((xContainer is XElement) ? xContainer : null);
 		XAttribute val2 = val.Attribute(XName.op_Implicit("Id"));
-		if (XDocumentExtensions.IsNullOrEmpty(val2))
+		if (val2.IsNullOrEmpty())
 		{
 			TPDebug.LogError((object)"BuildingUpgradeDefinition must have an Id", (Object)null);
 			return;
 		}
 		Id = val2.Value;
 		XAttribute val3 = val.Attribute(XName.op_Implicit("IsGlobal"));
-		if (!XDocumentExtensions.IsNullOrEmpty(val3))
+		if (!val3.IsNullOrEmpty())
 		{
 			IsGlobal = bool.Parse(val3.Value);
 		}
@@ -229,7 +228,7 @@ public class BuildingUpgradeDefinition : Definition
 		{
 			foreach (XElement item3 in ((XContainer)val5).Elements(XName.op_Implicit("LinkedUpgrade")))
 			{
-				if (XDocumentExtensions.IsNullOrEmpty(item3.Attribute(XName.op_Implicit("Id"))))
+				if (item3.Attribute(XName.op_Implicit("Id")).IsNullOrEmpty())
 				{
 					TPDebug.LogError((object)("BuildingUpgradeDefinition " + Id + " LinkedUpgrades must all have an Id"), (Object)null);
 					return;
@@ -305,7 +304,7 @@ public class BuildingUpgradeDefinition : Definition
 				case "GainGold":
 				{
 					int upgradedBonusValue2 = (building.ProductionModule.BuildingGaugeEffect as GainGold).UpgradedBonusValue;
-					num2 = (buildingGaugeEffect.BuildingGaugeEffectDefinition as GainGoldDefinition).GoldGain.EvalToFloat((InterpreterContext)(object)new FormulaInterpreterContext());
+					num2 = (buildingGaugeEffect.BuildingGaugeEffectDefinition as GainGoldDefinition).GoldGain.EvalToFloat(new FormulaInterpreterContext());
 					num2 += (float)upgradedBonusValue2;
 					break;
 				}

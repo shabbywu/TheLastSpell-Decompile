@@ -17,8 +17,7 @@ public class GainExperienceDefinition : BuildingSlotEffectDefinition
 	public override BuildingSlotEffectDefinition Clone()
 	{
 		GainExperienceDefinition obj = base.Clone() as GainExperienceDefinition;
-		Node value = Value;
-		obj.Value = ((value != null) ? value.Clone() : null);
+		obj.Value = Value?.Clone();
 		return obj;
 	}
 }

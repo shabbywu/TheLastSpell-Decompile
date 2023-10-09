@@ -4,7 +4,7 @@ using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Tooltip.Compendium;
 
-public class CompendiumDefinition : Definition
+public class CompendiumDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public Dictionary<string, ACompendiumEntryDefinition> CompendiumEntryDefinitions { get; private set; }
 
@@ -13,7 +13,7 @@ public class CompendiumDefinition : Definition
 	public Dictionary<string, string> AttackTypeAliases { get; private set; }
 
 	public CompendiumDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

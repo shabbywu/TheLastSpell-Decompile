@@ -29,7 +29,7 @@ public class ApocalypseLevelView : MonoBehaviour
 	{
 		if (level > 0)
 		{
-			levelImage.sprite = ResourcePooler<Sprite>.LoadOnce("View/Sprites/UI/WorldMap/ApocalypseLevels/ApocalypseLevel_" + level.ToString("00"), false);
+			levelImage.sprite = ResourcePooler<Sprite>.LoadOnce("View/Sprites/UI/WorldMap/ApocalypseLevels/ApocalypseLevel_" + level.ToString("00"));
 		}
 		else
 		{

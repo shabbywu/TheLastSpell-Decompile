@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Panic;
 
-public class PanicDefinition : Definition
+public class PanicDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public List<int> GoldValues { get; private set; }
 
@@ -23,7 +23,7 @@ public class PanicDefinition : Definition
 	public float ValueMax { get; private set; }
 
 	public PanicDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

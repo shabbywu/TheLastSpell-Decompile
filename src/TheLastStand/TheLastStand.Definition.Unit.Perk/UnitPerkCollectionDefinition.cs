@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.Perk;
 
-public class UnitPerkCollectionDefinition : Definition
+public class UnitPerkCollectionDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public string Id { get; private set; }
 
@@ -17,7 +17,7 @@ public class UnitPerkCollectionDefinition : Definition
 	public Dictionary<int, List<Tuple<PerkDefinition, int>>> PerksFromTier { get; private set; }
 
 	public UnitPerkCollectionDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

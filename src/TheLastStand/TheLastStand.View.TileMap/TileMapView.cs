@@ -25,8 +25,6 @@ using TheLastStand.Definition.Unit.Enemy;
 using TheLastStand.Definition.WorldMap;
 using TheLastStand.Dev.View;
 using TheLastStand.Framework;
-using TheLastStand.Framework.Automaton;
-using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Framework.Extensions;
 using TheLastStand.Manager;
 using TheLastStand.Manager.Building;
@@ -576,20 +574,20 @@ public class TileMapView : TPSingleton<TileMapView>
 		BuildingMasksTilemap.ClearAllTiles();
 		BuildingFrontMasksTilemap.ClearAllTiles();
 		TPSingleton<TileMapView>.Instance.tilesFlagTilemapTemplate.ClearAllTiles();
-		TransformExtensions.DestroyChildren(TPSingleton<TileMapView>.Instance.levelArtContainer);
+		TPSingleton<TileMapView>.Instance.levelArtContainer.DestroyChildren();
 		if (displayInCoroutine)
 		{
 			((MonoBehaviour)TPSingleton<TileMapView>.Instance).StartCoroutine(TPSingleton<TileMapView>.Instance.DisplayLevelCoroutine());
 			return;
 		}
-		bool flag = ((StateMachine)ApplicationManager.Application).State.GetName() == "LevelEditor";
+		bool flag = ApplicationManager.Application.State.GetName() == "LevelEditor";
 		CityDefinition cityDefinition = (flag ? null : TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition);
 		string text = cityDefinition?.Id ?? LevelEditorManager.CityToLoadId;
 		TPSingleton<TileMapView>.Instance.levelArtLoaded = false;
 		string text2 = cityDefinition?.LevelArtPrefabId ?? LevelEditorManager.CityToLoadId;
 		if (text2 != "None")
 		{
-			GameObject val = ResourcePooler.LoadOnce<GameObject>(string.Format("Prefab/Level Art/{0}/{0}_Level Art", text2), false);
+			GameObject val = ResourcePooler.LoadOnce<GameObject>(string.Format("Prefab/Level Art/{0}/{0}_Level Art", text2), failSilently: false);
 			if ((Object)(object)val != (Object)null)
 			{
 				Object.Instantiate<GameObject>(val, TPSingleton<TileMapView>.Instance.levelArtContainer);
@@ -616,12 +614,12 @@ public class TileMapView : TPSingleton<TileMapView>
 					TileBase val2 = null;
 					if (TPSingleton<TileMapView>.Instance.levelArtLoaded)
 					{
-						val2 = ResourcePooler<TileBase>.LoadOnce("View/Tiles/World/TileShape", false);
+						val2 = ResourcePooler<TileBase>.LoadOnce("View/Tiles/World/TileShape");
 					}
 					else
 					{
-						val2 = ResourcePooler<TileBase>.LoadOnce("View/Tiles/World/" + tile.GroundDefinition.Id + "_" + text, false) ?? ResourcePooler<TileBase>.LoadOnce("View/Tiles/World/" + tile.GroundDefinition.Id, false);
-						TileBase tileBase = ResourcePooler.LoadOnce<TileBase>("View/Tiles/World/Ground_" + text, false) ?? ResourcePooler.LoadOnce<TileBase>("View/Tiles/World/Ground", false);
+						val2 = ResourcePooler<TileBase>.LoadOnce("View/Tiles/World/" + tile.GroundDefinition.Id + "_" + text) ?? ResourcePooler<TileBase>.LoadOnce("View/Tiles/World/" + tile.GroundDefinition.Id);
+						TileBase tileBase = ResourcePooler.LoadOnce<TileBase>("View/Tiles/World/Ground_" + text, failSilently: false) ?? ResourcePooler.LoadOnce<TileBase>("View/Tiles/World/Ground", failSilently: false);
 						SetTile(GroundBackgroundTilemap, tile, tileBase);
 						GroundCityTilemap.color = Color.white;
 						GroundCraterTilemap.color = Color.white;
@@ -732,7 +730,7 @@ public class TileMapView : TPSingleton<TileMapView>
 		//IL_0117: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0139: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0148: Unknown result type (might be due to invalid IL or missing references)
-		TileBase val = ResourcePooler<TileBase>.LoadOnce("View/Tiles/World/Fog", false);
+		TileBase val = ResourcePooler<TileBase>.LoadOnce("View/Tiles/World/Fog");
 		TileBase[] array = (TileBase[])(object)new TileBase[4] { val, val, val, val };
 		for (int i = -1; i <= TPSingleton<TileMapManager>.Instance.TileMap.Width; i++)
 		{
@@ -764,10 +762,10 @@ public class TileMapView : TPSingleton<TileMapView>
 
 	public static void SetTile(Tilemap tileMap, Tile tile, string tileBasePath, string backupTileBasePath = null)
 	{
-		TileBase val = ((tileBasePath != null) ? ResourcePooler<TileBase>.LoadOnce(tileBasePath, false) : null);
+		TileBase val = ((tileBasePath != null) ? ResourcePooler<TileBase>.LoadOnce(tileBasePath) : null);
 		if ((Object)(object)val == (Object)null)
 		{
-			val = ((backupTileBasePath != null) ? ResourcePooler<TileBase>.LoadOnce(backupTileBasePath, false) : null);
+			val = ((backupTileBasePath != null) ? ResourcePooler<TileBase>.LoadOnce(backupTileBasePath) : null);
 		}
 		SetTile(tileMap, tile, val);
 	}
@@ -781,7 +779,7 @@ public class TileMapView : TPSingleton<TileMapView>
 
 	public static void SetTiles(Tilemap tileMap, List<Tile> tiles, string tileBasePath)
 	{
-		TileBase tileBase = ((tileBasePath != null) ? ResourcePooler<TileBase>.LoadOnce(tileBasePath, false) : null);
+		TileBase tileBase = ((tileBasePath != null) ? ResourcePooler<TileBase>.LoadOnce(tileBasePath) : null);
 		SetTiles(tileMap, tiles, tileBase);
 	}
 
@@ -823,7 +821,7 @@ public class TileMapView : TPSingleton<TileMapView>
 	public static void SpawnConstructionAnimation(Vector3 worldPosition, Sprite[] sprites, int sortingOrder, int animationFrameRate, int shockwaveFrame, Sprite[] spritesLUT = null)
 	{
 		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
-		ConstructionAnimationView pooledComponent = ObjectPooler.GetPooledComponent<ConstructionAnimationView>("Building Construction Animation", TPSingleton<TileMapView>.Instance.constructionAnimationViewPrefab, (Transform)null, false);
+		ConstructionAnimationView pooledComponent = ObjectPooler.GetPooledComponent<ConstructionAnimationView>("Building Construction Animation", TPSingleton<TileMapView>.Instance.constructionAnimationViewPrefab, (Transform)null, dontSetParent: false);
 		((Component)pooledComponent).transform.position = worldPosition;
 		pooledComponent.Init(sortingOrder, sprites, animationFrameRate, shockwaveFrame, spritesLUT);
 		pooledComponent.PlayConstructionAnimation();
@@ -840,10 +838,10 @@ public class TileMapView : TPSingleton<TileMapView>
 		//IL_008d: Unknown result type (might be due to invalid IL or missing references)
 		Vector3 worldPosition = ((GridLayout)BuildingTilemap).CellToWorld((Vector3Int)tile.Position);
 		Vector2Int relativeBuildingTilePosition = building.BlueprintModule.GetRelativeBuildingTilePosition(tile);
-		Sprite[] array = ResourcePooler.LoadAllOnce<Sprite>(string.Format("{0}/{1}/{2}{3}", "View/Sprites/DestructionAnimation", building.BuildingDefinition.Id, ((Vector2Int)(ref relativeBuildingTilePosition)).x, ((Vector2Int)(ref relativeBuildingTilePosition)).y), false);
+		Sprite[] array = ResourcePooler.LoadAllOnce<Sprite>(string.Format("{0}/{1}/{2}{3}", "View/Sprites/DestructionAnimation", building.BuildingDefinition.Id, ((Vector2Int)(ref relativeBuildingTilePosition)).x, ((Vector2Int)(ref relativeBuildingTilePosition)).y), failSilently: false);
 		if (array != null && array.Length != 0)
 		{
-			DestructionAnimationView pooledComponent = ObjectPooler.GetPooledComponent<DestructionAnimationView>("Building Destruction Animation", TPSingleton<TileMapView>.Instance.destructionAnimationViewPrefab, (Transform)null, false);
+			DestructionAnimationView pooledComponent = ObjectPooler.GetPooledComponent<DestructionAnimationView>("Building Destruction Animation", TPSingleton<TileMapView>.Instance.destructionAnimationViewPrefab, (Transform)null, dontSetParent: false);
 			pooledComponent.Init(worldPosition, array, delay);
 			pooledComponent.PlayDestructionAnimation();
 		}
@@ -1026,7 +1024,7 @@ public class TileMapView : TPSingleton<TileMapView>
 		//IL_0033: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0038: Unknown result type (might be due to invalid IL or missing references)
 		List<BoneZoneDefinition> boneZoneDefinitions = BonePileDatabase.BoneZonesDefinition.BoneZoneDefinitions;
-		TileBase tileBase = ResourcePooler<TileBase>.LoadOnce("View/Tiles/World/TileShape", false);
+		TileBase tileBase = ResourcePooler<TileBase>.LoadOnce("View/Tiles/World/TileShape");
 		Color colorA = Color.red;
 		Color colorB = Color.white;
 		int i = 0;
@@ -1060,7 +1058,7 @@ public class TileMapView : TPSingleton<TileMapView>
 			Tilemap val = Object.Instantiate<Tilemap>(TPSingleton<TileMapView>.Instance.boneZoneTilemapTemplate, TPSingleton<TileMapView>.Instance.boneZoneTilemapsContainer);
 			((Object)val).name = "BoneZone_" + boneZoneDefinition.Id;
 			val.ClearAllTiles();
-			val.color = ColorExtensions.WithA(Color.LerpUnclamped(colorA, colorB, (float)i / (float)boneZoneDefinitions.Count), 0f);
+			val.color = Color.LerpUnclamped(colorA, colorB, (float)i / (float)boneZoneDefinitions.Count).WithA(0f);
 			foreach (Tile item in TPSingleton<TileMapManager>.Instance.TileMap.Tiles.Where(match))
 			{
 				val.SetTile((Vector3Int)item.Position, tileBase);
@@ -1108,7 +1106,7 @@ public class TileMapView : TPSingleton<TileMapView>
 	{
 		//IL_0048: Unknown result type (might be due to invalid IL or missing references)
 		//IL_004d: Unknown result type (might be due to invalid IL or missing references)
-		TileBase item = ResourcePooler<TileBase>.LoadOnce("View/Tiles/Feedbacks/Movement/MoveRange", false);
+		TileBase item = ResourcePooler<TileBase>.LoadOnce("View/Tiles/Feedbacks/Movement/MoveRange");
 		List<Vector3Int> list = new List<Vector3Int>(enemiesReachableTiles.Count);
 		List<TileBase> list2 = new List<TileBase>(enemiesReachableTiles.Count);
 		foreach (Tile enemiesReachableTile in enemiesReachableTiles)
@@ -1153,17 +1151,17 @@ public class TileMapView : TPSingleton<TileMapView>
 			switch (areaOfEffectTileDisplayType)
 			{
 			case E_AreaOfEffectTileDisplayType.AreaOfEffect:
-				tileBase = ResourcePooler<TileBase>.LoadOnce("View/Tiles/Feedbacks/Skill/SkillAoe Back", false);
+				tileBase = ResourcePooler<TileBase>.LoadOnce("View/Tiles/Feedbacks/Skill/SkillAoe Back");
 				color = skillAoeValidColor._Color;
 				color2 = skillAoeInvalidColor._Color;
 				break;
 			case E_AreaOfEffectTileDisplayType.Maneuver:
-				tileBase = ResourcePooler<TileBase>.LoadOnce("View/Tiles/Feedbacks/Skill/SkillManeuver", false);
+				tileBase = ResourcePooler<TileBase>.LoadOnce("View/Tiles/Feedbacks/Skill/SkillManeuver");
 				color = skillManeuverValidColor._Color;
 				color2 = skillManeuverInvalidColor._Color;
 				break;
 			case E_AreaOfEffectTileDisplayType.Surrounding:
-				tileBase = ResourcePooler<TileBase>.LoadOnce("View/Tiles/Feedbacks/Skill/SkillSurrounding", false);
+				tileBase = ResourcePooler<TileBase>.LoadOnce("View/Tiles/Feedbacks/Skill/SkillSurrounding");
 				color = skillSurroundingValidColor._Color;
 				color2 = skillSurroundingInvalidColor._Color;
 				break;
@@ -1205,26 +1203,26 @@ public class TileMapView : TPSingleton<TileMapView>
 		{
 			Vector2Int relativeBuildingTilePosition = building.BlueprintModule.GetRelativeBuildingTilePosition(building.BlueprintModule.OccupiedTiles[i]);
 			((Vector3Int)(ref val))._002Ector(baseTile.X + ((Vector2Int)(ref relativeBuildingTilePosition)).x - building.BuildingDefinition.BlueprintModuleDefinition.OriginX, baseTile.Y + ((Vector2Int)(ref relativeBuildingTilePosition)).y - building.BuildingDefinition.BlueprintModuleDefinition.OriginY, 0);
-			Sprite[] array = ResourcePooler<Sprite>.LoadAllOnce(string.Format("{0}/{1}/{2}{3}", "View/Sprites/ConstructionAnimation", building.BuildingDefinition.Id, ((Vector2Int)(ref relativeBuildingTilePosition)).x, ((Vector2Int)(ref relativeBuildingTilePosition)).y), false);
-			Sprite[] spritesLUT = ResourcePooler<Sprite>.LoadAllOnce(string.Format("{0}/{1}/{2}{3}", "View/Sprites/LUTConstructionAnimation", building.BuildingDefinition.Id, ((Vector2Int)(ref relativeBuildingTilePosition)).x, ((Vector2Int)(ref relativeBuildingTilePosition)).y), true);
+			Sprite[] array = ResourcePooler<Sprite>.LoadAllOnce(string.Format("{0}/{1}/{2}{3}", "View/Sprites/ConstructionAnimation", building.BuildingDefinition.Id, ((Vector2Int)(ref relativeBuildingTilePosition)).x, ((Vector2Int)(ref relativeBuildingTilePosition)).y));
+			Sprite[] spritesLUT = ResourcePooler<Sprite>.LoadAllOnce(string.Format("{0}/{1}/{2}{3}", "View/Sprites/LUTConstructionAnimation", building.BuildingDefinition.Id, ((Vector2Int)(ref relativeBuildingTilePosition)).x, ((Vector2Int)(ref relativeBuildingTilePosition)).y), failSilently: true);
 			if (array.Length != 0)
 			{
 				animationSpritesCount = array.Length;
 				SpawnConstructionAnimation(((GridLayout)BuildingTilemap).CellToWorld(val), array, ((Renderer)((Component)BuildingTilemap).GetComponent<TilemapRenderer>()).sortingOrder, building.BuildingDefinition.ConstructionModuleDefinition.ConstructionAnimationFrameRate, building.BuildingDefinition.ConstructionModuleDefinition.ConstructionAnimationShockwaveFrame, spritesLUT);
 			}
-			TileBase val2 = ResourcePooler<TileBase>.LoadOnce("View/Tiles/Buildings/Diffuse/_Shadows/" + building.BuildingDefinition.BlueprintModuleDefinition.ShadowType, false);
+			TileBase val2 = ResourcePooler<TileBase>.LoadOnce("View/Tiles/Buildings/Diffuse/_Shadows/" + building.BuildingDefinition.BlueprintModuleDefinition.ShadowType);
 			if ((Object)(object)val2 != (Object)null)
 			{
 				BuildingShadowsTilemap.SetTile(val, val2);
 			}
 			if (building.BuildingDefinition.BlueprintModuleDefinition.SidewalkType != "None")
 			{
-				val2 = ResourcePooler<TileBase>.LoadOnce("View/Tiles/Buildings/Diffuse/_Sidewalks/" + building.BuildingDefinition.BlueprintModuleDefinition.SidewalkType, false);
+				val2 = ResourcePooler<TileBase>.LoadOnce("View/Tiles/Buildings/Diffuse/_Sidewalks/" + building.BuildingDefinition.BlueprintModuleDefinition.SidewalkType);
 				if ((Object)(object)val2 != (Object)null)
 				{
 					SideWalksTilemap.SetTile(val, val2);
 				}
-				val2 = ResourcePooler<TileBase>.LoadOnce("View/Tiles/Buildings/Diffuse/_Sidewalks/_Shadows/" + building.BuildingDefinition.BlueprintModuleDefinition.SidewalkType + "Shadow", false);
+				val2 = ResourcePooler<TileBase>.LoadOnce("View/Tiles/Buildings/Diffuse/_Sidewalks/_Shadows/" + building.BuildingDefinition.BlueprintModuleDefinition.SidewalkType + "Shadow");
 				if ((Object)(object)val2 != (Object)null)
 				{
 					SideWalkShadowsTilemap.SetTile(val, val2);
@@ -1299,7 +1297,7 @@ public class TileMapView : TPSingleton<TileMapView>
 			{
 				DisplaySkillAoE(skillDefinition, originTile, AreaOfEffectTilemap);
 			}
-			else if (((StateMachine)ApplicationManager.Application).State.GetName() != "LevelEditor")
+			else if (ApplicationManager.Application.State.GetName() != "LevelEditor")
 			{
 				DisplayBuildingGhostRange(skillDefinition, originTile, buildingDefinition.BlueprintModuleDefinition);
 			}
@@ -1336,7 +1334,7 @@ public class TileMapView : TPSingleton<TileMapView>
 			{
 				Vector2Int relativeBuildingTilePosition = building.BlueprintModule.GetRelativeBuildingTilePosition(building.BlueprintModule.OccupiedTiles[num]);
 				((Vector3Int)(ref val))._002Ector(building.OriginTile.X + ((Vector2Int)(ref relativeBuildingTilePosition)).x - building.BuildingDefinition.BlueprintModuleDefinition.OriginX, building.OriginTile.Y + ((Vector2Int)(ref relativeBuildingTilePosition)).y - building.BuildingDefinition.BlueprintModuleDefinition.OriginY, 0);
-				TileBase val2 = ResourcePooler<TileBase>.LoadOnce(string.Format("{0}/{1}{2}/{3}{4}{5}{6}", "View/Tiles/Buildings/Outline", building.BuildingDefinition.Id, suffix, building.BuildingDefinition.Id, ((Vector2Int)(ref relativeBuildingTilePosition)).x, ((Vector2Int)(ref relativeBuildingTilePosition)).y, "_Outline") ?? "", true);
+				TileBase val2 = ResourcePooler<TileBase>.LoadOnce(string.Format("{0}/{1}{2}/{3}{4}{5}{6}", "View/Tiles/Buildings/Outline", building.BuildingDefinition.Id, suffix, building.BuildingDefinition.Id, ((Vector2Int)(ref relativeBuildingTilePosition)).x, ((Vector2Int)(ref relativeBuildingTilePosition)).y, "_Outline") ?? "", failSilently: true);
 				Tilemap val3 = (hover ? buildingHoverOutlinesTilemap : buildingSelectionOutlinesTilemap);
 				if ((Object)(object)val2 != (Object)null)
 				{
@@ -1382,12 +1380,12 @@ public class TileMapView : TPSingleton<TileMapView>
 			TileBase tileBase = null;
 			if (!building.BlueprintModule.IsIndestructible && building.DamageableModule.IsUnderDamagedThreshold)
 			{
-				tileBase = ResourcePooler<TileBase>.LoadOnce(string.Format("{0}/{1}{2}/{3}{4}{5}{6}", "View/Tiles/Buildings/Damaged Diffuse", building.BuildingDefinition.Id, suffix, building.BuildingDefinition.Id, ((Vector2Int)(ref relativeBuildingTilePosition)).x, ((Vector2Int)(ref relativeBuildingTilePosition)).y, "_DamagedDiffuse"), true);
+				tileBase = ResourcePooler<TileBase>.LoadOnce(string.Format("{0}/{1}{2}/{3}{4}{5}{6}", "View/Tiles/Buildings/Damaged Diffuse", building.BuildingDefinition.Id, suffix, building.BuildingDefinition.Id, ((Vector2Int)(ref relativeBuildingTilePosition)).x, ((Vector2Int)(ref relativeBuildingTilePosition)).y, "_DamagedDiffuse"), failSilently: true);
 				if ((Object)(object)tileBase != (Object)null)
 				{
 					buildingDamagedTilemap.SetTile(val, tileBase);
 				}
-				tileBase = ResourcePooler<TileBase>.LoadOnce(string.Format("{0}/{1}{2}/{3}{4}{5}{6}", "View/Tiles/Buildings/Damaged Mask", building.BuildingDefinition.Id, suffix, building.BuildingDefinition.Id, ((Vector2Int)(ref relativeBuildingTilePosition)).x, ((Vector2Int)(ref relativeBuildingTilePosition)).y, "_DamagedMask"), true);
+				tileBase = ResourcePooler<TileBase>.LoadOnce(string.Format("{0}/{1}{2}/{3}{4}{5}{6}", "View/Tiles/Buildings/Damaged Mask", building.BuildingDefinition.Id, suffix, building.BuildingDefinition.Id, ((Vector2Int)(ref relativeBuildingTilePosition)).x, ((Vector2Int)(ref relativeBuildingTilePosition)).y, "_DamagedMask"), failSilently: true);
 				if ((Object)(object)tileBase != (Object)null)
 				{
 					buildingDamagedMaskTilemap.SetTile(val, tileBase);
@@ -1403,17 +1401,17 @@ public class TileMapView : TPSingleton<TileMapView>
 			{
 				BuildingTilemap.SetTile(val, tileBase);
 			}
-			tileBase = ResourcePooler<TileBase>.LoadOnce(string.Format("{0}/{1}{2}/{3}Front{4}{5}", "View/Tiles/Buildings/Diffuse", building.BuildingDefinition.Id, suffix, building.BuildingDefinition.Id, ((Vector2Int)(ref relativeBuildingTilePosition)).x, ((Vector2Int)(ref relativeBuildingTilePosition)).y), true);
+			tileBase = ResourcePooler<TileBase>.LoadOnce(string.Format("{0}/{1}{2}/{3}Front{4}{5}", "View/Tiles/Buildings/Diffuse", building.BuildingDefinition.Id, suffix, building.BuildingDefinition.Id, ((Vector2Int)(ref relativeBuildingTilePosition)).x, ((Vector2Int)(ref relativeBuildingTilePosition)).y), failSilently: true);
 			if ((Object)(object)tileBase != (Object)null)
 			{
 				BuildingFrontTilemap.SetTile(val, tileBase);
 			}
-			tileBase = ResourcePooler<TileBase>.LoadOnce(string.Format("{0}/{1}{2}/{3}{4}{5}_Mask", "View/Tiles/Buildings/Mask", building.BuildingDefinition.Id, suffix, building.BuildingDefinition.Id, ((Vector2Int)(ref relativeBuildingTilePosition)).x, ((Vector2Int)(ref relativeBuildingTilePosition)).y), true);
+			tileBase = ResourcePooler<TileBase>.LoadOnce(string.Format("{0}/{1}{2}/{3}{4}{5}_Mask", "View/Tiles/Buildings/Mask", building.BuildingDefinition.Id, suffix, building.BuildingDefinition.Id, ((Vector2Int)(ref relativeBuildingTilePosition)).x, ((Vector2Int)(ref relativeBuildingTilePosition)).y), failSilently: true);
 			if ((Object)(object)tileBase != (Object)null)
 			{
 				BuildingMasksTilemap.SetTile(val, tileBase);
 			}
-			tileBase = ResourcePooler<TileBase>.LoadOnce(string.Format("{0}/{1}{2}/{3}Front{4}{5}_Mask", "View/Tiles/Buildings/Mask", building.BuildingDefinition.Id, suffix, building.BuildingDefinition.Id, ((Vector2Int)(ref relativeBuildingTilePosition)).x, ((Vector2Int)(ref relativeBuildingTilePosition)).y), true);
+			tileBase = ResourcePooler<TileBase>.LoadOnce(string.Format("{0}/{1}{2}/{3}Front{4}{5}_Mask", "View/Tiles/Buildings/Mask", building.BuildingDefinition.Id, suffix, building.BuildingDefinition.Id, ((Vector2Int)(ref relativeBuildingTilePosition)).x, ((Vector2Int)(ref relativeBuildingTilePosition)).y), failSilently: true);
 			if ((Object)(object)tileBase != (Object)null)
 			{
 				BuildingFrontMasksTilemap.SetTile(val, tileBase);
@@ -1422,19 +1420,19 @@ public class TileMapView : TPSingleton<TileMapView>
 			{
 				building.BuildingView.PlaceholderView = true;
 			}
-			tileBase = ResourcePooler<TileBase>.LoadOnce("View/Tiles/Buildings/Diffuse/_Shadows/" + building.BuildingDefinition.BlueprintModuleDefinition.ShadowType, true);
+			tileBase = ResourcePooler<TileBase>.LoadOnce("View/Tiles/Buildings/Diffuse/_Shadows/" + building.BuildingDefinition.BlueprintModuleDefinition.ShadowType, failSilently: true);
 			if ((Object)(object)tileBase != (Object)null)
 			{
 				BuildingShadowsTilemap.SetTile(val, tileBase);
 			}
 			if (building.BuildingDefinition.BlueprintModuleDefinition.SidewalkType != "None")
 			{
-				tileBase = ResourcePooler<TileBase>.LoadOnce("View/Tiles/Buildings/Diffuse/_Sidewalks/" + building.BuildingDefinition.BlueprintModuleDefinition.SidewalkType, true);
+				tileBase = ResourcePooler<TileBase>.LoadOnce("View/Tiles/Buildings/Diffuse/_Sidewalks/" + building.BuildingDefinition.BlueprintModuleDefinition.SidewalkType, failSilently: true);
 				if ((Object)(object)tileBase != (Object)null)
 				{
 					SideWalksTilemap.SetTile(val, tileBase);
 				}
-				tileBase = ResourcePooler<TileBase>.LoadOnce("View/Tiles/Buildings/Diffuse/_Sidewalks/_Shadows/" + building.BuildingDefinition.BlueprintModuleDefinition.SidewalkType + "Shadow", true);
+				tileBase = ResourcePooler<TileBase>.LoadOnce("View/Tiles/Buildings/Diffuse/_Sidewalks/_Shadows/" + building.BuildingDefinition.BlueprintModuleDefinition.SidewalkType + "Shadow", failSilently: true);
 				if ((Object)(object)tileBase != (Object)null)
 				{
 					SideWalkShadowsTilemap.SetTile(val, tileBase);
@@ -1447,7 +1445,7 @@ public class TileMapView : TPSingleton<TileMapView>
 
 	public void DisplayBuildingSelectionFeedback(TheLastStand.Model.Building.Building building, bool show)
 	{
-		TileBase val = ResourcePooler<TileBase>.LoadOnce("View/Tiles/Feedbacks/BuildingSelectionFeedback", false);
+		TileBase val = ResourcePooler<TileBase>.LoadOnce("View/Tiles/Feedbacks/BuildingSelectionFeedback");
 		foreach (Tile occupiedTile in building.BlueprintModule.OccupiedTiles)
 		{
 			SetTile(BuildingSelectionFeedbackTilemap, occupiedTile, show ? val : null);
@@ -1499,9 +1497,9 @@ public class TileMapView : TPSingleton<TileMapView>
 			return;
 		}
 		Vector2Int tilePos = Vector2Int.zero;
-		TileBase val = ResourcePooler<TileBase>.LoadOnce("View/Tiles/Feedbacks/Skill/Dials/Tiles_cadrans_LeftRight", false);
-		TileBase val2 = ResourcePooler<TileBase>.LoadOnce("View/Tiles/Feedbacks/Skill/Dials/Tiles_cadrans_top", false);
-		TileBase val3 = ResourcePooler<TileBase>.LoadOnce("View/Tiles/Feedbacks/Skill/Dials/Tiles_cadrans_bot", false);
+		TileBase val = ResourcePooler<TileBase>.LoadOnce("View/Tiles/Feedbacks/Skill/Dials/Tiles_cadrans_LeftRight");
+		TileBase val2 = ResourcePooler<TileBase>.LoadOnce("View/Tiles/Feedbacks/Skill/Dials/Tiles_cadrans_top");
+		TileBase val3 = ResourcePooler<TileBase>.LoadOnce("View/Tiles/Feedbacks/Skill/Dials/Tiles_cadrans_bot");
 		int num = Mathf.Max(TPSingleton<TileMapManager>.Instance.TileMap.Width, TPSingleton<TileMapManager>.Instance.TileMap.Height);
 		for (int i = 0; i < num; i++)
 		{
@@ -1552,7 +1550,7 @@ public class TileMapView : TPSingleton<TileMapView>
 			{
 				ComputeFogMinMaxTiles(densityMin, densityMax);
 			}
-			SetTiles(FogMinMaxTilemap, fogMinMaxTiles, fogMinMaxTileBase ?? ResourcePooler<TileBase>.LoadOnce("View/Tiles/Feedbacks/Skill/InaccurateRange", false));
+			SetTiles(FogMinMaxTilemap, fogMinMaxTiles, fogMinMaxTileBase ?? ResourcePooler<TileBase>.LoadOnce("View/Tiles/Feedbacks/Skill/InaccurateRange"));
 		}
 	}
 
@@ -1560,7 +1558,7 @@ public class TileMapView : TPSingleton<TileMapView>
 	{
 		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
 		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
-		TileBase item = ResourcePooler<TileBase>.LoadOnce("View/Tiles/Feedbacks/Skill/InaccurateRange", false);
+		TileBase item = ResourcePooler<TileBase>.LoadOnce("View/Tiles/Feedbacks/Skill/InaccurateRange");
 		List<Vector3Int> list = new List<Vector3Int>(tiles.Count);
 		List<TileBase> list2 = new List<TileBase>(tiles.Count);
 		foreach (Tile tile in tiles)
@@ -1576,7 +1574,7 @@ public class TileMapView : TPSingleton<TileMapView>
 		List<Tile> list = new List<Tile>();
 		if (perk.PerkDefinition.HoverRanges.Count == 1)
 		{
-			foreach (Tile item in perk.Owner.TileObjectController.GetTilesInRange(perk.PerkDefinition.HoverRanges[0].EvalToInt((InterpreterContext)(object)perk)))
+			foreach (Tile item in perk.Owner.TileObjectController.GetTilesInRange(perk.PerkDefinition.HoverRanges[0].EvalToInt(perk)))
 			{
 				list.Add(item);
 			}
@@ -1588,7 +1586,7 @@ public class TileMapView : TPSingleton<TileMapView>
 		HashSet<int> hashSet = new HashSet<int>();
 		for (int i = 0; i < perk.PerkDefinition.HoverRanges.Count; i++)
 		{
-			int num3 = perk.PerkDefinition.HoverRanges[i].EvalToInt((InterpreterContext)(object)perk);
+			int num3 = perk.PerkDefinition.HoverRanges[i].EvalToInt(perk);
 			if (num3 > num)
 			{
 				num = num3;
@@ -1607,7 +1605,7 @@ public class TileMapView : TPSingleton<TileMapView>
 			{
 				continue;
 			}
-			int num5 = perk.PerkDefinition.HoverRanges[j].EvalToInt((InterpreterContext)(object)perk);
+			int num5 = perk.PerkDefinition.HoverRanges[j].EvalToInt(perk);
 			if (!hashSet.Add(num5))
 			{
 				continue;
@@ -1634,7 +1632,7 @@ public class TileMapView : TPSingleton<TileMapView>
 		int num = 0;
 		int num2 = 0;
 		int num3 = skill.SkillController.ComputeMaxRange();
-		TileBase val = ResourcePooler<TileBase>.LoadOnce("View/Tiles/Feedbacks/Skill/InaccurateRange", false);
+		TileBase val = ResourcePooler<TileBase>.LoadOnce("View/Tiles/Feedbacks/Skill/InaccurateRange");
 		foreach (int key in SkillDatabase.DamageTypeModifiersDefinition.DodgeMultiplierByDistance.Keys)
 		{
 			if (key > num3 && ++num2 == 2)
@@ -1663,7 +1661,7 @@ public class TileMapView : TPSingleton<TileMapView>
 		//IL_00a1: Unknown result type (might be due to invalid IL or missing references)
 		//IL_00a6: Unknown result type (might be due to invalid IL or missing references)
 		//IL_00b2: Unknown result type (might be due to invalid IL or missing references)
-		TileBase item = ResourcePooler<TileBase>.LoadOnce("View/Tiles/Feedbacks/Skill/SkillRange", false);
+		TileBase item = ResourcePooler<TileBase>.LoadOnce("View/Tiles/Feedbacks/Skill/SkillRange");
 		List<Vector3Int> list = new List<Vector3Int>(tiles.Count);
 		List<TileBase> list2 = new List<TileBase>(tiles.Count);
 		foreach (KeyValuePair<Tile, TilesInRangeInfos.TileDisplayInfos> tile in tiles)
@@ -1918,7 +1916,7 @@ public class TileMapView : TPSingleton<TileMapView>
 	public void SetWorldLimitTile(Vector3Int position)
 	{
 		//IL_0005: Unknown result type (might be due to invalid IL or missing references)
-		WorldLimitsTilemap.SetTile(position, ResourcePooler<TileBase>.LoadOnce("View/Tiles/Feedbacks/WorldLimits/WorldLimits", false));
+		WorldLimitsTilemap.SetTile(position, ResourcePooler<TileBase>.LoadOnce("View/Tiles/Feedbacks/WorldLimits/WorldLimits"));
 	}
 
 	public void StartGhostTilemapsAlphaTweening()
@@ -1930,10 +1928,10 @@ public class TileMapView : TPSingleton<TileMapView>
 			TweenExtensions.Kill(obj, false);
 		}
 		float alpha = ghostTweenMaxAlpha;
-		ghostFadeTween = (Tween)(object)TweenExtensions.SetFullId<TweenerCore<float, float, FloatOptions>>(TweenSettingsExtensions.SetLoops<TweenerCore<float, float, FloatOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(DOTween.To((DOGetter<float>)(() => alpha), (DOSetter<float>)delegate(float x)
+		ghostFadeTween = (Tween)(object)TweenSettingsExtensions.SetLoops<TweenerCore<float, float, FloatOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(DOTween.To((DOGetter<float>)(() => alpha), (DOSetter<float>)delegate(float x)
 		{
 			SetTilemapsAlpha(x, GhostBuildingsTilemap, GhostBuildingsFrontTilemap);
-		}, ghostTweenMinAlpha, ghostTweenDuration), ghostTweenEaseCurve), -1, (LoopType)1), "BuildingGhostTween", (Component)(object)this);
+		}, ghostTweenMinAlpha, ghostTweenDuration), ghostTweenEaseCurve), -1, (LoopType)1).SetFullId<TweenerCore<float, float, FloatOptions>>("BuildingGhostTween", (Component)(object)this);
 	}
 
 	public void UpdateDisplayRangeTilesColors(Dictionary<Tile, TilesInRangeInfos.TileDisplayInfos> tiles)
@@ -2164,7 +2162,7 @@ public class TileMapView : TPSingleton<TileMapView>
 			{
 				Tile tile = TileMapManager.GetTile(x, y);
 				string id = tile.GroundDefinition.Id;
-				TileBase val = ResourcePooler<TileBase>.LoadOnce("View/Tiles/World/" + id, false);
+				TileBase val = ResourcePooler<TileBase>.LoadOnce("View/Tiles/World/" + id);
 				((tile.GroundDefinition.GroundCategory == GroundDefinition.E_GroundCategory.NoBuilding) ? GroundCraterTilemap : GroundCityTilemap).SetTile(new Vector3Int(x, y, 0), val);
 				SetTile(GridTilemap, tile, "View/Tiles/Feedbacks/Grid Cell");
 				if (frames++ % TileMapManager.LoadingSpeed == 0)
@@ -2266,10 +2264,10 @@ public class TileMapView : TPSingleton<TileMapView>
 		//IL_004e: Unknown result type (might be due to invalid IL or missing references)
 		if (hoverOutlineTween == null || !TweenExtensions.IsActive(hoverOutlineTween) || !TweenExtensions.IsPlaying(hoverOutlineTween))
 		{
-			hoverOutlineTween = (Tween)(object)TweenExtensions.SetFullId<TweenerCore<float, float, FloatOptions>>(TweenSettingsExtensions.SetLoops<TweenerCore<float, float, FloatOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(DOTween.To((DOGetter<float>)(() => hoverOutlineTweenMaxAlpha), (DOSetter<float>)delegate(float x)
+			hoverOutlineTween = (Tween)(object)TweenSettingsExtensions.SetLoops<TweenerCore<float, float, FloatOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(DOTween.To((DOGetter<float>)(() => hoverOutlineTweenMaxAlpha), (DOSetter<float>)delegate(float x)
 			{
 				SetTilemapsAlpha(x, buildingHoverOutlinesTilemap);
-			}, hoverOutlineTweenMinAlpha, hoverOutlineTweenDuration), hoverOutlineTweenEaseCurve), -1, (LoopType)1), "BuildingHoverOutlineTween", (Component)(object)this);
+			}, hoverOutlineTweenMinAlpha, hoverOutlineTweenDuration), hoverOutlineTweenEaseCurve), -1, (LoopType)1).SetFullId<TweenerCore<float, float, FloatOptions>>("BuildingHoverOutlineTween", (Component)(object)this);
 		}
 	}
 
@@ -2342,7 +2340,7 @@ public class TileMapView : TPSingleton<TileMapView>
 		//IL_00a9: Unknown result type (might be due to invalid IL or missing references)
 		//IL_00c7: Unknown result type (might be due to invalid IL or missing references)
 		//IL_00e4: Unknown result type (might be due to invalid IL or missing references)
-		TileBase val = ((!TPSingleton<TileMapView>.Instance.levelArtLoaded) ? (ResourcePooler<TileBase>.LoadOnce("View/Tiles/World/" + tile.GroundDefinition.Id + "_" + cityId, false) ?? ResourcePooler<TileBase>.LoadOnce("View/Tiles/World/" + tile.GroundDefinition.Id, false)) : ResourcePooler<TileBase>.LoadOnce("View/Tiles/World/TileShape", false));
+		TileBase val = ((!TPSingleton<TileMapView>.Instance.levelArtLoaded) ? (ResourcePooler<TileBase>.LoadOnce("View/Tiles/World/" + tile.GroundDefinition.Id + "_" + cityId) ?? ResourcePooler<TileBase>.LoadOnce("View/Tiles/World/" + tile.GroundDefinition.Id)) : ResourcePooler<TileBase>.LoadOnce("View/Tiles/World/TileShape"));
 		switch (tile.GroundDefinition.GroundCategory)
 		{
 		case GroundDefinition.E_GroundCategory.City:
@@ -2366,8 +2364,8 @@ public class TileMapView : TPSingleton<TileMapView>
 		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
 		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
-		GroundCityTilemap.color = ColorExtensions.WithA(GroundCityTilemap.color, value);
-		GroundCraterTilemap.color = ColorExtensions.WithA(GroundCraterTilemap.color, value);
+		GroundCityTilemap.color = GroundCityTilemap.color.WithA(value);
+		GroundCraterTilemap.color = GroundCraterTilemap.color.WithA(value);
 	}
 
 	[DevConsoleCommand(Name = "TilesFlagsHideAll")]
@@ -2412,7 +2410,7 @@ public class TileMapView : TPSingleton<TileMapView>
 		}
 		foreach (Tilemap boneZoneTilemap in TPSingleton<TileMapView>.Instance.boneZoneTilemaps)
 		{
-			boneZoneTilemap.color = ColorExtensions.WithA(boneZoneTilemap.color, alpha);
+			boneZoneTilemap.color = boneZoneTilemap.color.WithA(alpha);
 		}
 	}
 

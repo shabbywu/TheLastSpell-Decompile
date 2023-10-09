@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.Enemy;
 
-public class SpawnWaveEnemiesDefinition : Definition
+public class SpawnWaveEnemiesDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public BossWaveSettings BossWaveSettings { get; private set; }
 
@@ -30,7 +30,7 @@ public class SpawnWaveEnemiesDefinition : Definition
 
 
 	public SpawnWaveEnemiesDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
@@ -51,13 +51,13 @@ public class SpawnWaveEnemiesDefinition : Definition
 		foreach (XElement item2 in ((XContainer)val2).Elements(XName.op_Implicit("EnemyUnitTemplateDefinition")))
 		{
 			XAttribute val4 = item2.Attribute(XName.op_Implicit("Id"));
-			if (XDocumentExtensions.IsNullOrEmpty(val4))
+			if (val4.IsNullOrEmpty())
 			{
 				CLoggerManager.Log((object)"EnemyUnitTemplateDefinition has no Id!", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 				continue;
 			}
 			XAttribute val5 = item2.Attribute(XName.op_Implicit("Weight"));
-			if (XDocumentExtensions.IsNullOrEmpty(val5))
+			if (val5.IsNullOrEmpty())
 			{
 				CLoggerManager.Log((object)"EnemyUnitTemplateDefinition has no Weight!", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 				continue;
@@ -77,14 +77,14 @@ public class SpawnWaveEnemiesDefinition : Definition
 		foreach (XElement item3 in ((XContainer)val2).Elements(XName.op_Implicit("EnemyTier")))
 		{
 			XAttribute val6 = item3.Attribute(XName.op_Implicit("Value"));
-			if (XDocumentExtensions.IsNullOrEmpty(val6))
+			if (val6.IsNullOrEmpty())
 			{
 				CLoggerManager.Log((object)"EnemyTier has no Value!", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 				continue;
 			}
 			float item = 1f;
 			XAttribute val7 = item3.Attribute(XName.op_Implicit("WeightMultiplier"));
-			if (!XDocumentExtensions.IsNullOrEmpty(val7))
+			if (!val7.IsNullOrEmpty())
 			{
 				if (!float.TryParse(val7.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var result2))
 				{

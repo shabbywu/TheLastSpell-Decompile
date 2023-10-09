@@ -40,7 +40,7 @@ public class BodyPartView : MonoBehaviour
 		{
 			return null;
 		}
-		return ResourcePooler.LoadOnce<Sprite>(spritePath, false);
+		return ResourcePooler.LoadOnce<Sprite>(spritePath, failSilently: false);
 	}
 
 	public Sprite GetSprite()

@@ -226,7 +226,7 @@ public class ChooseRewardPanel : TPSingleton<ChooseRewardPanel>, IOverlayUser
 		}
 		InventoryManager.InventoryView.ItemTooltip.Hide();
 		CharacterSheetPanel.ItemTooltip.Hide();
-		fadeTween = (Tween)(object)TweenSettingsExtensions.OnComplete<TweenerCore<float, float, FloatOptions>>(TweenExtensions.SetFullId<TweenerCore<float, float, FloatOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(DOTweenModuleUI.DOFade(canvasGroup, 0f, fadeOutTweenDuration), fadeOutTweenEasing), "ShopFadeOut", (Component)(object)this), (TweenCallback)delegate
+		fadeTween = (Tween)(object)TweenSettingsExtensions.OnComplete<TweenerCore<float, float, FloatOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(DOTweenModuleUI.DOFade(canvasGroup, 0f, fadeOutTweenDuration), fadeOutTweenEasing).SetFullId<TweenerCore<float, float, FloatOptions>>("ShopFadeOut", (Component)(object)this), (TweenCallback)delegate
 		{
 			((Behaviour)canvas).enabled = false;
 		});
@@ -247,7 +247,7 @@ public class ChooseRewardPanel : TPSingleton<ChooseRewardPanel>, IOverlayUser
 		confirmButton.Interactable = ProductionItem.ChosenItem != null;
 		if (ProductionItem.ChosenItem != null)
 		{
-			SoundManager.PlayAudioClip(ListExtensions.PickRandom<AudioClip>((IEnumerable<AudioClip>)selectAudioClips));
+			SoundManager.PlayAudioClip(selectAudioClips.PickRandom());
 		}
 		int i = 0;
 		for (int count = chooseRewardShelves.Count; i < count; i++)
@@ -305,7 +305,7 @@ public class ChooseRewardPanel : TPSingleton<ChooseRewardPanel>, IOverlayUser
 		tooltipDisplayer.LocalizationArguments = new object[1] { num };
 		((Behaviour)canvas).enabled = true;
 		canvasGroup.blocksRaycasts = true;
-		TPSingleton<ChooseRewardPanel>.Instance.fadeTween = (Tween)(object)TweenExtensions.SetFullId<TweenerCore<float, float, FloatOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(DOTweenModuleUI.DOFade(TPSingleton<ChooseRewardPanel>.Instance.canvasGroup, 1f, fadeInTweenDuration), fadeInTweenEasing), "ShopFadeIn", (Component)(object)this);
+		TPSingleton<ChooseRewardPanel>.Instance.fadeTween = (Tween)(object)TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(DOTweenModuleUI.DOFade(TPSingleton<ChooseRewardPanel>.Instance.canvasGroup, 1f, fadeInTweenDuration), fadeInTweenEasing).SetFullId<TweenerCore<float, float, FloatOptions>>("ShopFadeIn", (Component)(object)this);
 		if (!TileObjectSelectionManager.HasPlayableUnitSelected)
 		{
 			unitDropdownPanel.ResetDropdown();
@@ -551,9 +551,9 @@ public class ChooseRewardPanel : TPSingleton<ChooseRewardPanel>, IOverlayUser
 		((Behaviour)canvas).enabled = false;
 		canvasGroup = ((Component)TPSingleton<ChooseRewardPanel>.Instance).GetComponent<CanvasGroup>();
 		canvasGroup.blocksRaycasts = false;
-		TPSingleton<ChooseRewardPanel>.Instance.appearAudioClips = ResourcePooler.LoadAllOnce<AudioClip>("Sounds/SFX/UI_Reroll/UI_Reroll_Reward/Appear", false);
-		TPSingleton<ChooseRewardPanel>.Instance.disappearAudioClips = ResourcePooler.LoadAllOnce<AudioClip>("Sounds/SFX/UI_Reroll/UI_Reroll_Reward/Disappear", false);
-		TPSingleton<ChooseRewardPanel>.Instance.selectAudioClips = ResourcePooler.LoadAllOnce<AudioClip>("Sounds/SFX/UI_Reroll/UI_Reroll_Reward/Select", false);
+		TPSingleton<ChooseRewardPanel>.Instance.appearAudioClips = ResourcePooler.LoadAllOnce<AudioClip>("Sounds/SFX/UI_Reroll/UI_Reroll_Reward/Appear", failSilently: false);
+		TPSingleton<ChooseRewardPanel>.Instance.disappearAudioClips = ResourcePooler.LoadAllOnce<AudioClip>("Sounds/SFX/UI_Reroll/UI_Reroll_Reward/Disappear", failSilently: false);
+		TPSingleton<ChooseRewardPanel>.Instance.selectAudioClips = ResourcePooler.LoadAllOnce<AudioClip>("Sounds/SFX/UI_Reroll/UI_Reroll_Reward/Select", failSilently: false);
 		unitDropdownPanel.OnUnitToCompareChanged += ChangeUnitToCompare;
 	}
 

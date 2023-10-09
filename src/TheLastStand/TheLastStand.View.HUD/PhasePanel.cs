@@ -273,7 +273,7 @@ public class PhasePanel : MonoBehaviour
 
 	public void SetNightSliderValue(float value)
 	{
-		BetterSliderExtensions.SetValueWithTween(nightSlider, Mathf.Clamp(value, 0f, 1f), nightSliderSequence, nightSliderTweenDuration);
+		nightSlider.SetValueWithTween(Mathf.Clamp(value, 0f, 1f), nightSliderSequence, nightSliderTweenDuration);
 	}
 
 	public void SetNextRefreshNightSliderValue(float value)
@@ -310,7 +310,7 @@ public class PhasePanel : MonoBehaviour
 			goldIconImage.sprite = goldIconSpriteOff;
 			goldDisplay.SetColor(goldTextDisabledColor);
 		}
-		goldDisplay.RefreshValue(goldValue, () => ObjectPooler.GetPooledComponent<GainGoldDisplay>("TurnPanelGainGoldDisplay", goldDisplayPrefab, (Transform)null, false));
+		goldDisplay.RefreshValue(goldValue, () => ObjectPooler.GetPooledComponent<GainGoldDisplay>("TurnPanelGainGoldDisplay", goldDisplayPrefab, (Transform)null, dontSetParent: false));
 	}
 
 	private void RefreshMaterials(int materialsValue)
@@ -327,7 +327,7 @@ public class PhasePanel : MonoBehaviour
 			materialsIconImage.sprite = materialsIconSpriteOff;
 			materialsDisplay.SetColor(materialsTextDisabledColor);
 		}
-		materialsDisplay.RefreshValue(materialsValue, () => ObjectPooler.GetPooledComponent<GainMaterialDisplay>("TurnPanelGainMaterialsDisplay", materialsDisplayPrefab, (Transform)null, false));
+		materialsDisplay.RefreshValue(materialsValue, () => ObjectPooler.GetPooledComponent<GainMaterialDisplay>("TurnPanelGainMaterialsDisplay", materialsDisplayPrefab, (Transform)null, dontSetParent: false));
 	}
 
 	private void RefreshWorkers(int workersValue, int maxWorkersValue)

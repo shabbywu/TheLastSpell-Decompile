@@ -7,7 +7,7 @@ using TheLastStand.Model;
 
 namespace TheLastStand.Definition.Building.BuildingPassive;
 
-public class BuildingPassiveDefinition : Definition
+public class BuildingPassiveDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public string Id { get; private set; }
 
@@ -18,13 +18,13 @@ public class BuildingPassiveDefinition : Definition
 	public List<PassiveTriggerDefinition> TriggerDefinitions { get; private set; }
 
 	public BuildingPassiveDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
 	public virtual BuildingPassiveDefinition Clone()
 	{
-		return ((object)this).MemberwiseClone() as BuildingPassiveDefinition;
+		return MemberwiseClone() as BuildingPassiveDefinition;
 	}
 
 	public override void Deserialize(XContainer container)

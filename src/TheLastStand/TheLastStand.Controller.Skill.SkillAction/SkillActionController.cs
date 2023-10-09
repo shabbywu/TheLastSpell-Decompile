@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using TPLib;
@@ -271,7 +270,7 @@ public abstract class SkillActionController
 														LoseManaDisplay loseManaDisplay = targetUnit.UnitView.SkillEffectDisplays.FirstOrDefault((IDisplayableEffect x) => x is LoseManaDisplay loseManaDisplay2 && !loseManaDisplay2.IsBeingDisplayed) as LoseManaDisplay;
 														if ((Object)(object)loseManaDisplay == (Object)null)
 														{
-															loseManaDisplay = ObjectPooler.GetPooledComponent<LoseManaDisplay>("LoseManaDisplay", ResourcePooler.LoadOnce<LoseManaDisplay>("Prefab/Displayable Effect/UI Effect Displays/LoseManaDisplay", false), EffectManager.EffectDisplaysParent, false);
+															loseManaDisplay = ObjectPooler.GetPooledComponent<LoseManaDisplay>("LoseManaDisplay", ResourcePooler.LoadOnce<LoseManaDisplay>("Prefab/Displayable Effect/UI Effect Displays/LoseManaDisplay", failSilently: false), EffectManager.EffectDisplaysParent, dontSetParent: false);
 															loseManaDisplay.Init((int)decreaseStatSkillEffectDefinition.LossValue);
 															targetUnit.UnitController.AddEffectDisplay(loseManaDisplay);
 														}
@@ -295,7 +294,7 @@ public abstract class SkillActionController
 												case UnitStatDefinition.E_Stat.MovePoints:
 												{
 													targetUnit.UnitStatsController.IncreaseBaseStat(regenStatSkillEffectDefinition.Stat, regenStatSkillEffectDefinition.Bonus, includeChildStat: false);
-													RestoreStatDisplay pooledComponent = ObjectPooler.GetPooledComponent<RestoreStatDisplay>("RestoreStatDisplay", ResourcePooler.LoadOnce<RestoreStatDisplay>("Prefab/Displayable Effect/UI Effect Displays/RestoreStatDisplay", false), EffectManager.EffectDisplaysParent, false);
+													RestoreStatDisplay pooledComponent = ObjectPooler.GetPooledComponent<RestoreStatDisplay>("RestoreStatDisplay", ResourcePooler.LoadOnce<RestoreStatDisplay>("Prefab/Displayable Effect/UI Effect Displays/RestoreStatDisplay", failSilently: false), EffectManager.EffectDisplaysParent, dontSetParent: false);
 													pooledComponent.Init(regenStatSkillEffectDefinition.Stat, (int)regenStatSkillEffectDefinition.Bonus);
 													targetUnit.UnitController.AddEffectDisplay(pooledComponent);
 													break;
@@ -361,10 +360,7 @@ public abstract class SkillActionController
 		if (status != null)
 		{
 			SkillAction.SkillActionController.EnsurePerkData(null, targetUnit, null, SkillAction.Skill.SkillContainer is Perk, statusOwned, status);
-			if (playableUnit != null)
-			{
-				DictionaryExtensions.GetValueOrDefault<E_EffectTime, Action<PerkDataContainer>>(playableUnit.Events, E_EffectTime.OnSkillStatusApplied)?.Invoke(SkillAction.PerkDataContainer);
-			}
+			playableUnit?.Events.GetValueOrDefault(E_EffectTime.OnSkillStatusApplied)?.Invoke(SkillAction.PerkDataContainer);
 		}
 	}
 
@@ -492,7 +488,7 @@ public abstract class SkillActionController
 		if (playableUnit != null)
 		{
 			EnsurePerkData(SkillAction.PerkDataContainer?.TargetTile ?? targetUnit.OriginTile, targetUnit, attackSkillActionExecutionTileData, SkillAction.Skill.SkillContainer is Perk);
-			DictionaryExtensions.GetValueOrDefault<E_EffectTime, Action<PerkDataContainer>>(playableUnit.Events, E_EffectTime.OnTargetKilled)?.Invoke(SkillAction.PerkDataContainer);
+			playableUnit.Events.GetValueOrDefault(E_EffectTime.OnTargetKilled)?.Invoke(SkillAction.PerkDataContainer);
 		}
 	}
 
@@ -550,7 +546,7 @@ public abstract class SkillActionController
 			resultDatas.AddAffectedUnit(targetUnit);
 			if (removeStatusEffectDefinition.RemoveStatusDefinition.Status != TheLastStand.Model.Status.Status.E_StatusType.Charged)
 			{
-				DispelDisplay pooledComponent = ObjectPooler.GetPooledComponent<DispelDisplay>("DispelDisplay", ResourcePooler.LoadOnce<DispelDisplay>("Prefab/Displayable Effect/UI Effect Displays/DispelDisplay", false), EffectManager.EffectDisplaysParent, false);
+				DispelDisplay pooledComponent = ObjectPooler.GetPooledComponent<DispelDisplay>("DispelDisplay", ResourcePooler.LoadOnce<DispelDisplay>("Prefab/Displayable Effect/UI Effect Displays/DispelDisplay", failSilently: false), EffectManager.EffectDisplaysParent, dontSetParent: false);
 				pooledComponent.Init(removeStatusEffectDefinition.RemoveStatusDefinition.Status);
 				targetUnit.UnitController.AddEffectDisplay(pooledComponent);
 			}

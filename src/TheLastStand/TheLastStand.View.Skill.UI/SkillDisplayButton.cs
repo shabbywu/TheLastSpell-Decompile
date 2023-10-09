@@ -324,8 +324,7 @@ public class SkillDisplayButton : SerializedMonoBehaviour, IPointerEnterHandler,
 			button.Interactable = interactable;
 			if (Skill.SkillDefinition.IsContextual)
 			{
-				BetterButton obj = button;
-				obj.Interactable &= Skill.SkillController.ComputeTargetsAndValidity(playableUnit);
+				button.Interactable &= Skill.SkillController.ComputeTargetsAndValidity(playableUnit);
 			}
 		}
 		else if (skillDisplay.SkillOwner is EnemyUnit)

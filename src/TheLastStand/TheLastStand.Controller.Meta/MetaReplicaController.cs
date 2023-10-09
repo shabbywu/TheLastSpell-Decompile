@@ -35,7 +35,7 @@ public class MetaReplicaController
 			{
 				if (!(definition.ConditionsDefinition.Conditions[num] is MetaReplicaUsedReplicaConditionDefinition definition4))
 				{
-					((CLogger<MetaNarrationsManager>)TPSingleton<MetaNarrationsManager>.Instance).LogError((object)("Could not create a narration condition for definition type " + ((object)definition.ConditionsDefinition.Conditions[num]).GetType().Name + "."), (CLogLevel)1, true, true);
+					((CLogger<MetaNarrationsManager>)TPSingleton<MetaNarrationsManager>.Instance).LogError((object)("Could not create a narration condition for definition type " + definition.ConditionsDefinition.Conditions[num].GetType().Name + "."), (CLogLevel)1, true, true);
 					break;
 				}
 				MetaReplica.ConditionControllers.Add(new MetaReplicaUsedReplicaConditionController(definition4));

@@ -32,7 +32,7 @@ public class GainMaterialsBuildingActionEffectController : BuildingActionEffectC
 		{
 			TPSingleton<ResourceManager>.Instance.Materials += GainMaterialsBuildingActionEffect.GainMaterialsBuildingActionDefinition.GainMaterials;
 			((CLogger<BuildingManager>)TPSingleton<BuildingManager>.Instance).Log((object)$"Gaining {GainMaterialsBuildingActionEffect.GainMaterialsBuildingActionDefinition.GainMaterials} Materials from GainMaterials building action effect.", (CLogLevel)1, false, false);
-			GainMaterialDisplay pooledComponent = ObjectPooler.GetPooledComponent<GainMaterialDisplay>("GainMaterialDisplay", ResourcePooler.LoadOnce<GainMaterialDisplay>("Prefab/Displayable Effect/UI Effect Displays/GainMaterialDisplay", false), EffectManager.EffectDisplaysParent, false);
+			GainMaterialDisplay pooledComponent = ObjectPooler.GetPooledComponent<GainMaterialDisplay>("GainMaterialDisplay", ResourcePooler.LoadOnce<GainMaterialDisplay>("Prefab/Displayable Effect/UI Effect Displays/GainMaterialDisplay", failSilently: false), EffectManager.EffectDisplaysParent, dontSetParent: false);
 			pooledComponent.Init(GainMaterialsBuildingActionEffect.GainMaterialsBuildingActionDefinition.GainMaterials);
 			base.BuildingActionEffect.ProductionBuilding.BuildingParent.BuildingController.BlueprintModuleController.AddEffectDisplay(pooledComponent);
 		}

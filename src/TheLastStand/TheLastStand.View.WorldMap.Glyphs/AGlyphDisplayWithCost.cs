@@ -18,6 +18,6 @@ public class AGlyphDisplayWithCost : AGlyphDisplay
 	public override void Init(GlyphDefinition glyphDefinition)
 	{
 		base.Init(glyphDefinition);
-		glyphCost.sprite = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Meta/Glyphs/Costs/Glyphs_Cost_" + glyphDefinition.Cost, true) ?? ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Meta/Glyphs/Costs/Glyphs_Cost_1", false);
+		glyphCost.sprite = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Meta/Glyphs/Costs/Glyphs_Cost_" + glyphDefinition.Cost, failSilently: true) ?? ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Meta/Glyphs/Costs/Glyphs_Cost_1", failSilently: false);
 	}
 }

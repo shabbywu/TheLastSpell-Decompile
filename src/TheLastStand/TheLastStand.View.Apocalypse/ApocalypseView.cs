@@ -69,14 +69,13 @@ public class ApocalypseView : MonoBehaviour, ISelectHandler, IEventSystemHandler
 	[SerializeField]
 	private JoystickSelectable joystickSelectable;
 
-	public E_BetterToggleGaugeState State
+	public BetterToggleGauge.E_BetterToggleGaugeState State
 	{
 		get
 		{
-			//IL_0016: Unknown result type (might be due to invalid IL or missing references)
 			if (!((Object)(object)toggleGauge != (Object)null))
 			{
-				return (E_BetterToggleGaugeState)0;
+				return BetterToggleGauge.E_BetterToggleGaugeState.Disabled;
 			}
 			return toggleGauge.State;
 		}
@@ -96,7 +95,7 @@ public class ApocalypseView : MonoBehaviour, ISelectHandler, IEventSystemHandler
 		toggleGauge.Init(ApocalypseDefinition.Id, group);
 		if (ApocalypseDefinition.Id != 0)
 		{
-			apocalypseIndexImage.sprite = ResourcePooler<Sprite>.LoadOnce("View/Sprites/UI/WorldMap/ApocalypseLevels/ApocalypseLevel_" + ApocalypseDefinition.Id.ToString("00"), false);
+			apocalypseIndexImage.sprite = ResourcePooler<Sprite>.LoadOnce("View/Sprites/UI/WorldMap/ApocalypseLevels/ApocalypseLevel_" + ApocalypseDefinition.Id.ToString("00"));
 			((TMP_Text)apocalypseTitle).text = Localizer.Get("WorldMap_ApocalypseDifficulty_Apocalypse");
 		}
 		else
@@ -113,7 +112,7 @@ public class ApocalypseView : MonoBehaviour, ISelectHandler, IEventSystemHandler
 		ChangeFlame();
 		if (!Available)
 		{
-			toggleGauge.SetState((E_BetterToggleGaugeState)0);
+			toggleGauge.SetState(BetterToggleGauge.E_BetterToggleGaugeState.Disabled);
 			((TMP_Text)description).text = Localizer.Get("WorldMap_ApocalypseDescription_Unavailable");
 			((Component)apocalypseIndexImage).gameObject.SetActive(false);
 			((TMP_Text)apocalypseTitle).text = string.Empty;
@@ -121,7 +120,7 @@ public class ApocalypseView : MonoBehaviour, ISelectHandler, IEventSystemHandler
 		}
 		if (ApocalypseDefinition.Id != 0)
 		{
-			toggleGauge.SetState((E_BetterToggleGaugeState)1);
+			toggleGauge.SetState(BetterToggleGauge.E_BetterToggleGaugeState.Normal);
 			((Component)apocalypseIndexImage).gameObject.SetActive(true);
 			((TMP_Text)apocalypseTitle).text = Localizer.Get("WorldMap_ApocalypseDifficulty_Apocalypse");
 		}
@@ -188,15 +187,13 @@ public class ApocalypseView : MonoBehaviour, ISelectHandler, IEventSystemHandler
 
 	private void Start()
 	{
-		((UnityEvent<E_BetterToggleGaugeState>)(object)toggleGauge.OnStateHasChanged).AddListener((UnityAction<E_BetterToggleGaugeState>)OnToggleClicked);
+		((UnityEvent<BetterToggleGauge.E_BetterToggleGaugeState>)toggleGauge.OnStateHasChanged).AddListener((UnityAction<BetterToggleGauge.E_BetterToggleGaugeState>)OnToggleClicked);
 	}
 
-	private void OnToggleClicked(E_BetterToggleGaugeState state)
+	private void OnToggleClicked(BetterToggleGauge.E_BetterToggleGaugeState state)
 	{
-		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0016: Invalid comparison between Unknown and I4
 		TPSingleton<GameConfigurationsView>.Instance.OnApocalypseSelectionHasChanged(GameConfigurationsView.IsThereAnApocalypseSelected());
-		if ((int)state != 3)
+		if (state != BetterToggleGauge.E_BetterToggleGaugeState.Hovered)
 		{
 			if (ApocalypseDefinition.Id > 0 && WorldMapUIManager.GetApocalypseSelectedLevel() == ApocalypseDefinition.Id)
 			{

@@ -4,7 +4,6 @@ using TPLib.Log;
 using TheLastStand.Controller.Skill.SkillAction;
 using TheLastStand.Definition.Skill;
 using TheLastStand.Definition.Skill.SkillAction;
-using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Manager;
 using TheLastStand.Manager.Building;
 using TheLastStand.Manager.Skill;
@@ -359,7 +358,7 @@ public class SkillController
 		}
 		else
 		{
-			((CLogger<SkillManager>)TPSingleton<SkillManager>.Instance).LogError((object)("Unknown skill " + ((object)Skill.SkillDefinition.SkillActionDefinition).GetType().Name), (CLogLevel)2, true, true);
+			((CLogger<SkillManager>)TPSingleton<SkillManager>.Instance).LogError((object)("Unknown skill " + Skill.SkillDefinition.SkillActionDefinition.GetType().Name), (CLogLevel)2, true, true);
 		}
 	}
 
@@ -419,10 +418,10 @@ public class SkillController
 					Skill.Targets.Add(tile.Unit);
 					return true;
 				}
-				if (tile.Unit is EnemyUnit && Skill.SkillDefinition.ValidTargets.EnemyUnits && Skill.Owner is PlayableUnit playableUnit)
+				if (tile.Unit is EnemyUnit && Skill.SkillDefinition.ValidTargets.EnemyUnits && Skill.Owner is PlayableUnit context)
 				{
 					SkillConditionDefinition skillConditionDefinition = Skill.SkillDefinition.ContextualConditions.Find((SkillConditionDefinition o) => o.Name == "MaxTargetHealthLeft");
-					if (skillConditionDefinition != null && (tile.Unit.Health == 0f || tile.Unit.Health > ((MaxTargetHealthLeftConditionDefinition)skillConditionDefinition).HealthThreshold.EvalToFloat((InterpreterContext)(object)playableUnit) || (tile.Unit is EnemyUnit enemyUnit && enemyUnit.EnemyUnitTemplateDefinition.IsInvulnerable)))
+					if (skillConditionDefinition != null && (tile.Unit.Health == 0f || tile.Unit.Health > ((MaxTargetHealthLeftConditionDefinition)skillConditionDefinition).HealthThreshold.EvalToFloat(context) || (tile.Unit is EnemyUnit enemyUnit && enemyUnit.EnemyUnitTemplateDefinition.IsInvulnerable)))
 					{
 						return false;
 					}

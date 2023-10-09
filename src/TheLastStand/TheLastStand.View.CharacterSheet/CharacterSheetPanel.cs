@@ -18,7 +18,6 @@ using TheLastStand.Controller.Unit;
 using TheLastStand.Database.Unit;
 using TheLastStand.Definition.Item;
 using TheLastStand.Definition.Unit;
-using TheLastStand.Framework.Automaton;
 using TheLastStand.Framework.Extensions;
 using TheLastStand.Manager;
 using TheLastStand.Manager.Building;
@@ -830,7 +829,7 @@ public class CharacterSheetPanel : TPSingleton<CharacterSheetPanel>, IOverlayUse
 
 	private void Update()
 	{
-		if (!(((StateMachine)ApplicationManager.Application).State is GameState))
+		if (!(ApplicationManager.Application.State is GameState))
 		{
 			return;
 		}
@@ -995,7 +994,7 @@ public class CharacterSheetPanel : TPSingleton<CharacterSheetPanel>, IOverlayUse
 			if (list[i].isOn)
 			{
 				list[i].isOn = false;
-				int index = IntExtensions.Mod(i + (next ? 1 : (-1)), count);
+				int index = (i + (next ? 1 : (-1))).Mod(count);
 				list[index].isOn = true;
 				break;
 			}

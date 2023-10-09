@@ -1,5 +1,4 @@
 using System.Xml.Linq;
-using TheLastStand.Framework.Serialization;
 using UnityEngine;
 
 namespace TheLastStand.Definition.Apocalypse;
@@ -26,7 +25,7 @@ public class RunCompletedInCityConditionDefinition : ApocalypseUnlockConditionDe
 		XAttribute val2 = ((XElement)obj).Attribute(XName.op_Implicit("Value"));
 		if (!int.TryParse(val2.Value, out var result))
 		{
-			Debug.LogError((object)("RunCompletedInCity " + val2.Value + " " + ((Definition)this).HasAnInvalidInt(val2.Value)));
+			Debug.LogError((object)("RunCompletedInCity " + val2.Value + " " + HasAnInvalidInt(val2.Value)));
 		}
 		CityDefinitionId = val.Value;
 		RunCompleted = result;

@@ -446,7 +446,7 @@ public static class SaverLoader
 			saveQueues[saveType].Enqueue(saveType.GetSaveInfo());
 			if (saveQueues[saveType].Count == 1)
 			{
-				Task.Run(delegate
+				System.Threading.Tasks.Task.Run(delegate
 				{
 					Save(saveType);
 				});
@@ -519,7 +519,7 @@ public static class SaverLoader
 	{
 		if (container is SerializedGameState)
 		{
-			ThreadDispatcher.DispatchToMain((Action)delegate
+			ThreadDispatcher.DispatchToMain(delegate
 			{
 				SaverLoader.OnGameSavingStarts?.Invoke();
 			});
@@ -572,7 +572,7 @@ public static class SaverLoader
 			CLoggerManager.Log((object)$"Could not save {typeof(T)}! Triggered error:\n{arg}", (LogType)0, (CLogLevel)2, true, "SaverLoader", false);
 			if (container is SerializedGameState)
 			{
-				ThreadDispatcher.DispatchToMain((Action)delegate
+				ThreadDispatcher.DispatchToMain(delegate
 				{
 					OnGameSavingEnd(success: false);
 				});
@@ -581,7 +581,7 @@ public static class SaverLoader
 		}
 		if (container is SerializedGameState)
 		{
-			ThreadDispatcher.DispatchToMain((Action)delegate
+			ThreadDispatcher.DispatchToMain(delegate
 			{
 				OnGameSavingEnd(success: true);
 			});

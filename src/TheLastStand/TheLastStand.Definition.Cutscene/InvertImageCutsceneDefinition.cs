@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Cutscene;
 
-public class InvertImageCutsceneDefinition : Definition, ICutsceneDefinition
+public class InvertImageCutsceneDefinition : TheLastStand.Framework.Serialization.Definition, ICutsceneDefinition
 {
 	public static class Constants
 	{

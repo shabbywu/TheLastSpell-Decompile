@@ -153,8 +153,8 @@ public class GoddessSeal : MonoBehaviour
 		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
-		currentPositionFrequency = VectorExtensions.Lerp(positionFrequencyRange, 0f, positionCurve);
-		((Graphic)glowImage).color = ColorExtensions.WithA(((Graphic)glowImage).color, 0f);
+		currentPositionFrequency = positionFrequencyRange.Lerp(0f, positionCurve);
+		((Graphic)glowImage).color = ((Graphic)glowImage).color.WithA(0f);
 	}
 
 	private void Start()
@@ -168,7 +168,7 @@ public class GoddessSeal : MonoBehaviour
 	private void ComputeNewPositionFrequency()
 	{
 		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		float num = VectorExtensions.Lerp(positionFrequencyRange, percentage, positionCurve);
+		float num = positionFrequencyRange.Lerp(percentage, positionCurve);
 		float num2 = (Time.time * currentPositionFrequency + positionPhase) % ((float)Math.PI * 2f);
 		float num3 = Time.time * num % ((float)Math.PI * 2f);
 		positionPhase = num2 - num3;
@@ -255,12 +255,12 @@ public class GoddessSeal : MonoBehaviour
 		{
 			num5 = 0;
 		}
-		if (Mathf.Abs(VectorExtensions.Lerp(positionFrequencyRange, percentage, positionCurve) - currentPositionFrequency) > 0.01f)
+		if (Mathf.Abs(positionFrequencyRange.Lerp(percentage, positionCurve) - currentPositionFrequency) > 0.01f)
 		{
 			ComputeNewPositionFrequency();
 		}
 		Vector3 position = ((Transform)pivotRectTransform).position;
-		position.y += Mathf.Sin(Time.time * currentPositionFrequency + positionPhase) * VectorExtensions.Lerp(positionAmplitudeRange, percentage, positionCurve);
+		position.y += Mathf.Sin(Time.time * currentPositionFrequency + positionPhase) * positionAmplitudeRange.Lerp(percentage, positionCurve);
 		((Transform)rectTransform).position = position;
 		Color color = ((Graphic)glowImage).color;
 		float num6 = ((num5 != 0) ? 1f : 0f);
@@ -276,7 +276,7 @@ public class GoddessSeal : MonoBehaviour
 		}
 		((Graphic)glowImage).color = color;
 		Color color2 = ((Graphic)sealImage).color;
-		float a = VectorExtensions.Lerp(alphaRange, percentage, alphaCurve);
+		float a = alphaRange.Lerp(percentage, alphaCurve);
 		if (num5 != 0 && ((Graphic)glowImage).color.a >= 1f)
 		{
 			a = clickableAlpha;
@@ -285,10 +285,10 @@ public class GoddessSeal : MonoBehaviour
 		((Graphic)sealImage).color = color2;
 		if (((Behaviour)vignette).enabled)
 		{
-			float num9 = Maths.Normalize01(percentage, vignetteMinPercentage, 1f);
+			float t = percentage.Normalize01(vignetteMinPercentage, 1f);
 			Color color3 = ((Graphic)vignette).color;
-			float num10 = VectorExtensions.Lerp(new Vector2(0f, vignetteMaxAlpha), num9, vignetteCurve);
-			color3.a = Mathf.SmoothDamp(((Graphic)vignette).color.a, num10, ref refVignetteAlpha, vignetteSmoothTime);
+			float num9 = VectorExtensions.Lerp(new Vector2(0f, vignetteMaxAlpha), t, vignetteCurve);
+			color3.a = Mathf.SmoothDamp(((Graphic)vignette).color.a, num9, ref refVignetteAlpha, vignetteSmoothTime);
 			((Graphic)vignette).color = color3;
 		}
 		if (percentage >= circlesMinPercentage)
@@ -298,22 +298,22 @@ public class GoddessSeal : MonoBehaviour
 				circlesParticleSystem.Play();
 			}
 			EmissionModule emission = circlesParticleSystem.emission;
-			float num11 = Maths.Normalize01(percentage, circlesMinPercentage, 1f);
-			((EmissionModule)(ref emission)).rateOverTime = MinMaxCurve.op_Implicit(VectorExtensions.Lerp(circlesRateOverTimeRange, num11, circlesRateOverTimeCurve));
+			float t2 = percentage.Normalize01(circlesMinPercentage, 1f);
+			((EmissionModule)(ref emission)).rateOverTime = MinMaxCurve.op_Implicit(circlesRateOverTimeRange.Lerp(t2, circlesRateOverTimeCurve));
 		}
 		else if (circlesParticleSystem.isPlaying)
 		{
 			circlesParticleSystem.Stop();
 		}
-		lightRaysParticleSystemRenderer.lengthScale = VectorExtensions.Lerp(lightRaysLengthScaleRange, percentage);
+		lightRaysParticleSystemRenderer.lengthScale = lightRaysLengthScaleRange.Lerp(percentage);
 		EmissionModule emission2 = lightRaysParticleSystem.emission;
-		((EmissionModule)(ref emission2)).rateOverTimeMultiplier = VectorExtensions.Lerp(lightRaysLengthScaleRange, percentage);
+		((EmissionModule)(ref emission2)).rateOverTimeMultiplier = lightRaysLengthScaleRange.Lerp(percentage);
 		EmissionModule emission3 = dustParticleSystem.emission;
 		MainModule main = dustParticleSystem.main;
-		((EmissionModule)(ref emission3)).rateOverTimeMultiplier = VectorExtensions.Lerp(dustRateOverTimeRange, percentage, dustCurve);
-		((MainModule)(ref main)).startSpeed = MinMaxCurve.op_Implicit(VectorExtensions.Lerp(dustStartSpeedRange, percentage, dustCurve));
+		((EmissionModule)(ref emission3)).rateOverTimeMultiplier = dustRateOverTimeRange.Lerp(percentage, dustCurve);
+		((MainModule)(ref main)).startSpeed = MinMaxCurve.op_Implicit(dustStartSpeedRange.Lerp(percentage, dustCurve));
 		MainModule main2 = smokeParticleSystem.main;
-		((MainModule)(ref main2)).simulationSpeed = VectorExtensions.Lerp(smokeSpeedRange, percentage);
+		((MainModule)(ref main2)).simulationSpeed = smokeSpeedRange.Lerp(percentage);
 		hoverAudioSource.volume = percentage;
 	}
 }

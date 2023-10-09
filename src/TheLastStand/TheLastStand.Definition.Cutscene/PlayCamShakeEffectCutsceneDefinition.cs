@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Cutscene;
 
-public class PlayCamShakeEffectCutsceneDefinition : Definition, ICutsceneDefinition
+public class PlayCamShakeEffectCutsceneDefinition : TheLastStand.Framework.Serialization.Definition, ICutsceneDefinition
 {
 	public static class Constants
 	{
@@ -40,7 +40,7 @@ public class PlayCamShakeEffectCutsceneDefinition : Definition, ICutsceneDefinit
 	{
 		XContainer obj = ((container is XElement) ? container : null);
 		XAttribute val = ((XElement)obj).Attribute(XName.op_Implicit("DataAnimationCurve"));
-		DataAnimationCurve = ResourcePooler.LoadOnce<DataAnimationCurve>(Path.Combine("AnimationCurves/", val.Value), false);
+		DataAnimationCurve = ResourcePooler.LoadOnce<DataAnimationCurve>(Path.Combine("AnimationCurves/", val.Value), failSilently: false);
 		XAttribute val2 = ((XElement)obj).Attribute(XName.op_Implicit("DelayBetweenEachShake"));
 		if (float.TryParse(val2.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var result))
 		{

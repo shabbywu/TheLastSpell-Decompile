@@ -26,7 +26,6 @@ using TheLastStand.Definition.Skill.SkillAction;
 using TheLastStand.Definition.Skill.SkillEffect;
 using TheLastStand.Definition.Unit;
 using TheLastStand.Definition.Unit.Trait;
-using TheLastStand.Framework.Automaton;
 using TheLastStand.Framework.Command.Conversation;
 using TheLastStand.Framework.Extensions;
 using TheLastStand.Framework.Sequencing;
@@ -265,7 +264,7 @@ public sealed class PlayableUnitManager : Manager<PlayableUnitManager>, ISeriali
 
 	private MovePath movePath;
 
-	private readonly CompensationConversation unitsConversation = new CompensationConversation(false);
+	private readonly CompensationConversation unitsConversation = new CompensationConversation(isRedoable: false);
 
 	private readonly List<PlayableUnitGhostView> playableUnitGhostView = new List<PlayableUnitGhostView>();
 
@@ -484,9 +483,9 @@ public sealed class PlayableUnitManager : Manager<PlayableUnitManager>, ISeriali
 
 	public static bool CanUndoLastCommand()
 	{
-		if (TPSingleton<GameManager>.Instance.Game.State == Game.E_State.Management && ((Conversation<ICompensableCommand, ICompensableCommand>)(object)TPSingleton<PlayableUnitManager>.Instance.unitsConversation).UndoStack.Count > 0)
+		if (TPSingleton<GameManager>.Instance.Game.State == Game.E_State.Management && TPSingleton<PlayableUnitManager>.Instance.unitsConversation.UndoStack.Count > 0)
 		{
-			if (((Conversation<ICompensableCommand, ICompensableCommand>)(object)TPSingleton<PlayableUnitManager>.Instance.unitsConversation).UndoStack.Peek() is MoveUnitCommand moveUnitCommand)
+			if (TPSingleton<PlayableUnitManager>.Instance.unitsConversation.UndoStack.Peek() is MoveUnitCommand moveUnitCommand)
 			{
 				return moveUnitCommand.PlayableUnit.CanStopOn(moveUnitCommand.StartTile);
 			}
@@ -499,7 +498,7 @@ public sealed class PlayableUnitManager : Manager<PlayableUnitManager>, ISeriali
 	{
 		if (CanUndoLastCommand())
 		{
-			UnitCommand unitCommand = ((Conversation<ICompensableCommand, ICompensableCommand>)(object)TPSingleton<PlayableUnitManager>.Instance.unitsConversation).Undo() as UnitCommand;
+			UnitCommand unitCommand = TPSingleton<PlayableUnitManager>.Instance.unitsConversation.Undo() as UnitCommand;
 			TileObjectSelectionManager.SetSelectedPlayableUnit(unitCommand.PlayableUnit, CameraView.CameraUIMasksHandler.IsPointOffscreenOrHiddenByUI(unitCommand.PlayableUnit.OriginTile));
 			GameView.BottomScreenPanel.BottomLeftPanel.CancelMovementPanel.Refresh();
 		}
@@ -899,7 +898,7 @@ public sealed class PlayableUnitManager : Manager<PlayableUnitManager>, ISeriali
 	public static void SelectNewUnit(bool next)
 	{
 		int num = TPSingleton<PlayableUnitManager>.Instance.PlayableUnits.IndexOf(TileObjectSelectionManager.SelectedPlayableUnit);
-		int index = ((num != -1) ? IntExtensions.Mod(num + (next ? 1 : (-1)), TPSingleton<PlayableUnitManager>.Instance.PlayableUnits.Count) : IntExtensions.Mod(next ? (-1) : 0, TPSingleton<PlayableUnitManager>.Instance.PlayableUnits.Count));
+		int index = ((num != -1) ? (num + (next ? 1 : (-1))).Mod(TPSingleton<PlayableUnitManager>.Instance.PlayableUnits.Count) : (next ? (-1) : 0).Mod(TPSingleton<PlayableUnitManager>.Instance.PlayableUnits.Count));
 		SelectUnitAtIndex(index);
 	}
 
@@ -967,7 +966,7 @@ public sealed class PlayableUnitManager : Manager<PlayableUnitManager>, ISeriali
 
 	public static void StartTurn()
 	{
-		((Conversation<ICompensableCommand, ICompensableCommand>)(object)TPSingleton<PlayableUnitManager>.Instance.unitsConversation).Clear();
+		TPSingleton<PlayableUnitManager>.Instance.unitsConversation.Clear();
 		if (TPSingleton<PlayableUnitManager>.Instance.PlayableUnits.Count == 0)
 		{
 			return;
@@ -1004,8 +1003,8 @@ public sealed class PlayableUnitManager : Manager<PlayableUnitManager>, ISeriali
 			TileObjectSelectionManager.SelectedUnit.RandomId,
 			0
 		});
-		SkillCommand skillCommand = new SkillCommand(TileObjectSelectionManager.SelectedPlayableUnit, SelectedSkill);
-		((Conversation<ICompensableCommand, ICompensableCommand>)(object)UnitsConversation).Execute((ICompensableCommand)(object)skillCommand);
+		SkillCommand command = new SkillCommand(TileObjectSelectionManager.SelectedPlayableUnit, SelectedSkill);
+		UnitsConversation.Execute(command);
 		SelectedSkill.SkillAction.SkillActionExecution.SkillExecutionController.ExecuteSkill();
 		((MonoBehaviour)this).StartCoroutine(WaitForSkillExecution(TileObjectSelectionManager.SelectedUnit));
 	}
@@ -1108,13 +1107,11 @@ public sealed class PlayableUnitManager : Manager<PlayableUnitManager>, ISeriali
 
 	public void MoveUnit(PlayableUnit playableUnit)
 	{
-		//IL_00c0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ca: Expected O, but got Unknown
 		//IL_00b5: Unknown result type (might be due to invalid IL or missing references)
 		//IL_00ba: Unknown result type (might be due to invalid IL or missing references)
 		//IL_00c0: Expected O, but got Unknown
 		playableUnit.Path = MovePath.Path;
-		Task val = playableUnit.PlayableUnitController.PrepareForMovement((TPSingleton<GameManager>.Instance.Game.Cycle == Game.E_Cycle.Night) ? (playableUnit.Path.Count - 1) : 0);
+		Task task = playableUnit.PlayableUnitController.PrepareForMovement((TPSingleton<GameManager>.Instance.Game.Cycle == Game.E_Cycle.Night) ? (playableUnit.Path.Count - 1) : 0);
 		if (TPSingleton<GameManager>.Instance.Game.Cycle != Game.E_Cycle.Day)
 		{
 			PathfindingManager.Pathfinding.PathfindingController.ClearReachableTiles();
@@ -1131,15 +1128,15 @@ public sealed class PlayableUnitManager : Manager<PlayableUnitManager>, ISeriali
 		object obj = _003C_003Ec._003C_003E9__131_0;
 		if (obj == null)
 		{
-			UnityAction val2 = delegate
+			UnityAction val = delegate
 			{
 				GameController.SetState(Game.E_State.Management);
 			};
-			_003C_003Ec._003C_003E9__131_0 = val2;
-			obj = (object)val2;
+			_003C_003Ec._003C_003E9__131_0 = val;
+			obj = (object)val;
 		}
 		instance.MoveUnitsTaskGroup = new TaskGroup((UnityAction)obj);
-		TPSingleton<PlayableUnitManager>.Instance.MoveUnitsTaskGroup.AddTask(val);
+		TPSingleton<PlayableUnitManager>.Instance.MoveUnitsTaskGroup.AddTask(task);
 		TPSingleton<PlayableUnitManager>.Instance.MoveUnitsTaskGroup.Run();
 	}
 
@@ -1422,7 +1419,7 @@ public sealed class PlayableUnitManager : Manager<PlayableUnitManager>, ISeriali
 		//IL_0229: Unknown result type (might be due to invalid IL or missing references)
 		//IL_022e: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0764: Unknown result type (might be due to invalid IL or missing references)
-		if (!(((StateMachine)ApplicationManager.Application).State is GameState) || (TPSingleton<GameManager>.Instance.Game.Cycle == Game.E_Cycle.Night && TPSingleton<GameManager>.Instance.Game.NightTurn != Game.E_NightTurn.PlayableUnits))
+		if (!(ApplicationManager.Application.State is GameState) || (TPSingleton<GameManager>.Instance.Game.Cycle == Game.E_Cycle.Night && TPSingleton<GameManager>.Instance.Game.NightTurn != Game.E_NightTurn.PlayableUnits))
 		{
 			return;
 		}
@@ -1715,7 +1712,7 @@ public sealed class PlayableUnitManager : Manager<PlayableUnitManager>, ISeriali
 		SelectedSkill = null;
 		if (ShouldClearUndoStack)
 		{
-			((Conversation<ICompensableCommand, ICompensableCommand>)(object)unitsConversation).Clear();
+			unitsConversation.Clear();
 		}
 		GameView.BottomScreenPanel.BottomLeftPanel.CancelMovementPanel.Refresh();
 		if (TPSingleton<GameManager>.Instance.Game.State == Game.E_State.UnitExecutingSkill && !TPSingleton<NightTurnsManager>.Instance.IsEndingNight)
@@ -2418,7 +2415,7 @@ public sealed class PlayableUnitManager : Manager<PlayableUnitManager>, ISeriali
 				InstantiateUnit(playableUnit, playableUnit.OriginTile, saveVersion, onLoad: true);
 			}
 			TPSingleton<MetaConditionManager>.Instance.RefreshMaxPlayableUnitStatReached(PlayableUnits);
-			Recruitment = new Recruitment((ISerializedData)(object)serializedPlayableUnits.Recruitment, saveVersion);
+			Recruitment = new Recruitment(serializedPlayableUnits.Recruitment, saveVersion);
 			foreach (SerializedDeadUnit deadUnit in serializedPlayableUnits.DeadUnits)
 			{
 				if (!DeadPlayableUnits.ContainsKey(deadUnit.DeathTurn))
@@ -2463,6 +2460,6 @@ public sealed class PlayableUnitManager : Manager<PlayableUnitManager>, ISeriali
 				DeathTurn = entry.Key
 			}).ToList());
 		}
-		return (ISerializedData)(object)serializedPlayableUnits;
+		return serializedPlayableUnits;
 	}
 }

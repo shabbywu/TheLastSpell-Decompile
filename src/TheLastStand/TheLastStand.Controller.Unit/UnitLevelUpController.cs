@@ -102,7 +102,7 @@ public class UnitLevelUpController
 			if (count == 0)
 			{
 				((CLogger<PlayableUnitManager>)TPSingleton<PlayableUnitManager>.Instance).LogWarning((object)"No available stat found on unit to level up -> Returning a random one. This can be perfectly fine if you used debug commands to buff a hero.", (CLogLevel)1, true, false);
-				UnitLevelUp.SelectedStatToLevelUp item = new UnitLevelUp.SelectedStatToLevelUp(ListExtensions.PickRandom<UnitLevelUpStatDefinition>((IEnumerable<UnitLevelUpStatDefinition>)dictionary.Values), UnitLevelUp.E_StatLevelUpRarity.SmallRarity);
+				UnitLevelUp.SelectedStatToLevelUp item = new UnitLevelUp.SelectedStatToLevelUp(dictionary.Values.PickRandom(), UnitLevelUp.E_StatLevelUpRarity.SmallRarity);
 				selectedStatToLevelUps.Add(item);
 				break;
 			}
