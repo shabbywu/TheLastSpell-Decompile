@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.ExpressionInterpreter;
 
@@ -20,6 +19,6 @@ public class MaxTargetHealthLeftConditionDefinition : SkillConditionDefinition
 	public override void Deserialize(XContainer container)
 	{
 		XElement val = (XElement)(object)((container is XElement) ? container : null);
-		HealthThreshold = Parser.Parse(val.Value, (Dictionary<string, string>)null);
+		HealthThreshold = Parser.Parse(val.Value);
 	}
 }

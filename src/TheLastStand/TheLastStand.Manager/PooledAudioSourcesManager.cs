@@ -52,7 +52,7 @@ public class PooledAudioSourcesManager : Manager<PooledAudioSourcesManager>
 
 	public void IncreaseUsedPooledAudioSources(PooledAudioSourceData pooledAudioSourceData, int value)
 	{
-		DictionaryExtensions.AddValueOrCreateKey<PooledAudioSourceData, int>(usedPooledAudioSources, pooledAudioSourceData, value, (Func<int, int, int>)((int a, int b) => a + b));
+		usedPooledAudioSources.AddValueOrCreateKey(pooledAudioSourceData, value, (int a, int b) => a + b);
 		globalUsedPooledAudioSources += value;
 	}
 

@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.CastFx;
 
-public class SoundEffectDefinition : Definition
+public class SoundEffectDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public Node Delay { get; private set; }
 
@@ -21,13 +21,12 @@ public class SoundEffectDefinition : Definition
 
 
 	public SoundEffectDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
 	public override void Deserialize(XContainer container)
 	{
-		//IL_016a: Unknown result type (might be due to invalid IL or missing references)
 		XElement val = container.Element(XName.op_Implicit("FolderPath"));
 		XElement val2 = container.Element(XName.op_Implicit("Path"));
 		XElement val3 = container.Element(XName.op_Implicit("RandomPaths"));
@@ -63,6 +62,6 @@ public class SoundEffectDefinition : Definition
 			}
 		}
 		XElement val5 = container.Element(XName.op_Implicit("Delay"));
-		Delay = (Node)((val5 != null) ? ((object)Parser.Parse(val5.Value, (Dictionary<string, string>)null)) : ((object)new NodeNumber(0.0)));
+		Delay = ((val5 != null) ? Parser.Parse(val5.Value) : new NodeNumber(0.0));
 	}
 }

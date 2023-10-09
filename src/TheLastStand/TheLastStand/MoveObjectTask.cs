@@ -27,14 +27,14 @@ public class MoveObjectTask : Task
 
 	public override void StartTask()
 	{
-		((Task)this).StartTask();
+		base.StartTask();
 		coroutineRunner.StartCoroutine(MoveCoroutine());
 	}
 
 	public override string ToString()
 	{
 		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		return $"{((Task)this).ToString()}: {((Object)target).name} to {targetPosition} at speed {moveSpeed}";
+		return $"{base.ToString()}: {((Object)target).name} to {targetPosition} at speed {moveSpeed}";
 	}
 
 	private IEnumerator MoveCoroutine()
@@ -45,6 +45,6 @@ public class MoveObjectTask : Task
 			yield return SharedYields.WaitForEndOfFrame;
 		}
 		((Component)target).transform.position = targetPosition;
-		((Task)this).Complete();
+		Complete();
 	}
 }

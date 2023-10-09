@@ -271,7 +271,7 @@ public abstract class APerkModule : ISerializable, IDeserializable
 
 	public virtual ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedModule();
+		return new SerializedModule();
 	}
 
 	public virtual void Deserialize(ISerializedData container = null, int saveVersion = -1)

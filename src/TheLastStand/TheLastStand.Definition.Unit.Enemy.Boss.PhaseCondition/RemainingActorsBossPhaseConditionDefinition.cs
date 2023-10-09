@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TPLib.Log;
 using TheLastStand.Framework.Serialization;
@@ -6,14 +5,14 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.Enemy.Boss.PhaseCondition;
 
-public class RemainingActorsBossPhaseConditionDefinition : Definition, IBossPhaseConditionDefinition
+public class RemainingActorsBossPhaseConditionDefinition : TheLastStand.Framework.Serialization.Definition, IBossPhaseConditionDefinition
 {
 	public string ActorId { get; private set; }
 
 	public int Amount { get; private set; }
 
 	public RemainingActorsBossPhaseConditionDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

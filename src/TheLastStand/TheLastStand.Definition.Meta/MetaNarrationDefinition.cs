@@ -4,7 +4,7 @@ using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Meta;
 
-public class MetaNarrationDefinition : Definition
+public class MetaNarrationDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public List<string> DialogueGreetings { get; private set; }
 
@@ -19,7 +19,7 @@ public class MetaNarrationDefinition : Definition
 	public List<MetaNarrationConditionsDefinition> VisualEvolutions { get; private set; }
 
 	public MetaNarrationDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

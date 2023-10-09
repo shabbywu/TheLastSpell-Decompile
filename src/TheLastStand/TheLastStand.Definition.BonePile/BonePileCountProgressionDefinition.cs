@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.BonePile;
 
-public class BonePileCountProgressionDefinition : Definition
+public class BonePileCountProgressionDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public struct ProgressionData
 	{

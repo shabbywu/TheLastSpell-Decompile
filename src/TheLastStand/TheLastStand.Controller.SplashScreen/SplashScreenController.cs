@@ -25,13 +25,13 @@ public class SplashScreenController
 		switch (stateName)
 		{
 		case "MainMenuLoading":
-			SetState((State)(object)new MainMenuLoadingState());
+			SetState(new MainMenuLoadingState());
 			break;
 		case "ModsLoading":
-			SetState((State)(object)new ModsLoadingState());
+			SetState(new ModsLoadingState());
 			break;
 		case "SettingsLoading":
-			SetState((State)(object)new SettingsLoadingState());
+			SetState(new SettingsLoadingState());
 			break;
 		default:
 			((CLogger<SplashScreenManager>)TPSingleton<SplashScreenManager>.Instance).LogError((object)("Trying to set an unknown State : " + stateName), (CLogLevel)1, true, true);
@@ -41,9 +41,9 @@ public class SplashScreenController
 
 	public void SetState(State newState)
 	{
-		((CLogger<SplashScreenManager>)TPSingleton<SplashScreenManager>.Instance).Log((object)$"State transition : {((StateMachine)SplashScreen).State} -> {newState}", (CLogLevel)0, false, false);
-		((StateMachine)SplashScreen).SetState(newState);
-		SplashScreenManager.CurrentStateName = ((StateMachine)SplashScreen).State.GetName();
-		this.SplashScreenStateChangeEvent?.Invoke(((StateMachine)SplashScreen).State);
+		((CLogger<SplashScreenManager>)TPSingleton<SplashScreenManager>.Instance).Log((object)$"State transition : {SplashScreen.State} -> {newState}", (CLogLevel)0, false, false);
+		SplashScreen.SetState(newState);
+		SplashScreenManager.CurrentStateName = SplashScreen.State.GetName();
+		this.SplashScreenStateChangeEvent?.Invoke(SplashScreen.State);
 	}
 }

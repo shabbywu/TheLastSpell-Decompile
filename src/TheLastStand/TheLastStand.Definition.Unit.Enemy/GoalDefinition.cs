@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Definition.Unit.Enemy.GoalCondition;
 using TheLastStand.Definition.Unit.Enemy.GoalCondition.GoalPostcondition;
@@ -12,7 +11,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.Enemy;
 
-public class GoalDefinition : Definition
+public class GoalDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	[Flags]
 	public enum E_InterruptionCondition
@@ -49,7 +48,7 @@ public class GoalDefinition : Definition
 	public TargetingMethodsContainerDefinition TargetingMethodsContainer { get; private set; }
 
 	public GoalDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

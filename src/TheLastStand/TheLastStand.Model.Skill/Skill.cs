@@ -128,7 +128,7 @@ public class Skill : ISerializable, IDeserializable
 			{
 				return 0;
 			}
-			return DictionaryExtensions.GetValueOrDefault<string, int>(playableUnit.SkillLocksBuffers, SkillDefinition.Id);
+			return playableUnit.SkillLocksBuffers.GetValueOrDefault(SkillDefinition.Id);
 		}
 	}
 
@@ -434,7 +434,7 @@ public class Skill : ISerializable, IDeserializable
 	{
 		SkillController = skillController;
 		SkillContainer = skillContainer;
-		Deserialize((ISerializedData)(object)container);
+		Deserialize(container);
 	}
 
 	public Skill(SkillDefinition skillDefinition, SkillController skillController, ISkillContainer container, int overallUsesCount = -1, int usesPerTurnCount = -1, int bonusUses = 0)
@@ -481,7 +481,7 @@ public class Skill : ISerializable, IDeserializable
 
 	public virtual ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedSkill
+		return new SerializedSkill
 		{
 			Id = SkillDefinition.Id,
 			OverallUsesRemaining = OverallUsesRemaining,

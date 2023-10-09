@@ -1,6 +1,5 @@
 using TheLastStand.Definition.Unit.Perk;
 using TheLastStand.Definition.Unit.Perk.PerkAction;
-using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Model.Unit.Perk;
 using TheLastStand.Model.Unit.Perk.PerkAction;
 using TheLastStand.Model.Unit.Perk.PerkEvent;
@@ -23,7 +22,7 @@ public class DecreaseBufferController : APerkActionController
 
 	public override void Trigger(PerkDataContainer data)
 	{
-		int num = DecreaseBuffer.DecreaseBufferDefinition.ValueExpression.EvalToInt((InterpreterContext)(object)PerkAction.PerkEvent.PerkModule.Perk);
+		int num = DecreaseBuffer.DecreaseBufferDefinition.ValueExpression.EvalToInt(PerkAction.PerkEvent.PerkModule.Perk);
 		switch (DecreaseBuffer.DecreaseBufferDefinition.BufferIndex)
 		{
 		case BufferModuleDefinition.BufferIndex.Buffer:

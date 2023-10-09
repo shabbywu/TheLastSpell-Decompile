@@ -298,7 +298,7 @@ public class EnemyUnitManager : BehaviorManager<EnemyUnitManager>, ISerializable
 			TheLastStand.Model.Building.Building building = tile.Building;
 			if (building == null || building.IsTrap)
 			{
-				UnitView pooledComponent = ObjectPooler.GetPooledComponent<EliteEnemyUnitView>("EliteEnemyUnitViews", TPSingleton<EnemyUnitManager>.Instance.eliteEnemyUnitViewPrefab, TPSingleton<EnemyUnitManager>.Instance.unitsTransform, false);
+				UnitView pooledComponent = ObjectPooler.GetPooledComponent<EliteEnemyUnitView>("EliteEnemyUnitViews", TPSingleton<EnemyUnitManager>.Instance.eliteEnemyUnitViewPrefab, TPSingleton<EnemyUnitManager>.Instance.unitsTransform, dontSetParent: false);
 				EliteEnemyUnitController eliteEnemyUnitController = new EliteEnemyUnitController(eliteEnemyUnitTemplateDefinition, pooledComponent, tile, unitCreationSettings, enemyAffixDefinition);
 				CreateEnemyUnit(eliteEnemyUnitController, tile, unitCreationSettings);
 				return eliteEnemyUnitController.EliteEnemyUnit;
@@ -319,7 +319,7 @@ public class EnemyUnitManager : BehaviorManager<EnemyUnitManager>, ISerializable
 			TheLastStand.Model.Building.Building building = tile.Building;
 			if (building == null || building.IsTrap || building.IsTeleporter)
 			{
-				EnemyUnitView pooledComponent = ObjectPooler.GetPooledComponent<EnemyUnitView>("EnemyUnitViews", TPSingleton<EnemyUnitManager>.Instance.enemyUnitViewPrefab, TPSingleton<EnemyUnitManager>.Instance.unitsTransform, false);
+				EnemyUnitView pooledComponent = ObjectPooler.GetPooledComponent<EnemyUnitView>("EnemyUnitViews", TPSingleton<EnemyUnitManager>.Instance.enemyUnitViewPrefab, TPSingleton<EnemyUnitManager>.Instance.unitsTransform, dontSetParent: false);
 				EnemyUnitController enemyUnitController = new EnemyUnitController(enemyUnitTemplateDefinition, pooledComponent, tile, unitCreationSettings);
 				CreateEnemyUnit(enemyUnitController, tile, unitCreationSettings);
 				return enemyUnitController.EnemyUnit;
@@ -399,7 +399,7 @@ public class EnemyUnitManager : BehaviorManager<EnemyUnitManager>, ISerializable
 		}
 		foreach (BonePileGeneratorDefinition.BonePileGenerationInfo item in boneGroup.BonePileGenerationInfo)
 		{
-			DictionaryExtensions.AddValueOrCreateKey<string, int>(value, item.BuildingId, item.AddedPercentage, (Func<int, int, int>)((int a, int b) => a + b));
+			value.AddValueOrCreateKey(item.BuildingId, item.AddedPercentage, (int a, int b) => a + b);
 		}
 	}
 
@@ -809,7 +809,7 @@ public class EnemyUnitManager : BehaviorManager<EnemyUnitManager>, ISerializable
 				yield return SharedYields.WaitForSeconds(CameraView.AnimationMoveSpeed);
 			}
 		}
-		MoveUnitsTaskGroup = new TaskGroup((UnityAction)null);
+		MoveUnitsTaskGroup = new TaskGroup();
 		GameController.SetState(Game.E_State.Wait);
 		HashSet<string> hashSet = new HashSet<string>();
 		for (int num = sortedEnemies.Count - 1; num >= 0; num--)
@@ -977,7 +977,7 @@ public class EnemyUnitManager : BehaviorManager<EnemyUnitManager>, ISerializable
 			if (EnemyUnitDatabase.HitByEnemySoundDefinitions.TryGetValue("PlayableUnits", out var value))
 			{
 				string soundId = value.GetSoundId(TotalCasters);
-				ObjectPooler.GetPooledComponent<OneShotSound>("HitsSFX", TPSingleton<PlayableUnitManager>.Instance.HitSFXPrefab, (Transform)null, false).Play(ResourcePooler.LoadOnce<AudioClip>("Sounds/SFX/PlayableUnitHits/" + soundId, false));
+				ObjectPooler.GetPooledComponent<OneShotSound>("HitsSFX", TPSingleton<PlayableUnitManager>.Instance.HitSFXPrefab, (Transform)null, dontSetParent: false).Play(ResourcePooler.LoadOnce<AudioClip>("Sounds/SFX/PlayableUnitHits/" + soundId, failSilently: false));
 			}
 			else
 			{
@@ -992,7 +992,7 @@ public class EnemyUnitManager : BehaviorManager<EnemyUnitManager>, ISerializable
 			if (EnemyUnitDatabase.HitByEnemySoundDefinitions.TryGetValue("Buildings", out var value3))
 			{
 				string soundId3 = value3.GetSoundId(TotalCasters);
-				ObjectPooler.GetPooledComponent<OneShotSound>("HitsSFX", TPSingleton<PlayableUnitManager>.Instance.HitSFXPrefab, (Transform)null, false).Play(ResourcePooler.LoadOnce<AudioClip>("Sounds/SFX/BuildingHits/" + soundId3, false));
+				ObjectPooler.GetPooledComponent<OneShotSound>("HitsSFX", TPSingleton<PlayableUnitManager>.Instance.HitSFXPrefab, (Transform)null, dontSetParent: false).Play(ResourcePooler.LoadOnce<AudioClip>("Sounds/SFX/BuildingHits/" + soundId3, failSilently: false));
 			}
 			else
 			{
@@ -1005,7 +1005,7 @@ public class EnemyUnitManager : BehaviorManager<EnemyUnitManager>, ISerializable
 			if (EnemyUnitDatabase.HitByEnemySoundDefinitions.TryGetValue("MagicCircle", out var value2))
 			{
 				string soundId2 = value2.GetSoundId(TotalCasters);
-				ObjectPooler.GetPooledComponent<OneShotSound>("HitsSFX", TPSingleton<PlayableUnitManager>.Instance.HitSFXPrefab, (Transform)null, false).Play(ResourcePooler.LoadOnce<AudioClip>("Sounds/SFX/BuildingHits/" + soundId2, false));
+				ObjectPooler.GetPooledComponent<OneShotSound>("HitsSFX", TPSingleton<PlayableUnitManager>.Instance.HitSFXPrefab, (Transform)null, dontSetParent: false).Play(ResourcePooler.LoadOnce<AudioClip>("Sounds/SFX/BuildingHits/" + soundId2, failSilently: false));
 			}
 			else
 			{
@@ -1098,10 +1098,10 @@ public class EnemyUnitManager : BehaviorManager<EnemyUnitManager>, ISerializable
 		{
 			for (; index < unitMoveSoundIdsWithDelay.Count && unitMoveSoundIdsWithDelay[index].Item2 <= time; index++)
 			{
-				AudioClip[] array = ResourcePooler<AudioClip>.LoadAllOnce("Sounds/SFX/Enemy/Move/" + unitMoveSoundIdsWithDelay[index].Item1, false);
+				AudioClip[] array = ResourcePooler<AudioClip>.LoadAllOnce("Sounds/SFX/Enemy/Move/" + unitMoveSoundIdsWithDelay[index].Item1);
 				if (array != null && array.Length != 0)
 				{
-					ObjectPooler.GetPooledComponent<OneShotSound>("Enemies Move", enemyMoveSFXPrefab, (Transform)null, false).Play(TPHelpers.RandomElement<AudioClip>(array));
+					ObjectPooler.GetPooledComponent<OneShotSound>("Enemies Move", enemyMoveSFXPrefab, (Transform)null, dontSetParent: false).Play(TPHelpers.RandomElement<AudioClip>(array));
 				}
 				else
 				{
@@ -1204,12 +1204,12 @@ public class EnemyUnitManager : BehaviorManager<EnemyUnitManager>, ISerializable
 
 	protected override OneShotSound GetPooledSkillSoundAudioSource()
 	{
-		return ObjectPooler.GetPooledComponent<OneShotSound>("EnemySkillSFX", SoundManager.EnemySkillSFXPrefab, (Transform)null, false);
+		return ObjectPooler.GetPooledComponent<OneShotSound>("EnemySkillSFX", SoundManager.EnemySkillSFXPrefab, (Transform)null, dontSetParent: false);
 	}
 
 	protected override OneShotSound GetSpatializedPooledSkillSoundAudioSource()
 	{
-		return ObjectPooler.GetPooledComponent<OneShotSound>("EnemySkillSFX Spatialized", SoundManager.EnemySkillSpatializedSFXPrefab, (Transform)null, false);
+		return ObjectPooler.GetPooledComponent<OneShotSound>("EnemySkillSFX Spatialized", SoundManager.EnemySkillSpatializedSFXPrefab, (Transform)null, dontSetParent: false);
 	}
 
 	protected override string GetSkillSoundClipPathFormat()
@@ -1241,7 +1241,7 @@ public class EnemyUnitManager : BehaviorManager<EnemyUnitManager>, ISerializable
 				linkedBuilding = TPSingleton<BuildingManager>.Instance.Buildings.FirstOrDefault((TheLastStand.Model.Building.Building x) => x.RandomId == serializedEnemyUnit.LinkedBuilding);
 			}
 			UnitCreationSettings unitCreationSettings = new UnitCreationSettings(serializedEnemyUnit.BossPhaseActorId, castSpawnSkill: false, playSpawnAnim: false, playSpawnCutscene: false, waitSpawnAnim: false, serializedEnemyUnit.OverrideVariantId, linkedBuilding, serializedEnemyUnit.IsGuardian, serializedEnemyUnit.IgnoreFromEnemyUnitsCount);
-			EnemyUnitView pooledComponent = ObjectPooler.GetPooledComponent<EnemyUnitView>("EnemyUnitViews", TPSingleton<EnemyUnitManager>.Instance.enemyUnitViewPrefab, TPSingleton<EnemyUnitManager>.Instance.unitsTransform, false);
+			EnemyUnitView pooledComponent = ObjectPooler.GetPooledComponent<EnemyUnitView>("EnemyUnitViews", TPSingleton<EnemyUnitManager>.Instance.enemyUnitViewPrefab, TPSingleton<EnemyUnitManager>.Instance.unitsTransform, dontSetParent: false);
 			EnemyUnit enemyUnit = new EnemyUnitController(serializedEnemyUnit, pooledComponent, unitCreationSettings, saveVersion).EnemyUnit;
 			CreateEnemyUnit(enemyUnit.EnemyUnitController, enemyUnit.OriginTile, unitCreationSettings, onLoad: true, saveVersion);
 			enemyUnit.EnemyUnitController.UpdateInjuryStage();
@@ -1254,7 +1254,7 @@ public class EnemyUnitManager : BehaviorManager<EnemyUnitManager>, ISerializable
 				linkedBuilding2 = TPSingleton<BuildingManager>.Instance.Buildings.FirstOrDefault((TheLastStand.Model.Building.Building x) => x.RandomId == serializedEliteEnemyUnit.LinkedBuilding);
 			}
 			UnitCreationSettings unitCreationSettings2 = new UnitCreationSettings(serializedEliteEnemyUnit.BossPhaseActorId, castSpawnSkill: false, playSpawnAnim: false, playSpawnCutscene: false, waitSpawnAnim: false, serializedEliteEnemyUnit.OverrideVariantId, linkedBuilding2, serializedEliteEnemyUnit.IsGuardian, serializedEliteEnemyUnit.IgnoreFromEnemyUnitsCount);
-			EliteEnemyUnitView pooledComponent2 = ObjectPooler.GetPooledComponent<EliteEnemyUnitView>("EliteEnemyUnitViews", eliteEnemyUnitViewPrefab, TPSingleton<EnemyUnitManager>.Instance.unitsTransform, false);
+			EliteEnemyUnitView pooledComponent2 = ObjectPooler.GetPooledComponent<EliteEnemyUnitView>("EliteEnemyUnitViews", eliteEnemyUnitViewPrefab, TPSingleton<EnemyUnitManager>.Instance.unitsTransform, dontSetParent: false);
 			EliteEnemyUnit eliteEnemyUnit = new EliteEnemyUnitController(serializedEliteEnemyUnit, pooledComponent2, unitCreationSettings2, saveVersion).EliteEnemyUnit;
 			CreateEliteEnemyUnit(eliteEnemyUnit.EliteEnemyUnitController, eliteEnemyUnit.OriginTile, unitCreationSettings2, null, onLoad: true, saveVersion);
 			eliteEnemyUnit.EnemyUnitController.UpdateInjuryStage();
@@ -1297,7 +1297,7 @@ public class EnemyUnitManager : BehaviorManager<EnemyUnitManager>, ISerializable
 		{
 			if (!enemyUnit.IsDying && !enemyUnit.IsDead && !(enemyUnit is EliteEnemyUnit))
 			{
-				list2.Add((SerializedEnemyUnit)(object)enemyUnit.Serialize());
+				list2.Add((SerializedEnemyUnit)enemyUnit.Serialize());
 			}
 		}
 		List<SerializedEliteEnemyUnit> list3 = new List<SerializedEliteEnemyUnit>();
@@ -1305,10 +1305,10 @@ public class EnemyUnitManager : BehaviorManager<EnemyUnitManager>, ISerializable
 		{
 			if (enemyUnit2 is EliteEnemyUnit eliteEnemyUnit && !eliteEnemyUnit.IsDying && !eliteEnemyUnit.IsDead)
 			{
-				list3.Add((SerializedEliteEnemyUnit)(object)eliteEnemyUnit.Serialize());
+				list3.Add((SerializedEliteEnemyUnit)eliteEnemyUnit.Serialize());
 			}
 		}
-		return (ISerializedData)(object)new SerializedEnemyUnits
+		return new SerializedEnemyUnits
 		{
 			EnemyUnits = list2,
 			EliteEnemyUnits = list3,

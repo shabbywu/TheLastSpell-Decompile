@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition;
 
-public class RangeDefinition : Definition
+public class RangeDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public string Id { get; private set; }
 

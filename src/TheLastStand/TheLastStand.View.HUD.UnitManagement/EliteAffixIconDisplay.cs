@@ -41,9 +41,9 @@ public class EliteAffixIconDisplay : MonoBehaviour, IPointerEnterHandler, IEvent
 	public void Display(EnemyAffix newAffix, EnemyAffixEffectDefinition.E_EnemyAffixBoxType boxType)
 	{
 		affix = newAffix;
-		enemyAffixIcon.sprite = ResourcePooler.LoadOnce<Sprite>($"View/Sprites/UI/Units/EnemiesAffixes/Icons/EnemyAffix_Icon_{affix.EnemyAffixDefinition.EnemyAffixEffectDefinition.EnemyAffixEffect.ToString()}", false);
-		enemyAffixBackground.sprite = ResourcePooler.LoadOnce<Sprite>($"View/Sprites/UI/Units/EnemiesAffixes/Backgrounds/EnemyAffix_Box_{boxType.ToString()}", false);
-		hover.sprite = ResourcePooler.LoadOnce<Sprite>($"View/Sprites/UI/Units/EnemiesAffixes/Backgrounds/EnemyAffix_Box_{boxType.ToString()}_Hovered", false);
+		enemyAffixIcon.sprite = ResourcePooler.LoadOnce<Sprite>($"View/Sprites/UI/Units/EnemiesAffixes/Icons/EnemyAffix_Icon_{affix.EnemyAffixDefinition.EnemyAffixEffectDefinition.EnemyAffixEffect.ToString()}", failSilently: false);
+		enemyAffixBackground.sprite = ResourcePooler.LoadOnce<Sprite>($"View/Sprites/UI/Units/EnemiesAffixes/Backgrounds/EnemyAffix_Box_{boxType.ToString()}", failSilently: false);
+		hover.sprite = ResourcePooler.LoadOnce<Sprite>($"View/Sprites/UI/Units/EnemiesAffixes/Backgrounds/EnemyAffix_Box_{boxType.ToString()}_Hovered", failSilently: false);
 		((Component)this).gameObject.SetActive(true);
 	}
 

@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.Extensions;
-using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Meta.Glyphs.GlyphEffects;
 
@@ -31,9 +29,9 @@ public class GlyphModifyRarityProbabilityTreeEffectDefinition : GlyphEffectDefin
 		{
 			XAttribute obj2 = item.Attribute(XName.op_Implicit("Weight"));
 			GlyphDefinition.AssertIsTrue(obj2 != null, "Weight attribute is missing in Probability element in ModifyRarityProbabilityTree.");
-			GlyphDefinition.AssertIsTrue(int.TryParse(StringExtensions.Replace(obj2.Value, ((Definition)this).TokenVariables), out var result), "Could not parse Weight attribute into an int in Probability element in ModifyRarityProbabilityTree.");
-			GlyphDefinition.AssertIsTrue(int.TryParse(StringExtensions.Replace(item.Value, ((Definition)this).TokenVariables), out var result2), "Could not parse Probability into an int in ModifyRarityProbabilityTree.");
-			DictionaryExtensions.AddValueOrCreateKey<int, int>(ProbabilityModifiers, result2, result, (Func<int, int, int>)((int a, int b) => a + b));
+			GlyphDefinition.AssertIsTrue(int.TryParse(obj2.Value.Replace(base.TokenVariables), out var result), "Could not parse Weight attribute into an int in Probability element in ModifyRarityProbabilityTree.");
+			GlyphDefinition.AssertIsTrue(int.TryParse(item.Value.Replace(base.TokenVariables), out var result2), "Could not parse Probability into an int in ModifyRarityProbabilityTree.");
+			ProbabilityModifiers.AddValueOrCreateKey(result2, result, (int a, int b) => a + b);
 		}
 	}
 }

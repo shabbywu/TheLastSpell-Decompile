@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Item;
 
-public class AffixLevelsDefinition : Definition
+public class AffixLevelsDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public Dictionary<int, Dictionary<int, float>> AffixLevelsProbas { get; private set; } = new Dictionary<int, Dictionary<int, float>>();
 
@@ -17,7 +17,7 @@ public class AffixLevelsDefinition : Definition
 
 
 	public AffixLevelsDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
@@ -26,7 +26,7 @@ public class AffixLevelsDefinition : Definition
 		foreach (XElement item in ((container is XElement) ? container : null).Elements(XName.op_Implicit("ItemLevel")))
 		{
 			XAttribute val = item.Attribute(XName.op_Implicit("Id"));
-			if (XDocumentExtensions.IsNullOrEmpty(val))
+			if (val.IsNullOrEmpty())
 			{
 				Debug.LogError((object)"AffixLevelsDefinition ItemLevel must have an Id");
 				continue;
@@ -45,14 +45,14 @@ public class AffixLevelsDefinition : Definition
 			foreach (XElement item2 in ((XContainer)item).Elements(XName.op_Implicit("AffixLevelProba")))
 			{
 				XAttribute val2 = item2.Attribute(XName.op_Implicit("Id"));
-				if (XDocumentExtensions.IsNullOrEmpty(val2))
+				if (val2.IsNullOrEmpty())
 				{
 					CLoggerManager.Log((object)$"AffixLevelsDefinition {result}'s AffixLevelProba must have an Id", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 					continue;
 				}
 				if (!int.TryParse(val2.Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var result2) && result2 > 0 && result2 < 4)
 				{
-					CLoggerManager.Log((object)$"AffixLevelsDefinition {result}'s AffixLevelProba {((Definition)this).HasAnInvalidInt(val2.Value)}", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+					CLoggerManager.Log((object)$"AffixLevelsDefinition {result}'s AffixLevelProba {HasAnInvalidInt(val2.Value)}", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 					continue;
 				}
 				if (AffixLevelsProbas[result].ContainsKey(result2))

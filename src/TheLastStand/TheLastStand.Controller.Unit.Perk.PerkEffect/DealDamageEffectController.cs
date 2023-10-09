@@ -5,7 +5,6 @@ using TPLib;
 using TheLastStand.Controller.Trophy.TrophyConditions;
 using TheLastStand.Definition.Skill.SkillAction;
 using TheLastStand.Definition.Unit.Perk.PerkEffect;
-using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Manager;
 using TheLastStand.Manager.Meta;
 using TheLastStand.Manager.Unit;
@@ -45,7 +44,7 @@ public class DealDamageEffectController : APerkEffectController
 		base.Trigger(data);
 		TPSingleton<PlayableUnitManager>.Instance.ShouldClearUndoStack = true;
 		HashSet<IDamageable> hashSet = new HashSet<IDamageable>();
-		float num = DealDamageEffect.DealDamageEffectDefinition.Value.EvalToFloat((InterpreterContext)(object)base.PerkEffect.APerkModule.Perk);
+		float num = DealDamageEffect.DealDamageEffectDefinition.Value.EvalToFloat(base.PerkEffect.APerkModule.Perk);
 		PlayableUnit owner = base.PerkEffect.APerkModule.Perk.Owner;
 		HashSet<Tile> targetTiles = DealDamageEffect.PerkTargeting.GetTargetTiles(data, base.PerkEffect.APerkModule.Perk);
 		LinqExtensions.AddRange<IDamageable>(hashSet, from t in targetTiles

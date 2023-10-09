@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Xml.Linq;
-using TheLastStand.Framework.Serialization;
 using TheLastStand.Model.Status;
 
 namespace TheLastStand.Definition.Skill.SkillEffect;
@@ -31,6 +30,6 @@ public class BuffEffectDefinition : StatModifierEffectDefinition
 	{
 		base.Deserialize(container);
 		XElement val = (XElement)(object)((container is XElement) ? container : null);
-		bonusInterpretedValue = new InterpretedFloat((XContainer)(object)((XContainer)val).Element(XName.op_Implicit("Bonus")), 0f, ((Definition)this).TokenVariables);
+		bonusInterpretedValue = new InterpretedFloat((XContainer)(object)((XContainer)val).Element(XName.op_Implicit("Bonus")), 0f, base.TokenVariables);
 	}
 }

@@ -85,7 +85,7 @@ public class VictorySequenceView : CutsceneView
 		firstCityVictory = !selectedCity.HaveWon;
 		ToggleSkipText(CanBeSkipped());
 		string text = (string.IsNullOrEmpty(debugCityIdOverride) ? selectedCity.CityDefinition.Id : debugCityIdOverride);
-		CutsceneDefinition cutsceneDefinition = DictionaryExtensions.GetValueOrDefault<string, CutsceneDefinition>(GameDatabase.CutsceneDefinitions, text);
+		CutsceneDefinition cutsceneDefinition = GameDatabase.CutsceneDefinitions.GetValueOrDefault(text);
 		if (cutsceneDefinition == null)
 		{
 			KeyValuePair<string, CutsceneDefinition> keyValuePair = GameDatabase.CutsceneDefinitions.First();

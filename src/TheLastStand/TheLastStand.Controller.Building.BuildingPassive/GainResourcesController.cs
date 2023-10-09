@@ -29,19 +29,19 @@ public class GainResourcesController : BuildingPassiveEffectController
 		ApplicationManager.Application.DamnedSouls += (uint)gainDamnedSouls;
 		if (gainGold > 0)
 		{
-			GainGoldDisplay pooledComponent = ObjectPooler.GetPooledComponent<GainGoldDisplay>("GainGoldDisplay", ResourcePooler.LoadOnce<GainGoldDisplay>("Prefab/Displayable Effect/UI Effect Displays/GainGoldDisplay", false), EffectManager.EffectDisplaysParent, false);
+			GainGoldDisplay pooledComponent = ObjectPooler.GetPooledComponent<GainGoldDisplay>("GainGoldDisplay", ResourcePooler.LoadOnce<GainGoldDisplay>("Prefab/Displayable Effect/UI Effect Displays/GainGoldDisplay", failSilently: false), EffectManager.EffectDisplaysParent, dontSetParent: false);
 			pooledComponent.Init(gainGold);
 			buildingParent.BuildingController.BlueprintModuleController.AddEffectDisplay(pooledComponent);
 		}
 		if (gainMaterials > 0)
 		{
-			GainMaterialDisplay pooledComponent2 = ObjectPooler.GetPooledComponent<GainMaterialDisplay>("GainMaterialDisplay", ResourcePooler.LoadOnce<GainMaterialDisplay>("Prefab/Displayable Effect/UI Effect Displays/GainMaterialDisplay", false), EffectManager.EffectDisplaysParent, false);
+			GainMaterialDisplay pooledComponent2 = ObjectPooler.GetPooledComponent<GainMaterialDisplay>("GainMaterialDisplay", ResourcePooler.LoadOnce<GainMaterialDisplay>("Prefab/Displayable Effect/UI Effect Displays/GainMaterialDisplay", failSilently: false), EffectManager.EffectDisplaysParent, dontSetParent: false);
 			pooledComponent2.Init(gainMaterials);
 			buildingParent.BuildingController.BlueprintModuleController.AddEffectDisplay(pooledComponent2);
 		}
 		if (gainDamnedSouls > 0)
 		{
-			GainDamnedSoulsDisplay pooledComponent3 = ObjectPooler.GetPooledComponent<GainDamnedSoulsDisplay>("GainDamnedSoulsDisplay", ResourcePooler.LoadOnce<GainDamnedSoulsDisplay>("Prefab/Displayable Effect/UI Effect Displays/GainDamnedSoulsDisplay", false), EffectManager.EffectDisplaysParent, false);
+			GainDamnedSoulsDisplay pooledComponent3 = ObjectPooler.GetPooledComponent<GainDamnedSoulsDisplay>("GainDamnedSoulsDisplay", ResourcePooler.LoadOnce<GainDamnedSoulsDisplay>("Prefab/Displayable Effect/UI Effect Displays/GainDamnedSoulsDisplay", failSilently: false), EffectManager.EffectDisplaysParent, dontSetParent: false);
 			pooledComponent3.Init(gainDamnedSouls);
 			buildingParent.BuildingController.BlueprintModuleController.AddEffectDisplay(pooledComponent3);
 		}

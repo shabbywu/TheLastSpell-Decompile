@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Cutscene;
 
-public class ExileAllEnemiesCutsceneDefinition : Definition, ICutsceneDefinition
+public class ExileAllEnemiesCutsceneDefinition : TheLastStand.Framework.Serialization.Definition, ICutsceneDefinition
 {
 	public static class Constants
 	{

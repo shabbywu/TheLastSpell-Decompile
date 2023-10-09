@@ -43,7 +43,7 @@ public abstract class UnitStats : ISerializable, IDeserializable
 		});
 		serializedUnitStats.Stats.ForEach(delegate(SerializedUnitStat o)
 		{
-			UnitStatsController.InitStat((ISerializedData)(object)o);
+			UnitStatsController.InitStat(o);
 		});
 		if (saveVersion != -1 && saveVersion < 9 && SaveManager.GameSaveVersion >= 9)
 		{
@@ -56,7 +56,7 @@ public abstract class UnitStats : ISerializable, IDeserializable
 
 	public virtual ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedUnitStats
+		return new SerializedUnitStats
 		{
 			Stats = Stats.Select((KeyValuePair<UnitStatDefinition.E_Stat, UnitStat> o) => o.Value.Serialize()).Cast<SerializedUnitStat>().ToList(),
 			InjuryStage = InjuryStage

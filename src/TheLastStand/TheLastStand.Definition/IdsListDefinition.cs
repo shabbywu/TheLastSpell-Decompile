@@ -7,7 +7,7 @@ using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition;
 
-public class IdsListDefinition : Definition, ITopologicSortItem<IdsListDefinition>
+public class IdsListDefinition : TheLastStand.Framework.Serialization.Definition, ITopologicSortItem<IdsListDefinition>
 {
 	private XElement idsListElement;
 
@@ -20,7 +20,7 @@ public class IdsListDefinition : Definition, ITopologicSortItem<IdsListDefinitio
 
 
 	public IdsListDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
@@ -63,6 +63,6 @@ public class IdsListDefinition : Definition, ITopologicSortItem<IdsListDefinitio
 
 	public override string ToString()
 	{
-		return ((object)this).GetType().Name + " Id=" + Id;
+		return GetType().Name + " Id=" + Id;
 	}
 }

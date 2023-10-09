@@ -20,7 +20,7 @@ public class PlaySealAnticipationCutsceneController : CutsceneController
 	public override IEnumerator Play(CutsceneData cutsceneData)
 	{
 		BuildingManager.MagicCircle.MagicCircleView.PlaySealAnticipationAnimation();
-		ObjectPooler.GetPooledComponent<OneShotSound>("SFXVictory", BuildingManager.MagicCircle.MagicCircleView.SFXPrefab, (Transform)null, false).Play(GameManager.WinAudioClip, TPSingleton<CutsceneManager>.Instance.VictorySequenceView.VictorySfxDelay);
+		ObjectPooler.GetPooledComponent<OneShotSound>("SFXVictory", BuildingManager.MagicCircle.MagicCircleView.SFXPrefab, (Transform)null, dontSetParent: false).Play(GameManager.WinAudioClip, TPSingleton<CutsceneManager>.Instance.VictorySequenceView.VictorySfxDelay);
 		yield break;
 	}
 }

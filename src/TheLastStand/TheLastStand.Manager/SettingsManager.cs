@@ -10,7 +10,6 @@ using TPLib.Log;
 using TPLib.Yield;
 using TheLastStand.Controller.ApplicationState;
 using TheLastStand.Controller.Settings;
-using TheLastStand.Framework.Automaton;
 using TheLastStand.Framework.Serialization;
 using TheLastStand.Manager.Modding;
 using TheLastStand.Model;
@@ -285,7 +284,7 @@ public class SettingsManager : Manager<SettingsManager>, ISerializable, IDeseria
 
 	public static bool CanCloseSettings()
 	{
-		if (((StateMachine)ApplicationManager.Application).State is SettingsState && (!TPSingleton<GameManager>.Exist() || TPSingleton<GameManager>.Instance.Game.State == Game.E_State.Settings) && !TPSingleton<KeyRemappingManager>.Instance.RemappingInProgress && !TPSingleton<KeyRemappingManager>.Instance.ResetAllInProgress && !GenericPopUp.IsOpen && !GenericConsent.IsWaitingForInput())
+		if (ApplicationManager.Application.State is SettingsState && (!TPSingleton<GameManager>.Exist() || TPSingleton<GameManager>.Instance.Game.State == Game.E_State.Settings) && !TPSingleton<KeyRemappingManager>.Instance.RemappingInProgress && !TPSingleton<KeyRemappingManager>.Instance.ResetAllInProgress && !GenericPopUp.IsOpen && !GenericConsent.IsWaitingForInput())
 		{
 			return !GenericBlockingPopup.IsWaitingForInput();
 		}
@@ -294,7 +293,7 @@ public class SettingsManager : Manager<SettingsManager>, ISerializable, IDeseria
 
 	public static bool CanOpenSettings()
 	{
-		switch (((StateMachine)ApplicationManager.Application).State.GetName())
+		switch (ApplicationManager.Application.State.GetName())
 		{
 		case "GameLobby":
 			if (!GenericPopUp.IsOpen && !GenericConsent.IsWaitingForInput())
@@ -394,7 +393,7 @@ public class SettingsManager : Manager<SettingsManager>, ISerializable, IDeseria
 			}
 		}
 		InputManager.LoadMap();
-		TPSingleton<SettingsManager>.Instance.Deserialize((ISerializedData)(object)serializedSettings, ((int?)serializedSettings?.SaveVersion) ?? (-1));
+		TPSingleton<SettingsManager>.Instance.Deserialize(serializedSettings, ((int?)serializedSettings?.SaveVersion) ?? (-1));
 		((CLogger<SettingsManager>)TPSingleton<SettingsManager>.Instance).Log((object)"Settings loaded!", (CLogLevel)1, false, false);
 	}
 
@@ -534,7 +533,7 @@ public class SettingsManager : Manager<SettingsManager>, ISerializable, IDeseria
 
 	public ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedSettings
+		return new SerializedSettings
 		{
 			AlwaysDisplayMaxStatValue = Settings.AlwaysDisplayMaxStatValue,
 			EdgePan = Settings.EdgePan,
@@ -658,8 +657,6 @@ public class SettingsManager : Manager<SettingsManager>, ISerializable, IDeseria
 		//IL_00ad: Unknown result type (might be due to invalid IL or missing references)
 		//IL_00c1: Unknown result type (might be due to invalid IL or missing references)
 		//IL_00c6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0066: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006b: Unknown result type (might be due to invalid IL or missing references)
 		//IL_006e: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
 		List<Resolution> list = new List<Resolution>(Screen.resolutions.Length);
@@ -674,8 +671,7 @@ public class SettingsManager : Manager<SettingsManager>, ISerializable, IDeseria
 		SupportedResolutions = list.ToArray();
 		if (resolutionElement.HasValue)
 		{
-			SerializableResolution value = resolutionElement.Value;
-			SettingsController.SetResolution(((SerializableResolution)(ref value)).Deserialize());
+			SettingsController.SetResolution(resolutionElement.Value.Deserialize());
 			return;
 		}
 		SettingsController.SetResolution(Screen.currentResolution);
@@ -713,7 +709,6 @@ public class SettingsManager : Manager<SettingsManager>, ISerializable, IDeseria
 
 	private void DeserializeScreenSettings(SerializedSettings settingsElement, SerializedScreenSettings screenSettingsElement = null)
 	{
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
 		DeserializeResolution(screenSettingsElement?.Resolution);
 		DeserializeMonitorIndex(screenSettingsElement?.MonitorIndex);
 		DeserializeRestrictedCursor(screenSettingsElement?.IsCursorRestricted);
@@ -827,8 +822,6 @@ public class SettingsManager : Manager<SettingsManager>, ISerializable, IDeseria
 	private SerializedScreenSettings SerializeScreenSettings()
 	{
 		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
 		return new SerializedScreenSettings
 		{
 			IsCursorRestricted = Settings.IsCursorRestricted,

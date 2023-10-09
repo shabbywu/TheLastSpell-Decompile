@@ -1,5 +1,4 @@
 using TheLastStand.Definition.Unit.Perk.PerkDataCondition;
-using TheLastStand.Framework.ExpressionInterpreter;
 
 namespace TheLastStand.Model.Unit.Perk.PerkDataCondition;
 
@@ -14,6 +13,6 @@ public class IsTrueDataCondition : APerkDataCondition
 
 	public override bool IsValid()
 	{
-		return IsTrueDataConditionDefinition.ValueExpression.EvalToBool((InterpreterContext)(object)base.Perk);
+		return IsTrueDataConditionDefinition.ValueExpression.EvalToBool(base.Perk);
 	}
 }

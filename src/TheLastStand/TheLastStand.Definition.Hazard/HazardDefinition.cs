@@ -1,11 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Hazard;
 
-public abstract class HazardDefinition : Definition
+public abstract class HazardDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	[Flags]
 	public enum E_HazardType
@@ -18,7 +17,7 @@ public abstract class HazardDefinition : Definition
 	public abstract E_HazardType HazardType { get; }
 
 	protected HazardDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 }

@@ -228,7 +228,7 @@ public class CharacterDetailsView : TabbedPageView
 		{
 			((Behaviour)detailsScrollRect).enabled = true;
 			base.Open();
-			MonoBehaviourExtensions.DoAfter((MonoBehaviour)(object)this, 0.05f, (Action)delegate
+			((MonoBehaviour)(object)this).DoAfter(0.05f, delegate
 			{
 				characterDetailsPanelScrollbar.value = 1f;
 			});
@@ -444,36 +444,36 @@ public class CharacterDetailsView : TabbedPageView
 		}
 		for (int k = 0; k < array.Length; k++)
 		{
-			JoystickSelectable joystickSelectable = array[k];
-			SelectableExtensions.SetMode((Selectable)(object)joystickSelectable, (Mode)4);
+			JoystickSelectable selectable = array[k];
+			((Selectable)(object)selectable).SetMode((Mode)4);
 			if (k > 0)
 			{
-				SelectableExtensions.SetSelectOnUp((Selectable)(object)joystickSelectable, (Selectable)(object)array[k - 1]);
+				((Selectable)(object)selectable).SetSelectOnUp((Selectable)(object)array[k - 1]);
 			}
 			if (k < array.Length - 1)
 			{
-				SelectableExtensions.SetSelectOnDown((Selectable)(object)joystickSelectable, (Selectable)(object)array[k + 1]);
+				((Selectable)(object)selectable).SetSelectOnDown((Selectable)(object)array[k + 1]);
 			}
 			if (k < array2.Length)
 			{
-				SelectableExtensions.SetSelectOnRight((Selectable)(object)joystickSelectable, (Selectable)(object)array2[k]);
+				((Selectable)(object)selectable).SetSelectOnRight((Selectable)(object)array2[k]);
 			}
 		}
 		for (int l = 0; l < array2.Length; l++)
 		{
-			JoystickSelectable joystickSelectable2 = array2[l];
-			SelectableExtensions.SetMode((Selectable)(object)joystickSelectable2, (Mode)4);
+			JoystickSelectable selectable2 = array2[l];
+			((Selectable)(object)selectable2).SetMode((Mode)4);
 			if (l > 0)
 			{
-				SelectableExtensions.SetSelectOnUp((Selectable)(object)joystickSelectable2, (Selectable)(object)array2[l - 1]);
+				((Selectable)(object)selectable2).SetSelectOnUp((Selectable)(object)array2[l - 1]);
 			}
 			if (l < array2.Length - 1)
 			{
-				SelectableExtensions.SetSelectOnDown((Selectable)(object)joystickSelectable2, (Selectable)(object)array2[l + 1]);
+				((Selectable)(object)selectable2).SetSelectOnDown((Selectable)(object)array2[l + 1]);
 			}
 			if (l < array.Length)
 			{
-				SelectableExtensions.SetSelectOnLeft((Selectable)(object)joystickSelectable2, (Selectable)(object)array[l]);
+				((Selectable)(object)selectable2).SetSelectOnLeft((Selectable)(object)array[l]);
 			}
 		}
 	}
@@ -554,7 +554,7 @@ public class CharacterDetailsView : TabbedPageView
 
 	private void OnSecondaryStatJoystickSelect(RectTransform source)
 	{
-		GUIHelpers.AdjustScrollViewToFocusedItem(source, detailsViewportJoystickScroll, detailsScrollbar, 0.04f, 0f, (float?)null);
+		GUIHelpers.AdjustScrollViewToFocusedItem(source, detailsViewportJoystickScroll, detailsScrollbar, 0.04f, 0f);
 	}
 
 	private void RefreshTraits()

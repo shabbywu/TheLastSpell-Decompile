@@ -120,13 +120,13 @@ public class BossPhaseHandler : ISerializable, IDeserializable
 
 	public void Deserialize(ISerializedData container = null, int saveVersion = -1)
 	{
-		SerializedBossPhaseHandler serializedBossPhaseHandler = (SerializedBossPhaseHandler)(object)container;
+		SerializedBossPhaseHandler serializedBossPhaseHandler = (SerializedBossPhaseHandler)container;
 		IsLocked = serializedBossPhaseHandler.IsLocked;
 	}
 
 	public ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedBossPhaseHandler
+		return new SerializedBossPhaseHandler
 		{
 			Id = BossPhaseHandlerDefinition.Id,
 			IsLocked = IsLocked

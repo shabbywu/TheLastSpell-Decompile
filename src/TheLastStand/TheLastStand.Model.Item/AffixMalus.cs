@@ -18,7 +18,7 @@ public class AffixMalus : IAffix
 	public AffixMalus(SerializedAffixMalus container, AffixMalusController affixMalusController)
 	{
 		AffixMalusController = affixMalusController;
-		Deserialize((ISerializedData)(object)container);
+		Deserialize(container);
 	}
 
 	public AffixMalus(AffixMalusDefinition affixMalusDefinition, AffixMalusController affixMalusController)
@@ -45,7 +45,7 @@ public class AffixMalus : IAffix
 
 	public ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedAffixMalus
+		return new SerializedAffixMalus
 		{
 			MalusLevel = MalusLevel,
 			Stat = AffixMalusDefinition.Stat

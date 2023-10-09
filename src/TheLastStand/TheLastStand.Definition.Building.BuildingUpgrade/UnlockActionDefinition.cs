@@ -20,7 +20,7 @@ public class UnlockActionDefinition : BuildingUpgradeEffectDefinition
 	{
 		base.Deserialize(xContainer);
 		XAttribute val = ((XElement)((xContainer is XElement) ? xContainer : null)).Attribute(XName.op_Implicit("NewActionId"));
-		if (XDocumentExtensions.IsNullOrEmpty(val))
+		if (val.IsNullOrEmpty())
 		{
 			TPDebug.LogError((object)"UnlockActionDefinition must have an NewActionId", (Object)null);
 		}

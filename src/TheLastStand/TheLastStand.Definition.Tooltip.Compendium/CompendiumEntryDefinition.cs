@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TPLib.Log;
 using TheLastStand.Framework.Serialization;
@@ -6,7 +5,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Tooltip.Compendium;
 
-public class CompendiumEntryDefinition : Definition
+public class CompendiumEntryDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public string Id { get; private set; }
 
@@ -14,7 +13,7 @@ public class CompendiumEntryDefinition : Definition
 
 
 	public CompendiumEntryDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

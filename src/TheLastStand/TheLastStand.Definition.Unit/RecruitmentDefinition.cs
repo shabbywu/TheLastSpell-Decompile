@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit;
 
-public class RecruitmentDefinition : Definition
+public class RecruitmentDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public Node MageCost { get; set; }
 
@@ -24,7 +24,7 @@ public class RecruitmentDefinition : Definition
 
 
 	public RecruitmentDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
@@ -32,16 +32,16 @@ public class RecruitmentDefinition : Definition
 	{
 		XElement val = container.Element(XName.op_Implicit("UnitGenerationSettings"));
 		XElement val2 = ((XContainer)val).Element(XName.op_Implicit("Cost"));
-		if (XDocumentExtensions.IsNullOrEmpty(val2))
+		if (val2.IsNullOrEmpty())
 		{
 			Debug.LogError((object)"The UnitGenerationSettings must have a Cost");
 			return;
 		}
-		UnitCost = Parser.Parse(val2.Value, (Dictionary<string, string>)null);
+		UnitCost = Parser.Parse(val2.Value);
 		((XContainer)val).Element(XName.op_Implicit("UnitLimits"));
 		foreach (XElement item in ((XContainer)val).Elements(XName.op_Implicit("Slot")))
 		{
-			if (XDocumentExtensions.IsNullOrEmpty(item.Attribute(XName.op_Implicit("Id"))))
+			if (item.Attribute(XName.op_Implicit("Id")).IsNullOrEmpty())
 			{
 				Debug.LogError((object)"The Slot must have Id");
 			}
@@ -51,23 +51,23 @@ public class RecruitmentDefinition : Definition
 			}
 		}
 		XElement val3 = container.Element(XName.op_Implicit("MageGenerationSettings"));
-		if (XDocumentExtensions.IsNullOrEmpty(val3))
+		if (val3.IsNullOrEmpty())
 		{
 			Debug.LogError((object)"The document must have MageGenerationSettings");
 			return;
 		}
 		XElement val4 = ((XContainer)val3).Element(XName.op_Implicit("Cost"));
-		if (!XDocumentExtensions.IsNullOrEmpty(val4))
+		if (!val4.IsNullOrEmpty())
 		{
 			if (!int.TryParse(val4.Value, out var _))
 			{
 				Debug.LogError((object)"MageGenerationSettings must have a valid cost!");
 				return;
 			}
-			MageCost = Parser.Parse(val4.Value, (Dictionary<string, string>)null);
+			MageCost = Parser.Parse(val4.Value);
 		}
 		XElement val5 = ((XContainer)val3).Element(XName.op_Implicit("StartProbability"));
-		if (!XDocumentExtensions.IsNullOrEmpty(val5))
+		if (!val5.IsNullOrEmpty())
 		{
 			if (!float.TryParse(val5.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var result2))
 			{
@@ -77,7 +77,7 @@ public class RecruitmentDefinition : Definition
 			MageGenerationStartProbability = result2;
 		}
 		XElement val6 = ((XContainer)val3).Element(XName.op_Implicit("ProbabilityIncreasedPerReRoll"));
-		if (!XDocumentExtensions.IsNullOrEmpty(val6))
+		if (!val6.IsNullOrEmpty())
 		{
 			if (!float.TryParse(val6.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var result3))
 			{
@@ -87,7 +87,7 @@ public class RecruitmentDefinition : Definition
 			MageGenerationProbabilityIncreasedPerReRoll = result3;
 		}
 		XElement val7 = container.Element(XName.op_Implicit("RosterRerollCost"));
-		if (!XDocumentExtensions.IsNullOrEmpty(val7))
+		if (!val7.IsNullOrEmpty())
 		{
 			if (!int.TryParse(val7.Value, out var result4))
 			{

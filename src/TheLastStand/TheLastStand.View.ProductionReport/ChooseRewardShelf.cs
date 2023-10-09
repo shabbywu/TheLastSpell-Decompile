@@ -104,7 +104,7 @@ public class ChooseRewardShelf : MonoBehaviour
 		}
 		shelfRectTransform.sizeDelta = new Vector2(shelfRectTransform.sizeDelta.x, -50f);
 		TPSingleton<HUDJoystickNavigationManager>.Instance.JoystickHighlight.ToggleAlwaysFollow(state: true);
-		TweenerCore<Vector2, Vector2, VectorOptions> obj2 = TweenExtensions.SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenSettingsExtensions.SetDelay<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOSizeDelta(shelfRectTransform, new Vector2(shelfRectTransform.sizeDelta.x, heightInit), appearTweenDuration, false), appearTweenEase), delay), "RewardShelfAppear", (Component)(object)this);
+		TweenerCore<Vector2, Vector2, VectorOptions> obj2 = TweenSettingsExtensions.SetDelay<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOSizeDelta(shelfRectTransform, new Vector2(shelfRectTransform.sizeDelta.x, heightInit), appearTweenDuration, false), appearTweenEase), delay).SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>("RewardShelfAppear", (Component)(object)this);
 		object obj3 = _003C_003Ec._003C_003E9__21_0;
 		if (obj3 == null)
 		{
@@ -136,7 +136,7 @@ public class ChooseRewardShelf : MonoBehaviour
 			TweenExtensions.Kill(obj, false);
 		}
 		shelfRectTransform.sizeDelta = new Vector2(shelfRectTransform.sizeDelta.x, heightInit);
-		moveTween = (Tween)(object)TweenSettingsExtensions.OnStart<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenExtensions.SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenSettingsExtensions.SetDelay<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOSizeDelta(shelfRectTransform, new Vector2(shelfRectTransform.sizeDelta.x, -50f), appearTweenDuration, false), appearTweenEase), delay), "RewardShelfDisappear", (Component)(object)this), (TweenCallback)delegate
+		moveTween = (Tween)(object)TweenSettingsExtensions.OnStart<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenSettingsExtensions.SetDelay<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOSizeDelta(shelfRectTransform, new Vector2(shelfRectTransform.sizeDelta.x, -50f), appearTweenDuration, false), appearTweenEase), delay).SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>("RewardShelfDisappear", (Component)(object)this), (TweenCallback)delegate
 		{
 			SoundManager.PlayAudioClip(disappearClip);
 		});
@@ -157,7 +157,7 @@ public class ChooseRewardShelf : MonoBehaviour
 			TweenExtensions.Kill(obj, false);
 		}
 		TPSingleton<HUDJoystickNavigationManager>.Instance.JoystickHighlight.ToggleAlwaysFollow(state: true);
-		TweenerCore<Vector2, Vector2, VectorOptions> obj2 = TweenExtensions.SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOSizeDelta(shelfRectTransform, new Vector2(shelfRectTransform.sizeDelta.x, (TPSingleton<ChooseRewardPanel>.Instance.ProductionItem.ChosenItem == TPSingleton<ChooseRewardPanel>.Instance.ProductionItem.Items[ItemIndex]) ? heightSelected : heightInit), selectTweenDuration, false), selectTweenEase), "RewardShelfSelection", (Component)(object)this);
+		TweenerCore<Vector2, Vector2, VectorOptions> obj2 = TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOSizeDelta(shelfRectTransform, new Vector2(shelfRectTransform.sizeDelta.x, (TPSingleton<ChooseRewardPanel>.Instance.ProductionItem.ChosenItem == TPSingleton<ChooseRewardPanel>.Instance.ProductionItem.Items[ItemIndex]) ? heightSelected : heightInit), selectTweenDuration, false), selectTweenEase).SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>("RewardShelfSelection", (Component)(object)this);
 		object obj3 = _003C_003Ec._003C_003E9__23_0;
 		if (obj3 == null)
 		{

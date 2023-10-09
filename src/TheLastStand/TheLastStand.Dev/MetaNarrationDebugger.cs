@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Xml.Linq;
 using RedBlueGames.Tools.TextTyper;
 using TMPro;
 using TPLib;
 using TPLib.Localization;
 using TheLastStand.Database;
-using TheLastStand.Framework.Database;
 using TheLastStand.Manager;
 using TheLastStand.Manager.Meta;
 using TheLastStand.Model.Meta;
@@ -127,7 +125,7 @@ public class MetaNarrationDebugger : TPSingleton<MetaNarrationDebugger>
 		//IL_005c: Expected O, but got Unknown
 		//IL_0095: Unknown result type (might be due to invalid IL or missing references)
 		//IL_009f: Expected O, but got Unknown
-		((Database<MetaNarrationDatabase>)TPSingleton<MetaNarrationDatabase>.Instance).Deserialize((XContainer)null);
+		TPSingleton<MetaNarrationDatabase>.Instance.Deserialize();
 		TPSingleton<RandomManager>.Instance.Deserialize();
 		TPSingleton<MetaNarrationsManager>.Instance.Deserialize();
 		MetaNarrationDebuggerReplicaButton[] replicas = darkDebugger.Replicas;

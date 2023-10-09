@@ -1,6 +1,5 @@
 using System.Collections;
 using TheLastStand.Definition.Unit.Enemy.Boss.PhaseAction;
-using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Model;
 using TheLastStand.Model.Unit.Boss;
 
@@ -14,18 +13,7 @@ public abstract class ABossPhaseActionController
 
 	public ABossPhaseActionDefinition ABossPhaseActionDefinition { get; }
 
-	public int Delay
-	{
-		get
-		{
-			Node delayExpression = ABossPhaseActionDefinition.DelayExpression;
-			if (delayExpression == null)
-			{
-				return 0;
-			}
-			return delayExpression.EvalToInt((InterpreterContext)(object)FormulaInterpreterContext);
-		}
-	}
+	public int Delay => ABossPhaseActionDefinition.DelayExpression?.EvalToInt(FormulaInterpreterContext) ?? 0;
 
 	public FormulaInterpreterContext FormulaInterpreterContext { get; }
 

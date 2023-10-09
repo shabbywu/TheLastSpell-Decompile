@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Building;
 
-public class BuildingLimitGroupDefinition : Definition
+public class BuildingLimitGroupDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public List<string> BuildingIds = new List<string>();
 
@@ -19,7 +19,7 @@ public class BuildingLimitGroupDefinition : Definition
 	public string Id { get; set; }
 
 	public BuildingLimitGroupDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
@@ -42,7 +42,7 @@ public class BuildingLimitGroupDefinition : Definition
 					}
 				}
 			}
-			num += DictionaryExtensions.GetValueOrDefault<string, int>(TPSingleton<GlyphManager>.Instance.BuildLimitModifiers, Id);
+			num += TPSingleton<GlyphManager>.Instance.BuildLimitModifiers.GetValueOrDefault(Id);
 		}
 		return nativeLimit + num;
 	}
@@ -52,7 +52,7 @@ public class BuildingLimitGroupDefinition : Definition
 		XElement val = (XElement)(object)((container is XElement) ? container : null);
 		Id = val.Attribute(XName.op_Implicit("Id")).Value;
 		XAttribute val2 = val.Attribute(XName.op_Implicit("Limit"));
-		if (XDocumentExtensions.IsNullOrEmpty(val2))
+		if (val2.IsNullOrEmpty())
 		{
 			return;
 		}

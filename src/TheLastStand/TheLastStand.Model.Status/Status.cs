@@ -120,7 +120,7 @@ public abstract class Status : ISerializable, IDeserializable
 
 	public virtual ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedUnitStatus
+		return new SerializedUnitStatus
 		{
 			StatusSourceInfo = ((Source is IEntity entity) ? new StatusSourceInfo(entity.RandomId, Source.GetDamageableType()) : null),
 			RemainingTurns = RemainingTurnsCount,

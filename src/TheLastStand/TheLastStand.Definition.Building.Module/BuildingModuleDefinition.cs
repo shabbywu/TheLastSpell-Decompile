@@ -1,17 +1,16 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Building.Module;
 
-public abstract class BuildingModuleDefinition : Definition
+public abstract class BuildingModuleDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public readonly BuildingDefinition BuildingDefinition;
 
 	protected BuildingModuleDefinition(BuildingDefinition buildingDefinition, XContainer moduleDefinitionContainer)
-		: base((XContainer)null, (Dictionary<string, string>)null)
+		: base(null)
 	{
 		BuildingDefinition = buildingDefinition;
-		((Definition)this).Deserialize(moduleDefinitionContainer);
+		Deserialize(moduleDefinitionContainer);
 	}
 }

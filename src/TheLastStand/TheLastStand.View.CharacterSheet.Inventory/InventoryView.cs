@@ -115,7 +115,7 @@ public class InventoryView : TabbedPageView
 	{
 		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
 		//IL_002f: Expected O, but got Unknown
-		GUIHelpers.AdjustScrollViewToFocusedItem((RectTransform)((Component)source).transform, slotsViewport, itemsPanelScrollbar, 0.01f, 0.01f, (float?)null);
+		GUIHelpers.AdjustScrollViewToFocusedItem((RectTransform)((Component)source).transform, slotsViewport, itemsPanelScrollbar, 0.01f, 0.01f);
 	}
 
 	public override void Refresh()

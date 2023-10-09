@@ -154,10 +154,9 @@ public class LightningSDKManager : Manager<LightningSDKManager>
 	{
 		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
-		ColorEventPair colorEventPair = default(ColorEventPair);
-		if (ListExtensions.TryFind<ColorEventPair>(colorPerEvent, (Predicate<ColorEventPair>)((ColorEventPair x) => x.Event == SDKEventTriggered), ref colorEventPair))
+		if (colorPerEvent.TryFind((ColorEventPair x) => x.Event == SDKEventTriggered, out var value))
 		{
-			TransitionToColor(Color32.op_Implicit(colorEventPair.Color._Color), duration);
+			TransitionToColor(Color32.op_Implicit(value.Color._Color), duration);
 			return true;
 		}
 		return false;
@@ -169,7 +168,7 @@ public class LightningSDKManager : Manager<LightningSDKManager>
 		if (((TPSingleton<LightningSDKManager>)(object)this)._IsValid)
 		{
 			ApplicationManager.Application.ApplicationController.ApplicationStateChangeEvent += OnApplicationStateChange;
-			HandleApplicationStateColor(((StateMachine)ApplicationManager.Application).State);
+			HandleApplicationStateColor(ApplicationManager.Application.State);
 		}
 	}
 

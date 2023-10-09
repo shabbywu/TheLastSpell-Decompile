@@ -161,7 +161,7 @@ public class EnemiesDamagedTrophyConditionController : HeroesTrophyConditionCont
 				Values = item.Value
 			});
 		}
-		return (ISerializedData)(object)new SerializedEnemiesDamagedTrophy
+		return new SerializedEnemiesDamagedTrophy
 		{
 			ValuesPerUnitId = list
 		};

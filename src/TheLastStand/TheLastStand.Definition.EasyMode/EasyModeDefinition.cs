@@ -4,13 +4,13 @@ using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.EasyMode;
 
-public class EasyModeDefinition : Definition
+public class EasyModeDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public List<EasyModeModifierDefinition> ModifiersDefinitions { get; private set; } = new List<EasyModeModifierDefinition>();
 
 
 	public EasyModeDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

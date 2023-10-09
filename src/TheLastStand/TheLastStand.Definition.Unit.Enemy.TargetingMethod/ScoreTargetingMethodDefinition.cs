@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.ExpressionInterpreter;
 
@@ -19,6 +18,6 @@ public class ScoreTargetingMethodDefinition : TargetingMethodDefinition
 	{
 		base.Deserialize(container);
 		XAttribute val = ((XElement)((container is XElement) ? container : null)).Attribute(XName.op_Implicit("Value"));
-		Score = Parser.Parse(val.Value, (Dictionary<string, string>)null);
+		Score = Parser.Parse(val.Value);
 	}
 }

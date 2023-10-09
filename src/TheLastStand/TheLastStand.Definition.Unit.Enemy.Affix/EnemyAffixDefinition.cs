@@ -7,7 +7,6 @@ using TPLib.Localization;
 using TPLib.Log;
 using TheLastStand.Database.Unit;
 using TheLastStand.Framework.ExpressionInterpreter;
-using TheLastStand.Framework.Serialization;
 using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.Enemy.Affix;
@@ -57,7 +56,7 @@ public class EnemyAffixDefinition : LocalizableDefinition
 		ExcludedElites = new HashSet<string>();
 		XAttribute val2 = val.Attribute(XName.op_Implicit("Id"));
 		Id = val2.Value;
-		((Definition)this).DeserializeTokenVariables(((XContainer)val).Element(XName.op_Implicit("TokenVariables")));
+		DeserializeTokenVariables(((XContainer)val).Element(XName.op_Implicit("TokenVariables")));
 		base.Deserialize((XContainer)(object)((XContainer)val).Element(XName.op_Implicit("LocArguments")));
 		XElement val3 = ((XContainer)val).Element(XName.op_Implicit("IsEliteAffix"));
 		IsEliteAffix = val3 != null;
@@ -102,43 +101,43 @@ public class EnemyAffixDefinition : LocalizableDefinition
 		XElement val8 = ((XContainer)val).Element(XName.op_Implicit("AffixEffect"));
 		if (((XContainer)val8).Element(XName.op_Implicit("Reinforced")) != null)
 		{
-			EnemyAffixEffectDefinition = new EnemyReinforcedAffixEffectDefinition((XContainer)(object)((XContainer)val8).Element(XName.op_Implicit("Reinforced")), ((Definition)this).TokenVariables);
+			EnemyAffixEffectDefinition = new EnemyReinforcedAffixEffectDefinition((XContainer)(object)((XContainer)val8).Element(XName.op_Implicit("Reinforced")), base.TokenVariables);
 		}
 		else if (((XContainer)val8).Element(XName.op_Implicit("Aura")) != null)
 		{
-			EnemyAffixEffectDefinition = new EnemyAuraAffixEffectDefinition((XContainer)(object)((XContainer)val8).Element(XName.op_Implicit("Aura")), ((Definition)this).TokenVariables);
+			EnemyAffixEffectDefinition = new EnemyAuraAffixEffectDefinition((XContainer)(object)((XContainer)val8).Element(XName.op_Implicit("Aura")), base.TokenVariables);
 		}
 		else if (((XContainer)val8).Element(XName.op_Implicit("Mirror")) != null)
 		{
-			EnemyAffixEffectDefinition = new EnemyMirrorAffixEffectDefinition((XContainer)(object)((XContainer)val8).Element(XName.op_Implicit("Mirror")), ((Definition)this).TokenVariables);
+			EnemyAffixEffectDefinition = new EnemyMirrorAffixEffectDefinition((XContainer)(object)((XContainer)val8).Element(XName.op_Implicit("Mirror")), base.TokenVariables);
 		}
 		else if (((XContainer)val8).Element(XName.op_Implicit("Misty")) != null)
 		{
-			EnemyAffixEffectDefinition = new EnemyMistyAffixEffectDefinition((XContainer)(object)((XContainer)val8).Element(XName.op_Implicit("Misty")), ((Definition)this).TokenVariables);
+			EnemyAffixEffectDefinition = new EnemyMistyAffixEffectDefinition((XContainer)(object)((XContainer)val8).Element(XName.op_Implicit("Misty")), base.TokenVariables);
 		}
 		else if (((XContainer)val8).Element(XName.op_Implicit("Regenerative")) != null)
 		{
-			EnemyAffixEffectDefinition = new EnemyRegenerativeAffixEffectDefinition((XContainer)(object)((XContainer)val8).Element(XName.op_Implicit("Regenerative")), ((Definition)this).TokenVariables);
+			EnemyAffixEffectDefinition = new EnemyRegenerativeAffixEffectDefinition((XContainer)(object)((XContainer)val8).Element(XName.op_Implicit("Regenerative")), base.TokenVariables);
 		}
 		else if (((XContainer)val8).Element(XName.op_Implicit("Energetic")) != null)
 		{
-			EnemyAffixEffectDefinition = new EnemyEnergeticAffixEffectDefinition((XContainer)(object)((XContainer)val8).Element(XName.op_Implicit("Energetic")), ((Definition)this).TokenVariables);
+			EnemyAffixEffectDefinition = new EnemyEnergeticAffixEffectDefinition((XContainer)(object)((XContainer)val8).Element(XName.op_Implicit("Energetic")), base.TokenVariables);
 		}
 		else if (((XContainer)val8).Element(XName.op_Implicit("Revenge")) != null)
 		{
-			EnemyAffixEffectDefinition = new EnemyRevengeAffixEffectDefinition((XContainer)(object)((XContainer)val8).Element(XName.op_Implicit("Revenge")), ((Definition)this).TokenVariables);
+			EnemyAffixEffectDefinition = new EnemyRevengeAffixEffectDefinition((XContainer)(object)((XContainer)val8).Element(XName.op_Implicit("Revenge")), base.TokenVariables);
 		}
 		else if (((XContainer)val8).Element(XName.op_Implicit("Purge")) != null)
 		{
-			EnemyAffixEffectDefinition = new EnemyPurgeAffixEffectDefinition((XContainer)(object)((XContainer)val8).Element(XName.op_Implicit("Purge")), ((Definition)this).TokenVariables);
+			EnemyAffixEffectDefinition = new EnemyPurgeAffixEffectDefinition((XContainer)(object)((XContainer)val8).Element(XName.op_Implicit("Purge")), base.TokenVariables);
 		}
 		else if (((XContainer)val8).Element(XName.op_Implicit("Barrier")) != null)
 		{
-			EnemyAffixEffectDefinition = new EnemyBarrierAffixEffectDefinition((XContainer)(object)((XContainer)val8).Element(XName.op_Implicit("Barrier")), ((Definition)this).TokenVariables);
+			EnemyAffixEffectDefinition = new EnemyBarrierAffixEffectDefinition((XContainer)(object)((XContainer)val8).Element(XName.op_Implicit("Barrier")), base.TokenVariables);
 		}
 		else if (((XContainer)val8).Element(XName.op_Implicit("HigherPlane")) != null)
 		{
-			EnemyAffixEffectDefinition = new EnemyHigherPlaneAffixEffectDefinition((XContainer)(object)((XContainer)val8).Element(XName.op_Implicit("HigherPlane")), ((Definition)this).TokenVariables);
+			EnemyAffixEffectDefinition = new EnemyHigherPlaneAffixEffectDefinition((XContainer)(object)((XContainer)val8).Element(XName.op_Implicit("HigherPlane")), base.TokenVariables);
 		}
 		else
 		{

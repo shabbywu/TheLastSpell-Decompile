@@ -139,7 +139,7 @@ public sealed class BarkManager : Manager<BarkManager>
 			}
 			text = Localizer.Get($"Bark_{barkId}_{sentenceIndex}");
 		}
-		BarkView pooledComponent = ObjectPooler.GetPooledComponent<BarkView>("BarkViews", barkViewPrefab, barksParent, false);
+		BarkView pooledComponent = ObjectPooler.GetPooledComponent<BarkView>("BarkViews", barkViewPrefab, barksParent, dontSetParent: false);
 		Bark bark = new BarkController(BarkDatabase.BarkDefinitions[barkId], pooledComponent).Bark;
 		if (text != null)
 		{

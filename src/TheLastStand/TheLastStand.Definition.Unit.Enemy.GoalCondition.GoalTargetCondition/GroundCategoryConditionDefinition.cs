@@ -25,7 +25,7 @@ public class GroundCategoryConditionDefinition : GoalConditionDefinition
 		}
 		else
 		{
-			CLoggerManager.Log((object)"Error while parsing GroundCategory", (LogType)0, (CLogLevel)1, true, ((object)this).GetType().Name, false);
+			CLoggerManager.Log((object)"Error while parsing GroundCategory", (LogType)0, (CLogLevel)1, true, GetType().Name, false);
 		}
 	}
 }

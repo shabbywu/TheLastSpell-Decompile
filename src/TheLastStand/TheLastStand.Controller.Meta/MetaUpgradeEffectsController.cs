@@ -81,7 +81,7 @@ public class MetaUpgradeEffectsController
 		for (int num = upgradeDefinition.UpgradeEffectDefinitions.Count - 1; num >= 0; num--)
 		{
 			MetaEffectDefinition metaEffectDefinition = upgradeDefinition.UpgradeEffectDefinitions[num];
-			Type type = ((object)metaEffectDefinition).GetType();
+			Type type = metaEffectDefinition.GetType();
 			if (!UpgradesEffects.UpgradeEffectsByType.ContainsKey(type))
 			{
 				UpgradesEffects.UpgradeEffectsByType.Add(type, new List<MetaEffectDefinition>());
@@ -100,7 +100,7 @@ public class MetaUpgradeEffectsController
 		for (int num = upgradeDefinition.UpgradeEffectDefinitions.Count - 1; num >= 0; num--)
 		{
 			MetaEffectDefinition metaEffectDefinition = upgradeDefinition.UpgradeEffectDefinitions[num];
-			Type type = ((object)metaEffectDefinition).GetType();
+			Type type = metaEffectDefinition.GetType();
 			if (UpgradesEffects.UpgradeEffectsByType.ContainsKey(type))
 			{
 				UpgradesEffects.UpgradeEffectsByType[type].Remove(metaEffectDefinition);

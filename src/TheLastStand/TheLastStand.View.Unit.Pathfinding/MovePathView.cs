@@ -84,20 +84,20 @@ public class MovePathView : MonoBehaviour
 
 	private void LoadTileAssets()
 	{
-		tileAssets.Add("View/Tiles/Feedbacks/Movement/MovePath/Move Path Start Left", ResourcePooler.LoadOnce<TileBase>("View/Tiles/Feedbacks/Movement/MovePath/Move Path Start Left", false));
-		tileAssets.Add("View/Tiles/Feedbacks/Movement/MovePath/Move Path Start Right", ResourcePooler.LoadOnce<TileBase>("View/Tiles/Feedbacks/Movement/MovePath/Move Path Start Right", false));
-		tileAssets.Add("View/Tiles/Feedbacks/Movement/MovePath/Move Path Start Down", ResourcePooler.LoadOnce<TileBase>("View/Tiles/Feedbacks/Movement/MovePath/Move Path Start Down", false));
-		tileAssets.Add("View/Tiles/Feedbacks/Movement/MovePath/Move Path Start Up", ResourcePooler.LoadOnce<TileBase>("View/Tiles/Feedbacks/Movement/MovePath/Move Path Start Up", false));
-		tileAssets.Add("View/Tiles/Feedbacks/Movement/MovePath/Move Path Arrow Left", ResourcePooler.LoadOnce<TileBase>("View/Tiles/Feedbacks/Movement/MovePath/Move Path Arrow Left", false));
-		tileAssets.Add("View/Tiles/Feedbacks/Movement/MovePath/Move Path Arrow Right", ResourcePooler.LoadOnce<TileBase>("View/Tiles/Feedbacks/Movement/MovePath/Move Path Arrow Right", false));
-		tileAssets.Add("View/Tiles/Feedbacks/Movement/MovePath/Move Path Arrow Down", ResourcePooler.LoadOnce<TileBase>("View/Tiles/Feedbacks/Movement/MovePath/Move Path Arrow Down", false));
-		tileAssets.Add("View/Tiles/Feedbacks/Movement/MovePath/Move Path Arrow Up", ResourcePooler.LoadOnce<TileBase>("View/Tiles/Feedbacks/Movement/MovePath/Move Path Arrow Up", false));
-		tileAssets.Add("View/Tiles/Feedbacks/Movement/MovePath/Move Path Horizontal", ResourcePooler.LoadOnce<TileBase>("View/Tiles/Feedbacks/Movement/MovePath/Move Path Horizontal", false));
-		tileAssets.Add("View/Tiles/Feedbacks/Movement/MovePath/Move Path Vertical", ResourcePooler.LoadOnce<TileBase>("View/Tiles/Feedbacks/Movement/MovePath/Move Path Vertical", false));
-		tileAssets.Add("View/Tiles/Feedbacks/Movement/MovePath/Move Path Angle Up Left", ResourcePooler.LoadOnce<TileBase>("View/Tiles/Feedbacks/Movement/MovePath/Move Path Angle Up Left", false));
-		tileAssets.Add("View/Tiles/Feedbacks/Movement/MovePath/Move Path Angle Up Right", ResourcePooler.LoadOnce<TileBase>("View/Tiles/Feedbacks/Movement/MovePath/Move Path Angle Up Right", false));
-		tileAssets.Add("View/Tiles/Feedbacks/Movement/MovePath/Move Path Angle Down Left", ResourcePooler.LoadOnce<TileBase>("View/Tiles/Feedbacks/Movement/MovePath/Move Path Angle Down Left", false));
-		tileAssets.Add("View/Tiles/Feedbacks/Movement/MovePath/Move Path Angle Down Right", ResourcePooler.LoadOnce<TileBase>("View/Tiles/Feedbacks/Movement/MovePath/Move Path Angle Down Right", false));
+		tileAssets.Add("View/Tiles/Feedbacks/Movement/MovePath/Move Path Start Left", ResourcePooler.LoadOnce<TileBase>("View/Tiles/Feedbacks/Movement/MovePath/Move Path Start Left", failSilently: false));
+		tileAssets.Add("View/Tiles/Feedbacks/Movement/MovePath/Move Path Start Right", ResourcePooler.LoadOnce<TileBase>("View/Tiles/Feedbacks/Movement/MovePath/Move Path Start Right", failSilently: false));
+		tileAssets.Add("View/Tiles/Feedbacks/Movement/MovePath/Move Path Start Down", ResourcePooler.LoadOnce<TileBase>("View/Tiles/Feedbacks/Movement/MovePath/Move Path Start Down", failSilently: false));
+		tileAssets.Add("View/Tiles/Feedbacks/Movement/MovePath/Move Path Start Up", ResourcePooler.LoadOnce<TileBase>("View/Tiles/Feedbacks/Movement/MovePath/Move Path Start Up", failSilently: false));
+		tileAssets.Add("View/Tiles/Feedbacks/Movement/MovePath/Move Path Arrow Left", ResourcePooler.LoadOnce<TileBase>("View/Tiles/Feedbacks/Movement/MovePath/Move Path Arrow Left", failSilently: false));
+		tileAssets.Add("View/Tiles/Feedbacks/Movement/MovePath/Move Path Arrow Right", ResourcePooler.LoadOnce<TileBase>("View/Tiles/Feedbacks/Movement/MovePath/Move Path Arrow Right", failSilently: false));
+		tileAssets.Add("View/Tiles/Feedbacks/Movement/MovePath/Move Path Arrow Down", ResourcePooler.LoadOnce<TileBase>("View/Tiles/Feedbacks/Movement/MovePath/Move Path Arrow Down", failSilently: false));
+		tileAssets.Add("View/Tiles/Feedbacks/Movement/MovePath/Move Path Arrow Up", ResourcePooler.LoadOnce<TileBase>("View/Tiles/Feedbacks/Movement/MovePath/Move Path Arrow Up", failSilently: false));
+		tileAssets.Add("View/Tiles/Feedbacks/Movement/MovePath/Move Path Horizontal", ResourcePooler.LoadOnce<TileBase>("View/Tiles/Feedbacks/Movement/MovePath/Move Path Horizontal", failSilently: false));
+		tileAssets.Add("View/Tiles/Feedbacks/Movement/MovePath/Move Path Vertical", ResourcePooler.LoadOnce<TileBase>("View/Tiles/Feedbacks/Movement/MovePath/Move Path Vertical", failSilently: false));
+		tileAssets.Add("View/Tiles/Feedbacks/Movement/MovePath/Move Path Angle Up Left", ResourcePooler.LoadOnce<TileBase>("View/Tiles/Feedbacks/Movement/MovePath/Move Path Angle Up Left", failSilently: false));
+		tileAssets.Add("View/Tiles/Feedbacks/Movement/MovePath/Move Path Angle Up Right", ResourcePooler.LoadOnce<TileBase>("View/Tiles/Feedbacks/Movement/MovePath/Move Path Angle Up Right", failSilently: false));
+		tileAssets.Add("View/Tiles/Feedbacks/Movement/MovePath/Move Path Angle Down Left", ResourcePooler.LoadOnce<TileBase>("View/Tiles/Feedbacks/Movement/MovePath/Move Path Angle Down Left", failSilently: false));
+		tileAssets.Add("View/Tiles/Feedbacks/Movement/MovePath/Move Path Angle Down Right", ResourcePooler.LoadOnce<TileBase>("View/Tiles/Feedbacks/Movement/MovePath/Move Path Angle Down Right", failSilently: false));
 	}
 
 	private void RefreshMovePathState()

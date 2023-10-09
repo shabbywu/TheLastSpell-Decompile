@@ -29,7 +29,7 @@ public class UnitLevelUpPoint : ISerializable, IDeserializable
 
 	public UnitLevelUpPoint(SerializedLevelUpPoint levelUpPoint)
 	{
-		Deserialize((ISerializedData)(object)levelUpPoint);
+		Deserialize(levelUpPoint);
 	}
 
 	public void Deserialize(ISerializedData container = null, int saveVersion = -1)
@@ -41,7 +41,7 @@ public class UnitLevelUpPoint : ISerializable, IDeserializable
 
 	public ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedLevelUpPoint
+		return new SerializedLevelUpPoint
 		{
 			HasMainStatPoint = HasMainStatPoint,
 			HasSecondaryStatPoint = HasSecondaryStatPoint

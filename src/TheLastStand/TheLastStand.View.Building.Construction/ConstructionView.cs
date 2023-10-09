@@ -320,12 +320,6 @@ public class ConstructionView : TPSingleton<ConstructionView>
 
 	public void Init()
 	{
-		//IL_005e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0069: Expected O, but got Unknown
-		//IL_007a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0085: Expected O, but got Unknown
-		//IL_0096: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a1: Expected O, but got Unknown
 		//IL_00ae: Unknown result type (might be due to invalid IL or missing references)
 		//IL_00b8: Expected O, but got Unknown
 		//IL_00c5: Unknown result type (might be due to invalid IL or missing references)
@@ -351,9 +345,9 @@ public class ConstructionView : TPSingleton<ConstructionView>
 		canvas = ((Component)this).GetComponent<Canvas>();
 		((Behaviour)canvas).enabled = false;
 		TPSingleton<ResourceManager>.Instance.OnGoldChange += OnGoldChanged;
-		EventManager.AddListener(typeof(MaterialChangeEvent), new EventHandler(OnMaterialChanged), false);
-		EventManager.AddListener(typeof(BuildingConstructedEvent), new EventHandler(OnConstructionAvailabilityChanged), false);
-		EventManager.AddListener(typeof(BuildingDestroyedEvent), new EventHandler(OnConstructionAvailabilityChanged), false);
+		EventManager.AddListener(typeof(MaterialChangeEvent), OnMaterialChanged);
+		EventManager.AddListener(typeof(BuildingConstructedEvent), OnConstructionAvailabilityChanged);
+		EventManager.AddListener(typeof(BuildingDestroyedEvent), OnConstructionAvailabilityChanged);
 		destroyButton.Init(new UnityAction(OnDestroyToggleValueChanged));
 		repairButton.Init(new UnityAction(OnRepairToggleValueChanged));
 		structuresButton.Init(new UnityAction(OnStructuresToggleValueChanged));
@@ -541,21 +535,15 @@ public class ConstructionView : TPSingleton<ConstructionView>
 
 	private void OnDestroy()
 	{
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0045: Expected O, but got Unknown
-		//IL_0056: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0060: Expected O, but got Unknown
-		//IL_0071: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007b: Expected O, but got Unknown
 		if (TPSingleton<ResourceManager>.Exist())
 		{
 			TPSingleton<ResourceManager>.Instance.OnGoldChange -= OnGoldChanged;
 		}
 		if ((Object)(object)SingletonBehaviour<EventManager>.Instance != (Object)null)
 		{
-			EventManager.RemoveListener(typeof(MaterialChangeEvent), new EventHandler(OnMaterialChanged));
-			EventManager.RemoveListener(typeof(BuildingConstructedEvent), new EventHandler(OnConstructionAvailabilityChanged));
-			EventManager.RemoveListener(typeof(BuildingDestroyedEvent), new EventHandler(OnConstructionAvailabilityChanged));
+			EventManager.RemoveListener(typeof(MaterialChangeEvent), OnMaterialChanged);
+			EventManager.RemoveListener(typeof(BuildingConstructedEvent), OnConstructionAvailabilityChanged);
+			EventManager.RemoveListener(typeof(BuildingDestroyedEvent), OnConstructionAvailabilityChanged);
 		}
 	}
 

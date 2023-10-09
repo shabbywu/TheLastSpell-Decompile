@@ -73,7 +73,7 @@ public class PanicPanel : MonoBehaviour
 			{
 				movePanelSequence = TweenSettingsExtensions.SetId<Sequence>(DOTween.Sequence(), "MovePanel");
 			}
-			TweenSettingsExtensions.Append(movePanelSequence, (Tween)(object)TweenSettingsExtensions.OnComplete<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenExtensions.SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosY(rectTransform, closedPanelPosY, closePanelTweenDuration, true), "ClosePanicPanel", (Component)(object)this), (Ease)26), (TweenCallback)delegate
+			TweenSettingsExtensions.Append(movePanelSequence, (Tween)(object)TweenSettingsExtensions.OnComplete<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosY(rectTransform, closedPanelPosY, closePanelTweenDuration, true).SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>("ClosePanicPanel", (Component)(object)this), (Ease)26), (TweenCallback)delegate
 			{
 				((Component)this).gameObject.SetActive(false);
 			}));
@@ -105,7 +105,7 @@ public class PanicPanel : MonoBehaviour
 			{
 				movePanelSequence = TweenSettingsExtensions.SetId<Sequence>(DOTween.Sequence(), "MovePanel");
 			}
-			TweenSettingsExtensions.Append(movePanelSequence, (Tween)(object)TweenSettingsExtensions.OnComplete<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenExtensions.SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosY(rectTransform, openedPanelPosY, openPanelTweenDuration, true), "OpenPanicPanel", (Component)(object)this), (Ease)30), (TweenCallback)delegate
+			TweenSettingsExtensions.Append(movePanelSequence, (Tween)(object)TweenSettingsExtensions.OnComplete<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosY(rectTransform, openedPanelPosY, openPanelTweenDuration, true).SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>("OpenPanicPanel", (Component)(object)this), (Ease)30), (TweenCallback)delegate
 			{
 				((Component)panicLevelsPanelTransform).gameObject.SetActive(true);
 			}));
@@ -128,10 +128,10 @@ public class PanicPanel : MonoBehaviour
 			{
 				refreshPanicPreviewGaugeSequence = TweenSettingsExtensions.SetId<Sequence>(DOTween.Sequence(), "RefreshPanicPreviewGauge");
 			}
-			TweenSettingsExtensions.Append(refreshPanicPreviewGaugeSequence, (Tween)(object)TweenExtensions.SetFullId<TweenerCore<float, float, FloatOptions>>(DOTween.To((DOGetter<float>)(() => panicPreviewGaugeSlider.value), (DOSetter<float>)delegate(float x)
+			TweenSettingsExtensions.Append(refreshPanicPreviewGaugeSequence, (Tween)(object)DOTween.To((DOGetter<float>)(() => panicPreviewGaugeSlider.value), (DOSetter<float>)delegate(float x)
 			{
 				panicPreviewGaugeSlider.value = x;
-			}, targetPanicPreviewGaugeSliderValue, panicGaugeTweenDuration), "RefreshPanicPreviewGauge", (Component)(object)this));
+			}, targetPanicPreviewGaugeSliderValue, panicGaugeTweenDuration).SetFullId<TweenerCore<float, float, FloatOptions>>("RefreshPanicPreviewGauge", (Component)(object)this));
 		}
 		RefreshPanicLevels(panic);
 	}
@@ -174,10 +174,10 @@ public class PanicPanel : MonoBehaviour
 			{
 				refreshPanicGaugeSequence = TweenSettingsExtensions.SetId<Sequence>(DOTween.Sequence(), "RefreshPanicGauge");
 			}
-			TweenSettingsExtensions.Append(refreshPanicGaugeSequence, (Tween)(object)TweenExtensions.SetFullId<TweenerCore<float, float, FloatOptions>>(DOTween.To((DOGetter<float>)(() => panicGaugeSlider.value), (DOSetter<float>)delegate(float value)
+			TweenSettingsExtensions.Append(refreshPanicGaugeSequence, (Tween)(object)DOTween.To((DOGetter<float>)(() => panicGaugeSlider.value), (DOSetter<float>)delegate(float value)
 			{
 				panicGaugeSlider.value = value;
-			}, targetPanicGaugeSliderValue, panicGaugeTweenDuration), "RefreshPanicGauge", (Component)(object)this));
+			}, targetPanicGaugeSliderValue, panicGaugeTweenDuration).SetFullId<TweenerCore<float, float, FloatOptions>>("RefreshPanicGauge", (Component)(object)this));
 			RefreshPanicLevels(panic);
 		}
 	}

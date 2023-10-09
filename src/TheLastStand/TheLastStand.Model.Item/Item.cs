@@ -11,7 +11,6 @@ using TheLastStand.Database.Unit;
 using TheLastStand.Definition.Item;
 using TheLastStand.Definition.Unit;
 using TheLastStand.Framework.Database;
-using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Framework.Extensions;
 using TheLastStand.Framework.Serialization;
 using TheLastStand.Manager;
@@ -79,7 +78,7 @@ public class Item : ISkillContainer, ISerializable, IDeserializable
 	{
 		get
 		{
-			int num = Mathf.RoundToInt(ItemDatabase.ItemPriceEquation.EvalToFloat((InterpreterContext)(object)itemInterpreterContext));
+			int num = Mathf.RoundToInt(ItemDatabase.ItemPriceEquation.EvalToFloat(itemInterpreterContext));
 			int num2 = 0;
 			num2 += ResourceManager.ComputeExtraPercentageForCost(ResourceManager.E_PriceModifierType.Items);
 			return num + Mathf.RoundToInt((float)(num * num2) / 100f);
@@ -108,7 +107,7 @@ public class Item : ISkillContainer, ISerializable, IDeserializable
 
 	public string RarityName => Localizer.Get(string.Format("{0}{1}", "RarityName_", Rarity));
 
-	public int DefaultSellingPrice => Mathf.RoundToInt(ItemDatabase.ItemPriceEquation.EvalToFloat((InterpreterContext)(object)itemInterpreterContext));
+	public int DefaultSellingPrice => Mathf.RoundToInt(ItemDatabase.ItemPriceEquation.EvalToFloat(itemInterpreterContext));
 
 	public int SellingPrice => Mathf.FloorToInt((float)DefaultSellingPrice * TPSingleton<BuildingManager>.Instance.Shop.SellingMultiplier / 100f);
 
@@ -122,7 +121,7 @@ public class Item : ISkillContainer, ISerializable, IDeserializable
 		ItemController = itemController;
 		ItemSlot = itemSlot;
 		itemInterpreterContext = new ItemInterpreterContext(this);
-		Deserialize((ISerializedData)(object)container);
+		Deserialize(container);
 	}
 
 	public Item(ItemDefinition itemDefinition, ItemController itemController)
@@ -138,18 +137,18 @@ public class Item : ISkillContainer, ISerializable, IDeserializable
 		dictionary.Add(UnitStatDefinition.E_Stat.Resistance, Resistance);
 		if (MainStatBonusByLevel != null)
 		{
-			DictionaryExtensions.AddValueOrCreateKey<UnitStatDefinition.E_Stat, float>(dictionary, MainStatBonusByLevel.Item1, MainStatBonusByLevel.Item2, (Func<float, float, float>)((float a, float b) => a + b));
+			dictionary.AddValueOrCreateKey(MainStatBonusByLevel.Item1, MainStatBonusByLevel.Item2, (float a, float b) => a + b);
 		}
 		if (BaseStatBonuses != null)
 		{
 			foreach (KeyValuePair<UnitStatDefinition.E_Stat, float> baseStatBonuse in BaseStatBonuses)
 			{
-				DictionaryExtensions.AddValueOrCreateKey<UnitStatDefinition.E_Stat, float>(dictionary, baseStatBonuse.Key, baseStatBonuse.Value, (Func<float, float, float>)((float a, float b) => a + b));
+				dictionary.AddValueOrCreateKey(baseStatBonuse.Key, baseStatBonuse.Value, (float a, float b) => a + b);
 			}
 		}
 		foreach (KeyValuePair<UnitStatDefinition.E_Stat, float> item in ItemController.MergeAllAffixes())
 		{
-			DictionaryExtensions.AddValueOrCreateKey<UnitStatDefinition.E_Stat, float>(dictionary, item.Key, item.Value, (Func<float, float, float>)((float a, float b) => a + b));
+			dictionary.AddValueOrCreateKey(item.Key, item.Value, (float a, float b) => a + b);
 		}
 		return dictionary;
 	}
@@ -215,7 +214,7 @@ public class Item : ISkillContainer, ISerializable, IDeserializable
 		}
 		catch (KeyNotFoundException)
 		{
-			throw new MissingAssetException<ItemDatabase>(serializedItem.Id);
+			throw new Database<ItemDatabase>.MissingAssetException(serializedItem.Id);
 		}
 		Level = serializedItem.Level;
 		Resistance = serializedItem.Resistance;
@@ -238,14 +237,13 @@ public class Item : ISkillContainer, ISerializable, IDeserializable
 		{
 			return;
 		}
-		SerializedSkill container = default(SerializedSkill);
 		foreach (KeyValuePair<string, int> skillByLevel in ItemDefinition.SkillsByLevel[Level])
 		{
 			if (SkillDatabase.SkillDefinitions.TryGetValue(skillByLevel.Key, out var value))
 			{
-				if (ListExtensions.TryFind<SerializedSkill>(skills, (Predicate<SerializedSkill>)((SerializedSkill s) => s.Id == skillByLevel.Key), ref container))
+				if (skills.TryFind((SerializedSkill s) => s.Id == skillByLevel.Key, out var value2))
 				{
-					Skills.Add(new SkillController(container, this).Skill);
+					Skills.Add(new SkillController(value2, this).Skill);
 					continue;
 				}
 				TheLastStand.Model.Skill.Skill skill = new SkillController(value, this, skillByLevel.Value).Skill;
@@ -257,7 +255,7 @@ public class Item : ISkillContainer, ISerializable, IDeserializable
 
 	public ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedItem
+		return new SerializedItem
 		{
 			Id = ItemDefinition.Id,
 			Level = Level,

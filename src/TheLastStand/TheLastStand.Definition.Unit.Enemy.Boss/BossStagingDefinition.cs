@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Xml.Linq;
 using DG.Tweening;
@@ -8,7 +7,7 @@ using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Unit.Enemy.Boss;
 
-public class BossStagingDefinition : Definition
+public class BossStagingDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public Node TotalDuration { get; private set; }
 
@@ -19,7 +18,7 @@ public class BossStagingDefinition : Definition
 	public float PauseDuration { get; private set; }
 
 	public BossStagingDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
@@ -28,7 +27,7 @@ public class BossStagingDefinition : Definition
 		//IL_0077: Unknown result type (might be due to invalid IL or missing references)
 		XContainer obj = ((container is XElement) ? container : null);
 		XElement val = obj.Element(XName.op_Implicit("Duration"));
-		TotalDuration = Parser.Parse(val.Value, (Dictionary<string, string>)null);
+		TotalDuration = Parser.Parse(val.Value);
 		if (float.TryParse(obj.Element(XName.op_Implicit("PauseDuration")).Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var result))
 		{
 			PauseDuration = result;

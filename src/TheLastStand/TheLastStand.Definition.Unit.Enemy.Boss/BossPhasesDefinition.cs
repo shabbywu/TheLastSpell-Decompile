@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.Enemy.Boss;
 
-public class BossPhasesDefinition : Definition
+public class BossPhasesDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public Dictionary<string, BossPhaseDefinition> BossPhaseDefinitions { get; } = new Dictionary<string, BossPhaseDefinition>();
 
@@ -14,7 +14,7 @@ public class BossPhasesDefinition : Definition
 	public string Id { get; private set; }
 
 	public BossPhasesDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
@@ -22,7 +22,7 @@ public class BossPhasesDefinition : Definition
 	{
 		XElement val = (XElement)(object)((container is XElement) ? container : null);
 		XAttribute val2 = val.Attribute(XName.op_Implicit("Id"));
-		if (XDocumentExtensions.IsNullOrEmpty(val2))
+		if (val2.IsNullOrEmpty())
 		{
 			Debug.LogError((object)"BossPhasesDefinition has no Id!");
 			return;

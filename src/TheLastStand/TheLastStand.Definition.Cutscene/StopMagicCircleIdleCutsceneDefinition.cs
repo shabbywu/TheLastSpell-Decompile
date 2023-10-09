@@ -1,10 +1,9 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Cutscene;
 
-public class StopMagicCircleIdleCutsceneDefinition : Definition, ICutsceneDefinition
+public class StopMagicCircleIdleCutsceneDefinition : TheLastStand.Framework.Serialization.Definition, ICutsceneDefinition
 {
 	public static class Constants
 	{
@@ -12,7 +11,7 @@ public class StopMagicCircleIdleCutsceneDefinition : Definition, ICutsceneDefini
 	}
 
 	public StopMagicCircleIdleCutsceneDefinition(XContainer xContainer)
-		: base(xContainer, (Dictionary<string, string>)null)
+		: base(xContainer)
 	{
 	}
 

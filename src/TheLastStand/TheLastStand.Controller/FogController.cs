@@ -8,7 +8,6 @@ using TheLastStand.Controller.TileMap;
 using TheLastStand.DRM.Achievements;
 using TheLastStand.Database.Fog;
 using TheLastStand.Definition.Hazard;
-using TheLastStand.Framework.Automaton;
 using TheLastStand.Manager;
 using TheLastStand.Manager.Achievements;
 using TheLastStand.Manager.Building;
@@ -292,7 +291,7 @@ public static class FogController
 	public static void SetFogTilesAndRecomputeSpawnPoints(bool instant = false)
 	{
 		SetFogTiles(instant);
-		if (((StateMachine)ApplicationManager.Application).State.GetName() != "LevelEditor")
+		if (ApplicationManager.Application.State.GetName() != "LevelEditor")
 		{
 			SpawnWaveManager.CurrentSpawnWave?.SpawnWaveController.RecomputeSpawnPoints();
 		}

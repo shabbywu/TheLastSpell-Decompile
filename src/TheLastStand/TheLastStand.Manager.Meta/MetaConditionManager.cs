@@ -14,7 +14,6 @@ using TheLastStand.Definition.Item;
 using TheLastStand.Definition.Meta;
 using TheLastStand.Definition.Skill.SkillAction;
 using TheLastStand.Definition.Unit;
-using TheLastStand.Framework.Automaton;
 using TheLastStand.Manager.Building;
 using TheLastStand.Manager.Unit;
 using TheLastStand.Manager.WorldMap;
@@ -70,7 +69,7 @@ public class MetaConditionManager : Manager<MetaConditionManager>
 	{
 		get
 		{
-			if (!(((StateMachine)ApplicationManager.Application).State.GetName() != "Game"))
+			if (!(ApplicationManager.Application.State.GetName() != "Game"))
 			{
 				return !TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.IsTutorialMap;
 			}
@@ -124,7 +123,7 @@ public class MetaConditionManager : Manager<MetaConditionManager>
 			{
 				MetaConditionDefinition = metaConditionController.MetaCondition.MetaConditionDefinition
 			};
-			condition.Deserialize((ISerializedData)(object)serializedCondition);
+			condition.Deserialize(serializedCondition);
 			if (condition.Id == null)
 			{
 				throw new Exception($"Invalid Id on serialized condition {condition} (non-loaded or non-existing condition), breaking save loading.");
@@ -244,12 +243,12 @@ public class MetaConditionManager : Manager<MetaConditionManager>
 		serializedMetaConditions.Conditions.AddRange(from o in metaConditionControllers
 			where !TPSingleton<MetaUpgradesManager>.Instance.ActivatedUpgrades.Contains(o.MetaCondition.MetaUpgradeController.MetaUpgrade)
 			select o.MetaCondition.Serialize() as SerializedMetaCondition);
-		return (ISerializedData)(object)serializedMetaConditions;
+		return serializedMetaConditions;
 	}
 
 	public ISerializedData SerializeToGameSave()
 	{
-		return (ISerializedData)(object)new SerializedMetaConditionsContext
+		return new SerializedMetaConditionsContext
 		{
 			Context = runContext
 		};

@@ -467,17 +467,17 @@ public sealed class AchievementManager : Manager<AchievementManager>
 		{
 			crit20EnemiesTurnAchievementUnlocker = new AchievementUnlocker(AchievementContainer.ACH_CRIT_20_ENEMIES_TURN, 20);
 		}
-		crit20EnemiesTurnAchievementUnlocker.Deserialize((ISerializedData)(object)serializedAchievements?.Crit20EnemiesTurnAchievementUnlocker);
+		crit20EnemiesTurnAchievementUnlocker.Deserialize(serializedAchievements?.Crit20EnemiesTurnAchievementUnlocker);
 		if (stun50EnemiesNightAchievementUnlocker == null)
 		{
 			stun50EnemiesNightAchievementUnlocker = new AchievementUnlocker(AchievementContainer.ACH_STUN_50_ENEMIES_NIGHT, 50);
 		}
-		stun50EnemiesNightAchievementUnlocker.Deserialize((ISerializedData)(object)serializedAchievements?.Stun50EnemiesNightAchievementUnlocker);
+		stun50EnemiesNightAchievementUnlocker.Deserialize(serializedAchievements?.Stun50EnemiesNightAchievementUnlocker);
 		if (perfectWinAchievementUnlocker == null)
 		{
 			perfectWinAchievementUnlocker = new AchievementUnlocker(AchievementContainer.ACH_PERFECT_WIN, 14);
 		}
-		perfectWinAchievementUnlocker.Deserialize((ISerializedData)(object)serializedAchievements?.PerfectWinAchievementUnlocker);
+		perfectWinAchievementUnlocker.Deserialize(serializedAchievements?.PerfectWinAchievementUnlocker);
 	}
 
 	public SerializedAchievements Serialize()

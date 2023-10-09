@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using TPLib;
 using TPLib.Log;
 using TheLastStand.Controller.Item;
-using TheLastStand.Database;
 using TheLastStand.Framework.Database;
 using TheLastStand.Framework.Serialization;
 using TheLastStand.Manager.Item;
@@ -46,7 +45,7 @@ public class Inventory : ISerializable, IDeserializable
 					InventorySlots[i].Item = new ItemController(list[i], InventorySlots[i]).Item;
 					InventorySlots[i].IsNewItem = true;
 				}
-				catch (MissingAssetException<ItemDatabase> arg)
+				catch (Database<TheLastStand.Database.ItemDatabase>.MissingAssetException arg)
 				{
 					((CLogger<InventoryManager>)TPSingleton<InventoryManager>.Instance).LogError((object)$"{arg}\nTried to load non existing item definition, this item will be skipped.", (CLogLevel)0, true, true);
 				}
@@ -65,6 +64,6 @@ public class Inventory : ISerializable, IDeserializable
 				serializedItems.Add(item);
 			}
 		}
-		return (ISerializedData)(object)serializedItems;
+		return serializedItems;
 	}
 }

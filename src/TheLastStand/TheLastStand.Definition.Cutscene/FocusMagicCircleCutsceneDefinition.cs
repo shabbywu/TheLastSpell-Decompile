@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TPLib.Log;
 using TheLastStand.Framework.Serialization;
@@ -6,7 +5,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Cutscene;
 
-public class FocusMagicCircleCutsceneDefinition : Definition, ICutsceneDefinition
+public class FocusMagicCircleCutsceneDefinition : TheLastStand.Framework.Serialization.Definition, ICutsceneDefinition
 {
 	public static class Constants
 	{
@@ -17,7 +16,7 @@ public class FocusMagicCircleCutsceneDefinition : Definition, ICutsceneDefinitio
 
 
 	public FocusMagicCircleCutsceneDefinition(XContainer xContainer)
-		: base(xContainer, (Dictionary<string, string>)null)
+		: base(xContainer)
 	{
 	}
 

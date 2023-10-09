@@ -1,13 +1,12 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.AnimatedCutscene;
 
-public abstract class AnimatedCutsceneSlideItemDefinition : Definition
+public abstract class AnimatedCutsceneSlideItemDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public AnimatedCutsceneSlideItemDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

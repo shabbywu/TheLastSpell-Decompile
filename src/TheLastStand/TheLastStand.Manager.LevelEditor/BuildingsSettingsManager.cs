@@ -29,12 +29,10 @@ public class BuildingsSettingsManager : Manager<BuildingsSettingsManager>
 
 	protected override void Awake()
 	{
-		//IL_004d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0058: Expected O, but got Unknown
 		base.Awake();
 		TPSingleton<LevelEditorManager>.Instance.LevelEditorStateChanged += OnLevelEditorStateChanged;
 		PlaceBuildingCommand.BuildingPlaced = (PlaceBuildingCommand.BuildingPlacedEventHandler)Delegate.Combine(PlaceBuildingCommand.BuildingPlaced, new PlaceBuildingCommand.BuildingPlacedEventHandler(OnBuildingPlaced));
-		EventManager.AddListener(typeof(BuildingDestroyedEvent), new EventHandler(OnBuildingDestroyed), false);
+		EventManager.AddListener(typeof(BuildingDestroyedEvent), OnBuildingDestroyed);
 	}
 
 	protected override void OnDestroy()

@@ -6,14 +6,14 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.Enemy;
 
-public class EnemySkillSoundDefinition : Definition
+public class EnemySkillSoundDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public string EnemyTemplateDefinitionId { get; private set; }
 
 	public Dictionary<Vector2Int, List<string>> SoundsPerNumberOfEnemies { get; private set; }
 
 	public EnemySkillSoundDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

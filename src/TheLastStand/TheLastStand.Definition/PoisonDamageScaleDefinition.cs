@@ -9,12 +9,12 @@ using UnityEngine;
 
 namespace TheLastStand.Definition;
 
-public class PoisonDamageScaleDefinition : Definition
+public class PoisonDamageScaleDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public Dictionary<int, float> MultipliersPerLevel { get; private set; }
 
 	public PoisonDamageScaleDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

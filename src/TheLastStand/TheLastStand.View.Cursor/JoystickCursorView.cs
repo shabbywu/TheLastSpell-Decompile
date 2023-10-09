@@ -45,7 +45,7 @@ public class JoystickCursorView : MonoBehaviour
 				TweenExtensions.Kill(obj, false);
 			}
 			hideTween = null;
-			spriteRenderer.color = ColorExtensions.WithA(spriteRenderer.color, 1f);
+			spriteRenderer.color = spriteRenderer.color.WithA(1f);
 		}
 		else if (hideTween == null && spriteRenderer.color.a > 0f)
 		{

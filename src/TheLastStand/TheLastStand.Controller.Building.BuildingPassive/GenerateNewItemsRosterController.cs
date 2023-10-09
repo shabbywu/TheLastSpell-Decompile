@@ -56,7 +56,7 @@ public class GenerateNewItemsRosterController : BuildingPassiveEffectController
 					}
 				}
 			}
-			int num = count2.EvalToInt((InterpreterContext)(object)new ItemInterpreterContext());
+			int num = count2.EvalToInt(new ItemInterpreterContext());
 			for (int k = 0; k < num; k++)
 			{
 				int num2 = CreateRosterItemControllers[i].CreateRosterItem.GenerationProbabilitiesTree.GenerateLevel();

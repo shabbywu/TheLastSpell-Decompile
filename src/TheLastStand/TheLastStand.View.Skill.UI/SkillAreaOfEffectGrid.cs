@@ -101,7 +101,7 @@ public class SkillAreaOfEffectGrid : MonoBehaviour
 				if ((Object)(object)val2 != (Object)null)
 				{
 					((Vector2)(ref val3))._002Ector(value.GridCenter.x + ((float)i - val.x) * (float)value.CellSize, value.GridCenter.y - ((float)j - val.y) * (float)value.CellSize);
-					Image obj = (usePooler ? ObjectPooler.GetPooledComponent<Image>("SkillAoeCellPrefab", cellPrefab, ((Component)this).transform, false) : Object.Instantiate<Image>(cellPrefab, ((Component)this).transform));
+					Image obj = (usePooler ? ObjectPooler.GetPooledComponent<Image>("SkillAoeCellPrefab", cellPrefab, ((Component)this).transform, dontSetParent: false) : Object.Instantiate<Image>(cellPrefab, ((Component)this).transform));
 					((Component)obj).transform.localPosition = Vector2.op_Implicit(val3);
 					obj.sprite = val2;
 				}

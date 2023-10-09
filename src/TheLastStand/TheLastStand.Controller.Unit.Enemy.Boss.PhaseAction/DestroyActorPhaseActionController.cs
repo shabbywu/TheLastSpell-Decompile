@@ -36,8 +36,7 @@ public class DestroyActorPhaseActionController : ABossPhaseActionController
 			ACameraView.AllowUserZoom = false;
 			ACameraView.Zoom(zoomIn: true);
 		}
-		BossPhase currentBossPhase = TPSingleton<BossManager>.Instance.CurrentBossPhase;
-		if (((currentBossPhase != null) ? DictionaryExtensions.GetValueOrDefault<string, ActorDefinition>(currentBossPhase.BossPhaseDefinition.ActorDefinitions, actorId) : null)?.GetCorrespondingDefinition() is BuildingDefinition buildingDefinition && (buildingDefinition.BlueprintModuleDefinition.Category & BuildingDefinition.E_BuildingCategory.LitBrazier) != 0)
+		if ((TPSingleton<BossManager>.Instance.CurrentBossPhase?.BossPhaseDefinition.ActorDefinitions.GetValueOrDefault(actorId))?.GetCorrespondingDefinition() is BuildingDefinition buildingDefinition && (buildingDefinition.BlueprintModuleDefinition.Category & BuildingDefinition.E_BuildingCategory.LitBrazier) != 0)
 		{
 			TPSingleton<BuildingManager>.Instance.ExtinguishBraziers();
 		}

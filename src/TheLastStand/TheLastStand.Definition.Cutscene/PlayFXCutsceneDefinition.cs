@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Cutscene;
 
-public class PlayFXCutsceneDefinition : Definition, ICutsceneDefinition
+public class PlayFXCutsceneDefinition : TheLastStand.Framework.Serialization.Definition, ICutsceneDefinition
 {
 	public static class Constants
 	{

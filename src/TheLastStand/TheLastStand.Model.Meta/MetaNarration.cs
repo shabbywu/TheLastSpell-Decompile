@@ -49,7 +49,7 @@ public class MetaNarration : ISerializable, IDeserializable
 	{
 		MetaNarrationDefinition = definition;
 		MetaNarrationController = controller;
-		Deserialize((ISerializedData)(object)serializedNarration);
+		Deserialize(serializedNarration);
 	}
 
 	public MetaNarration(MetaNarrationDefinition definition, MetaNarrationController controller)
@@ -79,7 +79,7 @@ public class MetaNarration : ISerializable, IDeserializable
 
 	public ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedNarration
+		return new SerializedNarration
 		{
 			AlreadyUsedReplicasIds = AlreadyUsedReplicasIds,
 			DialogueGreetingsIdsLeft = DialogueGreetingsIdsLeft,

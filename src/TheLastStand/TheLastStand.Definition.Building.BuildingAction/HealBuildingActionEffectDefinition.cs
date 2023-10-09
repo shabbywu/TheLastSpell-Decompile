@@ -1,7 +1,6 @@
 using System;
 using System.Xml.Linq;
 using TPLib.Log;
-using TheLastStand.Framework.Serialization;
 using UnityEngine;
 
 namespace TheLastStand.Definition.Building.BuildingAction;
@@ -34,7 +33,7 @@ public class HealBuildingActionEffectDefinition : BuildingActionEffectDefinition
 			{
 				if (!int.TryParse(val2.Value, out var result))
 				{
-					CLoggerManager.Log((object)("Heal Amount " + ((Definition)this).HasAnInvalid("int", val2.Value)), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+					CLoggerManager.Log((object)("Heal Amount " + HasAnInvalid("int", val2.Value)), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 					return;
 				}
 				Amount = result;
@@ -43,7 +42,7 @@ public class HealBuildingActionEffectDefinition : BuildingActionEffectDefinition
 				{
 					if (!Enum.TryParse<E_BuildingActionTargeting>(val3.Value, out var result2))
 					{
-						CLoggerManager.Log((object)("Heal Target " + ((Definition)this).HasAnInvalid("E_Target", val3.Value)), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+						CLoggerManager.Log((object)("Heal Target " + HasAnInvalid("E_Target", val3.Value)), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 					}
 					else
 					{

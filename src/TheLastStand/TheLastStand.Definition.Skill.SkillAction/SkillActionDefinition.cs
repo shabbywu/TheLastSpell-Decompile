@@ -8,14 +8,14 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Skill.SkillAction;
 
-public abstract class SkillActionDefinition : Definition
+public abstract class SkillActionDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public bool ApplyOnCaster { get; set; }
 
 	public Dictionary<string, List<SkillEffectDefinition>> SkillEffectDefinitions { get; private set; }
 
 	public SkillActionDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
@@ -132,7 +132,7 @@ public abstract class SkillActionDefinition : Definition
 	{
 		XContainer obj = ((container is XElement) ? container : null);
 		XAttribute val = ((XElement)obj).Attribute(XName.op_Implicit("ApplyOnCaster"));
-		if (!XDocumentExtensions.IsNullOrEmpty(val))
+		if (!val.IsNullOrEmpty())
 		{
 			if (bool.TryParse(val.Value, out var result))
 			{

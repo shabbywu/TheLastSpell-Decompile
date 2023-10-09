@@ -483,16 +483,16 @@ public class ModifiersLayoutView : MonoBehaviour
 		}
 		for (int k = 0; k < list.Count; k++)
 		{
-			Selectable val = list[k];
-			SelectableExtensions.SetMode(val, (Mode)4);
-			SelectableExtensions.ClearNavigation(val);
+			Selectable selectable = list[k];
+			selectable.SetMode((Mode)4);
+			selectable.ClearNavigation();
 			if (k > 0)
 			{
-				SelectableExtensions.SetSelectOnLeft(val, list[k - 1]);
+				selectable.SetSelectOnLeft(list[k - 1]);
 			}
 			if (k < list.Count - 1)
 			{
-				SelectableExtensions.SetSelectOnRight(val, list[k + 1]);
+				selectable.SetSelectOnRight(list[k + 1]);
 			}
 		}
 		JoystickTarget.NavigationEnabled = IsDisplayed();

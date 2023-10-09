@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TPLib.Log;
 using TheLastStand.Database;
@@ -8,7 +7,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition;
 
-public class ResourceDefinition : Definition
+public class ResourceDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public static class Constants
 	{
@@ -29,7 +28,7 @@ public class ResourceDefinition : Definition
 	public int Materials { get; private set; }
 
 	public ResourceDefinition(XContainer xContainer)
-		: base(xContainer, (Dictionary<string, string>)null)
+		: base(xContainer)
 	{
 	}
 
@@ -38,7 +37,7 @@ public class ResourceDefinition : Definition
 		XElement val = (XElement)(object)((xContainer is XElement) ? xContainer : null);
 		ResourceDefinition resourceDefinition = null;
 		XAttribute val2 = val.Attribute(XName.op_Implicit("Id"));
-		if (XDocumentExtensions.IsNullOrEmpty(val2))
+		if (val2.IsNullOrEmpty())
 		{
 			CLoggerManager.Log((object)"A ResourceDefinition must have an Id attribute.", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 			return;
@@ -50,7 +49,7 @@ public class ResourceDefinition : Definition
 			resourceDefinition = ResourceDatabase.ResourceDefinitions[val3.Value];
 		}
 		XElement val4 = ((XContainer)val).Element(XName.op_Implicit("Gold"));
-		if (XDocumentExtensions.IsNullOrEmpty(val4))
+		if (val4.IsNullOrEmpty())
 		{
 			if (resourceDefinition == null)
 			{
@@ -70,7 +69,7 @@ public class ResourceDefinition : Definition
 		}
 		XElement val5 = ((XContainer)val).Element(XName.op_Implicit("Materials"));
 		int result2;
-		if (XDocumentExtensions.IsNullOrEmpty(val5))
+		if (val5.IsNullOrEmpty())
 		{
 			if (resourceDefinition == null)
 			{

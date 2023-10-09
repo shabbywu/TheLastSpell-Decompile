@@ -17,7 +17,7 @@ public class GlyphDatabase : Database<GlyphDatabase>
 
 	public override void Deserialize(XContainer container = null)
 	{
-		Queue<XElement> queue = base.GatherElements((IEnumerable<TextAsset>)glyphDefinitions, (IEnumerable<TextAsset>)null, "GlyphDefinition", (string)null);
+		Queue<XElement> queue = GatherElements(glyphDefinitions, null, "GlyphDefinition");
 		GlyphDefinitions = new Dictionary<string, GlyphDefinition>();
 		while (queue.Count > 0)
 		{

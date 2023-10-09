@@ -17,7 +17,7 @@ public class BuildingUpgradeIcon : OraculumUnlockIcon
 
 	public void Init(BuildingUpgradeDefinition buildingUpgradeDefinition, MetaUpgradeLineView containerUpgrade, BuildingUpgradeTooltip buildingUpgradeTooltip = null, bool isLightShop = false)
 	{
-		icon.sprite = ResourcePooler<Sprite>.LoadOnce("View/Sprites/UI/Buildings/Upgrades/" + buildingUpgradeDefinition.Id + "0", false);
+		icon.sprite = ResourcePooler<Sprite>.LoadOnce("View/Sprites/UI/Buildings/Upgrades/" + buildingUpgradeDefinition.Id + "0");
 		BuildingUpgradeTooltipDisplayer.Init(buildingUpgradeDefinition, buildingUpgradeTooltip, isLightShop);
 		SetMetaUpgrade(containerUpgrade);
 	}

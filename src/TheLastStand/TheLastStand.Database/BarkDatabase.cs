@@ -22,7 +22,7 @@ public class BarkDatabase : Database<BarkDatabase>
 			return;
 		}
 		XElement val = ((XContainer)XDocument.Parse(barkDefinitionsTextAsset.text, (LoadOptions)2)).Element(XName.op_Implicit("BarkDefinitions"));
-		if (XDocumentExtensions.IsNullOrEmpty(val))
+		if (val.IsNullOrEmpty())
 		{
 			CLoggerManager.Log((object)("The document " + ((Object)barkDefinitionsTextAsset).name + " must have BarkDefinitions!"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 			return;

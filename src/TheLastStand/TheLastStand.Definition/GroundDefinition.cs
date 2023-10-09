@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition;
 
-public class GroundDefinition : Definition
+public class GroundDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public enum E_GroundCategory
 	{
@@ -56,7 +56,7 @@ public class GroundDefinition : Definition
 	public bool IsCrossable { get; private set; }
 
 	public GroundDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
@@ -70,7 +70,7 @@ public class GroundDefinition : Definition
 		}
 		else
 		{
-			CLoggerManager.Log((object)"Error while parsing GroundType in GroundDefinition, keeping None value.", (LogType)0, (CLogLevel)1, true, ((object)this).GetType().Name, false);
+			CLoggerManager.Log((object)"Error while parsing GroundType in GroundDefinition, keeping None value.", (LogType)0, (CLogLevel)1, true, GetType().Name, false);
 		}
 		IsCrossable = bool.Parse(((XContainer)val).Element(XName.op_Implicit("IsCrossable")).Value);
 	}

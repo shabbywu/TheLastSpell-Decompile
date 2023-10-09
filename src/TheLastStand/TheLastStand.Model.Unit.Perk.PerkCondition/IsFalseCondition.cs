@@ -1,5 +1,4 @@
 using TheLastStand.Definition.Unit.Perk.PerkCondition;
-using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Model.Unit.Perk.PerkModule;
 
 namespace TheLastStand.Model.Unit.Perk.PerkCondition;
@@ -15,6 +14,6 @@ public class IsFalseCondition : APerkCondition
 
 	public override bool IsValid()
 	{
-		return !IsFalseConditionDefinition.ValueExpression.EvalToBool((InterpreterContext)(object)base.PerkModule.Perk);
+		return !IsFalseConditionDefinition.ValueExpression.EvalToBool(base.PerkModule.Perk);
 	}
 }

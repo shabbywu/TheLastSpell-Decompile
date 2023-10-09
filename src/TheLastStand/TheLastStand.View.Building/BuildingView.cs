@@ -183,7 +183,7 @@ public class BuildingView : MonoBehaviour, IDamageableView, ITileObjectView
 		{
 			if ((Object)(object)healFeedback == (Object)null)
 			{
-				healFeedback = Object.Instantiate<HealFeedback>(ResourcePooler.LoadOnce<HealFeedback>("Prefab/Displayable Effect/Heal Feedback", false));
+				healFeedback = Object.Instantiate<HealFeedback>(ResourcePooler.LoadOnce<HealFeedback>("Prefab/Displayable Effect/Heal Feedback", failSilently: false));
 				healFeedback.Init(this);
 			}
 			return healFeedback;
@@ -281,15 +281,15 @@ public class BuildingView : MonoBehaviour, IDamageableView, ITileObjectView
 
 	public static Sprite GetPortraitSprite(string buildingDefinitionId)
 	{
-		return ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Buildings/Portraits/Icons_Buildings_" + buildingDefinitionId, false);
+		return ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Buildings/Portraits/Icons_Buildings_" + buildingDefinitionId, failSilently: false);
 	}
 
 	public static bool TryGetDiffuseTileBase(string buildingDefinitionId, string suffix, int x, int y, out TileBase tileBase)
 	{
-		tileBase = ResourcePooler<TileBase>.LoadOnce(string.Format("{0}/{1}{2}/{3}{4}{5}", "View/Tiles/Buildings/Diffuse", buildingDefinitionId, suffix, buildingDefinitionId, x, y), true);
+		tileBase = ResourcePooler<TileBase>.LoadOnce(string.Format("{0}/{1}{2}/{3}{4}{5}", "View/Tiles/Buildings/Diffuse", buildingDefinitionId, suffix, buildingDefinitionId, x, y), failSilently: true);
 		if ((Object)(object)tileBase == (Object)null && buildingDefinitionId != "MagicCircle")
 		{
-			tileBase = ResourcePooler<TileBase>.LoadOnce("View/Tiles/Buildings/Diffuse/Placeholder/Placeholder", true);
+			tileBase = ResourcePooler<TileBase>.LoadOnce("View/Tiles/Buildings/Diffuse/Placeholder/Placeholder", failSilently: true);
 			return false;
 		}
 		return true;
@@ -297,7 +297,7 @@ public class BuildingView : MonoBehaviour, IDamageableView, ITileObjectView
 
 	public static TileBase GetGhostTileBase(string buildingDefinitionId, string suffix, int x, int y)
 	{
-		TileBase tileBase = ResourcePooler<TileBase>.LoadOnce(string.Format("{0}/{1}{2}/{3}{4}{5}{6}", "View/Tiles/Buildings/Ghost", buildingDefinitionId, suffix, buildingDefinitionId, "Ghost", x, y), true);
+		TileBase tileBase = ResourcePooler<TileBase>.LoadOnce(string.Format("{0}/{1}{2}/{3}{4}{5}{6}", "View/Tiles/Buildings/Ghost", buildingDefinitionId, suffix, buildingDefinitionId, "Ghost", x, y), failSilently: true);
 		if ((Object)(object)tileBase == (Object)null)
 		{
 			TryGetDiffuseTileBase(buildingDefinitionId, suffix, x, y, out tileBase);
@@ -442,7 +442,7 @@ public class BuildingView : MonoBehaviour, IDamageableView, ITileObjectView
 
 	public Sprite GetBuildingCostIconSprite()
 	{
-		return ResourcePooler.LoadOnce<Sprite>(Building.ConstructionModule.CostsMaterials ? "View/Sprites/UI/Buildings/ProductionRewards/Small/WorldUI_Gauges_Prod_Reward_Material" : "View/Sprites/UI/Buildings/ProductionRewards/Small/WorldUI_Gauges_Prod_Reward_Gold", false);
+		return ResourcePooler.LoadOnce<Sprite>(Building.ConstructionModule.CostsMaterials ? "View/Sprites/UI/Buildings/ProductionRewards/Small/WorldUI_Gauges_Prod_Reward_Material" : "View/Sprites/UI/Buildings/ProductionRewards/Small/WorldUI_Gauges_Prod_Reward_Gold", failSilently: false);
 	}
 
 	public string GetBuildingSkillCostString(string buildingSkillId)
@@ -461,23 +461,23 @@ public class BuildingView : MonoBehaviour, IDamageableView, ITileObjectView
 
 	public Sprite GetPortraitSprite()
 	{
-		string text = "View/Sprites/UI/Buildings/Portraits/64px/BuildingsPortraits_" + Building.BuildingDefinition.Id;
+		string resourcePath = "View/Sprites/UI/Buildings/Portraits/64px/BuildingsPortraits_" + Building.BuildingDefinition.Id;
 		if (Building.IsTrap)
 		{
 			BattleModule battleModule = Building.BattleModule;
 			if (battleModule != null && battleModule.RemainingTrapCharges == 0)
 			{
-				text = "View/Sprites/UI/Buildings/Portraits/64px/BuildingsPortraits_" + Building.BuildingDefinition.Id + "_Disabled";
+				resourcePath = "View/Sprites/UI/Buildings/Portraits/64px/BuildingsPortraits_" + Building.BuildingDefinition.Id + "_Disabled";
 				goto IL_00a7;
 			}
 		}
 		if (Building is MagicCircle)
 		{
-			text = "View/Sprites/UI/Buildings/Portraits/64px/BuildingsPortraits_" + Building.BuildingDefinition.Id + "_" + TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.Id;
+			resourcePath = "View/Sprites/UI/Buildings/Portraits/64px/BuildingsPortraits_" + Building.BuildingDefinition.Id + "_" + TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.Id;
 		}
 		goto IL_00a7;
 		IL_00a7:
-		return ResourcePooler.LoadOnce<Sprite>(text, false) ?? ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Buildings/Portraits/64px/BuildingsPortraits_" + Building.BuildingDefinition.Id, false);
+		return ResourcePooler.LoadOnce<Sprite>(resourcePath, failSilently: false) ?? ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Buildings/Portraits/64px/BuildingsPortraits_" + Building.BuildingDefinition.Id, failSilently: false);
 	}
 
 	public void Init()
@@ -500,11 +500,11 @@ public class BuildingView : MonoBehaviour, IDamageableView, ITileObjectView
 
 	public virtual void InitVisuals()
 	{
-		AttackFeedback = Object.Instantiate<AttackFeedback>(ResourcePooler.LoadOnce<AttackFeedback>("Prefab/Displayable Effect/Attack Feedback", false));
+		AttackFeedback = Object.Instantiate<AttackFeedback>(ResourcePooler.LoadOnce<AttackFeedback>("Prefab/Displayable Effect/Attack Feedback", failSilently: false));
 		AttackFeedback.Init(this);
 		if (Building.BrazierModule != null)
 		{
-			ExtinguishBrazierFeedback = Object.Instantiate<ExtinguishBrazierFeedback>(ResourcePooler.LoadOnce<ExtinguishBrazierFeedback>("Prefab/Displayable Effect/Extinguish Brazier Feedback", false));
+			ExtinguishBrazierFeedback = Object.Instantiate<ExtinguishBrazierFeedback>(ResourcePooler.LoadOnce<ExtinguishBrazierFeedback>("Prefab/Displayable Effect/Extinguish Brazier Feedback", failSilently: false));
 			ExtinguishBrazierFeedback.Init(this);
 			BuildingHUD.DisplayBrazierIfNeeded();
 		}
@@ -523,7 +523,7 @@ public class BuildingView : MonoBehaviour, IDamageableView, ITileObjectView
 		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
 		if ((Object)(object)skillTargetingMark == (Object)null)
 		{
-			skillTargetingMark = ObjectPooler.GetPooledComponent<SkillTargetingMark>("SkillTargetingMarkSprite", SkillManager.SkillTargetingMarkSpritePrefab, (Transform)null, false);
+			skillTargetingMark = ObjectPooler.GetPooledComponent<SkillTargetingMark>("SkillTargetingMarkSprite", SkillManager.SkillTargetingMarkSpritePrefab, (Transform)null, dontSetParent: false);
 			Transform transform = ((Component)skillTargetingMark).transform;
 			transform.SetParent(skillTargetingMarkAnchor);
 			transform.localPosition = Vector3.zero;
@@ -549,7 +549,7 @@ public class BuildingView : MonoBehaviour, IDamageableView, ITileObjectView
 		{
 			((CLogger<BuildingManager>)TPSingleton<BuildingManager>.Instance).Log((object)(Building.Id + " damaged particles has not been set in the definition, using default particles."), (CLogLevel)1, false, false);
 		}
-		GameObject pooledGameObject = ObjectPooler.GetPooledGameObject(string.IsNullOrEmpty(Building.BuildingDefinition.DamageableModuleDefinition.DamagedParticlesId) ? Building.Id : Building.BuildingDefinition.DamageableModuleDefinition.DamagedParticlesId, string.IsNullOrEmpty(Building.BuildingDefinition.DamageableModuleDefinition.DamagedParticlesId) ? damagedParticles : null, (Transform)null, false);
+		GameObject pooledGameObject = ObjectPooler.GetPooledGameObject(string.IsNullOrEmpty(Building.BuildingDefinition.DamageableModuleDefinition.DamagedParticlesId) ? Building.Id : Building.BuildingDefinition.DamageableModuleDefinition.DamagedParticlesId, string.IsNullOrEmpty(Building.BuildingDefinition.DamageableModuleDefinition.DamagedParticlesId) ? damagedParticles : null);
 		if ((Object)(object)pooledGameObject != (Object)null)
 		{
 			pooledGameObject.transform.position = Vector2.op_Implicit(TileMapView.GetTileCenter(Building.OriginTile));
@@ -637,13 +637,13 @@ public class BuildingView : MonoBehaviour, IDamageableView, ITileObjectView
 	{
 		if ((buildingDefinition.BlueprintModuleDefinition.Category & BuildingDefinition.E_BuildingCategory.Trap) != 0 || (buildingDefinition.BlueprintModuleDefinition.Category & BuildingDefinition.E_BuildingCategory.HandledDefense) != 0)
 		{
-			HandledDefensesHUD = ObjectPooler.GetPooledComponent<HandledDefensesHUD>("HandledDefensesHUDs", handledDefenseshudPrefab, BuildingManager.BuildingsHudsTransform, false);
+			HandledDefensesHUD = ObjectPooler.GetPooledComponent<HandledDefensesHUD>("HandledDefensesHUDs", handledDefenseshudPrefab, BuildingManager.BuildingsHudsTransform, dontSetParent: false);
 		}
 	}
 
 	protected virtual void InitHud()
 	{
-		BuildingHUD = ObjectPooler.GetPooledComponent<BuildingHUD>("BuildingHUDs", hudPrefab, BuildingManager.BuildingsHudsTransform, false);
+		BuildingHUD = ObjectPooler.GetPooledComponent<BuildingHUD>("BuildingHUDs", hudPrefab, BuildingManager.BuildingsHudsTransform, dontSetParent: false);
 	}
 
 	protected virtual void OnDisable()
@@ -672,12 +672,12 @@ public class BuildingView : MonoBehaviour, IDamageableView, ITileObjectView
 		//IL_00a1: Unknown result type (might be due to invalid IL or missing references)
 		//IL_00ce: Unknown result type (might be due to invalid IL or missing references)
 		//IL_00d3: Unknown result type (might be due to invalid IL or missing references)
-		Queue<Vector2> queue = new Queue<Vector2>(ListExtensions.ShuffleAndReturn<Vector2>((IList<Vector2>)Building.BuildingDefinition.DamageableModuleDefinition.FlamesPositions));
+		Queue<Vector2> queue = new Queue<Vector2>(Building.BuildingDefinition.DamageableModuleDefinition.FlamesPositions.ShuffleAndReturn());
 		for (int i = 0; i < Building.BuildingDefinition.DamageableModuleDefinition.FlameCount; i++)
 		{
 			Vector2 val = queue.Dequeue();
-			DamagedBuildingFlameView damagedBuildingFlameView = ListExtensions.PickRandom<DamagedBuildingFlameView>((IEnumerable<DamagedBuildingFlameView>)flameViews);
-			GameObject pooledGameObject = ObjectPooler.GetPooledGameObject("BuildingDamageFlame", ((Component)damagedBuildingFlameView).gameObject, (Transform)null, false);
+			DamagedBuildingFlameView damagedBuildingFlameView = flameViews.PickRandom();
+			GameObject pooledGameObject = ObjectPooler.GetPooledGameObject("BuildingDamageFlame", ((Component)damagedBuildingFlameView).gameObject);
 			if (!flamesPool.TryGetValue(pooledGameObject, out var value))
 			{
 				flamesPool[pooledGameObject] = pooledGameObject.GetComponent<DamagedBuildingFlameView>();
@@ -733,7 +733,7 @@ public class BuildingView : MonoBehaviour, IDamageableView, ITileObjectView
 
 	public void PlayDeathSound()
 	{
-		AudioClip[] array = ResourcePooler.LoadAllOnce<AudioClip>($"Sounds/SFX/Buildings/Death/{Building.BuildingDefinition.Id}", true);
+		AudioClip[] array = ResourcePooler.LoadAllOnce<AudioClip>($"Sounds/SFX/Buildings/Death/{Building.BuildingDefinition.Id}", failSilently: true);
 		if (array != null && array.Length != 0)
 		{
 			SoundManager.PlayAudioClip(array, BuildingManager.BuildingPooledAudioSourceData);
@@ -748,7 +748,7 @@ public class BuildingView : MonoBehaviour, IDamageableView, ITileObjectView
 	{
 		foreach (Tile occupiedTile in Building.BlueprintModule.OccupiedTiles)
 		{
-			GameObject pooledGameObject = ObjectPooler.GetPooledGameObject("DestructionSmoke", ((Component)smokeSystem).gameObject, ((Component)occupiedTile.TileView).transform, false);
+			GameObject pooledGameObject = ObjectPooler.GetPooledGameObject("DestructionSmoke", ((Component)smokeSystem).gameObject, ((Component)occupiedTile.TileView).transform);
 			pooledGameObject.SetActive(true);
 			pooledGameObject.transform.SetParent(((Component)occupiedTile.TileView).transform);
 			pooledGameObject.transform.localPosition = Vector3.zero;

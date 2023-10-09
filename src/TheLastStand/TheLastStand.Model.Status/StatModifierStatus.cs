@@ -22,7 +22,7 @@ public abstract class StatModifierStatus : Status
 
 	public override ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedUnitStatus
+		return new SerializedUnitStatus
 		{
 			RemainingTurns = base.RemainingTurnsCount,
 			Type = StatusType,

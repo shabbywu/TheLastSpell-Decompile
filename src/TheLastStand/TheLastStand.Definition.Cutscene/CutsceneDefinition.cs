@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Cutscene;
 
-public class CutsceneDefinition : Definition
+public class CutsceneDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public string Id { get; private set; }
 
@@ -23,7 +23,7 @@ public class CutsceneDefinition : Definition
 
 
 	public CutsceneDefinition(XContainer xContainer)
-		: base(xContainer, (Dictionary<string, string>)null)
+		: base(xContainer)
 	{
 	}
 

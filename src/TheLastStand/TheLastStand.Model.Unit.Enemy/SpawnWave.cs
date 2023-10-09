@@ -132,7 +132,7 @@ public class SpawnWave : ISerializable, IDeserializable
 	{
 		SpawnWaveController = spawnWaveController;
 		SpawnWaveView = spawnWaveView;
-		Deserialize((ISerializedData)(object)serializedSpawnWave, saveVersion);
+		Deserialize(serializedSpawnWave, saveVersion);
 	}
 
 	public void Deserialize(ISerializedData container = null, int saveVersion = -1)
@@ -175,7 +175,7 @@ public class SpawnWave : ISerializable, IDeserializable
 
 	public ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedSpawnWave
+		return new SerializedSpawnWave
 		{
 			SpawnWaveDefinitionId = SpawnWaveDefinition.Id,
 			IsPaused = IsPaused,

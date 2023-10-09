@@ -43,7 +43,7 @@ public abstract class BuildingGaugeEffect : ISerializable, IDeserializable
 
 	public virtual ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedGaugeEffect
+		return new SerializedGaugeEffect
 		{
 			Id = BuildingGaugeEffectDefinition.Id,
 			Units = Units

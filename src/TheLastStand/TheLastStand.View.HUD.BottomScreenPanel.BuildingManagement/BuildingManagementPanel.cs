@@ -6,7 +6,6 @@ using TPLib.Localization;
 using TPLib.Localization.Fonts;
 using TheLastStand.Controller.Unit;
 using TheLastStand.Framework.EventSystem;
-using TheLastStand.Framework.UI;
 using TheLastStand.Manager;
 using TheLastStand.Manager.Building;
 using TheLastStand.Manager.Skill;
@@ -363,8 +362,8 @@ public class BuildingManagementPanel : SerializedMonoBehaviour
 		{
 			((Component)magicCircleUnitsBackground.GetChild(i)).gameObject.SetActive(i < TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.VictoryDaysCount);
 		}
-		((GraduatedGauge)buildingProductionUnitsGaugeMagicCircle).Clear();
-		((GraduatedGauge)buildingProductionUnitsGaugeMagicCircle).SetUnits(building.ProductionModule.BuildingGaugeEffect.Units, true);
+		buildingProductionUnitsGaugeMagicCircle.Clear();
+		buildingProductionUnitsGaugeMagicCircle.SetUnits(building.ProductionModule.BuildingGaugeEffect.Units);
 	}
 
 	private void DisableProduction()
@@ -374,9 +373,7 @@ public class BuildingManagementPanel : SerializedMonoBehaviour
 
 	private void Start()
 	{
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0022: Expected O, but got Unknown
 		Close();
-		EventManager.AddListener(typeof(WorkersChangeEvent), new EventHandler(OnWorkersChange), false);
+		EventManager.AddListener(typeof(WorkersChangeEvent), OnWorkersChange);
 	}
 }

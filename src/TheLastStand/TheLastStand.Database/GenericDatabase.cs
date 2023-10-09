@@ -55,12 +55,12 @@ public class GenericDatabase : Database<GenericDatabase>
 	private void DeserializeIdsListDefinitions()
 	{
 		IdsListDefinitions = new Dictionary<string, IdsListDefinition>();
-		foreach (XElement item in base.GatherElements((IEnumerable<TextAsset>)idsListsDefinitionsTextAssets, (IEnumerable<TextAsset>)null, "IdsListDefinition", "IdsListsDefinitions"))
+		foreach (XElement item in GatherElements(idsListsDefinitionsTextAssets, null, "IdsListDefinition", "IdsListsDefinitions"))
 		{
 			XAttribute val = item.Attribute(XName.op_Implicit("Id"));
 			IdsListDefinitions.Add(val.Value, new IdsListDefinition((XContainer)(object)item));
 		}
-		foreach (IdsListDefinition item2 in TopologicSorter.Sort<IdsListDefinition>((IEnumerable<IdsListDefinition>)IdsListDefinitions.Values).ToList())
+		foreach (IdsListDefinition item2 in TopologicSorter.Sort(IdsListDefinitions.Values).ToList())
 		{
 			item2.DeserializeAfterDependencySorting();
 		}

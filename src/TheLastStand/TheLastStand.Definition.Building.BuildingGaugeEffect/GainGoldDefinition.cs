@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Framework.Extensions;
@@ -28,13 +27,13 @@ public class GainGoldDefinition : BuildingGaugeEffectDefinition
 	{
 		base.Deserialize(container);
 		XElement val = ((container is XElement) ? container : null).Element(XName.op_Implicit("Gold"));
-		if (XDocumentExtensions.IsNullOrEmpty(val))
+		if (val.IsNullOrEmpty())
 		{
 			Debug.LogError((object)"BuildingGaugeEffectDefinition must have Golds");
 		}
 		else
 		{
-			GoldGain = Parser.Parse(val.Value, (Dictionary<string, string>)null);
+			GoldGain = Parser.Parse(val.Value);
 		}
 	}
 }

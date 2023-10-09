@@ -1,10 +1,9 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Building.BuildingAction;
 
-public abstract class BuildingActionEffectDefinition : Definition
+public abstract class BuildingActionEffectDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public enum E_BuildingActionTargeting
 	{
@@ -18,7 +17,7 @@ public abstract class BuildingActionEffectDefinition : Definition
 
 
 	public BuildingActionEffectDefinition(XContainer xContainer, BuildingActionDefinition buildingActionDefinitionContainer)
-		: base(xContainer, (Dictionary<string, string>)null)
+		: base(xContainer)
 	{
 		BuildingActionDefinitionContainer = buildingActionDefinitionContainer;
 	}

@@ -246,7 +246,7 @@ public class SkillManager : Manager<SkillManager>
 		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
 		if (!TPSingleton<SkillManager>.Instance.multiHitTargetHUDs.TryGetValue(tile, out var value))
 		{
-			value = ObjectPooler.GetPooledComponent<MultiHitTargetHUD>("MultiHitHUDs", TPSingleton<SkillManager>.Instance.multiHitTargetHUDPrefab, (Transform)null, false);
+			value = ObjectPooler.GetPooledComponent<MultiHitTargetHUD>("MultiHitHUDs", TPSingleton<SkillManager>.Instance.multiHitTargetHUDPrefab, (Transform)null, dontSetParent: false);
 			((Component)value).transform.position = TileMapView.GetWorldPosition(tile);
 			TPSingleton<SkillManager>.Instance.multiHitTargetHUDs.Add(tile, value);
 		}

@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.ExpressionInterpreter;
-using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Unit.Perk.PerkAction;
 
@@ -17,6 +16,6 @@ public abstract class InstantiateEffectDisplayDefinition : APerkActionDefinition
 	public override void Deserialize(XContainer container)
 	{
 		XAttribute val = ((XElement)((container is XElement) ? container : null)).Attribute(XName.op_Implicit("Value"));
-		ValueExpression = Parser.Parse(val.Value, ((Definition)this).TokenVariables);
+		ValueExpression = Parser.Parse(val.Value, base.TokenVariables);
 	}
 }

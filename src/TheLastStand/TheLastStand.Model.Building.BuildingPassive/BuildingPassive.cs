@@ -30,7 +30,7 @@ public class BuildingPassive : IDeserializable, ISerializable
 	{
 		BuildingPassivesModule = buildingPassivesModule;
 		BuildingPassiveController = buildingPassiveController;
-		Deserialize((ISerializedData)(object)serializedPassive, saveVersion);
+		Deserialize(serializedPassive, saveVersion);
 		DeserializeEffects(serializedPassive);
 		DeserializeTriggers(serializedPassive);
 	}
@@ -52,7 +52,7 @@ public class BuildingPassive : IDeserializable, ISerializable
 			BuildingPassiveEffect buildingPassiveEffect = BuildingPassiveEffectFactory.PassiveEffectFromDefinition(passiveEffectDefinition, BuildingPassivesModule, serializedData);
 			if (buildingPassiveEffect == null)
 			{
-				CLoggerManager.Log((object)$"Unknown building passive effect definition : {((object)passiveEffectDefinition).GetType()}.", (LogType)0, (CLogLevel)2, true, "StaticLog", false);
+				CLoggerManager.Log((object)$"Unknown building passive effect definition : {passiveEffectDefinition.GetType()}.", (LogType)0, (CLogLevel)2, true, "StaticLog", false);
 			}
 			else
 			{
@@ -69,7 +69,7 @@ public class BuildingPassive : IDeserializable, ISerializable
 			TheLastStand.Model.Building.BuildingPassive.PassiveTrigger.PassiveTrigger passiveTrigger = BuildingPassiveTriggerFactory.PassiveTriggerFromDefinition(triggerDefinition, serializedData);
 			if (passiveTrigger == null)
 			{
-				CLoggerManager.Log((object)$"Unknown trigger definition : {((object)triggerDefinition).GetType()}.", (LogType)0, (CLogLevel)2, true, "StaticLog", false);
+				CLoggerManager.Log((object)$"Unknown trigger definition : {triggerDefinition.GetType()}.", (LogType)0, (CLogLevel)2, true, "StaticLog", false);
 			}
 			else
 			{
@@ -134,7 +134,7 @@ public class BuildingPassive : IDeserializable, ISerializable
 				list4.Add(generateLightFog.Serialize());
 			}
 		}
-		return (ISerializedData)(object)new SerializedBuildingPassive
+		return new SerializedBuildingPassive
 		{
 			Id = BuildingPassiveDefinition.Id,
 			AfterXProductionPhasesTriggers = list,

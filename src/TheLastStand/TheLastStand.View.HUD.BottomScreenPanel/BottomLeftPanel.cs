@@ -312,22 +312,22 @@ public class BottomLeftPanel : MonoBehaviour
 
 	private void RefreshButtonNavigationLeft(Selectable button, IEnumerable<Selectable> targets)
 	{
-		SelectableExtensions.SetSelectOnLeft(button, targets.FirstOrDefault((Func<Selectable, bool>)((Selectable t) => ((Component)t).gameObject.activeInHierarchy && t.IsInteractable())));
+		button.SetSelectOnLeft(targets.FirstOrDefault((Func<Selectable, bool>)((Selectable t) => ((Component)t).gameObject.activeInHierarchy && t.IsInteractable())));
 	}
 
 	private void RefreshButtonNavigationRight(Selectable button, IEnumerable<Selectable> targets)
 	{
-		SelectableExtensions.SetSelectOnRight(button, targets.FirstOrDefault((Func<Selectable, bool>)((Selectable t) => ((Component)t).gameObject.activeInHierarchy && t.IsInteractable())));
+		button.SetSelectOnRight(targets.FirstOrDefault((Func<Selectable, bool>)((Selectable t) => ((Component)t).gameObject.activeInHierarchy && t.IsInteractable())));
 	}
 
 	private void RefreshButtonNavigationUp(Selectable button, IEnumerable<Selectable> targets)
 	{
-		SelectableExtensions.SetSelectOnUp(button, targets.FirstOrDefault((Func<Selectable, bool>)((Selectable t) => ((Component)t).gameObject.activeInHierarchy && t.IsInteractable())));
+		button.SetSelectOnUp(targets.FirstOrDefault((Func<Selectable, bool>)((Selectable t) => ((Component)t).gameObject.activeInHierarchy && t.IsInteractable())));
 	}
 
 	private void RefreshButtonNavigationDown(Selectable button, IEnumerable<Selectable> targets)
 	{
-		SelectableExtensions.SetSelectOnDown(button, targets.FirstOrDefault((Func<Selectable, bool>)((Selectable t) => ((Component)t).gameObject.activeInHierarchy && t.IsInteractable())));
+		button.SetSelectOnDown(targets.FirstOrDefault((Func<Selectable, bool>)((Selectable t) => ((Component)t).gameObject.activeInHierarchy && t.IsInteractable())));
 	}
 
 	private void RefreshCharacterSheetButton()
@@ -387,17 +387,17 @@ public class BottomLeftPanel : MonoBehaviour
 	private void RefreshJoystickNavigation()
 	{
 		Selectable lastActiveSelectable = TPSingleton<ToDoListView>.Instance.GetLastActiveSelectable();
-		Selectable val = (InputManager.JoystickConfig.HUDNavigation.SelectLastButtonFromBottomPanel ? lastActiveSelectable : TPSingleton<ToDoListView>.Instance.GetFirstActiveSelectable());
+		Selectable selectOnUp = (InputManager.JoystickConfig.HUDNavigation.SelectLastButtonFromBottomPanel ? lastActiveSelectable : TPSingleton<ToDoListView>.Instance.GetFirstActiveSelectable());
 		if ((Object)(object)lastActiveSelectable != (Object)null)
 		{
-			SelectableExtensions.SetSelectOnDown(lastActiveSelectable, (Selectable)(object)inventoryButton.Button);
+			lastActiveSelectable.SetSelectOnDown((Selectable)(object)inventoryButton.Button);
 		}
 		RefreshButtonNavigationLeft((Selectable)(object)characterSheetButton.Button, characterSheetNavigationLeft);
 		RefreshButtonNavigationDown((Selectable)(object)characterSheetButton.Button, characterSheetNavigationDown);
-		SelectableExtensions.SetSelectOnUp((Selectable)(object)characterSheetButton.Button, val);
+		((Selectable)(object)characterSheetButton.Button).SetSelectOnUp(selectOnUp);
 		RefreshButtonNavigationRight((Selectable)(object)inventoryButton.Button, inventoryNavigationRight);
 		RefreshButtonNavigationDown((Selectable)(object)inventoryButton.Button, inventoryNavigationDown);
-		SelectableExtensions.SetSelectOnUp((Selectable)(object)inventoryButton.Button, val);
+		((Selectable)(object)inventoryButton.Button).SetSelectOnUp(selectOnUp);
 		RefreshButtonNavigationRight((Selectable)(object)metaShopsButton.Button, metaShopsNavigationRight);
 		RefreshButtonNavigationUp((Selectable)(object)metaShopsButton.Button, metaShopsNavigationUp);
 		RefreshButtonNavigationDown((Selectable)(object)metaShopsButton.Button, metaShopsNavigationDown);
@@ -415,13 +415,13 @@ public class BottomLeftPanel : MonoBehaviour
 
 	private void InitJoystickNavigation()
 	{
-		SelectableExtensions.SetMode((Selectable)(object)inventoryButton.Button, (Mode)4);
-		SelectableExtensions.SetMode((Selectable)(object)characterSheetButton.Button, (Mode)4);
-		SelectableExtensions.SetMode((Selectable)(object)shopButton.Button, (Mode)4);
-		SelectableExtensions.SetMode((Selectable)(object)constructionButton.Button, (Mode)4);
-		SelectableExtensions.SetMode((Selectable)(object)metaShopsButton.Button, (Mode)4);
-		SelectableExtensions.SetMode((Selectable)(object)innButton.Button, (Mode)4);
-		SelectableExtensions.SetMode((Selectable)(object)settingsButton, (Mode)4);
+		((Selectable)(object)inventoryButton.Button).SetMode((Mode)4);
+		((Selectable)(object)characterSheetButton.Button).SetMode((Mode)4);
+		((Selectable)(object)shopButton.Button).SetMode((Mode)4);
+		((Selectable)(object)constructionButton.Button).SetMode((Mode)4);
+		((Selectable)(object)metaShopsButton.Button).SetMode((Mode)4);
+		((Selectable)(object)innButton.Button).SetMode((Mode)4);
+		((Selectable)(object)settingsButton).SetMode((Mode)4);
 		characterSheetNavigationLeft = new List<Selectable> { (Selectable)(object)inventoryButton.Button };
 		characterSheetNavigationDown = new List<Selectable>
 		{

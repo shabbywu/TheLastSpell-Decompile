@@ -41,7 +41,7 @@ public class PathfindingController
 		{
 			return false;
 		}
-		if (currentTile.Unit != null && !currentTile.Unit.IsDead && ((object)unit).GetType() != ((object)currentTile.Unit).GetType())
+		if (currentTile.Unit != null && !currentTile.Unit.IsDead && unit.GetType() != currentTile.Unit.GetType())
 		{
 			return false;
 		}

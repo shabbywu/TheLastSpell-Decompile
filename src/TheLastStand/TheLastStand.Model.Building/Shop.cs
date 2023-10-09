@@ -3,7 +3,6 @@ using TPLib;
 using TPLib.Log;
 using TheLastStand.Controller.Building;
 using TheLastStand.Controller.Item;
-using TheLastStand.Database;
 using TheLastStand.Database.Building;
 using TheLastStand.Definition.Item;
 using TheLastStand.Framework.Database;
@@ -88,7 +87,7 @@ public class Shop : ISerializable, IDeserializable
 				{
 					item = new ItemController(itemSlot.Item, null).Item;
 				}
-				catch (MissingAssetException<ItemDatabase> arg)
+				catch (Database<TheLastStand.Database.ItemDatabase>.MissingAssetException arg)
 				{
 					((CLogger<BuildingManager>)TPSingleton<BuildingManager>.Instance).LogError((object)$"Skipped loading of item {itemSlot.Item.Id} while deserializing shop controller\n{arg}", (CLogLevel)0, true, true);
 					continue;
@@ -107,6 +106,6 @@ public class Shop : ISerializable, IDeserializable
 			serializedShop.ItemSlots.Add(ShopSlots[i].Serialize() as SerializedItemShopSlot);
 		}
 		serializedShop.RerollIndex = ShopRerollIndex;
-		return (ISerializedData)(object)serializedShop;
+		return serializedShop;
 	}
 }

@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Building;
 
-public class ConstructionDefinition : Definition
+public class ConstructionDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public float RepairCostRatio { get; private set; }
 
@@ -16,7 +16,7 @@ public class ConstructionDefinition : Definition
 
 
 	public ConstructionDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

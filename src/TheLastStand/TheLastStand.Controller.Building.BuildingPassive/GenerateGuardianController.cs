@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using TPLib;
@@ -70,14 +69,14 @@ public class GenerateGuardianController : BuildingPassiveEffectController
 		}
 		list = RandomManager.Shuffle(TPSingleton<EnemyUnitManager>.Instance, list).ToList();
 		Tile magicCircleTile = BuildingManager.MagicCircle.OriginTile;
-		ListExtensions.Split<Tile>(list, (Func<Tile, bool>)delegate(Tile adjacentTile)
+		list.Split(delegate(Tile adjacentTile)
 		{
 			//IL_0071: Unknown result type (might be due to invalid IL or missing references)
 			//IL_0076: Unknown result type (might be due to invalid IL or missing references)
 			Vector2 val = default(Vector2);
 			((Vector2)(ref val))._002Ector((float)(building.OriginTile.X - magicCircleTile.X), (float)(building.OriginTile.Y - magicCircleTile.Y));
 			return Vector2.Dot(new Vector2((float)(adjacentTile.X - building.OriginTile.X), (float)(adjacentTile.Y - building.OriginTile.Y)), val) <= 0f;
-		}, 0, -1);
+		});
 		EnemyUnitTemplateDefinition guardianToSpawn = TPSingleton<EnemyUnitManager>.Instance.GetGuardianToSpawn();
 		foreach (Tile item in list)
 		{

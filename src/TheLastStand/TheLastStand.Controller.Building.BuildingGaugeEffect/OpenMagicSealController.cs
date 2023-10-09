@@ -12,7 +12,7 @@ public class OpenMagicSealController : BuildingGaugeEffectController
 	{
 		base.BuildingGaugeEffect = new OpenMagicSeal(productionBuilding, definition, this, new OpenMagicSealView());
 		base.BuildingGaugeEffect.BuildingGaugeEffectView.BuildingGaugeEffect = base.BuildingGaugeEffect;
-		base.BuildingGaugeEffect.Deserialize((ISerializedData)(object)container);
+		base.BuildingGaugeEffect.Deserialize(container);
 	}
 
 	public OpenMagicSealController(ProductionModule productionBuilding, BuildingGaugeEffectDefinition definition)

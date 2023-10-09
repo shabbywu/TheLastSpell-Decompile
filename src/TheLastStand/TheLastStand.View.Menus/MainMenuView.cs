@@ -277,14 +277,14 @@ public class MainMenuView : TPSingleton<MainMenuView>
 		}
 		for (int j = 0; j < list.Count; j++)
 		{
-			SelectableExtensions.SetMode(list[j], (Mode)4);
+			list[j].SetMode((Mode)4);
 			if (j > 0)
 			{
-				SelectableExtensions.SetSelectOnUp(list[j], list[j - 1]);
+				list[j].SetSelectOnUp(list[j - 1]);
 			}
 			if (j < list.Count - 1)
 			{
-				SelectableExtensions.SetSelectOnDown(list[j], list[j + 1]);
+				list[j].SetSelectOnDown(list[j + 1]);
 			}
 		}
 	}

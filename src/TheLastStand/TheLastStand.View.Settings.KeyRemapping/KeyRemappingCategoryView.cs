@@ -43,7 +43,7 @@ public class KeyRemappingCategoryView : MonoBehaviour
 	{
 		categoryName = category.name;
 		((Object)((Component)this).transform).name = "Category Panel - " + categoryName;
-		categoryIcon.sprite = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/KeyRemapping/KeyRemapping_Category_" + categoryName, false);
+		categoryIcon.sprite = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/KeyRemapping/KeyRemapping_Category_" + categoryName, failSilently: false);
 		((Graphic)categoryIcon).SetNativeSize();
 		RefreshTexts();
 	}

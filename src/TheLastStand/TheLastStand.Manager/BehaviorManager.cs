@@ -433,7 +433,7 @@ public abstract class BehaviorManager<T> : Manager<T> where T : SerializedMonoBe
 		int num = 1;
 		while (true)
 		{
-			AudioClip val = ResourcePooler<AudioClip>.LoadOnce(string.Format("{0}_{1}{2}", prefix, (num < 10) ? "0" : string.Empty, num), true);
+			AudioClip val = ResourcePooler<AudioClip>.LoadOnce(string.Format("{0}_{1}{2}", prefix, (num < 10) ? "0" : string.Empty, num), failSilently: true);
 			if (!((Object)(object)val != (Object)null))
 			{
 				break;
@@ -452,21 +452,21 @@ public abstract class BehaviorManager<T> : Manager<T> where T : SerializedMonoBe
 			result = true;
 			OneShotSound pooledSkillSoundAudioSource = GetPooledSkillSoundAudioSource();
 			((Object)((Component)pooledSkillSoundAudioSource).gameObject).name = skillId;
-			pooledSkillSoundAudioSource.Play(ListExtensions.PickRandom<AudioClip>((IEnumerable<AudioClip>)skillGroupAudioClips[skillId][suffix].Clips));
+			pooledSkillSoundAudioSource.Play(skillGroupAudioClips[skillId][suffix].Clips.PickRandom());
 		}
 		if (skillGroupAudioClips[skillId][suffix].LaunchClips.Count > 0)
 		{
 			result = true;
 			OneShotSound spatializedPooledSkillSoundAudioSource = GetSpatializedPooledSkillSoundAudioSource();
 			((Object)((Component)spatializedPooledSkillSoundAudioSource).gameObject).name = skillId + "_Launch";
-			spatializedPooledSkillSoundAudioSource.PlaySpatialized(ListExtensions.PickRandom<AudioClip>((IEnumerable<AudioClip>)skillGroupAudioClips[skillId][suffix].LaunchClips), launchTile);
+			spatializedPooledSkillSoundAudioSource.PlaySpatialized(skillGroupAudioClips[skillId][suffix].LaunchClips.PickRandom(), launchTile);
 		}
 		if (skillGroupAudioClips[skillId][suffix].ImpactClips.Count > 0)
 		{
 			result = true;
 			OneShotSound spatializedPooledSkillSoundAudioSource2 = GetSpatializedPooledSkillSoundAudioSource();
 			((Object)((Component)spatializedPooledSkillSoundAudioSource2).gameObject).name = skillId + "_Impact";
-			spatializedPooledSkillSoundAudioSource2.PlaySpatialized(ListExtensions.PickRandom<AudioClip>((IEnumerable<AudioClip>)skillGroupAudioClips[skillId][suffix].ImpactClips), impactTile);
+			spatializedPooledSkillSoundAudioSource2.PlaySpatialized(skillGroupAudioClips[skillId][suffix].ImpactClips.PickRandom(), impactTile);
 		}
 		return result;
 	}

@@ -205,7 +205,7 @@ public class FollowElement : MonoBehaviour
 			}
 			if (FollowElementDatas.ClampToParent)
 			{
-				RectTransformExtensions.ClampToParent(RectTransform);
+				RectTransform.ClampToParent();
 			}
 		}
 	}

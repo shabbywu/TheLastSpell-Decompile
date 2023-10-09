@@ -106,11 +106,11 @@ public class UnitPerkTreeView : TabbedPageView
 
 	public static T GetCollectionAssetOrDefault<T>(string assetPathFormat, string collectionId) where T : Object
 	{
-		T val = ResourcePooler.LoadOnce<T>(string.Format(assetPathFormat, collectionId), true);
+		T val = ResourcePooler.LoadOnce<T>(string.Format(assetPathFormat, collectionId), failSilently: true);
 		if ((Object)(object)val == (Object)null)
 		{
 			((CLogger<PlayableUnitManager>)TPSingleton<PlayableUnitManager>.Instance).Log((object)("Could not find collection asset at path \"" + string.Format(assetPathFormat, collectionId) + "\". Using default (Misc) instead."), (CLogLevel)1, false, false);
-			val = ResourcePooler.LoadOnce<T>(string.Format(assetPathFormat, "Misc"), false);
+			val = ResourcePooler.LoadOnce<T>(string.Format(assetPathFormat, "Misc"));
 		}
 		return val;
 	}
@@ -279,7 +279,7 @@ public class UnitPerkTreeView : TabbedPageView
 		{
 			foreach (UnitPerkDisplay perkDisplay in unitPerkTierView.PerkDisplays)
 			{
-				SelectableExtensions.ClearNavigation((Selectable)(object)perkDisplay.JoystickSelectable);
+				((Selectable)(object)perkDisplay.JoystickSelectable).ClearNavigation();
 			}
 		}
 	}
@@ -311,27 +311,27 @@ public class UnitPerkTreeView : TabbedPageView
 				bool flag2 = i == 0;
 				bool flag3 = i == list.Count - 1;
 				UnitPerkDisplay unitPerkDisplay = list[i][j];
-				SelectableExtensions.SetMode((Selectable)(object)unitPerkDisplay.JoystickSelectable, (Mode)4);
+				((Selectable)(object)unitPerkDisplay.JoystickSelectable).SetMode((Mode)4);
 				if (!num)
 				{
-					SelectableExtensions.SetSelectOnLeft((Selectable)(object)unitPerkDisplay.JoystickSelectable, (Selectable)(object)list[i][j - 1].JoystickSelectable);
+					((Selectable)(object)unitPerkDisplay.JoystickSelectable).SetSelectOnLeft((Selectable)(object)list[i][j - 1].JoystickSelectable);
 				}
 				if (!flag)
 				{
-					SelectableExtensions.SetSelectOnRight((Selectable)(object)unitPerkDisplay.JoystickSelectable, (Selectable)(object)list[i][j + 1].JoystickSelectable);
+					((Selectable)(object)unitPerkDisplay.JoystickSelectable).SetSelectOnRight((Selectable)(object)list[i][j + 1].JoystickSelectable);
 				}
 				if (!flag2)
 				{
-					SelectableExtensions.SetSelectOnUp((Selectable)(object)unitPerkDisplay.JoystickSelectable, (Selectable)(object)list[i - 1][j].JoystickSelectable);
+					((Selectable)(object)unitPerkDisplay.JoystickSelectable).SetSelectOnUp((Selectable)(object)list[i - 1][j].JoystickSelectable);
 				}
 				if (!flag3)
 				{
-					SelectableExtensions.SetSelectOnDown((Selectable)(object)unitPerkDisplay.JoystickSelectable, (Selectable)(object)list[i + 1][j].JoystickSelectable);
+					((Selectable)(object)unitPerkDisplay.JoystickSelectable).SetSelectOnDown((Selectable)(object)list[i + 1][j].JoystickSelectable);
 				}
 				Navigation navigation = ((Selectable)unitPerkDisplay.JoystickSelectable).navigation;
 				if ((Object)(object)((Navigation)(ref navigation)).selectOnLeft == (Object)null)
 				{
-					SelectableExtensions.SetSelectOnLeft((Selectable)(object)unitPerkDisplay.JoystickSelectable, unitPerkDisplay.DefaultSelectOnLeft);
+					((Selectable)(object)unitPerkDisplay.JoystickSelectable).SetSelectOnLeft(unitPerkDisplay.DefaultSelectOnLeft);
 				}
 			}
 		}

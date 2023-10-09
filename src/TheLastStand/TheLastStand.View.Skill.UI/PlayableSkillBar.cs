@@ -139,7 +139,7 @@ public class PlayableSkillBar : SkillBar
 		if (((Component)scrollbar).gameObject.activeSelf)
 		{
 			Transform transform = ((Component)skillDisplayButton).transform;
-			GUIHelpers.AdjustHorizontalScrollViewToFocusedItem((RectTransform)(object)((transform is RectTransform) ? transform : null), scrollViewport, scrollbar, 0.01f, 0.01f, (float?)0.1f);
+			GUIHelpers.AdjustHorizontalScrollViewToFocusedItem((RectTransform)(object)((transform is RectTransform) ? transform : null), scrollViewport, scrollbar, 0.01f, 0.01f, 0.1f);
 		}
 	}
 

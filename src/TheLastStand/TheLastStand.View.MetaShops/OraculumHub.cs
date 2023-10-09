@@ -5,7 +5,6 @@ using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
 using TPLib;
-using TheLastStand.Framework.Automaton;
 using TheLastStand.Framework.UI;
 using TheLastStand.Manager;
 using TheLastStand.Manager.SDK;
@@ -91,7 +90,7 @@ public abstract class OraculumHub<T> : TPSingleton<T> where T : OraculumHub<T>
 	{
 		get
 		{
-			if (((StateMachine)ApplicationManager.Application).State.GetName() == "Game" || ((StateMachine)ApplicationManager.Application).State.GetName() == "MetaShops")
+			if (ApplicationManager.Application.State.GetName() == "Game" || ApplicationManager.Application.State.GetName() == "MetaShops")
 			{
 				return TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.HideGoddesses;
 			}
@@ -158,13 +157,13 @@ public abstract class OraculumHub<T> : TPSingleton<T> where T : OraculumHub<T>
 		}
 		else
 		{
-			if (((StateMachine)ApplicationManager.Application).State.GetName() == "Game")
+			if (ApplicationManager.Application.State.GetName() == "Game")
 			{
 				TPSingleton<LightningSDKManager>.Instance.HandleGameCycleColor(value);
 			}
 			else
 			{
-				TPSingleton<LightningSDKManager>.Instance.HandleApplicationStateColor(((StateMachine)ApplicationManager.Application).State, value);
+				TPSingleton<LightningSDKManager>.Instance.HandleApplicationStateColor(ApplicationManager.Application.State, value);
 			}
 			Sequence obj6 = TPSingleton<T>.Instance.displaySequence;
 			TweenerCore<float, float, FloatOptions> obj7 = TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(DOTweenModuleUI.DOFade(TPSingleton<T>.Instance.gameTransitionCanvasGroup, 1f, TPSingleton<T>.Instance.blackScreenInDuration), TPSingleton<T>.Instance.blackScreenInEase);
@@ -209,7 +208,7 @@ public abstract class OraculumHub<T> : TPSingleton<T> where T : OraculumHub<T>
 			Canvas obj = gameTransitionCanvas;
 			int sortingOrder = obj.sortingOrder;
 			obj.sortingOrder = sortingOrder + 1;
-			if (((StateMachine)ApplicationManager.Application).State.GetName() == "Game")
+			if (ApplicationManager.Application.State.GetName() == "Game")
 			{
 				TPSingleton<TileMapView>.Instance.Hide();
 				TPSingleton<GameView>.Instance.HideHud();
@@ -219,7 +218,7 @@ public abstract class OraculumHub<T> : TPSingleton<T> where T : OraculumHub<T>
 		{
 			TPSingleton<T>.Instance.canvasGroup.alpha = 0f;
 			SaveManager.Save();
-			if (((StateMachine)ApplicationManager.Application).State.GetName() == "Game")
+			if (ApplicationManager.Application.State.GetName() == "Game")
 			{
 				TPSingleton<TileMapView>.Instance.Display();
 				TPSingleton<GameView>.Instance.DisplayHud();
@@ -282,12 +281,12 @@ public abstract class OraculumHub<T> : TPSingleton<T> where T : OraculumHub<T>
 	protected virtual void Start()
 	{
 		((MonoBehaviour)this).StartCoroutine(InitCoroutine());
-		if (((StateMachine)ApplicationManager.Application).State.GetName() == "MetaShops")
+		if (ApplicationManager.Application.State.GetName() == "MetaShops")
 		{
 			Display(show: true);
 			EnableRaycasters(state: true);
 		}
-		else if (((StateMachine)ApplicationManager.Application).State.GetName() != "Credits")
+		else if (ApplicationManager.Application.State.GetName() != "Credits")
 		{
 			canvasGroup.alpha = 0f;
 			((Component)this).gameObject.SetActive(false);

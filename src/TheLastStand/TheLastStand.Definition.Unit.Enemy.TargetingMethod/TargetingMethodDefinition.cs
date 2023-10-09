@@ -1,13 +1,12 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Unit.Enemy.TargetingMethod;
 
-public abstract class TargetingMethodDefinition : Definition
+public abstract class TargetingMethodDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public TargetingMethodDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

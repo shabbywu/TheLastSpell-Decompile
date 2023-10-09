@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Xml.Linq;
 using TPLib.Log;
 using TheLastStand.Framework.ExpressionInterpreter;
-using TheLastStand.Framework.Serialization;
 using TheLastStand.Model.Status;
 using UnityEngine;
 
@@ -42,7 +41,7 @@ public class ApplyStatusEffectDefinition : APerkEffectDefinition
 	public override void Deserialize(XContainer container)
 	{
 		XElement val = (XElement)(object)((container is XElement) ? container : null);
-		PerkTargetingDefinition = new PerkTargetingDefinition((XContainer)(object)((XContainer)val).Element(XName.op_Implicit("PerkTargeting")), ((Definition)this).TokenVariables);
+		PerkTargetingDefinition = new PerkTargetingDefinition((XContainer)(object)((XContainer)val).Element(XName.op_Implicit("PerkTargeting")), base.TokenVariables);
 		XAttribute val2 = val.Attribute(XName.op_Implicit("Status"));
 		if (Enum.TryParse<Status.E_StatusType>(val2.Value, out var result))
 		{
@@ -71,15 +70,15 @@ public class ApplyStatusEffectDefinition : APerkEffectDefinition
 		XAttribute val4 = val.Attribute(XName.op_Implicit("Value"));
 		if (val4 != null)
 		{
-			ValueExpression = Parser.Parse(val4.Value, ((Definition)this).TokenVariables);
+			ValueExpression = Parser.Parse(val4.Value, base.TokenVariables);
 		}
 		XAttribute val5 = val.Attribute(XName.op_Implicit("Chance"));
 		if (val5 != null)
 		{
-			ChanceExpression = Parser.Parse(val5.Value, ((Definition)this).TokenVariables);
+			ChanceExpression = Parser.Parse(val5.Value, base.TokenVariables);
 		}
 		XAttribute val6 = val.Attribute(XName.op_Implicit("TurnsCount"));
-		TurnsCountExpression = Parser.Parse(val6.Value, ((Definition)this).TokenVariables);
+		TurnsCountExpression = Parser.Parse(val6.Value, base.TokenVariables);
 		XAttribute val7 = val.Attribute(XName.op_Implicit("HideDisplayEffect"));
 		if (val7 != null)
 		{

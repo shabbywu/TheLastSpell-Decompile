@@ -7,7 +7,6 @@ using TPLib.Localization.Fonts;
 using TPLib.UI;
 using TPLib.Yield;
 using TheLastStand.Controller;
-using TheLastStand.Framework.Automaton;
 using TheLastStand.Framework.UI;
 using TheLastStand.Manager;
 using TheLastStand.Model;
@@ -370,7 +369,7 @@ public class GenericConsent : MonoBehaviour, IOverlayUser
 			}
 			else
 			{
-				CameraView.AttenuateWorldForPopupFocus((IOverlayUser)(object)((((StateMachine)ApplicationManager.Application).State.GetName() == "Settings") ? TPSingleton<SettingsManager>.Instance.SettingsPanel : null));
+				CameraView.AttenuateWorldForPopupFocus((IOverlayUser)(object)((ApplicationManager.Application.State.GetName() == "Settings") ? TPSingleton<SettingsManager>.Instance.SettingsPanel : null));
 			}
 		}
 		InputManager.OnGenericConsentViewToggled(state: false);

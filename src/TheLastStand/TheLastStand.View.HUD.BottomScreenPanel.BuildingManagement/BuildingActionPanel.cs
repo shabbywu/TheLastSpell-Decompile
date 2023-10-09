@@ -39,7 +39,7 @@ public class BuildingActionPanel : BuildingCapacityPanel
 
 	public static Sprite GetActionSprite(string buildingActionId)
 	{
-		return ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Buildings/Actions/" + buildingActionId, false);
+		return ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Buildings/Actions/" + buildingActionId, failSilently: false);
 	}
 
 	public void Display(bool show)

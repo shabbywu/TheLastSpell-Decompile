@@ -1,10 +1,9 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Cutscene;
 
-public class IncreaseFogCutsceneDefinition : Definition, ICutsceneDefinition
+public class IncreaseFogCutsceneDefinition : TheLastStand.Framework.Serialization.Definition, ICutsceneDefinition
 {
 	public class Constants
 	{
@@ -15,7 +14,7 @@ public class IncreaseFogCutsceneDefinition : Definition, ICutsceneDefinition
 
 
 	public IncreaseFogCutsceneDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

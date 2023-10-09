@@ -20,7 +20,7 @@ public class IncreasePlaysPerTurnDefinition : BuildingUpgradeEffectDefinition
 	{
 		base.Deserialize(xContainer);
 		XAttribute val = ((XElement)((xContainer is XElement) ? xContainer : null)).Attribute(XName.op_Implicit("Value"));
-		if (!XDocumentExtensions.IsNullOrEmpty(val))
+		if (!val.IsNullOrEmpty())
 		{
 			if (!int.TryParse(val.Value, out var result))
 			{

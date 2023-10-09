@@ -8,7 +8,6 @@ using TheLastStand.Definition.Tooltip.Compendium;
 using TheLastStand.Definition.Unit.Perk.PerkDataCondition;
 using TheLastStand.Framework;
 using TheLastStand.Framework.ExpressionInterpreter;
-using TheLastStand.Framework.Serialization;
 using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.Perk;
@@ -88,20 +87,20 @@ public class PerkDefinition : LocalizableDefinition
 	public override void Deserialize(XContainer container)
 	{
 		XContainer obj = ((container is XElement) ? container : null);
-		XElement val = obj.Element(XName.op_Implicit("TokenVariables"));
-		((Definition)this).DeserializeTokenVariables(val);
+		XElement xTokenVariables = obj.Element(XName.op_Implicit("TokenVariables"));
+		DeserializeTokenVariables(xTokenVariables);
 		XElement container2 = obj.Element(XName.op_Implicit("LocArguments"));
 		base.Deserialize((XContainer)(object)container2);
-		XAttribute val2 = ((XElement)obj).Attribute(XName.op_Implicit("Id"));
-		Id = val2.Value;
+		XAttribute val = ((XElement)obj).Attribute(XName.op_Implicit("Id"));
+		Id = val.Value;
 		PerkEffectsInformationsExist = Localizer.Exists(PerkEffectsInformations);
 		CompendiumEntries = new HashSet<CompendiumEntryDefinition>();
 		HoverRanges = new List<Node>();
 		SkillsToShow = new List<Tuple<string, int>>();
-		XElement val3 = obj.Element(XName.op_Implicit("View"));
-		if (val3 != null)
+		XElement val2 = obj.Element(XName.op_Implicit("View"));
+		if (val2 != null)
 		{
-			DeserializeView(val3);
+			DeserializeView(val2);
 		}
 		XElement xModules = obj.Element(XName.op_Implicit("Modules"));
 		DeserializeModules(xModules);
@@ -115,10 +114,10 @@ public class PerkDefinition : LocalizableDefinition
 			switch (item.Name.LocalName)
 			{
 			case "BufferModule":
-				PerkModuleDefinitions.Add(new BufferModuleDefinition((XContainer)(object)item, ((Definition)this).TokenVariables));
+				PerkModuleDefinitions.Add(new BufferModuleDefinition((XContainer)(object)item, base.TokenVariables));
 				break;
 			case "GaugeModule":
-				PerkModuleDefinitions.Add(new GaugeModuleDefinition((XContainer)(object)item, ((Definition)this).TokenVariables));
+				PerkModuleDefinitions.Add(new GaugeModuleDefinition((XContainer)(object)item, base.TokenVariables));
 				break;
 			default:
 				CLoggerManager.Log((object)("Tried to Deserialize an unimplemented PerkModule: " + item.Name.LocalName), (LogType)0, (CLogLevel)2, true, "PerkDefinition", false);
@@ -162,27 +161,27 @@ public class PerkDefinition : LocalizableDefinition
 			if (val6 != null)
 			{
 				XAttribute val7 = val6.Attribute(XName.op_Implicit("Value"));
-				HudBonus = Parser.Parse(val7.Value, ((Definition)this).TokenVariables);
+				HudBonus = Parser.Parse(val7.Value, base.TokenVariables);
 			}
 			XElement val8 = ((XContainer)val5).Element(XName.op_Implicit("Buffer"));
 			if (val8 != null)
 			{
 				XAttribute val9 = val8.Attribute(XName.op_Implicit("Value"));
-				HudBuffer = Parser.Parse(val9.Value, ((Definition)this).TokenVariables);
+				HudBuffer = Parser.Parse(val9.Value, base.TokenVariables);
 			}
-			GreyOutConditionsDefinition = new PerkDataConditionsDefinition((XContainer)(object)((XContainer)val5).Element(XName.op_Implicit("GreyOut")), ((Definition)this).TokenVariables);
-			HighlightConditionsDefinition = new PerkDataConditionsDefinition((XContainer)(object)((XContainer)val5).Element(XName.op_Implicit("Highlight")), ((Definition)this).TokenVariables);
+			GreyOutConditionsDefinition = new PerkDataConditionsDefinition((XContainer)(object)((XContainer)val5).Element(XName.op_Implicit("GreyOut")), base.TokenVariables);
+			HighlightConditionsDefinition = new PerkDataConditionsDefinition((XContainer)(object)((XContainer)val5).Element(XName.op_Implicit("Highlight")), base.TokenVariables);
 			XElement val10 = ((XContainer)val5).Element(XName.op_Implicit("HoverDisplay"));
 			if (val10 != null)
 			{
 				foreach (XElement item3 in ((XContainer)val10).Elements(XName.op_Implicit("HoverRange")))
 				{
 					XAttribute val11 = item3.Attribute(XName.op_Implicit("Range"));
-					HoverRanges.Add(Parser.Parse(val11.Value, ((Definition)this).TokenVariables));
+					HoverRanges.Add(Parser.Parse(val11.Value, base.TokenVariables));
 				}
 			}
 		}
-		FeedbackActivationConditionsDefinition = new PerkDataConditionsDefinition((XContainer)(object)((XContainer)xView).Element(XName.op_Implicit("FeedbackActivationConditions")), ((Definition)this).TokenVariables);
+		FeedbackActivationConditionsDefinition = new PerkDataConditionsDefinition((XContainer)(object)((XContainer)xView).Element(XName.op_Implicit("FeedbackActivationConditions")), base.TokenVariables);
 	}
 
 	public string GetAdditionDescription(InterpreterContext interpreterContext)
@@ -223,11 +222,11 @@ public class PerkDefinition : LocalizableDefinition
 		}
 		else
 		{
-			val = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Perks/" + Id, false);
+			val = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Perks/" + Id, failSilently: false);
 		}
 		if ((Object)(object)val == (Object)null)
 		{
-			val = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Perks/Default", false);
+			val = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Perks/Default", failSilently: false);
 		}
 		return val;
 	}

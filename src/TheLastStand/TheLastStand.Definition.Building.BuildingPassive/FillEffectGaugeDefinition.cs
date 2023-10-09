@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.ExpressionInterpreter;
 
@@ -16,6 +15,6 @@ public class FillEffectGaugeDefinition : BuildingPassiveEffectDefinition
 	public override void Deserialize(XContainer container)
 	{
 		XElement val = (XElement)(object)((container is XElement) ? container : null);
-		Value = Parser.Parse(((XContainer)val).Element(XName.op_Implicit("Value")).Value, (Dictionary<string, string>)null);
+		Value = Parser.Parse(((XContainer)val).Element(XName.op_Implicit("Value")).Value);
 	}
 }

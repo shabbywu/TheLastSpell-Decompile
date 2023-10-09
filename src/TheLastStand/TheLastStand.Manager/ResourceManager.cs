@@ -150,7 +150,7 @@ public class ResourceManager : Manager<ResourceManager>, ISerializable, IDeseria
 
 	public static int ComputeExtraPercentageForCost(E_PriceModifierType type)
 	{
-		return ApocalypseManager.CurrentApocalypse.ExtraPercentageForCosts(type) + DictionaryExtensions.GetValueOrDefault<E_PriceModifierType, int>(TPSingleton<GlyphManager>.Instance.CostsModifiers, type);
+		return ApocalypseManager.CurrentApocalypse.ExtraPercentageForCosts(type) + TPSingleton<GlyphManager>.Instance.CostsModifiers.GetValueOrDefault(type);
 	}
 
 	public static int GetModifiedWorkersCost(BuildingActionDefinition buildingActionDefinition, bool updateGlyphLimits = false)
@@ -252,7 +252,7 @@ public class ResourceManager : Manager<ResourceManager>, ISerializable, IDeseria
 
 	public ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedResources
+		return new SerializedResources
 		{
 			Gold = Gold,
 			Materials = Materials,

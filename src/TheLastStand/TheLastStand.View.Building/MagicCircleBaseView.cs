@@ -28,10 +28,10 @@ public class MagicCircleBaseView : MonoBehaviour
 	{
 		//IL_0190: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0197: Expected O, but got Unknown
-		AnimationClip val = ResourcePooler.LoadOnce<AnimationClip>("Animation/MagicCircle/MagicCircle_IdleBase/" + TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.Id + "/MagicCircle_" + TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.Id + "_IdleBase_1", true);
-		AnimationClip val2 = ResourcePooler.LoadOnce<AnimationClip>("Animation/MagicCircle/MagicCircle_IdleBase/" + TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.Id + "/MagicCircle_" + TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.Id + "_IdleBase_2", true);
-		AnimationClip val3 = ResourcePooler.LoadOnce<AnimationClip>("Animation/MagicCircle/MagicCircle_IdleBase/" + TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.Id + "/MagicCircle_" + TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.Id + "_IdleBase_3", true);
-		AnimationClip val4 = ResourcePooler.LoadOnce<AnimationClip>("Animation/MagicCircle/MagicCircle_IdleBase/" + TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.Id + "/MagicCircle_" + TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.Id + "_IdleBase_4", true);
+		AnimationClip val = ResourcePooler.LoadOnce<AnimationClip>("Animation/MagicCircle/MagicCircle_IdleBase/" + TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.Id + "/MagicCircle_" + TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.Id + "_IdleBase_1", failSilently: true);
+		AnimationClip val2 = ResourcePooler.LoadOnce<AnimationClip>("Animation/MagicCircle/MagicCircle_IdleBase/" + TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.Id + "/MagicCircle_" + TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.Id + "_IdleBase_2", failSilently: true);
+		AnimationClip val3 = ResourcePooler.LoadOnce<AnimationClip>("Animation/MagicCircle/MagicCircle_IdleBase/" + TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.Id + "/MagicCircle_" + TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.Id + "_IdleBase_3", failSilently: true);
+		AnimationClip val4 = ResourcePooler.LoadOnce<AnimationClip>("Animation/MagicCircle/MagicCircle_IdleBase/" + TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.Id + "/MagicCircle_" + TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.Id + "_IdleBase_4", failSilently: true);
 		if (!((Object)(object)val == (Object)null) || !((Object)(object)val2 == (Object)null) || !((Object)(object)val3 == (Object)null) || !((Object)(object)val4 == (Object)null))
 		{
 			AnimatorOverrideController val5 = new AnimatorOverrideController(animator.runtimeAnimatorController);

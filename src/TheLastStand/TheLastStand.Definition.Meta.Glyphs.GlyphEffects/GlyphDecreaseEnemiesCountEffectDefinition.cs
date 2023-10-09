@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.Extensions;
-using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Meta.Glyphs.GlyphEffects;
 
@@ -22,7 +21,7 @@ public class GlyphDecreaseEnemiesCountEffectDefinition : GlyphEffectDefinition
 		GlyphDefinition.AssertIsTrue(obj != null, "Received null element in DecreaseEnemiesCount.");
 		XAttribute obj2 = ((XElement)obj).Attribute(XName.op_Implicit("Percentage"));
 		GlyphDefinition.AssertIsTrue(obj2 != null, "Percentage attribute is missing in DecreaseEnemiesCount element.");
-		string text = StringExtensions.Replace(obj2.Value, ((Definition)this).TokenVariables);
+		string text = obj2.Value.Replace(base.TokenVariables);
 		GlyphDefinition.AssertIsTrue(int.TryParse(text, out var result), "Could not parse Value attribute into an int in DecreaseEnemiesCount : " + text + ".");
 		Percentage = result;
 	}

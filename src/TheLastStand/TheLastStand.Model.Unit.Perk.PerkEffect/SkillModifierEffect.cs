@@ -1,6 +1,5 @@
 using TheLastStand.Controller.Unit.Perk.PerkEffect;
 using TheLastStand.Definition.Unit.Perk.PerkEffect;
-using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Model.Unit.Perk.PerkDataCondition;
 using TheLastStand.Model.Unit.Perk.PerkModule;
 
@@ -12,7 +11,7 @@ public class SkillModifierEffect : APerkEffect
 
 	public SkillModifierEffectDefinition SkillModifierEffectDefinition => base.APerkEffectDefinition as SkillModifierEffectDefinition;
 
-	public float Value => SkillModifierEffectDefinition.ValueExpression.EvalToInt((InterpreterContext)(object)base.APerkModule.Perk);
+	public float Value => SkillModifierEffectDefinition.ValueExpression.EvalToInt(base.APerkModule.Perk);
 
 	public PerkDataConditions PerkDataConditions { get; private set; }
 

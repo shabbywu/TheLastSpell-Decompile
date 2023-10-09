@@ -579,7 +579,7 @@ public class PlayableUnitView : UnitView, ISnapshotable
 		if (EnemyUnitDatabase.HitByEnemySoundDefinitions.TryGetValue("PlayableUnits", out var value))
 		{
 			string soundId = value.GetSoundId(TPSingleton<EnemyUnitManager>.Instance.TotalCasters);
-			ObjectPooler.GetPooledComponent<OneShotSound>("HitsSFX", TPSingleton<PlayableUnitManager>.Instance.HitSFXPrefab, (Transform)null, false).Play(ResourcePooler.LoadOnce<AudioClip>("Sounds/SFX/PlayableUnitHits/" + soundId, false));
+			ObjectPooler.GetPooledComponent<OneShotSound>("HitsSFX", TPSingleton<PlayableUnitManager>.Instance.HitSFXPrefab, (Transform)null, dontSetParent: false).Play(ResourcePooler.LoadOnce<AudioClip>("Sounds/SFX/PlayableUnitHits/" + soundId, failSilently: false));
 		}
 		else
 		{

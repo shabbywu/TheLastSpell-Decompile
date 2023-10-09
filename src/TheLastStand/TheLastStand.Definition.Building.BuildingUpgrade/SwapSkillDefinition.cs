@@ -26,7 +26,7 @@ public class SwapSkillDefinition : BuildingUpgradeEffectDefinition
 		XContainer obj = ((xContainer is XElement) ? xContainer : null);
 		XAttribute val = ((XElement)obj).Attribute(XName.op_Implicit("OldSkillId"));
 		XAttribute val2 = ((XElement)obj).Attribute(XName.op_Implicit("NewSkillId"));
-		if (!XDocumentExtensions.IsNullOrEmpty(val))
+		if (!val.IsNullOrEmpty())
 		{
 			OldSkillId = val.Value;
 		}
@@ -34,7 +34,7 @@ public class SwapSkillDefinition : BuildingUpgradeEffectDefinition
 		{
 			TPDebug.LogError((object)(base.Id + " UpgradeEffect must have a valid Attribute OldSkillId (token)"), (Object)null);
 		}
-		if (!XDocumentExtensions.IsNullOrEmpty(val2))
+		if (!val2.IsNullOrEmpty())
 		{
 			NewSkillId = val2.Value;
 		}

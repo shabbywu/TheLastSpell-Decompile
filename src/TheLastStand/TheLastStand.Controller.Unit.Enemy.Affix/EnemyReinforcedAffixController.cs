@@ -20,7 +20,7 @@ public class EnemyReinforcedAffixController : EnemyAffixController
 
 	public float GetBonusModifiers(UnitStatDefinition.E_Stat stat)
 	{
-		return EnemyReinforcedAffix.EnemyReinforcedAffixEffectDefinition.ModifiedStatsEveryXDay[stat].EvalToFloat((InterpreterContext)(object)base.EnemyAffix.Interpreter);
+		return EnemyReinforcedAffix.EnemyReinforcedAffixEffectDefinition.ModifiedStatsEveryXDay[stat].EvalToFloat(base.EnemyAffix.Interpreter);
 	}
 
 	public override void Trigger(E_EffectTime effectTime, object data = null)

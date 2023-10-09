@@ -4,14 +4,14 @@ using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Tooltip.Compendium;
 
-public abstract class ACompendiumEntryDefinition : Definition
+public abstract class ACompendiumEntryDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public string Id { get; private set; }
 
 	public HashSet<string> LinkedEntries { get; private set; }
 
 	protected ACompendiumEntryDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

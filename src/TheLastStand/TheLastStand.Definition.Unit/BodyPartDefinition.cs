@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit;
 
-public class BodyPartDefinition : Definition
+public class BodyPartDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	[Flags]
 	public enum E_Orientation
@@ -55,7 +55,7 @@ public class BodyPartDefinition : Definition
 	public string Id { get; private set; }
 
 	public BodyPartDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
@@ -94,7 +94,7 @@ public class BodyPartDefinition : Definition
 	{
 		XElement val = (XElement)(object)((container is XElement) ? container : null);
 		XAttribute val2 = val.Attribute(XName.op_Implicit("Id"));
-		if (XDocumentExtensions.IsNullOrEmpty(val2))
+		if (val2.IsNullOrEmpty())
 		{
 			Debug.LogError((object)"The BodyPartDefinition has no Id!");
 			return;
@@ -103,14 +103,14 @@ public class BodyPartDefinition : Definition
 		spritePaths.Clear();
 		foreach (XElement item in ((XContainer)val).Elements(XName.op_Implicit("Sprite")))
 		{
-			if (XDocumentExtensions.IsNullOrEmpty(item))
+			if (item.IsNullOrEmpty())
 			{
 				Debug.LogError((object)("The Sprite for BodyPartDefinition '" + Id + "' is invalid: entry is undefined"));
 				continue;
 			}
 			XAttribute val3 = item.Attribute(XName.op_Implicit("Constraint"));
 			string text = null;
-			if (XDocumentExtensions.IsNullOrEmpty(val3))
+			if (val3.IsNullOrEmpty())
 			{
 				Debug.LogError((object)("The Sprite for BodyPartDefinition '" + Id + "' is invalid: Constraint is undefined"));
 				continue;
@@ -118,7 +118,7 @@ public class BodyPartDefinition : Definition
 			text = val3.Value;
 			XAttribute val4 = item.Attribute(XName.op_Implicit("Orientation"));
 			E_Orientation result = E_Orientation.Front | E_Orientation.Back;
-			if (!XDocumentExtensions.IsNullOrEmpty(val4) && !Enum.TryParse<E_Orientation>(val4.Value, out result))
+			if (!val4.IsNullOrEmpty() && !Enum.TryParse<E_Orientation>(val4.Value, out result))
 			{
 				Debug.LogError((object)("The Sprite for BodyPartDefinition '" + Id + "' is invalid:  Orientation '" + val4.Value + "' is invalid"));
 				continue;

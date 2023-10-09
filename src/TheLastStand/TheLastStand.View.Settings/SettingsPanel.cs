@@ -532,10 +532,10 @@ public class SettingsPanel : SerializedMonoBehaviour, IOverlayUser
 			if (keyValuePair.Key.isOn)
 			{
 				keyValuePair.Key.isOn = false;
-				int index = IntExtensions.Mod(i + (next ? 1 : (-1)), count);
+				int index = (i + (next ? 1 : (-1))).Mod(count);
 				if (InputManager.IsLastControllerJoystick && (Object)(object)tabPagePairs.ElementAt(index).Value == (Object)(object)keyRemappingTab)
 				{
-					index = IntExtensions.Mod(i + (next ? 2 : (-2)), count);
+					index = (i + (next ? 2 : (-2))).Mod(count);
 				}
 				tabPagePairs.ElementAt(index).Key.isOn = true;
 				break;

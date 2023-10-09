@@ -159,7 +159,7 @@ public class EnemyUnitView : UnitView
 
 	public static Sprite GetHiddenEnemySprite()
 	{
-		return ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Units/Portaits/Enemy Unit/EnemiesPortrait_Hidden", false);
+		return ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Units/Portaits/Enemy Unit/EnemiesPortrait_Hidden", failSilently: false);
 	}
 
 	public static Sprite GetUiSprite(string enemyUnitDefinitionId)
@@ -168,7 +168,7 @@ public class EnemyUnitView : UnitView
 		{
 			return null;
 		}
-		return ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Units/Portaits/Enemy Unit/EnemiesPortrait_" + enemyUnitDefinitionId, false);
+		return ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Units/Portaits/Enemy Unit/EnemiesPortrait_" + enemyUnitDefinitionId, failSilently: false);
 	}
 
 	public override void ClearWaitUntils()
@@ -236,7 +236,7 @@ public class EnemyUnitView : UnitView
 
 	protected virtual void InitMaterial()
 	{
-		material = ResourcePooler.LoadOnce<Material>(((EnemyUnit is BossUnit) ? "View/Materials/BossUnit" : "View/Materials/EnemyUnit") + "_" + EnemyUnit.SpecificAssetsId, true) ?? EnemyUnitManager.DefaultEnemyMaterial;
+		material = ResourcePooler.LoadOnce<Material>(((EnemyUnit is BossUnit) ? "View/Materials/BossUnit" : "View/Materials/EnemyUnit") + "_" + EnemyUnit.SpecificAssetsId, failSilently: true) ?? EnemyUnitManager.DefaultEnemyMaterial;
 		((Renderer)frontSpriteRenderer).material = material;
 		((Renderer)backSpriteRenderer).material = material;
 		RefreshMaterial();
@@ -268,7 +268,7 @@ public class EnemyUnitView : UnitView
 		//IL_00c7: Unknown result type (might be due to invalid IL or missing references)
 		//IL_00d1: Expected O, but got Unknown
 		((Behaviour)animator).enabled = true;
-		animator.runtimeAnimatorController = ResourcePooler.LoadOnce<RuntimeAnimatorController>("Animators/Units/EnemyUnits/" + EnemyUnit.SpecificAssetsId + "/" + EnemyUnit.SpecificAssetsId + "_" + EnemyUnit.VariantId, false);
+		animator.runtimeAnimatorController = ResourcePooler.LoadOnce<RuntimeAnimatorController>("Animators/Units/EnemyUnits/" + EnemyUnit.SpecificAssetsId + "/" + EnemyUnit.SpecificAssetsId + "_" + EnemyUnit.VariantId, failSilently: false);
 		animator.SetFloat(IdleSpeedParameter, (Unit is BossUnit) ? 1f : RandomManager.GetRandomRange(this, EnemyUnitManager.IdleAnimSpeedMultRange.x, EnemyUnitManager.IdleAnimSpeedMultRange.y));
 		if (!base.InitAnimations())
 		{
@@ -311,8 +311,8 @@ public class EnemyUnitView : UnitView
 
 	protected virtual void InitDefaultSprites(string unitId)
 	{
-		EnemyUnit.DefaultSpriteFront = ResourcePooler.LoadOnce<Sprite>("View/Sprites/Units/" + GetDefaultSpritesFolder() + "/DefaultSprites/" + unitId + "/" + EnemyUnit.VariantId + "/" + unitId + "_Lvl1_" + EnemyUnit.VariantId + "_Idle_Front_00", false);
-		Sprite val = ResourcePooler.LoadOnce<Sprite>("View/Sprites/Units/" + GetDefaultSpritesFolder() + "/DefaultSprites/" + unitId + "/" + EnemyUnit.VariantId + "/" + unitId + "_Lvl1_" + EnemyUnit.VariantId + "_Idle_Back_00", false);
+		EnemyUnit.DefaultSpriteFront = ResourcePooler.LoadOnce<Sprite>("View/Sprites/Units/" + GetDefaultSpritesFolder() + "/DefaultSprites/" + unitId + "/" + EnemyUnit.VariantId + "/" + unitId + "_Lvl1_" + EnemyUnit.VariantId + "_Idle_Front_00", failSilently: false);
+		Sprite val = ResourcePooler.LoadOnce<Sprite>("View/Sprites/Units/" + GetDefaultSpritesFolder() + "/DefaultSprites/" + unitId + "/" + EnemyUnit.VariantId + "/" + unitId + "_Lvl1_" + EnemyUnit.VariantId + "_Idle_Back_00", failSilently: false);
 		EnemyUnit.DefaultSpriteBack = val ?? EnemyUnit.DefaultSpriteFront;
 	}
 
@@ -381,7 +381,7 @@ public class EnemyUnitView : UnitView
 		else if (Unit != null)
 		{
 			E_EnemyHudType bestFittingHUD = GetBestFittingHUD();
-			base.UnitHUD = ObjectPooler.GetPooledComponent<UnitHUD>(bestFittingHUD.GetPoolId(), bestFittingHUD.GetPrefab(), PlayableUnitManager.UnitHudsTransform, false);
+			base.UnitHUD = ObjectPooler.GetPooledComponent<UnitHUD>(bestFittingHUD.GetPoolId(), bestFittingHUD.GetPrefab(), PlayableUnitManager.UnitHudsTransform, dontSetParent: false);
 		}
 	}
 

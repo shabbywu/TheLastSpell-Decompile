@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.ExpressionInterpreter;
 
@@ -18,6 +17,6 @@ public class InterpretedTurnCondition : GoalConditionDefinition
 	public override void Deserialize(XContainer container)
 	{
 		XElement val = (XElement)(object)((container is XElement) ? container : null);
-		Expression = Parser.Parse(val.Value, (Dictionary<string, string>)null);
+		Expression = Parser.Parse(val.Value);
 	}
 }

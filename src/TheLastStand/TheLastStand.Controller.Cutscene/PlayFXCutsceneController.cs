@@ -4,7 +4,6 @@ using TPLib.Log;
 using TPLib.Yield;
 using TheLastStand.Controller.SpawnFx;
 using TheLastStand.Definition.Cutscene;
-using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Manager;
 using TheLastStand.Model;
 using TheLastStand.Model.SpawnFx;
@@ -34,7 +33,7 @@ public class PlayFXCutsceneController : CutsceneController
 			((CLogger<CutsceneManager>)TPSingleton<CutsceneManager>.Instance).LogError((object)"Tried to play a PlayFXCutsceneController with a null tile.", (CLogLevel)1, true, true);
 			yield break;
 		}
-		((InterpreterContext)formulaInterpreterContext).TargetObject = cutsceneData;
+		formulaInterpreterContext.TargetObject = cutsceneData;
 		if (PlayFXCutsceneDefinition.SpawnFxDefinition != null)
 		{
 			TheLastStand.Model.SpawnFx.SpawnFx spawnFx = new SpawnFxController(PlayFXCutsceneDefinition.SpawnFxDefinition).SpawnFx;
@@ -42,7 +41,7 @@ public class PlayFXCutsceneController : CutsceneController
 			spawnFx.SpawnFxController.PlaySpawnFxs();
 			if (PlayFXCutsceneDefinition.WaitForFXDuration)
 			{
-				yield return SharedYields.WaitForSeconds(spawnFx.SpawnFxDefinition.CastTotalDuration.EvalToFloat((InterpreterContext)(object)formulaInterpreterContext));
+				yield return SharedYields.WaitForSeconds(spawnFx.SpawnFxDefinition.CastTotalDuration.EvalToFloat(formulaInterpreterContext));
 			}
 		}
 	}

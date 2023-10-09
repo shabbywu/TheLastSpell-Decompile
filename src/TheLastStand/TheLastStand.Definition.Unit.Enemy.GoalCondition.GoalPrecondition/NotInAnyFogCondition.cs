@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.ExpressionInterpreter;
 
@@ -20,7 +19,7 @@ public class NotInAnyFogCondition : GoalConditionDefinition
 		XAttribute val = ((XElement)((container is XElement) ? container : null)).Attribute(XName.op_Implicit("NbTurns"));
 		if (val != null)
 		{
-			NbTurns = Parser.Parse(val.Value, (Dictionary<string, string>)null);
+			NbTurns = Parser.Parse(val.Value);
 		}
 	}
 }

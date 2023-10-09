@@ -328,17 +328,17 @@ public class NarrationView : MonoBehaviour
 	{
 		for (int i = 0; i < replicaViews.Length; i++)
 		{
-			SelectableExtensions.SetMode((Selectable)(object)replicaViews[i].Button, (Mode)4);
-			SelectableExtensions.ClearNavigation((Selectable)(object)replicaViews[i].Button);
+			((Selectable)(object)replicaViews[i].Button).SetMode((Mode)4);
+			((Selectable)(object)replicaViews[i].Button).ClearNavigation();
 			if (((Component)replicaViews[i]).gameObject.activeSelf)
 			{
 				if (i > 0)
 				{
-					SelectableExtensions.SetSelectOnUp((Selectable)(object)replicaViews[i].Button, (Selectable)(object)replicaViews[i - 1].Button);
+					((Selectable)(object)replicaViews[i].Button).SetSelectOnUp((Selectable)(object)replicaViews[i - 1].Button);
 				}
 				if (i < replicaViews.Length - 1 && ((Component)replicaViews[i + 1]).gameObject.activeSelf)
 				{
-					SelectableExtensions.SetSelectOnDown((Selectable)(object)replicaViews[i].Button, (Selectable)(object)replicaViews[i + 1].Button);
+					((Selectable)(object)replicaViews[i].Button).SetSelectOnDown((Selectable)(object)replicaViews[i + 1].Button);
 				}
 				continue;
 			}

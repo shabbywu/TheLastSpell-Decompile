@@ -122,16 +122,16 @@ public class WorldMapApocalypseMaxLevelView : TPSingleton<WorldMapApocalypseMaxL
 		//IL_0044: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0052: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0057: Unknown result type (might be due to invalid IL or missing references)
-		BetterButton obj = leftButton;
+		BetterButton betterButton = leftButton;
 		Rect rect = scrollViewRectTransform.rect;
 		float width = ((Rect)(ref rect)).width;
 		rect = scrollRectRectTransform.rect;
-		obj.Interactable = width < ((Rect)(ref rect)).width;
-		BetterButton obj2 = rightButton;
+		betterButton.Interactable = width < ((Rect)(ref rect)).width;
+		BetterButton betterButton2 = rightButton;
 		rect = scrollViewRectTransform.rect;
 		float width2 = ((Rect)(ref rect)).width;
 		rect = scrollRectRectTransform.rect;
-		obj2.Interactable = width2 < ((Rect)(ref rect)).width;
+		betterButton2.Interactable = width2 < ((Rect)(ref rect)).width;
 	}
 
 	private void Fold(float duration)
@@ -144,7 +144,7 @@ public class WorldMapApocalypseMaxLevelView : TPSingleton<WorldMapApocalypseMaxL
 			{
 				TweenExtensions.Kill(statusTransitionTween, false);
 			}
-			foldAnimation.StatusTransitionTween = (Tween)(object)TweenExtensions.SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosY(foldRectTransform, foldAnimation.StatusOne, foldAnimation.TransitionDuration, false), foldAnimation.TransitionEase), "ApocalypseFold", (Component)(object)this);
+			foldAnimation.StatusTransitionTween = (Tween)(object)TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosY(foldRectTransform, foldAnimation.StatusOne, foldAnimation.TransitionDuration, false), foldAnimation.TransitionEase).SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>("ApocalypseFold", (Component)(object)this);
 			foldAnimation.InStatusOne = true;
 			isFolded = true;
 			UIOptimization(stopAnimations: true);
@@ -169,7 +169,7 @@ public class WorldMapApocalypseMaxLevelView : TPSingleton<WorldMapApocalypseMaxL
 			{
 				TweenExtensions.Kill(statusTransitionTween, false);
 			}
-			foldAnimation.StatusTransitionTween = (Tween)(object)TweenExtensions.SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosY(foldRectTransform, foldAnimation.StatusTwo, foldAnimation.TransitionDuration, false), foldAnimation.TransitionEase), "ApocalypseUnfold", (Component)(object)this);
+			foldAnimation.StatusTransitionTween = (Tween)(object)TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosY(foldRectTransform, foldAnimation.StatusTwo, foldAnimation.TransitionDuration, false), foldAnimation.TransitionEase).SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>("ApocalypseUnfold", (Component)(object)this);
 			foldAnimation.InStatusOne = false;
 			isFolded = false;
 			UIOptimization(stopAnimations: false);

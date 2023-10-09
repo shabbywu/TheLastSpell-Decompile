@@ -65,9 +65,7 @@ public class Recruitment : ISerializable, IDeserializable
 
 	public void ListenToBuildingDestroyEvent()
 	{
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Expected O, but got Unknown
-		EventManager.AddListener(typeof(BuildingDestroyedEvent), new EventHandler(OnBuildingDestroy), false);
+		EventManager.AddListener(typeof(BuildingDestroyedEvent), OnBuildingDestroy);
 	}
 
 	private void OnBuildingDestroy(Event e)
@@ -153,6 +151,6 @@ public class Recruitment : ISerializable, IDeserializable
 		serializedRecruitment.HasMage = HasMage;
 		serializedRecruitment.MageGenerationCurrentProbability = MageGenerationCurrentProbability;
 		serializedRecruitment.UnitLimitBonus = UnitLimitBonus;
-		return (ISerializedData)(object)serializedRecruitment;
+		return serializedRecruitment;
 	}
 }

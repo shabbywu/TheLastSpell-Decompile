@@ -3,7 +3,6 @@ using System.Xml.Linq;
 using TPLib.Log;
 using TheLastStand.Database.Unit;
 using TheLastStand.Definition.Skill;
-using TheLastStand.Framework.Serialization;
 using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.Perk.PerkEffect;
@@ -36,6 +35,6 @@ public class CastSkillEffectDefinition : APerkEffectDefinition
 		{
 			CLoggerManager.Log((object)("Skill " + val2.Value + " not found!"), (LogType)0, (CLogLevel)2, true, "CastSkillEffectDefinition", false);
 		}
-		PerkTargetingDefinition = new PerkTargetingDefinition((XContainer)(object)((XContainer)val).Element(XName.op_Implicit("PerkTargeting")), ((Definition)this).TokenVariables);
+		PerkTargetingDefinition = new PerkTargetingDefinition((XContainer)(object)((XContainer)val).Element(XName.op_Implicit("PerkTargeting")), base.TokenVariables);
 	}
 }

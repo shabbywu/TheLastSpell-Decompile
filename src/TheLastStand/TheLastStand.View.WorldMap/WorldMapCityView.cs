@@ -147,7 +147,7 @@ public class WorldMapCityView : MonoBehaviour
 		{
 			WorldMapCity.RefreshIsSelectable();
 			selectionCursor.SetActive(false);
-			animator.runtimeAnimatorController = ResourcePooler<RuntimeAnimatorController>.LoadOnce(string.Format("Animators/Cities/Worldmap/{0}Animations/{0}_Animator", WorldMapCity.CityDefinition.Id), false);
+			animator.runtimeAnimatorController = ResourcePooler<RuntimeAnimatorController>.LoadOnce(string.Format("Animators/Cities/Worldmap/{0}Animations/{0}_Animator", WorldMapCity.CityDefinition.Id));
 			animator.Play(GetAnimationName(hovered: false), 0, Random.value);
 			((TMP_Text)cityNameText).text = ((WorldMapCity.NumberOfRuns > 0) ? $"{WorldMapCity.CityDefinition.Name} #{WorldMapCity.NumberOfRuns + 1}" : WorldMapCity.CityDefinition.Name);
 			if (!WorldMapCity.IsSelectable)
@@ -156,7 +156,7 @@ public class WorldMapCityView : MonoBehaviour
 			}
 			if (WorldMapCity.MaxApocalypsePassed >= 1)
 			{
-				apocalypseLevelImage.sprite = ResourcePooler<Sprite>.LoadOnce($"View/Sprites/UI/WorldMap/ApocalypseLevels/ApocalypseLevel_{WorldMapCity.MaxApocalypsePassed:00}", false);
+				apocalypseLevelImage.sprite = ResourcePooler<Sprite>.LoadOnce($"View/Sprites/UI/WorldMap/ApocalypseLevels/ApocalypseLevel_{WorldMapCity.MaxApocalypsePassed:00}");
 			}
 			else
 			{

@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Xml.Linq;
 using TPLib.Log;
 using TheLastStand.Framework.Extensions;
-using TheLastStand.Framework.Serialization;
 using UnityEngine;
 
 namespace TheLastStand.Definition.Meta.Glyphs.GlyphEffects;
@@ -19,10 +18,10 @@ public abstract class GlyphIntValueBasedEffectDefinition : GlyphEffectDefinition
 	public override void Deserialize(XContainer container)
 	{
 		XAttribute val = ((XElement)((container is XElement) ? container : null)).Attribute(XName.op_Implicit("Value"));
-		string text = StringExtensions.Replace(val.Value, ((Definition)this).TokenVariables);
+		string text = val.Value.Replace(base.TokenVariables);
 		if (!int.TryParse(text, out var result))
 		{
-			CLoggerManager.Log((object)(((object)this).GetType().FullName + " Unable to parse " + text + " (" + val.Value + ") into an int"), (LogType)0, (CLogLevel)2, true, "StaticLog", false);
+			CLoggerManager.Log((object)(GetType().FullName + " Unable to parse " + text + " (" + val.Value + ") into an int"), (LogType)0, (CLogLevel)2, true, "StaticLog", false);
 		}
 		Value = result;
 	}

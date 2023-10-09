@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Xml.Linq;
 using TheLastStand.Controller.Meta;
@@ -10,7 +9,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.PlayableUnitGeneration;
 
-public class StatGenerationDefinition : Definition
+public class StatGenerationDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	private string Archetype { get; set; }
 
@@ -19,7 +18,7 @@ public class StatGenerationDefinition : Definition
 	public UnitStatDefinition.E_Stat Stat { get; private set; }
 
 	public StatGenerationDefinition(XContainer container, string archetype)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 		Archetype = archetype;
 	}

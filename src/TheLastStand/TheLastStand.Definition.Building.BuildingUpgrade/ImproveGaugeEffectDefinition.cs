@@ -21,7 +21,7 @@ public class ImproveGaugeEffectDefinition : BuildingUpgradeEffectDefinition
 		base.Deserialize(xContainer);
 		XAttribute val = ((XElement)((xContainer is XElement) ? xContainer : null)).Attribute(XName.op_Implicit("UpgradedBonusValue"));
 		int result;
-		if (XDocumentExtensions.IsNullOrEmpty(val))
+		if (val.IsNullOrEmpty())
 		{
 			TPDebug.LogError((object)(base.Id + " UpgradeEffect must have an Attribute UpgradedBonusValue"), (Object)null);
 		}

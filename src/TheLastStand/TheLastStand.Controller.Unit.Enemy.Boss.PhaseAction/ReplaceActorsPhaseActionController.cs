@@ -31,9 +31,8 @@ public class ReplaceActorsPhaseActionController : ABossPhaseActionController
 
 	public override IEnumerator Execute()
 	{
-		BossPhase currentBossPhase = TPSingleton<BossManager>.Instance.CurrentBossPhase;
-		ActorDefinition actorDefinition = ((currentBossPhase != null) ? DictionaryExtensions.GetValueOrDefault<string, ActorDefinition>(currentBossPhase.BossPhaseDefinition.ActorDefinitions, ReplaceActorsPhaseActionDefinition.ReplacementId) : null);
-		Definition actorTypedDefinition = actorDefinition?.GetCorrespondingDefinition();
+		ActorDefinition actorDefinition = TPSingleton<BossManager>.Instance.CurrentBossPhase?.BossPhaseDefinition.ActorDefinitions.GetValueOrDefault(ReplaceActorsPhaseActionDefinition.ReplacementId);
+		TheLastStand.Framework.Serialization.Definition actorTypedDefinition = actorDefinition?.GetCorrespondingDefinition();
 		if (!TPSingleton<BossManager>.Instance.BossPhaseActors.TryGetValue(ReplaceActorsPhaseActionDefinition.ActorId, out var actors))
 		{
 			yield break;

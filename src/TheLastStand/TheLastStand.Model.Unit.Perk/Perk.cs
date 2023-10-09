@@ -6,7 +6,6 @@ using TheLastStand.Controller.TileMap;
 using TheLastStand.Controller.Unit.Perk;
 using TheLastStand.Database.Unit;
 using TheLastStand.Definition.Unit.Perk;
-using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Framework.Serialization;
 using TheLastStand.Manager;
 using TheLastStand.Manager.Unit;
@@ -55,7 +54,7 @@ public class Perk : FormulaInterpreterContext, ISkillContainer, ISerializable, I
 	{
 		get
 		{
-			if (((InterpreterContext)this).TargetObject is PerkDataContainer perkDataContainer)
+			if (TargetObject is PerkDataContainer perkDataContainer)
 			{
 				return perkDataContainer.Caster == Owner;
 			}
@@ -67,7 +66,7 @@ public class Perk : FormulaInterpreterContext, ISkillContainer, ISerializable, I
 	{
 		get
 		{
-			if (((InterpreterContext)this).TargetObject is PerkDataContainer perkDataContainer)
+			if (TargetObject is PerkDataContainer perkDataContainer)
 			{
 				return perkDataContainer.TargetDamageable == Owner;
 			}
@@ -79,7 +78,7 @@ public class Perk : FormulaInterpreterContext, ISkillContainer, ISerializable, I
 	{
 		get
 		{
-			if (!(((InterpreterContext)this).TargetObject is PerkDataContainer perkDataContainer))
+			if (!(TargetObject is PerkDataContainer perkDataContainer))
 			{
 				return 0;
 			}
@@ -87,7 +86,7 @@ public class Perk : FormulaInterpreterContext, ISkillContainer, ISerializable, I
 		}
 	}
 
-	public bool HasPerkData => ((InterpreterContext)this).TargetObject is PerkDataContainer;
+	public bool HasPerkData => TargetObject is PerkDataContainer;
 
 	public bool IsNightCycle => TPSingleton<GameManager>.Instance.Game.Cycle == Game.E_Cycle.Night;
 
@@ -173,7 +172,7 @@ public class Perk : FormulaInterpreterContext, ISkillContainer, ISerializable, I
 	public Perk(SerializedPerk serializedPerk, PerkDefinition perkDefinition, PerkController perkController, UnitPerkDisplay perkView, PlayableUnit owner, UnitPerkTier perkTier, string collectionId, bool isNative)
 		: this(perkDefinition, perkController, perkView, owner, perkTier, collectionId, isNative)
 	{
-		Deserialize((ISerializedData)(object)serializedPerk);
+		Deserialize(serializedPerk);
 	}
 
 	public bool DisplayCounter(out int counter)
@@ -183,7 +182,7 @@ public class Perk : FormulaInterpreterContext, ISkillContainer, ISerializable, I
 			counter = -1;
 			return false;
 		}
-		counter = PerkDefinition.HudBuffer.EvalToInt((InterpreterContext)(object)this);
+		counter = PerkDefinition.HudBuffer.EvalToInt(this);
 		return counter != 0;
 	}
 
@@ -194,7 +193,7 @@ public class Perk : FormulaInterpreterContext, ISkillContainer, ISerializable, I
 			value = -1;
 			return false;
 		}
-		value = PerkDefinition.HudBonus.EvalToInt((InterpreterContext)(object)this);
+		value = PerkDefinition.HudBonus.EvalToInt(this);
 		return true;
 	}
 
@@ -226,7 +225,7 @@ public class Perk : FormulaInterpreterContext, ISkillContainer, ISerializable, I
 				}
 				else
 				{
-					Owner.LogError($"Found an unknown type of PerkModuleDefinition: {((object)perkModuleDefinition3).GetType()}.", (CLogLevel)1);
+					Owner.LogError($"Found an unknown type of PerkModuleDefinition: {perkModuleDefinition3.GetType()}.", (CLogLevel)1);
 				}
 			}
 			else
@@ -250,7 +249,7 @@ public class Perk : FormulaInterpreterContext, ISkillContainer, ISerializable, I
 
 	public ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedPerk
+		return new SerializedPerk
 		{
 			Id = PerkDefinition.Id,
 			Unlocked = Unlocked,
@@ -270,7 +269,7 @@ public class Perk : FormulaInterpreterContext, ISkillContainer, ISerializable, I
 				((CLogger<PlayableUnitManager>)TPSingleton<PlayableUnitManager>.Instance).LogWarning((object)"Deserializing perk module but serialized perk modules count is less than modules definition count -> Aborting excess.", (CLogLevel)1, true, false);
 				break;
 			}
-			PerkModules[i].Deserialize((ISerializedData)(object)serializedPerk.Modules[i]);
+			PerkModules[i].Deserialize(serializedPerk.Modules[i]);
 		}
 		Bookmarked = serializedPerk.Bookmarked;
 	}

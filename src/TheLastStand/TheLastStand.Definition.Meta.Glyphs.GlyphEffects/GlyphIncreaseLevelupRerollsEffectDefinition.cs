@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.ExpressionInterpreter;
-using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Meta.Glyphs.GlyphEffects;
 
@@ -22,6 +21,6 @@ public class GlyphIncreaseLevelupRerollsEffectDefinition : GlyphEffectDefinition
 		GlyphDefinition.AssertIsTrue(obj != null, "Received null element in GlyphIncreaseStartingResourcesEffectDefinition.");
 		XAttribute val = ((XElement)obj).Attribute(XName.op_Implicit("Value"));
 		GlyphDefinition.AssertIsTrue(val != null, "Value attribute is missing in IncreaseLevelupRerolls.");
-		RerollsBonusExpression = Parser.Parse(val.Value, ((Definition)this).TokenVariables);
+		RerollsBonusExpression = Parser.Parse(val.Value, base.TokenVariables);
 	}
 }

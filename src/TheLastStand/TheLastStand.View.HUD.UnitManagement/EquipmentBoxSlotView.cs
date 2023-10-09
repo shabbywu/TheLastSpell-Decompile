@@ -75,8 +75,8 @@ public class EquipmentBoxSlotView : MonoBehaviour, IPointerEnterHandler, IEventS
 			equippedSlotImage.sprite = ItemView.GetUiSprite(this.item.ItemDefinition.ArtId);
 			equippedSlotBGImage.sprite = ItemView.GetUiSprite(this.item.ItemDefinition.ArtId, isBG: true);
 			Color colorAt = rarityColors.GetColorAt((int)(this.item.Rarity - 1));
-			((Graphic)equippedSlotImage).color = ((shouldAttenuateWhenTwoHandedWeapon && isTwoHandedWeapon) ? ColorExtensions.WithA(Color.white, 0.5f) : Color.white);
-			((Graphic)equippedSlotBGImage).color = ((shouldAttenuateWhenTwoHandedWeapon && isTwoHandedWeapon) ? ColorExtensions.WithA(colorAt, 0.5f) : colorAt);
+			((Graphic)equippedSlotImage).color = ((shouldAttenuateWhenTwoHandedWeapon && isTwoHandedWeapon) ? Color.white.WithA(0.5f) : Color.white);
+			((Graphic)equippedSlotBGImage).color = ((shouldAttenuateWhenTwoHandedWeapon && isTwoHandedWeapon) ? colorAt.WithA(0.5f) : colorAt);
 		}
 	}
 

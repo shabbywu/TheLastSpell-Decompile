@@ -20,7 +20,7 @@ public class PlaySoundCutsceneController : CutsceneController
 
 	public override IEnumerator Play(CutsceneData cutsceneData)
 	{
-		AudioClip audioClip = ResourcePooler.LoadOnce<AudioClip>(PlaySoundCutsceneDefinition.AudioClipPath ?? "", false);
+		AudioClip audioClip = ResourcePooler.LoadOnce<AudioClip>(PlaySoundCutsceneDefinition.AudioClipPath ?? "", failSilently: false);
 		SoundManager.PlayAudioClip(TPSingleton<CutsceneManager>.Instance.VictorySequenceView.AudioSource, audioClip, PlaySoundCutsceneDefinition.Delay);
 		yield break;
 	}

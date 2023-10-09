@@ -1,10 +1,9 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Cutscene;
 
-public class PlayPillarsCutsceneDefinition : Definition, ICutsceneDefinition
+public class PlayPillarsCutsceneDefinition : TheLastStand.Framework.Serialization.Definition, ICutsceneDefinition
 {
 	public static class Constants
 	{
@@ -14,7 +13,7 @@ public class PlayPillarsCutsceneDefinition : Definition, ICutsceneDefinition
 	public bool SkipFadeOut { get; private set; }
 
 	public PlayPillarsCutsceneDefinition(XContainer xContainer)
-		: base(xContainer, (Dictionary<string, string>)null)
+		: base(xContainer)
 	{
 	}
 

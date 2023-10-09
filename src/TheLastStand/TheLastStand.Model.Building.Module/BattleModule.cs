@@ -123,9 +123,9 @@ public class BattleModule : BuildingModule, ISkillContainer, IBehaviorModel, ISk
 		for (int num2 = ModifyDefensesDamagePerks.Count - 1; num2 >= 0; num2--)
 		{
 			ModifyDefensesDamageEffect modifyDefensesDamageEffect = ModifyDefensesDamagePerks[num2];
-			if (TileMapController.IsAnyTileInRange(modifyDefensesDamageEffect.APerkModule.Perk.Owner.OriginTile, base.BuildingParent.OccupiedTiles, modifyDefensesDamageEffect.ModifyDefensesDamageEffectDefinition.RangeExpression.EvalToInt((object)ModifyDefensesDamagePerks[num2])))
+			if (TileMapController.IsAnyTileInRange(modifyDefensesDamageEffect.APerkModule.Perk.Owner.OriginTile, base.BuildingParent.OccupiedTiles, modifyDefensesDamageEffect.ModifyDefensesDamageEffectDefinition.RangeExpression.EvalToInt(ModifyDefensesDamagePerks[num2])))
 			{
-				num += modifyDefensesDamageEffect.ModifyDefensesDamageEffectDefinition.PercentageExpression.EvalToInt((object)ModifyDefensesDamagePerks[num2]);
+				num += modifyDefensesDamageEffect.ModifyDefensesDamageEffectDefinition.PercentageExpression.EvalToInt(ModifyDefensesDamagePerks[num2]);
 			}
 		}
 		return num;
@@ -161,7 +161,7 @@ public class BattleModule : BuildingModule, ISkillContainer, IBehaviorModel, ISk
 			{
 				if (serializedGoal.Id == Goals[i].Id)
 				{
-					Goals[i].Deserialize((ISerializedData)(object)serializedGoal);
+					Goals[i].Deserialize(serializedGoal);
 					break;
 				}
 			}

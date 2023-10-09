@@ -22,10 +22,9 @@ public class SpritesLocalizeManager : Manager<SpritesLocalizeManager>
 		}
 		if (spritesLocalizedDictionnary.SpritesByLanguages.TryGetValue(CurrentLanguage, out var value))
 		{
-			SpritesLocalizedDictionnary.KeySprite keySprite = default(SpritesLocalizedDictionnary.KeySprite);
-			if (ListExtensions.TryFind<SpritesLocalizedDictionnary.KeySprite>(value, (Predicate<SpritesLocalizedDictionnary.KeySprite>)((SpritesLocalizedDictionnary.KeySprite x) => x.Key == key), ref keySprite))
+			if (value.TryFind((SpritesLocalizedDictionnary.KeySprite x) => x.Key == key, out var value2))
 			{
-				return keySprite.Sprite;
+				return value2.Sprite;
 			}
 			return null;
 		}

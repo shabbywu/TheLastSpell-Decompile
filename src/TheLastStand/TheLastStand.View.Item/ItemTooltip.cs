@@ -402,8 +402,8 @@ public class ItemTooltip : TooltipBase
 		itemLevelImage.sprite = itemLevelSprites.GetSpriteAt(Item.Level);
 		((Behaviour)itemLevelImage).enabled = (Object)(object)itemLevelImage.sprite != (Object)null;
 		RefreshText();
-		categoryImage.sprite = ResourcePooler.LoadOnce<Sprite>(string.Format("{0}{1}_On", "View/Sprites/UI/Items/Categories/Icon_ItemCategory_", ItemDefinition.E_Category.Usable.HasFlag(Item.ItemDefinition.Category) ? ItemDefinition.E_Category.Usable : Item.ItemDefinition.Category), false);
-		handsImage.sprite = ((Item.ItemDefinition.Hands != 0) ? ResourcePooler.LoadOnce<Sprite>(string.Format("{0}{1}_On", "View/Sprites/UI/Items/Hands/Icon_ItemCategory_", Item.ItemDefinition.Hands), false) : null);
+		categoryImage.sprite = ResourcePooler.LoadOnce<Sprite>(string.Format("{0}{1}_On", "View/Sprites/UI/Items/Categories/Icon_ItemCategory_", ItemDefinition.E_Category.Usable.HasFlag(Item.ItemDefinition.Category) ? ItemDefinition.E_Category.Usable : Item.ItemDefinition.Category), failSilently: false);
+		handsImage.sprite = ((Item.ItemDefinition.Hands != 0) ? ResourcePooler.LoadOnce<Sprite>(string.Format("{0}{1}_On", "View/Sprites/UI/Items/Hands/Icon_ItemCategory_", Item.ItemDefinition.Hands), failSilently: false) : null);
 		((Behaviour)handsImage).enabled = Item.ItemDefinition.Hands != ItemDefinition.E_Hands.None;
 		rarityIconImage.sprite = rarityIcons.GetSpriteAt((int)(Item.Rarity - 1));
 		((TMP_Text)sellPriceText).text = (useDefaultValues ? Item.DefaultSellingPrice.ToString() : Item.SellingPrice.ToString());

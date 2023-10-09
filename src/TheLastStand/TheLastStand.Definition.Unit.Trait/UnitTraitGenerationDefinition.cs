@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TPLib;
 using TheLastStand.Framework.Extensions;
@@ -8,7 +7,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.Trait;
 
-public class UnitTraitGenerationDefinition : Definition
+public class UnitTraitGenerationDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public int StartTraitTotalPoints { get; private set; }
 
@@ -19,7 +18,7 @@ public class UnitTraitGenerationDefinition : Definition
 	public Vector2Int UnitTraitPointBoundariesWithModifiers => UnitTraitPointBoundaries + TPSingleton<MetaUpgradesManager>.Instance.ComputeUnitTraitPointsBoundariesModifiers();
 
 	public UnitTraitGenerationDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
@@ -34,7 +33,7 @@ public class UnitTraitGenerationDefinition : Definition
 			return;
 		}
 		XAttribute val3 = val2.Attribute(XName.op_Implicit("Value"));
-		if (XDocumentExtensions.IsNullOrEmpty(val3))
+		if (val3.IsNullOrEmpty())
 		{
 			TPDebug.LogError((object)"UnitTraitGenerationDefinition StartTraitTotalPoints must have an attribute Value", (Object)null);
 			return;
@@ -52,7 +51,7 @@ public class UnitTraitGenerationDefinition : Definition
 			return;
 		}
 		XAttribute val5 = val4.Attribute(XName.op_Implicit("Min"));
-		if (XDocumentExtensions.IsNullOrEmpty(val5))
+		if (val5.IsNullOrEmpty())
 		{
 			TPDebug.LogError((object)"UnitTraitGenerationDefinition UnitTraitPointsBoundaries must have an attribute Min", (Object)null);
 			return;
@@ -64,7 +63,7 @@ public class UnitTraitGenerationDefinition : Definition
 		}
 		XAttribute val6 = val4.Attribute(XName.op_Implicit("Max"));
 		int result3;
-		if (XDocumentExtensions.IsNullOrEmpty(val6))
+		if (val6.IsNullOrEmpty())
 		{
 			TPDebug.LogError((object)"UnitTraitGenerationDefinition UnitTraitPointsBoundaries must have an attribute Max", (Object)null);
 		}

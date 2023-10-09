@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Item;
 
-public class AffixMalusDefinition : Definition
+public class AffixMalusDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public enum E_MalusLevel
 	{
@@ -43,7 +43,7 @@ public class AffixMalusDefinition : Definition
 	public int Weight { get; private set; }
 
 	public AffixMalusDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

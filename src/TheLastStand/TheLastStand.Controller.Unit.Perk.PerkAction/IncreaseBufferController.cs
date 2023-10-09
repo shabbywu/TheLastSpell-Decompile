@@ -1,6 +1,5 @@
 using TheLastStand.Definition.Unit.Perk;
 using TheLastStand.Definition.Unit.Perk.PerkAction;
-using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Model.Unit.Perk;
 using TheLastStand.Model.Unit.Perk.PerkAction;
 using TheLastStand.Model.Unit.Perk.PerkEvent;
@@ -23,7 +22,7 @@ public class IncreaseBufferController : APerkActionController
 
 	public override void Trigger(PerkDataContainer data)
 	{
-		int num = IncreaseBuffer.IncreaseBufferDefinition.ValueExpression.EvalToInt((InterpreterContext)(object)PerkAction.PerkEvent.PerkModule.Perk);
+		int num = IncreaseBuffer.IncreaseBufferDefinition.ValueExpression.EvalToInt(PerkAction.PerkEvent.PerkModule.Perk);
 		switch (IncreaseBuffer.IncreaseBufferDefinition.BufferIndex)
 		{
 		case BufferModuleDefinition.BufferIndex.Buffer:

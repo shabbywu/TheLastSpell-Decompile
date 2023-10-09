@@ -143,7 +143,7 @@ public class Game : ISerializable, IDeserializable
 
 	public Game(SerializedGame container)
 	{
-		Deserialize((ISerializedData)(object)container);
+		Deserialize(container);
 	}
 
 	public void Deserialize(ISerializedData game = null, int saveVersion = -1)
@@ -166,7 +166,7 @@ public class Game : ISerializable, IDeserializable
 
 	public ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedGame
+		return new SerializedGame
 		{
 			Cycle = Cycle,
 			DayNumber = DayNumber,

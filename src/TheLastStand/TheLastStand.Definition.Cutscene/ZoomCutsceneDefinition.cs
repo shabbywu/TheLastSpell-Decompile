@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TPLib.Log;
 using TheLastStand.Framework.Serialization;
@@ -6,7 +5,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Cutscene;
 
-public class ZoomCutsceneDefinition : Definition, ICutsceneDefinition
+public class ZoomCutsceneDefinition : TheLastStand.Framework.Serialization.Definition, ICutsceneDefinition
 {
 	public static class Constants
 	{
@@ -18,7 +17,7 @@ public class ZoomCutsceneDefinition : Definition, ICutsceneDefinition
 	public bool Instant { get; private set; }
 
 	public ZoomCutsceneDefinition(XContainer xContainer)
-		: base(xContainer, (Dictionary<string, string>)null)
+		: base(xContainer)
 	{
 	}
 

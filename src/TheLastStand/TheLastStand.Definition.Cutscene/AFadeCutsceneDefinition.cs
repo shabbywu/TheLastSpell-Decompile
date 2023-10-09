@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Cutscene;
 
-public abstract class AFadeCutsceneDefinition : Definition, ICutsceneDefinition
+public abstract class AFadeCutsceneDefinition : TheLastStand.Framework.Serialization.Definition, ICutsceneDefinition
 {
 	public Color Color { get; private set; } = Color.white;
 
@@ -36,7 +36,7 @@ public abstract class AFadeCutsceneDefinition : Definition, ICutsceneDefinition
 		}
 		else
 		{
-			CLoggerManager.Log((object)("Could not parse " + ((object)this).GetType().Name + " value " + val2.Value + " as a valid color."), (LogType)3, (CLogLevel)1, true, "StaticLog", false);
+			CLoggerManager.Log((object)("Could not parse " + GetType().Name + " value " + val2.Value + " as a valid color."), (LogType)3, (CLogLevel)1, true, "StaticLog", false);
 		}
 		XAttribute val3 = val.Attribute(XName.op_Implicit("Duration"));
 		if (float.TryParse(val3.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var result))
@@ -45,7 +45,7 @@ public abstract class AFadeCutsceneDefinition : Definition, ICutsceneDefinition
 		}
 		else
 		{
-			CLoggerManager.Log((object)("Could not parse " + ((object)this).GetType().Name + " value " + val3.Value + " as a valid float value."), (LogType)3, (CLogLevel)1, true, "StaticLog", false);
+			CLoggerManager.Log((object)("Could not parse " + GetType().Name + " value " + val3.Value + " as a valid float value."), (LogType)3, (CLogLevel)1, true, "StaticLog", false);
 		}
 		XAttribute val4 = val.Attribute(XName.op_Implicit("WaitDuration"));
 		if (val4 != null)
@@ -55,7 +55,7 @@ public abstract class AFadeCutsceneDefinition : Definition, ICutsceneDefinition
 				WaitDuration = result2;
 				return;
 			}
-			CLoggerManager.Log((object)("Could not parse " + ((object)this).GetType().Name + " waitDuration value " + val4.Value + " as a valid bool value."), (LogType)3, (CLogLevel)1, true, "StaticLog", false);
+			CLoggerManager.Log((object)("Could not parse " + GetType().Name + " waitDuration value " + val4.Value + " as a valid bool value."), (LogType)3, (CLogLevel)1, true, "StaticLog", false);
 			WaitDuration = true;
 		}
 	}

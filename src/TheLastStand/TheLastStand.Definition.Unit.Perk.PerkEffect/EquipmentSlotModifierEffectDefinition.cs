@@ -4,7 +4,6 @@ using System.Xml.Linq;
 using TPLib.Log;
 using TheLastStand.Definition.Item;
 using TheLastStand.Framework.ExpressionInterpreter;
-using TheLastStand.Framework.Serialization;
 using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.Perk.PerkEffect;
@@ -37,7 +36,7 @@ public class EquipmentSlotModifierEffectDefinition : APerkEffectDefinition
 		XAttribute val2 = ((XElement)obj).Attribute(XName.op_Implicit("Value"));
 		if (val2 != null)
 		{
-			ValueExpression = Parser.Parse(val2.Value, ((Definition)this).TokenVariables);
+			ValueExpression = Parser.Parse(val2.Value, base.TokenVariables);
 		}
 	}
 }

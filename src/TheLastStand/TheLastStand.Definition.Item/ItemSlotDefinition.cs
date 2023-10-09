@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Item;
 
-public class ItemSlotDefinition : Definition
+public class ItemSlotDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	[Flags]
 	public enum E_ItemSlotId
@@ -64,7 +64,7 @@ public class ItemSlotDefinition : Definition
 
 
 	public ItemSlotDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
@@ -72,7 +72,7 @@ public class ItemSlotDefinition : Definition
 	{
 		XElement val = (XElement)(object)((container is XElement) ? container : null);
 		XAttribute val2 = val.Attribute(XName.op_Implicit("Id"));
-		if (XDocumentExtensions.IsNullOrEmpty(val2))
+		if (val2.IsNullOrEmpty())
 		{
 			Debug.LogError((object)"The ItemSlotDefinition has no Id!");
 			return;
@@ -83,7 +83,7 @@ public class ItemSlotDefinition : Definition
 		}
 		Id = result;
 		XElement val3 = ((XContainer)val).Element(XName.op_Implicit("Categories"));
-		if (XDocumentExtensions.IsNullOrEmpty(val3))
+		if (val3.IsNullOrEmpty())
 		{
 			Debug.LogError((object)$"The ItemSlotDefinition {Id} must have a Categories element!");
 			return;
@@ -104,7 +104,7 @@ public class ItemSlotDefinition : Definition
 			}
 		}
 		XElement val4 = ((XContainer)val).Element(XName.op_Implicit("Hands"));
-		if (XDocumentExtensions.IsNullOrEmpty(val4))
+		if (val4.IsNullOrEmpty())
 		{
 			Hands.Add(ItemDefinition.E_Hands.None);
 			return;

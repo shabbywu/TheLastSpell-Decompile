@@ -7,28 +7,27 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.CastFx;
 
-public class CastFxDefinition : Definition
+public class CastFxDefinition : TheLastStand.Framework.Serialization.Definition
 {
-	public class CamShakeDefinition : Definition
+	public class CamShakeDefinition : TheLastStand.Framework.Serialization.Definition
 	{
 		public Node Delay { get; private set; }
 
 		public string Id { get; private set; }
 
 		public CamShakeDefinition(XContainer container)
-			: base(container, (Dictionary<string, string>)null)
+			: base(container)
 		{
 		}
 
 		public override void Deserialize(XContainer container)
 		{
-			//IL_004b: Unknown result type (might be due to invalid IL or missing references)
 			XElement val = container.Element(XName.op_Implicit("Id"));
 			if (val != null)
 			{
 				Id = val.Value;
 				XElement val2 = container.Element(XName.op_Implicit("Delay"));
-				Delay = (Node)((val2 != null) ? ((object)Parser.Parse(val2.Value, (Dictionary<string, string>)null)) : ((object)new NodeNumber(0.0)));
+				Delay = ((val2 != null) ? Parser.Parse(val2.Value) : new NodeNumber(0.0));
 			}
 			else
 			{
@@ -40,7 +39,7 @@ public class CastFxDefinition : Definition
 	public List<CamShakeDefinition> CamShakeDefinitions { get; private set; } = new List<CamShakeDefinition>();
 
 
-	public Node CastTotalDuration { get; private set; } = (Node)new NodeNumber(0.20000000298023224);
+	public Node CastTotalDuration { get; private set; } = new NodeNumber(0.20000000298023224);
 
 
 	public List<SoundEffectDefinition> SoundEffectDefinitionsOnCast { get; } = new List<SoundEffectDefinition>();
@@ -53,11 +52,9 @@ public class CastFxDefinition : Definition
 
 
 	public CastFxDefinition(XContainer xContainer)
-		: base(xContainer, (Dictionary<string, string>)null)
+		: base(xContainer)
 	{
-	}//IL_0015: Unknown result type (might be due to invalid IL or missing references)
-	//IL_001f: Expected O, but got Unknown
-
+	}
 
 	public override void Deserialize(XContainer xContainer)
 	{
@@ -67,9 +64,9 @@ public class CastFxDefinition : Definition
 			return;
 		}
 		XAttribute val2 = val.Attribute(XName.op_Implicit("TotalDuration"));
-		if (!XDocumentExtensions.IsNullOrEmpty(val2))
+		if (!val2.IsNullOrEmpty())
 		{
-			CastTotalDuration = Parser.Parse(val2.Value, (Dictionary<string, string>)null);
+			CastTotalDuration = Parser.Parse(val2.Value);
 		}
 		foreach (XElement item in ((XContainer)val).Elements(XName.op_Implicit("VisualEffect")))
 		{

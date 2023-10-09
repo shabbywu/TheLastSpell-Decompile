@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using TheLastStand.Controller.Unit.Perk.PerkEffect;
 using TheLastStand.Definition.Unit;
 using TheLastStand.Definition.Unit.Perk.PerkEffect;
-using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Model.Unit.Perk.PerkModule;
 using TheLastStand.Model.Unit.Stat;
 
@@ -15,7 +14,7 @@ public class DynamicStatsModifierEffect : APerkEffect
 
 	public DynamicStatsModifierEffectDefinition DynamicStatsModifierEffectDefinition => base.APerkEffectDefinition as DynamicStatsModifierEffectDefinition;
 
-	public float Value => DynamicStatsModifierEffectDefinition.ValueExpression.EvalToInt((InterpreterContext)(object)base.APerkModule.Perk);
+	public float Value => DynamicStatsModifierEffectDefinition.ValueExpression.EvalToInt(base.APerkModule.Perk);
 
 	public List<(float, UnitStatDefinition.E_Stat)> SortedDamageTypes
 	{

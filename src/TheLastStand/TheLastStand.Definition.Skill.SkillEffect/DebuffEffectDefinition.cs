@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Xml.Linq;
-using TheLastStand.Framework.Serialization;
 using TheLastStand.Model.Status;
 
 namespace TheLastStand.Definition.Skill.SkillEffect;
@@ -32,6 +31,6 @@ public class DebuffEffectDefinition : StatModifierEffectDefinition
 		AffectedUnits = E_SkillUnitAffect.IgnoreCaster;
 		base.Deserialize(container);
 		XElement val = (XElement)(object)((container is XElement) ? container : null);
-		malusInterpretedValue = new InterpretedFloat((XContainer)(object)((XContainer)val).Element(XName.op_Implicit("Malus")), 0f, ((Definition)this).TokenVariables);
+		malusInterpretedValue = new InterpretedFloat((XContainer)(object)((XContainer)val).Element(XName.op_Implicit("Malus")), 0f, base.TokenVariables);
 	}
 }

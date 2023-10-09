@@ -78,7 +78,7 @@ public class MetaNarrationsManager : Manager<MetaNarrationsManager>, ISerializab
 
 	public ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedNarrations
+		return new SerializedNarrations
 		{
 			DarkNarration = (DarkNarration?.Serialize() as SerializedNarration),
 			LightNarration = (LightNarration?.Serialize() as SerializedNarration),

@@ -350,9 +350,9 @@ public class RecruitmentView : TPSingleton<RecruitmentView>, IOverlayUser
 		}
 		CLoggerManager.Log((object)"RecruitmentView opened", (Object)(object)this, (LogType)3, (CLogLevel)0, true, "StaticLog", false);
 		CameraView.AttenuateWorldForPopupFocus((IOverlayUser)(object)this);
-		SoundManager.PlayAudioClip(ListExtensions.PickRandom<AudioClip>((IEnumerable<AudioClip>)openClips));
+		SoundManager.PlayAudioClip(openClips.PickRandom());
 		TPSingleton<SoundManager>.Instance.TransitionToInnSnapshot(snapshotTransitionDurationIn);
-		SoundManager.PlayFadeInAudioClip(ambienceAudioSource, ref ambientSoundsFadeTween, ListExtensions.PickRandom<AudioClip>((IEnumerable<AudioClip>)ambienceAudioLoops), ambientSoundsFadeInDuration);
+		SoundManager.PlayFadeInAudioClip(ambienceAudioSource, ref ambientSoundsFadeTween, ambienceAudioLoops.PickRandom(), ambientSoundsFadeInDuration);
 		if (moveTween != null)
 		{
 			TweenExtensions.Kill(moveTween, false);
@@ -393,7 +393,7 @@ public class RecruitmentView : TPSingleton<RecruitmentView>, IOverlayUser
 
 	public void OnRerollClick()
 	{
-		SoundManager.PlayAudioClip(ListExtensions.PickRandom<AudioClip>((IEnumerable<AudioClip>)rerollAudioClips));
+		SoundManager.PlayAudioClip(rerollAudioClips.PickRandom());
 		RecruitmentController.BuyRerollRoster();
 	}
 
@@ -443,12 +443,12 @@ public class RecruitmentView : TPSingleton<RecruitmentView>, IOverlayUser
 		((Behaviour)canvas).enabled = false;
 		canvasGroup = ((Component)TPSingleton<RecruitmentView>.Instance).GetComponent<CanvasGroup>();
 		canvasGroup.blocksRaycasts = false;
-		TransformExtensions.DestroyChildren(((Component)unitRosterParent).transform);
+		((Component)unitRosterParent).transform.DestroyChildren();
 		isOpened = false;
 		rectTransform = ((Component)this).GetComponent<RectTransform>();
 		posYInit = rectTransform.anchoredPosition.y;
-		TPSingleton<RecruitmentView>.Instance.rerollAudioClips = ResourcePooler.LoadAllOnce<AudioClip>("Sounds/SFX/UI_Reroll/UI_Reroll_Inn", false);
-		TPSingleton<RecruitmentView>.Instance.ambienceAudioLoops = ResourcePooler.LoadAllOnce<AudioClip>("Sounds/SFX/Ambient/AMB_Tavern", false);
+		TPSingleton<RecruitmentView>.Instance.rerollAudioClips = ResourcePooler.LoadAllOnce<AudioClip>("Sounds/SFX/UI_Reroll/UI_Reroll_Inn", failSilently: false);
+		TPSingleton<RecruitmentView>.Instance.ambienceAudioLoops = ResourcePooler.LoadAllOnce<AudioClip>("Sounds/SFX/Ambient/AMB_Tavern", failSilently: false);
 		healthStatDisplay.StatDefinition = UnitDatabase.UnitStatDefinitions[UnitStatDefinition.E_Stat.Health];
 		healthStatDisplay.SecondaryStatDefinition = UnitDatabase.UnitStatDefinitions[UnitStatDefinition.E_Stat.HealthTotal];
 		healthRegenStatDisplay.StatDefinition = UnitDatabase.UnitStatDefinitions[UnitStatDefinition.E_Stat.HealthRegen];
@@ -528,20 +528,18 @@ public class RecruitmentView : TPSingleton<RecruitmentView>, IOverlayUser
 		TPSingleton<RecruitmentView>.Instance.unitLevel.PlayableUnit = TPSingleton<RecruitmentView>.Instance.recruitmentUnitDisplays[TPSingleton<RecruitmentView>.Instance.selectedUnit].Unit;
 		TPSingleton<RecruitmentView>.Instance.unitLevel.Refresh();
 		HashSet<int> lockedPerkCollectionSlots = TPSingleton<MetaUpgradesManager>.Instance.GetLockedPerkCollectionSlots();
-		string collectionId = default(string);
-		if (!lockedPerkCollectionSlots.Contains(4) && ListExtensions.TryGetAtIndex<string>(TPSingleton<RecruitmentView>.Instance.recruitmentUnitDisplays[TPSingleton<RecruitmentView>.Instance.selectedUnit].Unit.PerkTree.UnitPerkCollectionIds, 3, ref collectionId))
+		if (!lockedPerkCollectionSlots.Contains(4) && TPSingleton<RecruitmentView>.Instance.recruitmentUnitDisplays[TPSingleton<RecruitmentView>.Instance.selectedUnit].Unit.PerkTree.UnitPerkCollectionIds.TryGetAtIndex(3, out var value))
 		{
-			TPSingleton<RecruitmentView>.Instance.perkCollectionLeft.sprite = UnitPerkTreeView.GetCollectionAssetOrDefault<Sprite>("View/Sprites/UI/CharacterSheet/PerkTree/{0}/Crest_{0}_Off", collectionId);
+			TPSingleton<RecruitmentView>.Instance.perkCollectionLeft.sprite = UnitPerkTreeView.GetCollectionAssetOrDefault<Sprite>("View/Sprites/UI/CharacterSheet/PerkTree/{0}/Crest_{0}_Off", value);
 			((Behaviour)TPSingleton<RecruitmentView>.Instance.perkCollectionLeft).enabled = true;
 		}
 		else
 		{
 			((Behaviour)TPSingleton<RecruitmentView>.Instance.perkCollectionLeft).enabled = false;
 		}
-		string collectionId2 = default(string);
-		if (!lockedPerkCollectionSlots.Contains(5) && ListExtensions.TryGetAtIndex<string>(TPSingleton<RecruitmentView>.Instance.recruitmentUnitDisplays[TPSingleton<RecruitmentView>.Instance.selectedUnit].Unit.PerkTree.UnitPerkCollectionIds, 4, ref collectionId2))
+		if (!lockedPerkCollectionSlots.Contains(5) && TPSingleton<RecruitmentView>.Instance.recruitmentUnitDisplays[TPSingleton<RecruitmentView>.Instance.selectedUnit].Unit.PerkTree.UnitPerkCollectionIds.TryGetAtIndex(4, out var value2))
 		{
-			TPSingleton<RecruitmentView>.Instance.perkCollectionRight.sprite = UnitPerkTreeView.GetCollectionAssetOrDefault<Sprite>("View/Sprites/UI/CharacterSheet/PerkTree/{0}/Crest_{0}_Off", collectionId2);
+			TPSingleton<RecruitmentView>.Instance.perkCollectionRight.sprite = UnitPerkTreeView.GetCollectionAssetOrDefault<Sprite>("View/Sprites/UI/CharacterSheet/PerkTree/{0}/Crest_{0}_Off", value2);
 			((Behaviour)TPSingleton<RecruitmentView>.Instance.perkCollectionRight).enabled = true;
 		}
 		else

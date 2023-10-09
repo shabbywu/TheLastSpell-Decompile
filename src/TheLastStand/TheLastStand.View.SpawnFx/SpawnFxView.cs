@@ -52,7 +52,7 @@ public class SpawnFxView : MonoBehaviour
 		{
 			if ((Object)(object)animPlayerPrefab == (Object)null)
 			{
-				animPlayerPrefab = ResourcePooler.LoadOnce<GameObject>("Prefab/Spawns FXs/Spawn FX", false);
+				animPlayerPrefab = ResourcePooler.LoadOnce<GameObject>("Prefab/Spawns FXs/Spawn FX", failSilently: false);
 			}
 			return animPlayerPrefab;
 		}
@@ -88,12 +88,12 @@ public class SpawnFxView : MonoBehaviour
 	{
 		if (!string.IsNullOrEmpty(soundEffectDefinition.FolderPath))
 		{
-			AudioClip[] list = ResourcePooler.LoadAllOnce<AudioClip>("Sounds/SFX/Spawns SFXs/" + soundEffectDefinition.FolderPath, false);
+			AudioClip[] list = ResourcePooler.LoadAllOnce<AudioClip>("Sounds/SFX/Spawns SFXs/" + soundEffectDefinition.FolderPath, failSilently: false);
 			return RandomManager.GetRandomElement(TPSingleton<SkillManager>.Instance, list);
 		}
 		if (!string.IsNullOrEmpty(soundEffectDefinition.Path))
 		{
-			return ResourcePooler.LoadOnce<AudioClip>("Sounds/SFX/Spawns SFXs/" + soundEffectDefinition.Path, false);
+			return ResourcePooler.LoadOnce<AudioClip>("Sounds/SFX/Spawns SFXs/" + soundEffectDefinition.Path, failSilently: false);
 		}
 		if (soundEffectDefinition.RandomPaths.Count > 0)
 		{
@@ -109,10 +109,10 @@ public class SpawnFxView : MonoBehaviour
 				num2 -= soundEffectDefinition.RandomPaths.ElementAt(j).Value;
 				if (num2 < 0)
 				{
-					return ResourcePooler.LoadOnce<AudioClip>("Sounds/SFX/Spawns SFXs/" + soundEffectDefinition.RandomPaths.ElementAt(j).Key, false);
+					return ResourcePooler.LoadOnce<AudioClip>("Sounds/SFX/Spawns SFXs/" + soundEffectDefinition.RandomPaths.ElementAt(j).Key, failSilently: false);
 				}
 			}
-			return ResourcePooler.LoadOnce<AudioClip>("Sounds/SFX/Spawns SFXs/" + soundEffectDefinition.RandomPaths.ElementAt(count - 1).Key, false);
+			return ResourcePooler.LoadOnce<AudioClip>("Sounds/SFX/Spawns SFXs/" + soundEffectDefinition.RandomPaths.ElementAt(count - 1).Key, failSilently: false);
 		}
 		CLoggerManager.Log((object)"A sound effect should have a Path or some random paths !!", (LogType)3, (CLogLevel)1, true, "StaticLog", false);
 		return null;
@@ -132,7 +132,7 @@ public class SpawnFxView : MonoBehaviour
 		int i = 0;
 		for (int count = spawnFx.SpawnFxDefinition.SpawnVisualEffectDefinition.Count; i < count; i++)
 		{
-			AnimationClip clip = ResourcePooler.LoadOnce<AnimationClip>("Animation/Spawns FXs/" + spawnFx.SpawnFxDefinition.SpawnVisualEffectDefinition[i].Path, false);
+			AnimationClip clip = ResourcePooler.LoadOnce<AnimationClip>("Animation/Spawns FXs/" + spawnFx.SpawnFxDefinition.SpawnVisualEffectDefinition[i].Path, failSilently: false);
 			SpawnVisualEffectDefinition spawnVisualEffectDefinition = spawnFx.SpawnFxDefinition.SpawnVisualEffectDefinition[i];
 			if (spawnVisualEffectDefinition != null)
 			{
@@ -144,8 +144,8 @@ public class SpawnFxView : MonoBehaviour
 				((Component)component).transform.position = TileMapView.GetWorldPosition(val);
 				((Renderer)((Component)component).GetComponentInChildren<SpriteRenderer>()).sortingOrder = ComputeSortingOrder(spawnFx, spawnFx.SpawnFxDefinition.SpawnVisualEffectDefinition[i], val);
 				((Object)((Component)component).gameObject).name = $"SpawnFX_{((Vector2Int)(ref val)).x}-{((Vector2Int)(ref val)).y}";
-				float num = spawnVisualEffectDefinition.Delay.EvalToFloat();
-				component.Play(num);
+				float delay = spawnVisualEffectDefinition.Delay.EvalToFloat();
+				component.Play(delay);
 			}
 		}
 	}
@@ -162,7 +162,7 @@ public class SpawnFxView : MonoBehaviour
 	{
 		foreach (SoundEffectDefinition soundEffectDefinition in spawnFx.SpawnFxDefinition.SoundEffectDefinitions)
 		{
-			OneShotSound component = ObjectPooler.GetPooledGameObject("Spawn SFX Spatialized", ResourcePooler.LoadOnce<GameObject>("Prefab/Spawns SFXs/Spawn SFX", false), (Transform)null, false).GetComponent<OneShotSound>();
+			OneShotSound component = ObjectPooler.GetPooledGameObject("Spawn SFX Spatialized", ResourcePooler.LoadOnce<GameObject>("Prefab/Spawns SFXs/Spawn SFX", failSilently: false)).GetComponent<OneShotSound>();
 			if ((Object)(object)GetSoundEffectAudioClip(soundEffectDefinition) == (Object)null)
 			{
 				((CLogger<SoundManager>)TPSingleton<SoundManager>.Instance).LogError((object)("Failed at loading AudioClip on path Sounds/SFX/Spawns SFXs/" + soundEffectDefinition.Path), (CLogLevel)1, true, true);

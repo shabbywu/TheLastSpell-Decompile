@@ -22,7 +22,7 @@ public class GainMaterialsController : BuildingGaugeEffectController
 	{
 		base.BuildingGaugeEffect = new GainMaterials(productionBuilding, definition, this, new GainMaterialsView());
 		base.BuildingGaugeEffect.BuildingGaugeEffectView.BuildingGaugeEffect = base.BuildingGaugeEffect;
-		base.BuildingGaugeEffect.Deserialize((ISerializedData)(object)container);
+		base.BuildingGaugeEffect.Deserialize(container);
 	}
 
 	public GainMaterialsController(ProductionModule productionBuilding, BuildingGaugeEffectDefinition definition)
@@ -36,7 +36,7 @@ public class GainMaterialsController : BuildingGaugeEffectController
 		List<IEffectTargetSkillActionController> list = base.TriggerEffect();
 		int num = GainMaterials.ComputeMaterialsValue();
 		TPSingleton<ResourceManager>.Instance.Materials += num;
-		GainMaterialDisplay pooledComponent = ObjectPooler.GetPooledComponent<GainMaterialDisplay>("GainMaterialDisplay", ResourcePooler.LoadOnce<GainMaterialDisplay>("Prefab/Displayable Effect/UI Effect Displays/GainMaterialDisplay", false), EffectManager.EffectDisplaysParent, false);
+		GainMaterialDisplay pooledComponent = ObjectPooler.GetPooledComponent<GainMaterialDisplay>("GainMaterialDisplay", ResourcePooler.LoadOnce<GainMaterialDisplay>("Prefab/Displayable Effect/UI Effect Displays/GainMaterialDisplay", failSilently: false), EffectManager.EffectDisplaysParent, dontSetParent: false);
 		pooledComponent.Init(num);
 		base.BuildingGaugeEffect.ProductionBuilding.BuildingParent.BuildingController.BlueprintModuleController.AddEffectDisplay(pooledComponent);
 		list.Add(base.BuildingGaugeEffect.ProductionBuilding.BuildingParent.BuildingController.BlueprintModuleController);

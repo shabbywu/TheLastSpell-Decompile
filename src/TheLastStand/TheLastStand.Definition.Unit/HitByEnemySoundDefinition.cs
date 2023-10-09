@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit;
 
-public class HitByEnemySoundDefinition : Definition
+public class HitByEnemySoundDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public static class Consts
 	{
@@ -23,7 +23,7 @@ public class HitByEnemySoundDefinition : Definition
 	public Dictionary<Vector2Int, List<string>> SoundsPerNumberOfEnemies { get; private set; }
 
 	public HitByEnemySoundDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

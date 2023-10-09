@@ -25,7 +25,7 @@ public class MetaDatabase : Database<MetaDatabase>
 
 	public override void Deserialize(XContainer container = null)
 	{
-		Queue<XElement> queue = base.GatherElements((IEnumerable<TextAsset>)metaUpgradesDefinitions, (IEnumerable<TextAsset>)null, "MetaUpgradeDefinition", (string)null);
+		Queue<XElement> queue = GatherElements(metaUpgradesDefinitions, null, "MetaUpgradeDefinition");
 		MetaUpgradesDefinitions = new Dictionary<string, MetaUpgradeDefinition>();
 		int num = 0;
 		while (queue.Count > 0)
@@ -58,7 +58,7 @@ public class MetaDatabase : Database<MetaDatabase>
 		{
 			for (int num = MetaUpgradesDefinitions[key].UpgradeEffectDefinitions.Count - 1; num >= 0; num--)
 			{
-				if (DefaultEnabledIdsByMetaEffectType.TryGetValue(((object)MetaUpgradesDefinitions[key].UpgradeEffectDefinitions[num]).GetType(), out var value))
+				if (DefaultEnabledIdsByMetaEffectType.TryGetValue(MetaUpgradesDefinitions[key].UpgradeEffectDefinitions[num].GetType(), out var value))
 				{
 					List<string> relatedIdsFromUpgrade = GetRelatedIdsFromUpgrade(MetaUpgradesDefinitions[key].UpgradeEffectDefinitions[num]);
 					for (int num2 = relatedIdsFromUpgrade.Count - 1; num2 >= 0; num2--)

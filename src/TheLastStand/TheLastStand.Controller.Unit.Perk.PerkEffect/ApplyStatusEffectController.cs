@@ -3,7 +3,6 @@ using System.Linq;
 using Sirenix.Utilities;
 using TPLib;
 using TheLastStand.Definition.Unit.Perk.PerkEffect;
-using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Manager;
 using TheLastStand.Manager.Skill;
 using TheLastStand.Manager.Unit;
@@ -45,15 +44,13 @@ public class ApplyStatusEffectController : APerkEffectController
 		{
 			return;
 		}
-		Node chanceExpression = ApplyStatusEffect.ApplyStatusEffectDefinition.ChanceExpression;
-		int num = ((chanceExpression != null) ? chanceExpression.EvalToInt((InterpreterContext)(object)base.PerkEffect.APerkModule.Perk) : 100);
+		int num = ApplyStatusEffect.ApplyStatusEffectDefinition.ChanceExpression?.EvalToInt(base.PerkEffect.APerkModule.Perk) ?? 100;
 		if (statusType == TheLastStand.Model.Status.Status.E_StatusType.Stun)
 		{
 			num = (int)(owner.PlayableUnitController.GetModifiedStunChance((float)num / 100f) * 100f);
 		}
-		int turnsCount = owner.ComputeStatusDuration(statusType, ApplyStatusEffect.ApplyStatusEffectDefinition.TurnsCountExpression.EvalToInt((InterpreterContext)(object)base.PerkEffect.APerkModule.Perk));
-		Node valueExpression = ApplyStatusEffect.ApplyStatusEffectDefinition.ValueExpression;
-		float num2 = ((valueExpression == null) ? 1 : valueExpression.EvalToInt((InterpreterContext)(object)base.PerkEffect.APerkModule.Perk));
+		int turnsCount = owner.ComputeStatusDuration(statusType, ApplyStatusEffect.ApplyStatusEffectDefinition.TurnsCountExpression.EvalToInt(base.PerkEffect.APerkModule.Perk));
+		float num2 = ApplyStatusEffect.ApplyStatusEffectDefinition.ValueExpression?.EvalToInt(base.PerkEffect.APerkModule.Perk) ?? 1;
 		if (statusType == TheLastStand.Model.Status.Status.E_StatusType.Poison)
 		{
 			num2 = owner.PlayableUnitController.GetModifiedPoisonDamage(num2);

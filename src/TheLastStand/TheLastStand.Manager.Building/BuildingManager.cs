@@ -31,11 +31,8 @@ using TheLastStand.Definition.TileMap;
 using TheLastStand.Definition.Unit.Enemy;
 using TheLastStand.Dev;
 using TheLastStand.Framework;
-using TheLastStand.Framework.Automaton;
-using TheLastStand.Framework.Command.Conversation;
 using TheLastStand.Framework.Database;
 using TheLastStand.Framework.EventSystem;
-using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Framework.Extensions;
 using TheLastStand.Framework.Serialization;
 using TheLastStand.Helpers;
@@ -473,7 +470,7 @@ public sealed class BuildingManager : Manager<BuildingManager>
 		TheLastStand.Model.Building.Building building = new BuildingController(buildingDefinition, buildingView, tile).Building;
 		InitBuilding(building, tile, updateView, playSound, instantly, recomputeReachableTiles);
 		building.BossPhaseActorId = bossPhaseActorId;
-		if (triggerEvent && ((StateMachine)ApplicationManager.Application).State.GetName() != "LevelEditor")
+		if (triggerEvent && ApplicationManager.Application.State.GetName() != "LevelEditor")
 		{
 			TPSingleton<EffectTimeEventManager>.Instance.InvokeEvent(E_EffectTime.OnBuildingConstructed);
 		}
@@ -527,8 +524,8 @@ public sealed class BuildingManager : Manager<BuildingManager>
 		}
 		building.BlueprintModule.BlueprintModuleController.FreeOccupiedTiles();
 		TPSingleton<ConstructionManager>.Instance.DecrementBuildingCount(building.BuildingDefinition);
-		EventManager.TriggerEvent((Event)(object)new BuildingDestroyedEvent(building));
-		if (triggerEvent && ((StateMachine)ApplicationManager.Application).State.GetName() != "LevelEditor")
+		EventManager.TriggerEvent(new BuildingDestroyedEvent(building));
+		if (triggerEvent && ApplicationManager.Application.State.GetName() != "LevelEditor")
 		{
 			TPSingleton<EffectTimeEventManager>.Instance.InvokeEvent(E_EffectTime.OnBuildingDestroyed);
 		}
@@ -577,7 +574,7 @@ public sealed class BuildingManager : Manager<BuildingManager>
 		}
 		building.UpgradeModule?.UpgradeModuleController.OnDeath();
 		building.PassivesModule?.PassivesModuleController.OnDeath(triggerOnDeathEvent);
-		if (((StateMachine)ApplicationManager.Application).State.GetName() != "LevelEditor")
+		if (ApplicationManager.Application.State.GetName() != "LevelEditor")
 		{
 			PlayableUnitManagementView.OnBuildingDestroyed();
 			if (recomputeReachableTiles)
@@ -975,7 +972,7 @@ public sealed class BuildingManager : Manager<BuildingManager>
 	private void PrioritizeWaveSides(List<TheLastStand.Model.Building.Building> candidateBraziers)
 	{
 		Tile centerTile = TileMapController.GetCenterTile();
-		int num = ListExtensions.Split<TheLastStand.Model.Building.Building>(candidateBraziers, (Func<TheLastStand.Model.Building.Building, bool>)delegate(TheLastStand.Model.Building.Building brazier)
+		int maxIndex = candidateBraziers.Split(delegate(TheLastStand.Model.Building.Building brazier)
 		{
 			foreach (SpawnPointInfo item in SpawnWaveManager.CurrentSpawnWave.SpawnPointsInfo)
 			{
@@ -985,12 +982,12 @@ public sealed class BuildingManager : Manager<BuildingManager>
 				}
 			}
 			return false;
-		}, 0, -1);
-		ListExtensions.Split<TheLastStand.Model.Building.Building>(candidateBraziers, (Func<TheLastStand.Model.Building.Building, bool>)delegate(TheLastStand.Model.Building.Building brazier)
+		});
+		candidateBraziers.Split(delegate(TheLastStand.Model.Building.Building brazier)
 		{
 			SpawnDirectionsDefinition.E_Direction brazierDirection = TileMapController.GetDirectionBetweenTiles(centerTile, brazier.OriginTile).ToSpawnDirection();
 			return SpawnWaveManager.CurrentSpawnWave.SpawnPointsInfo.Any((SpawnPointInfo x) => x.Direction == brazierDirection);
-		}, 0, num);
+		}, 0, maxIndex);
 	}
 
 	private IEnumerator LightBraziersCoroutine(List<TheLastStand.Model.Building.Building> candidateBraziers, KMeansClustersInfo clusters, BuildingDefinition brazierDefinition, string bossPhaseActorId = null)
@@ -1220,7 +1217,7 @@ public sealed class BuildingManager : Manager<BuildingManager>
 
 	public void CastSelectedSkill()
 	{
-		((Conversation<ICompensableCommand, ICompensableCommand>)(object)PlayableUnitManager.UnitsConversation).Clear();
+		PlayableUnitManager.UnitsConversation.Clear();
 		GameView.BottomScreenPanel.BottomLeftPanel.CancelMovementPanel.Refresh();
 		GameController.SetState(Game.E_State.BuildingExecutingSkill);
 		if (TileObjectSelectionManager.SelectedBuilding.Id == "Catapult")
@@ -1351,7 +1348,7 @@ public sealed class BuildingManager : Manager<BuildingManager>
 	protected override void Awake()
 	{
 		base.Awake();
-		if (((StateMachine)ApplicationManager.Application).State.GetName() != "LevelEditor")
+		if (ApplicationManager.Application.State.GetName() != "LevelEditor")
 		{
 			MetaUpgradesManager.MetaUpgradeActivated += OnMetaUpgradeActivated;
 		}
@@ -1367,7 +1364,7 @@ public sealed class BuildingManager : Manager<BuildingManager>
 	{
 		if (!BuildingDatabase.BuildingDefinitions.TryGetValue(buildingElement.Id, out var value))
 		{
-			throw new MissingAssetException<BuildingDatabase>(buildingElement.Id);
+			throw new Database<BuildingDatabase>.MissingAssetException(buildingElement.Id);
 		}
 		Tile tile = TileMapManager.GetTile(buildingElement.Position.X, buildingElement.Position.Y);
 		BuildingView buildingView = CreateBuildingView(value);
@@ -1378,7 +1375,7 @@ public sealed class BuildingManager : Manager<BuildingManager>
 
 	private static BuildingView CreateBuildingView(BuildingDefinition buildingDefinition)
 	{
-		BuildingView buildingView = ((buildingDefinition.Id == "MagicCircle") ? Object.Instantiate<BuildingView>(TPSingleton<BuildingManager>.Instance.magicCircleViewPrefab) : ((!buildingDefinition.BlueprintModuleDefinition.Category.HasFlag(BuildingDefinition.E_BuildingCategory.Watchtower)) ? ObjectPooler.GetPooledComponent<BuildingView>("BuildingViews", TPSingleton<BuildingManager>.Instance.buildingViewPrefab, (Transform)null, false) : ObjectPooler.GetPooledComponent<BuildingView>("WatchtowerViews", TPSingleton<BuildingManager>.Instance.watchTowerViewPrefab, (Transform)null, false)));
+		BuildingView buildingView = ((buildingDefinition.Id == "MagicCircle") ? Object.Instantiate<BuildingView>(TPSingleton<BuildingManager>.Instance.magicCircleViewPrefab) : ((!buildingDefinition.BlueprintModuleDefinition.Category.HasFlag(BuildingDefinition.E_BuildingCategory.Watchtower)) ? ObjectPooler.GetPooledComponent<BuildingView>("BuildingViews", TPSingleton<BuildingManager>.Instance.buildingViewPrefab, (Transform)null, dontSetParent: false) : ObjectPooler.GetPooledComponent<BuildingView>("WatchtowerViews", TPSingleton<BuildingManager>.Instance.watchTowerViewPrefab, (Transform)null, dontSetParent: false)));
 		buildingView.Init();
 		((Component)buildingView).transform.SetParent(TPSingleton<BuildingManager>.Instance.buildingsTransform, true);
 		((Object)((Component)buildingView).gameObject).name = buildingDefinition.Id;
@@ -1451,7 +1448,7 @@ public sealed class BuildingManager : Manager<BuildingManager>
 			PlayConstructionSound(building.BuildingDefinition);
 		}
 		TPSingleton<ConstructionManager>.Instance.IncrementBuildingCount(building.BuildingDefinition);
-		EventManager.TriggerEvent((Event)(object)new BuildingConstructedEvent(building.Id));
+		EventManager.TriggerEvent(new BuildingConstructedEvent(building.Id));
 		if (TPSingleton<PlayableUnitManager>.Exist())
 		{
 			TPSingleton<PlayableUnitManager>.Instance.HasToRecomputeReachableTiles = true;
@@ -1472,7 +1469,7 @@ public sealed class BuildingManager : Manager<BuildingManager>
 
 	private static void PlayConstructionSound(BuildingDefinition buildingDefinition)
 	{
-		AudioClip[] array = ResourcePooler.LoadAllOnce<AudioClip>("Sounds/SFX/BuildingConstruction/" + buildingDefinition.Id, true);
+		AudioClip[] array = ResourcePooler.LoadAllOnce<AudioClip>("Sounds/SFX/BuildingConstruction/" + buildingDefinition.Id, failSilently: true);
 		if (array != null && array.Length != 0)
 		{
 			SoundManager.PlayAudioClip(array, BuildingPooledAudioSourceData);
@@ -1504,7 +1501,7 @@ public sealed class BuildingManager : Manager<BuildingManager>
 
 	private void GenerateInitialBuildings()
 	{
-		bool flag = ((StateMachine)ApplicationManager.Application).State.GetName() == "LevelEditor";
+		bool flag = ApplicationManager.Application.State.GetName() == "LevelEditor";
 		string levelLayoutId = (flag ? LevelEditorManager.CityToLoadId : TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.LevelLayoutBuildingsId);
 		string format = ((flag || GameManager.LoadLevelEditorCityAssets) ? "TextAssets/Cities/Level Editor/{0}/{0}{1}_Buildings" : "TextAssets/Cities/{0}/{0}{1}_Buildings");
 		string arg = string.Empty;
@@ -1517,7 +1514,7 @@ public sealed class BuildingManager : Manager<BuildingManager>
 		{
 			arg = effects.LastOrDefault((UpgradeCityMetaEffectDefinition o) => o.CityId == levelLayoutId)?.Level.ToString();
 		}
-		TextAsset val = ResourcePooler.LoadOnce<TextAsset>(string.Format(format, levelLayoutId, arg), false);
+		TextAsset val = ResourcePooler.LoadOnce<TextAsset>(string.Format(format, levelLayoutId, arg), failSilently: false);
 		((CLogger<BuildingManager>)TPSingleton<BuildingManager>.Instance).Log((object)("Loading Level Buildings layout using Id <b>" + levelLayoutId + "</b> from path <b>" + string.Format(format, levelLayoutId, arg) + "</b> " + (GameManager.LoadLevelEditorCityAssets ? " (in Level but using Level Editor path)" : string.Empty) + "."), (CLogLevel)2, true, false);
 		((CLogger<BuildingManager>)TPSingleton<BuildingManager>.Instance).Log((object)("Level Tilemap Buildings loading " + (((Object)(object)val != (Object)null) ? "<color=green>succeeded</color>" : "<color=red>failed</color>") + "."), (CLogLevel)2, true, false);
 		foreach (XElement item in ((XContainer)((XContainer)XDocument.Parse(val.text, (LoadOptions)2)).Element(XName.op_Implicit("Buildings"))).Elements(XName.op_Implicit("Building")))
@@ -1541,7 +1538,7 @@ public sealed class BuildingManager : Manager<BuildingManager>
 				continue;
 			}
 			TheLastStand.Model.Building.Building building = CreateBuilding(value, TileMapManager.GetTile(result, result2), updateView: true, playSound: false, instantly: true, triggerEvent: false);
-			if (((StateMachine)ApplicationManager.Application).State.GetName() != "LevelEditor")
+			if (ApplicationManager.Application.State.GetName() != "LevelEditor")
 			{
 				XElement val5 = ((XContainer)item).Element(XName.op_Implicit("Health"));
 				if (val5 != null)
@@ -1865,7 +1862,7 @@ public sealed class BuildingManager : Manager<BuildingManager>
 	{
 		if (!instant && SelectedBuildingAction.BuildingActionDefinition.CastFxDefinition != null)
 		{
-			float num = SelectedBuildingAction.BuildingActionDefinition.CastFxDefinition.CastTotalDuration.EvalToFloat((InterpreterContext)(object)SelectedBuildingAction.CastFx.CastFXInterpreterContext);
+			float num = SelectedBuildingAction.BuildingActionDefinition.CastFxDefinition.CastTotalDuration.EvalToFloat(SelectedBuildingAction.CastFx.CastFXInterpreterContext);
 			yield return SharedYields.WaitForSeconds(num);
 		}
 		else
@@ -2103,7 +2100,7 @@ public sealed class BuildingManager : Manager<BuildingManager>
 
 	private void Initialize()
 	{
-		if (((StateMachine)ApplicationManager.Application).State.GetName() != "LevelEditor")
+		if (ApplicationManager.Application.State.GetName() != "LevelEditor")
 		{
 			Shop = new ShopController(shopView).Shop;
 			ProductionReport = new ProductionReportController(productionReportPanel).ProductionReport;
@@ -2118,7 +2115,7 @@ public sealed class BuildingManager : Manager<BuildingManager>
 		if (container is SerializedBuildings serializedBuildings)
 		{
 			Shop = new ShopController(serializedBuildings.Shop, shopView).Shop;
-			Shop.Deserialize((ISerializedData)(object)serializedBuildings.Shop);
+			Shop.Deserialize(serializedBuildings.Shop);
 			ProductionReport = new ProductionReportController(serializedBuildings.ProductionReport, productionReportPanel).ProductionReport;
 			GlobalItemProductionUpgradeLevel = new BuildingUpgradeLevel(serializedBuildings.BuildingUpgradeLevel);
 			foreach (SerializedBuilding building in serializedBuildings.Buildings)
@@ -2127,7 +2124,7 @@ public sealed class BuildingManager : Manager<BuildingManager>
 				{
 					CreateBuilding(building, saveVersion);
 				}
-				catch (MissingAssetException<BuildingDatabase> arg)
+				catch (Database<BuildingDatabase>.MissingAssetException arg)
 				{
 					((CLogger<BuildingManager>)this).LogError((object)$"{arg}\nThis asset will be skipped.", (CLogLevel)1, true, true);
 				}
@@ -2136,7 +2133,7 @@ public sealed class BuildingManager : Manager<BuildingManager>
 			{
 				try
 				{
-					BuildingToRestore buildingToRestore = new BuildingToRestore((ISerializedData)(object)item, saveVersion);
+					BuildingToRestore buildingToRestore = new BuildingToRestore(item, saveVersion);
 					BuildingsToRestore.Add(buildingToRestore.Tile, buildingToRestore);
 				}
 				catch (Exception arg2)
@@ -2158,7 +2155,7 @@ public sealed class BuildingManager : Manager<BuildingManager>
 					((CLogger<BuildingManager>)this).LogError((object)$"{arg3}\nThis random building will be skipped.", (CLogLevel)1, true, true);
 				}
 			}
-			TPSingleton<ConstructionManager>.Instance.Deserialize((ISerializedData)(object)serializedBuildings.SerializedConstruction, saveVersion);
+			TPSingleton<ConstructionManager>.Instance.Deserialize(serializedBuildings.SerializedConstruction, saveVersion);
 		}
 		else
 		{
@@ -2175,7 +2172,7 @@ public sealed class BuildingManager : Manager<BuildingManager>
 			ProductionReport = (ProductionReport.Serialize() as SerializedProductionReport),
 			BuildingUpgradeLevel = (GlobalItemProductionUpgradeLevel.Serialize() as SerializedBuildingUpgradeLevel),
 			SerializedConstruction = (TPSingleton<ConstructionManager>.Instance.Serialize() as SerializedConstruction),
-			BuildingsToRestore = BuildingsToRestore.Select((KeyValuePair<Tile, BuildingToRestore> o) => (SerializedBuildingToRestore)(object)o.Value.Serialize()).ToList(),
+			BuildingsToRestore = BuildingsToRestore.Select((KeyValuePair<Tile, BuildingToRestore> o) => (SerializedBuildingToRestore)o.Value.Serialize()).ToList(),
 			RandomBuildings = RandomsBuildings.Select((KeyValuePair<Tile, BuildingDefinition> o) => new SerializedRandomBuilding
 			{
 				TilePosition = new SerializableVector2Int(o.Key.Position),
@@ -2186,6 +2183,6 @@ public sealed class BuildingManager : Manager<BuildingManager>
 		{
 			serializedBuildings.Buildings.Add(Buildings[num].Serialize() as SerializedBuilding);
 		}
-		return (ISerializedData)(object)serializedBuildings;
+		return serializedBuildings;
 	}
 }

@@ -72,19 +72,19 @@ public class ScavengeBuildingActionEffectController : BuildingActionEffectContro
 		};
 		if (gainGold > 0)
 		{
-			GainGoldDisplay pooledComponent = ObjectPooler.GetPooledComponent<GainGoldDisplay>("GainGoldDisplay", ResourcePooler.LoadOnce<GainGoldDisplay>("Prefab/Displayable Effect/UI Effect Displays/GainGoldDisplay", false), EffectManager.EffectDisplaysParent, false);
+			GainGoldDisplay pooledComponent = ObjectPooler.GetPooledComponent<GainGoldDisplay>("GainGoldDisplay", ResourcePooler.LoadOnce<GainGoldDisplay>("Prefab/Displayable Effect/UI Effect Displays/GainGoldDisplay", failSilently: false), EffectManager.EffectDisplaysParent, dontSetParent: false);
 			pooledComponent.Init(gainGold);
 			buildingParent.BuildingController.BlueprintModuleController.AddEffectDisplay(pooledComponent);
 		}
 		if (gainMaterials > 0)
 		{
-			GainMaterialDisplay pooledComponent2 = ObjectPooler.GetPooledComponent<GainMaterialDisplay>("GainMaterialDisplay", ResourcePooler.LoadOnce<GainMaterialDisplay>("Prefab/Displayable Effect/UI Effect Displays/GainMaterialDisplay", false), EffectManager.EffectDisplaysParent, false);
+			GainMaterialDisplay pooledComponent2 = ObjectPooler.GetPooledComponent<GainMaterialDisplay>("GainMaterialDisplay", ResourcePooler.LoadOnce<GainMaterialDisplay>("Prefab/Displayable Effect/UI Effect Displays/GainMaterialDisplay", failSilently: false), EffectManager.EffectDisplaysParent, dontSetParent: false);
 			pooledComponent2.Init(gainMaterials);
 			buildingParent.BuildingController.BlueprintModuleController.AddEffectDisplay(pooledComponent2);
 		}
 		if (ScavengeBuildingActionEffect.ScavengeBuildingActionDefinition.GainDamnedSouls > 0)
 		{
-			GainDamnedSoulsDisplay pooledComponent3 = ObjectPooler.GetPooledComponent<GainDamnedSoulsDisplay>("GainDamnedSoulsDisplay", ResourcePooler.LoadOnce<GainDamnedSoulsDisplay>("Prefab/Displayable Effect/UI Effect Displays/GainDamnedSoulsDisplay", false), EffectManager.EffectDisplaysParent, false);
+			GainDamnedSoulsDisplay pooledComponent3 = ObjectPooler.GetPooledComponent<GainDamnedSoulsDisplay>("GainDamnedSoulsDisplay", ResourcePooler.LoadOnce<GainDamnedSoulsDisplay>("Prefab/Displayable Effect/UI Effect Displays/GainDamnedSoulsDisplay", failSilently: false), EffectManager.EffectDisplaysParent, dontSetParent: false);
 			pooledComponent3.Init(ScavengeBuildingActionEffect.ScavengeBuildingActionDefinition.GainDamnedSouls);
 			buildingParent.BuildingController.BlueprintModuleController.AddEffectDisplay(pooledComponent3);
 		}
@@ -103,7 +103,7 @@ public class ScavengeBuildingActionEffectController : BuildingActionEffectContro
 					productionItem.Items.Add(item);
 					((CLogger<ItemManager>)TPSingleton<ItemManager>.Instance).Log((object)("(" + base.BuildingActionEffect.ProductionBuilding.BuildingParent.BuildingDefinition.Id + ") Item created: " + item.ItemDefinition.Id + "."), (CLogLevel)2, false, false);
 				}
-				CreateItemDisplay pooledComponent4 = ObjectPooler.GetPooledComponent<CreateItemDisplay>("CreateItemDisplay", ResourcePooler.LoadOnce<CreateItemDisplay>("Prefab/Displayable Effect/UI Effect Displays/CreateItemDisplay", false), EffectManager.EffectDisplaysParent, false);
+				CreateItemDisplay pooledComponent4 = ObjectPooler.GetPooledComponent<CreateItemDisplay>("CreateItemDisplay", ResourcePooler.LoadOnce<CreateItemDisplay>("Prefab/Displayable Effect/UI Effect Displays/CreateItemDisplay", failSilently: false), EffectManager.EffectDisplaysParent, dontSetParent: false);
 				pooledComponent4.Init(productionItem);
 				base.BuildingActionEffect.ProductionBuilding.BuildingParent.BuildingController.BlueprintModuleController.AddEffectDisplay(pooledComponent4);
 				TPSingleton<BuildingManager>.Instance.ProductionReport.ProductionReportController.AddProductionObject(productionItem);

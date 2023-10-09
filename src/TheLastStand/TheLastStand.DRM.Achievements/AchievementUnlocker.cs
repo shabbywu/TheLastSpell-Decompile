@@ -55,7 +55,7 @@ public class AchievementUnlocker : ISerializable, IDeserializable
 
 	public ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedAchievementUnlocker
+		return new SerializedAchievementUnlocker
 		{
 			Value = value
 		};

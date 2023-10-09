@@ -19,7 +19,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.WorldMap;
 
-public class CityDefinition : Definition
+public class CityDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public static class Constants
 	{
@@ -108,7 +108,7 @@ public class CityDefinition : Definition
 	public Vector2 WorldMapPosition { get; private set; }
 
 	public CityDefinition(XContainer xContainer)
-		: base(xContainer, (Dictionary<string, string>)null)
+		: base(xContainer)
 	{
 	}
 
@@ -176,7 +176,7 @@ public class CityDefinition : Definition
 			}
 		}
 		XElement val8 = ((val4 != null) ? ((XContainer)val4).Element(XName.op_Implicit("FogId")) : null);
-		if (XDocumentExtensions.IsNullOrEmpty(val8))
+		if (val8.IsNullOrEmpty())
 		{
 			if (cityDefinition == null)
 			{
@@ -190,7 +190,7 @@ public class CityDefinition : Definition
 			FogDefinitionId = val8.Value;
 		}
 		XElement val9 = ((val4 != null) ? ((XContainer)val4).Element(XName.op_Implicit("InitResourceId")) : null);
-		if (XDocumentExtensions.IsNullOrEmpty(val9))
+		if (val9.IsNullOrEmpty())
 		{
 			if (cityDefinition == null)
 			{
@@ -207,11 +207,11 @@ public class CityDefinition : Definition
 		if (val10 != null)
 		{
 			XElement val11 = ((XContainer)val10).Element(XName.op_Implicit("Buildings"));
-			LevelLayoutBuildingsId = ((!XDocumentExtensions.IsNullOrEmpty(val11)) ? val11.Value : Id);
+			LevelLayoutBuildingsId = ((!val11.IsNullOrEmpty()) ? val11.Value : Id);
 			XElement val12 = ((XContainer)val10).Element(XName.op_Implicit("TileMap"));
-			LevelLayoutTileMapId = ((!XDocumentExtensions.IsNullOrEmpty(val12)) ? val12.Value : Id);
+			LevelLayoutTileMapId = ((!val12.IsNullOrEmpty()) ? val12.Value : Id);
 			XElement val13 = ((XContainer)val10).Element(XName.op_Implicit("LevelArtPrefabId"));
-			LevelArtPrefabId = ((!XDocumentExtensions.IsNullOrEmpty(val13)) ? val13.Value : Id);
+			LevelArtPrefabId = ((!val13.IsNullOrEmpty()) ? val13.Value : Id);
 		}
 		else
 		{
@@ -226,7 +226,7 @@ public class CityDefinition : Definition
 		}
 		else
 		{
-			LightFogSpawnersGenerationDefinition = new LightFogSpawnersGenerationDefinition(null, ((Definition)FogDatabase.LightFogDefinition).TokenVariables);
+			LightFogSpawnersGenerationDefinition = new LightFogSpawnersGenerationDefinition(null, FogDatabase.LightFogDefinition.TokenVariables);
 		}
 		XElement val15 = ((val4 != null) ? ((XContainer)val4).Element(XName.op_Implicit("MaxGlyphPoints")) : null);
 		if (val15 != null)
@@ -278,7 +278,7 @@ public class CityDefinition : Definition
 			PanicRewardItemsOffset = cityDefinition.PanicRewardItemsOffset;
 		}
 		XElement val19 = ((val4 != null) ? ((XContainer)val4).Element(XName.op_Implicit("SectorsId")) : null);
-		if (XDocumentExtensions.IsNullOrEmpty(val19))
+		if (val19.IsNullOrEmpty())
 		{
 			if (cityDefinition == null)
 			{
@@ -328,7 +328,7 @@ public class CityDefinition : Definition
 		}
 		XElement val23 = ((val4 != null) ? ((XContainer)val4).Element(XName.op_Implicit("Spawn")) : null);
 		XAttribute val24 = val23.Attribute(XName.op_Implicit("Id"));
-		if (XDocumentExtensions.IsNullOrEmpty(val24))
+		if (val24.IsNullOrEmpty())
 		{
 			if (cityDefinition == null)
 			{
@@ -343,7 +343,7 @@ public class CityDefinition : Definition
 		}
 		ForbiddenDirections = new List<SpawnDirectionsDefinition.E_Direction>();
 		XElement val25 = ((XContainer)val23).Element(XName.op_Implicit("ForbiddenDirections"));
-		if (XDocumentExtensions.IsNullOrEmpty(val25))
+		if (val25.IsNullOrEmpty())
 		{
 			if (cityDefinition != null)
 			{
@@ -384,7 +384,7 @@ public class CityDefinition : Definition
 			StartingDayTurn = Game.E_DayTurn.Deployment;
 		}
 		XElement val27 = ((XContainer)val5).Element(XName.op_Implicit("StartingSetup"));
-		if (XDocumentExtensions.IsNullOrEmpty(val27))
+		if (val27.IsNullOrEmpty())
 		{
 			if (cityDefinition == null)
 			{
@@ -398,7 +398,7 @@ public class CityDefinition : Definition
 			StartingSetup = val27.Value;
 		}
 		XElement val28 = ((XContainer)val4).Element(XName.op_Implicit("UnitGenerationId"));
-		if (XDocumentExtensions.IsNullOrEmpty(val28))
+		if (val28.IsNullOrEmpty())
 		{
 			if (cityDefinition == null)
 			{
@@ -412,7 +412,7 @@ public class CityDefinition : Definition
 			UnitGenerationDefinitionId = val28.Value;
 		}
 		XElement val29 = ((XContainer)val4).Element(XName.op_Implicit("VictoryDaysCount"));
-		if (XDocumentExtensions.IsNullOrEmpty(val29))
+		if (val29.IsNullOrEmpty())
 		{
 			if (cityDefinition == null)
 			{
@@ -444,7 +444,7 @@ public class CityDefinition : Definition
 		}
 		CameraBoundaries = default(Vector4);
 		XElement val32 = ((XContainer)val5).Element(XName.op_Implicit("CameraBoundaries"));
-		if (XDocumentExtensions.IsNullOrEmpty(val32))
+		if (val32.IsNullOrEmpty())
 		{
 			if (cityDefinition == null)
 			{
@@ -460,7 +460,7 @@ public class CityDefinition : Definition
 			float result12 = 0f;
 			float result13 = 0f;
 			XElement val33 = ((XContainer)val32).Element(XName.op_Implicit("Top"));
-			if (XDocumentExtensions.IsNullOrEmpty(val33))
+			if (val33.IsNullOrEmpty())
 			{
 				if (cityDefinition == null)
 				{
@@ -475,7 +475,7 @@ public class CityDefinition : Definition
 				return;
 			}
 			XElement val34 = ((XContainer)val32).Element(XName.op_Implicit("Bottom"));
-			if (XDocumentExtensions.IsNullOrEmpty(val34))
+			if (val34.IsNullOrEmpty())
 			{
 				if (cityDefinition == null)
 				{
@@ -490,7 +490,7 @@ public class CityDefinition : Definition
 				return;
 			}
 			XElement val35 = ((XContainer)val32).Element(XName.op_Implicit("Left"));
-			if (XDocumentExtensions.IsNullOrEmpty(val35))
+			if (val35.IsNullOrEmpty())
 			{
 				if (cityDefinition == null)
 				{
@@ -505,7 +505,7 @@ public class CityDefinition : Definition
 				return;
 			}
 			XElement val36 = ((XContainer)val32).Element(XName.op_Implicit("Right"));
-			if (XDocumentExtensions.IsNullOrEmpty(val36))
+			if (val36.IsNullOrEmpty())
 			{
 				if (cityDefinition == null)
 				{
@@ -523,7 +523,7 @@ public class CityDefinition : Definition
 		}
 		BlackenBackground = ((XContainer)val5).Element(XName.op_Implicit("BlackenBackground")) != null;
 		XElement val37 = ((XContainer)val5).Element(XName.op_Implicit("AnimatedCutscenes"));
-		if (!XDocumentExtensions.IsNullOrEmpty(val37))
+		if (!val37.IsNullOrEmpty())
 		{
 			object preGameCutscene;
 			if (val37 == null)

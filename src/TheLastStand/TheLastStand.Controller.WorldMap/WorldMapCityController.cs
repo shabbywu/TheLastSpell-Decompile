@@ -13,7 +13,7 @@ public class WorldMapCityController
 	public WorldMapCityController(SerializedCity cityElement, CityDefinition definition, WorldMapCityView view, int saveVersion)
 	{
 		WorldMapCity = new WorldMapCity(definition, this, view);
-		WorldMapCity.Deserialize((ISerializedData)(object)cityElement, saveVersion);
+		WorldMapCity.Deserialize(cityElement, saveVersion);
 	}
 
 	public bool CanAddGlyph(GlyphDefinition glyphDefinition)

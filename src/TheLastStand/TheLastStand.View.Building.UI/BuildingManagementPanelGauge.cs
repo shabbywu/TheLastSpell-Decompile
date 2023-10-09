@@ -24,16 +24,16 @@ public class BuildingManagementPanelGauge : GraduatedGauge
 		{
 			return;
 		}
-		int num = ((GraduatedGauge)this).Units;
+		int num = base.Units;
 		for (int i = 0; i < amount; i++)
 		{
-			if (num > ((GraduatedGauge)this).MaxUnits - 1)
+			if (num > MaxUnits - 1)
 			{
-				if (!base.clearOnCapacityExceeded)
+				if (!clearOnCapacityExceeded)
 				{
 					break;
 				}
-				((GraduatedGauge)this).Clear();
+				Clear();
 				num = 0;
 			}
 			((Component)unitsTransforms[num]).gameObject.SetActive(true);
@@ -43,34 +43,34 @@ public class BuildingManagementPanelGauge : GraduatedGauge
 		Transform obj = unitsParent;
 		LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)(object)((obj is RectTransform) ? obj : null));
 		((Behaviour)unitsLayoutGroup).enabled = false;
-		((GraduatedGauge)this).Units = num;
+		base.Units = num;
 	}
 
 	public override void Clear()
 	{
-		for (int num = ((GraduatedGauge)this).MaxUnits - 1; num >= 0; num--)
+		for (int num = MaxUnits - 1; num >= 0; num--)
 		{
 			((Component)unitsTransforms[num]).gameObject.SetActive(false);
 		}
-		((GraduatedGauge)this).Units = 0;
+		base.Units = 0;
 	}
 
 	public void SetUnitsCount(int count)
 	{
-		if (((GraduatedGauge)this).MaxUnits == count)
+		if (MaxUnits == count)
 		{
 			return;
 		}
-		if (((GraduatedGauge)this).MaxUnits < count)
+		if (MaxUnits < count)
 		{
-			while (((GraduatedGauge)this).MaxUnits < count)
+			while (MaxUnits < count)
 			{
 				Transform item = Object.Instantiate<Transform>(unitsTransforms[0], unitsParent);
 				unitsTransforms.Add(item);
 			}
 			return;
 		}
-		while (((GraduatedGauge)this).MaxUnits > count)
+		while (MaxUnits > count)
 		{
 			Transform val = unitsTransforms[unitsTransforms.Count - 1];
 			unitsTransforms.Remove(val);

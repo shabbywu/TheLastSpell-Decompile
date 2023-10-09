@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Globalization;
 using System.Xml.Linq;
 using TheLastStand.Framework.ExpressionInterpreter;
@@ -8,7 +7,7 @@ namespace TheLastStand.Definition.CastFx;
 
 public class SkillCastFxDefinition : CastFxDefinition
 {
-	public class CasterAnimDefinition : Definition
+	public class CasterAnimDefinition : TheLastStand.Framework.Serialization.Definition
 	{
 		public Node Delay { get; private set; }
 
@@ -16,7 +15,7 @@ public class SkillCastFxDefinition : CastFxDefinition
 
 
 		public CasterAnimDefinition(XContainer container)
-			: base(container, (Dictionary<string, string>)null)
+			: base(container)
 		{
 		}
 
@@ -27,14 +26,13 @@ public class SkillCastFxDefinition : CastFxDefinition
 
 		public override void Deserialize(XContainer container)
 		{
-			//IL_004a: Unknown result type (might be due to invalid IL or missing references)
 			XElement val = ((container != null) ? container.Element(XName.op_Implicit("Path")) : null);
 			if (val != null)
 			{
 				Path = val.Value;
 			}
 			XElement val2 = ((container != null) ? container.Element(XName.op_Implicit("Delay")) : null);
-			Delay = (Node)((val2 != null) ? ((object)Parser.Parse(val2.Value, (Dictionary<string, string>)null)) : ((object)new NodeNumber(0.0)));
+			Delay = ((val2 != null) ? Parser.Parse(val2.Value) : new NodeNumber(0.0));
 		}
 	}
 

@@ -4,7 +4,7 @@ using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Meta.Glyphs.GlyphEffects;
 
-public abstract class GlyphEffectDefinition : Definition
+public abstract class GlyphEffectDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	protected GlyphEffectDefinition(XContainer container, Dictionary<string, string> tokenVariables = null)
 		: base(container, tokenVariables)

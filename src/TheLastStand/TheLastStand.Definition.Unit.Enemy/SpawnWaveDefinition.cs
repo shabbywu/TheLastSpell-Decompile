@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.Enemy;
 
-public class SpawnWaveDefinition : Definition
+public class SpawnWaveDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public int Duration { get; private set; }
 
@@ -40,7 +40,7 @@ public class SpawnWaveDefinition : Definition
 	public float TemporalDistributionTotalWeight { get; private set; }
 
 	public SpawnWaveDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
@@ -48,7 +48,7 @@ public class SpawnWaveDefinition : Definition
 	{
 		XElement val = (XElement)(object)((container is XElement) ? container : null);
 		XAttribute val2 = val.Attribute(XName.op_Implicit("Id"));
-		if (XDocumentExtensions.IsNullOrEmpty(val2))
+		if (val2.IsNullOrEmpty())
 		{
 			CLoggerManager.Log((object)"SpawnWaveDefinition has no Id!", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 			return;
@@ -64,7 +64,7 @@ public class SpawnWaveDefinition : Definition
 		foreach (XElement item in ((XContainer)val3).Elements(XName.op_Implicit("Turn")))
 		{
 			XAttribute val4 = item.Attribute(XName.op_Implicit("Id"));
-			if (XDocumentExtensions.IsNullOrEmpty(val4))
+			if (val4.IsNullOrEmpty())
 			{
 				CLoggerManager.Log((object)"Turn has no Id!", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 				continue;
@@ -79,7 +79,7 @@ public class SpawnWaveDefinition : Definition
 				Duration = result;
 			}
 			XAttribute val5 = item.Attribute(XName.op_Implicit("Weight"));
-			if (XDocumentExtensions.IsNullOrEmpty(val5))
+			if (val5.IsNullOrEmpty())
 			{
 				CLoggerManager.Log((object)"Turn has no Weight!", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 				continue;
@@ -94,7 +94,7 @@ public class SpawnWaveDefinition : Definition
 		}
 		float result3 = 1f;
 		XElement val6 = ((XContainer)val).Element(XName.op_Implicit("SpawnsCountMultiplier"));
-		if (!XDocumentExtensions.IsNullOrEmpty(val6) && !float.TryParse(val6.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out result3))
+		if (!val6.IsNullOrEmpty() && !float.TryParse(val6.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out result3))
 		{
 			CLoggerManager.Log((object)"SpawnWaveDefinition has an invalid SpawnsCountMultiplier!", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 		}

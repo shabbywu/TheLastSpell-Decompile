@@ -155,7 +155,7 @@ public class SpawnWaveManager : Manager<SpawnWaveManager>, ISerializable, IDeser
 		if (SpawnWaveDatabase.WaveDefinitions.TryGetValue(spawnWaveId, out var value))
 		{
 			RandomManager.SaveState(TPSingleton<SpawnWaveManager>.Instance);
-			SpawnDirectionsDefinition valueOrDefault = DictionaryExtensions.GetValueOrDefault<string, SpawnDirectionsDefinition>(SpawnWaveDatabase.SpawnDirectionDefinitions, spawnDirectionId);
+			SpawnDirectionsDefinition valueOrDefault = SpawnWaveDatabase.SpawnDirectionDefinitions.GetValueOrDefault(spawnDirectionId);
 			RerolledSpawnWave = new SpawnWaveInfos(CurrentSpawnWave);
 			CurrentSpawnWave = new SpawnWaveController(value, SpawnWaveView, isReroll: true, valueOrDefault).SpawnWave;
 			TPSingleton<TrophyManager>.Instance.SpawnWaveDuration = CurrentSpawnWave.SpawnWaveDefinition.Duration;
@@ -169,7 +169,7 @@ public class SpawnWaveManager : Manager<SpawnWaveManager>, ISerializable, IDeser
 
 	public static SpawnWaveDefinition TryGetSpawnWaveDefinitionOrRandom(string spawnWaveDefinitionId, out bool success)
 	{
-		SpawnWaveDefinition valueOrDefault = DictionaryExtensions.GetValueOrDefault<string, SpawnWaveDefinition>(SpawnWaveDatabase.WaveDefinitions, spawnWaveDefinitionId);
+		SpawnWaveDefinition valueOrDefault = SpawnWaveDatabase.WaveDefinitions.GetValueOrDefault(spawnWaveDefinitionId);
 		success = valueOrDefault != null;
 		return valueOrDefault ?? GetRandomWaveDefinition();
 	}
@@ -217,7 +217,7 @@ public class SpawnWaveManager : Manager<SpawnWaveManager>, ISerializable, IDeser
 				((CLogger<SpawnWaveManager>)TPSingleton<SpawnWaveManager>.Instance).LogError((object)("I've been looking in the following definition list: " + string.Join(", ", dictionary.Keys) + " and I finally settled on the definition " + item2.Key), (CLogLevel)0, true, true);
 				((CLogger<SpawnWaveManager>)TPSingleton<SpawnWaveManager>.Instance).LogError((object)("But it doesn't exist! Here's what exists in the definition SWD: " + string.Join(", ", SpawnWaveDatabase.WaveDefinitions.Keys)), (CLogLevel)0, true, true);
 				((CLogger<SpawnWaveManager>)TPSingleton<SpawnWaveManager>.Instance).LogError((object)"Please notice me :(", (CLogLevel)0, true, true);
-				throw new MissingAssetException<SpawnWaveDatabase>(item2.Key);
+				throw new Database<SpawnWaveDatabase>.MissingAssetException(item2.Key);
 			}
 		}
 		((CLogger<SpawnWaveManager>)TPSingleton<SpawnWaveManager>.Instance).LogError((object)"No valid spawn waves found!", (CLogLevel)0, true, true);
@@ -314,7 +314,7 @@ public class SpawnWaveManager : Manager<SpawnWaveManager>, ISerializable, IDeser
 
 	public ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedSpawnWaveContainer
+		return new SerializedSpawnWaveContainer
 		{
 			DisplayDangerIndicators = DetailedSpawnWaveArrows,
 			CurrentSpawnWave = (CurrentSpawnWave?.Serialize() as SerializedSpawnWave),
@@ -420,19 +420,19 @@ public class SpawnWaveManager : Manager<SpawnWaveManager>, ISerializable, IDeser
 				{
 					{
 						SpawnDirectionsDefinition.E_Direction.Top,
-						DictionaryExtensions.GetValueOrDefault<SpawnDirectionsDefinition.E_Direction, SpawnDirectionsDefinition.SpawnDirectionInfoContainer>(spawnDirectionsDefinition.SpawnDirectionsInfo, SpawnDirectionsDefinition.E_Direction.Top)
+						spawnDirectionsDefinition.SpawnDirectionsInfo.GetValueOrDefault(SpawnDirectionsDefinition.E_Direction.Top)
 					},
 					{
 						SpawnDirectionsDefinition.E_Direction.Right,
-						DictionaryExtensions.GetValueOrDefault<SpawnDirectionsDefinition.E_Direction, SpawnDirectionsDefinition.SpawnDirectionInfoContainer>(spawnDirectionsDefinition.SpawnDirectionsInfo, SpawnDirectionsDefinition.E_Direction.Right)
+						spawnDirectionsDefinition.SpawnDirectionsInfo.GetValueOrDefault(SpawnDirectionsDefinition.E_Direction.Right)
 					},
 					{
 						SpawnDirectionsDefinition.E_Direction.Bottom,
-						DictionaryExtensions.GetValueOrDefault<SpawnDirectionsDefinition.E_Direction, SpawnDirectionsDefinition.SpawnDirectionInfoContainer>(spawnDirectionsDefinition.SpawnDirectionsInfo, SpawnDirectionsDefinition.E_Direction.Bottom)
+						spawnDirectionsDefinition.SpawnDirectionsInfo.GetValueOrDefault(SpawnDirectionsDefinition.E_Direction.Bottom)
 					},
 					{
 						SpawnDirectionsDefinition.E_Direction.Left,
-						DictionaryExtensions.GetValueOrDefault<SpawnDirectionsDefinition.E_Direction, SpawnDirectionsDefinition.SpawnDirectionInfoContainer>(spawnDirectionsDefinition.SpawnDirectionsInfo, SpawnDirectionsDefinition.E_Direction.Left)
+						spawnDirectionsDefinition.SpawnDirectionsInfo.GetValueOrDefault(SpawnDirectionsDefinition.E_Direction.Left)
 					}
 				};
 				for (int i = 0; i < 4; i++)

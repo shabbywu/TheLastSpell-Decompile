@@ -38,7 +38,7 @@ public class RarityProbabilitiesTreeController
 		Dictionary<int, int> dictionary2 = new Dictionary<int, int>();
 		if (TPSingleton<GlyphManager>.Instance.RarityProbabilityTreeModifiers.TryGetValue(probabilityTreeEntriesDefinition.Id, out var value))
 		{
-			dictionary = DictionaryExtensions.Add(dictionary, value);
+			dictionary = dictionary.Add(value);
 		}
 		if (MetaUpgradeEffectsController.TryGetEffectsOfType<ItemRaritiesMetaEffectDefinition>(out var effects, MetaUpgradesManager.E_MetaState.Activated))
 		{
@@ -61,6 +61,6 @@ public class RarityProbabilitiesTreeController
 				}
 			}
 		}
-		return DictionaryExtensions.Add(dictionary, dictionary2);
+		return dictionary.Add(dictionary2);
 	}
 }

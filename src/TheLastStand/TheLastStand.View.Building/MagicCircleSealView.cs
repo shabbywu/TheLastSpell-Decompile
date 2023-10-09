@@ -96,8 +96,8 @@ public class MagicCircleSealView : MonoBehaviour
 	{
 		//IL_0072: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0078: Expected O, but got Unknown
-		AnimationClip val = ResourcePooler.LoadOnce<AnimationClip>("Animation/MagicCircle/MagicCircle_Seal_Idle/MagicCircle_Seal_" + TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.Id + "_Idle", false);
-		AnimationClip val2 = ResourcePooler.LoadOnce<AnimationClip>("Animation/MagicCircle/MagicCircle_Seal_Anticipation/MagicCircle_Seal_" + TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.Id + "_Anticipation", false);
+		AnimationClip val = ResourcePooler.LoadOnce<AnimationClip>("Animation/MagicCircle/MagicCircle_Seal_Idle/MagicCircle_Seal_" + TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.Id + "_Idle", failSilently: false);
+		AnimationClip val2 = ResourcePooler.LoadOnce<AnimationClip>("Animation/MagicCircle/MagicCircle_Seal_Anticipation/MagicCircle_Seal_" + TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.Id + "_Anticipation", failSilently: false);
 		if (!((Object)(object)val == (Object)null) || !((Object)(object)val2 == (Object)null))
 		{
 			AnimatorOverrideController val3 = new AnimatorOverrideController(animator.runtimeAnimatorController);
@@ -119,7 +119,7 @@ public class MagicCircleSealView : MonoBehaviour
 		//IL_006f: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0075: Expected O, but got Unknown
 		string text = ((!TPSingleton<CutsceneManager>.Exist() || string.IsNullOrEmpty(TPSingleton<CutsceneManager>.Instance.VictorySequenceView.debugCityIdOverride)) ? TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.Id : TPSingleton<CutsceneManager>.Instance.VictorySequenceView.debugCityIdOverride);
-		AnimationClip val = ResourcePooler.LoadOnce<AnimationClip>("Animation/MagicCircle/MagicCircle_Pillar_Idle/MagicCircle_" + text + "_Pillar_Idle", false);
+		AnimationClip val = ResourcePooler.LoadOnce<AnimationClip>("Animation/MagicCircle/MagicCircle_Pillar_Idle/MagicCircle_" + text + "_Pillar_Idle", failSilently: false);
 		if (!((Object)(object)val == (Object)null))
 		{
 			AnimatorOverrideController val2 = new AnimatorOverrideController(pillarAnimator.runtimeAnimatorController);

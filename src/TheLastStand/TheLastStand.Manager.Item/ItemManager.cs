@@ -72,7 +72,7 @@ public class ItemManager : Manager<ItemManager>
 			Affix affix = new AffixController(randomItemFromWeights2).Affix;
 			affix.Level = randomItemFromWeights;
 			item.AdditionalAffixes.Add(affix);
-			DictionaryExtensions.AddValueOrCreateKey<AffixDefinition, int>(dictionary3, randomItemFromWeights2, 1, (Func<int, int, int>)((int a, int b) => a + b));
+			dictionary3.AddValueOrCreateKey(randomItemFromWeights2, 1, (int a, int b) => a + b);
 			if (randomItemFromWeights2.MaxOccurrences != -1 && dictionary3[randomItemFromWeights2] >= randomItemFromWeights2.MaxOccurrences)
 			{
 				dictionary.Remove(randomItemFromWeights2);
@@ -204,7 +204,7 @@ public class ItemManager : Manager<ItemManager>
 				}
 			}
 		}
-		int num = count.EvalToInt((InterpreterContext)(object)new ItemInterpreterContext());
+		int num = count.EvalToInt(new ItemInterpreterContext());
 		if (num == CreateItemDefinition.All)
 		{
 			GenerateAllItemsInList(itemDestination, createItemDefinition.ItemsListDefinition, level, createItemDefinition.ItemRaritiesListDefinition);
@@ -363,7 +363,7 @@ public class ItemManager : Manager<ItemManager>
 			}
 			foreach (KeyValuePair<UnitStatDefinition.E_Stat, float> item2 in item.GetAllStatBonusesMerged())
 			{
-				DictionaryExtensions.AddValueOrCreateKey<UnitStatDefinition.E_Stat, float>(allStatBonusesMerged, item2.Key, 0f - item2.Value, (Func<float, float, float>)((float a, float b) => a + b));
+				allStatBonusesMerged.AddValueOrCreateKey(item2.Key, 0f - item2.Value, (float a, float b) => a + b);
 			}
 		}
 		return allStatBonusesMerged;

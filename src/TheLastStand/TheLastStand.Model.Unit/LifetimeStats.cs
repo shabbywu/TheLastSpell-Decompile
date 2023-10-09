@@ -56,7 +56,7 @@ public class LifetimeStats : ISerializable, IDeserializable
 	public LifetimeStats(SerializedLifetimeStats container, LifetimeStatsController lifetimeStatsController)
 	{
 		LifetimeStatsController = lifetimeStatsController;
-		Deserialize((ISerializedData)(object)container);
+		Deserialize(container);
 	}
 
 	public LifetimeStats(LifetimeStatsController lifetimeStatsController)
@@ -102,7 +102,7 @@ public class LifetimeStats : ISerializable, IDeserializable
 
 	public ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedLifetimeStats
+		return new SerializedLifetimeStats
 		{
 			BestBlow = BestBlow,
 			CriticalHits = CriticalHits,

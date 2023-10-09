@@ -5,7 +5,6 @@ using TheLastStand.Database.Fog;
 using TheLastStand.Database.WorldMap;
 using TheLastStand.Definition.Fog;
 using TheLastStand.Definition.WorldMap;
-using TheLastStand.Framework.Command.Conversation;
 using TheLastStand.Manager;
 using TheLastStand.Manager.LevelEditor;
 using TheLastStand.Serialization.LevelEditor;
@@ -181,20 +180,20 @@ public class LevelEditorPanel : MonoBehaviour
 	public void Refresh()
 	{
 		undoButton.InitText("UNDO (U)");
-		if (((Conversation<ICompensableCommand, ICompensableCommand>)(object)LevelEditorManager.CompensationConversation).UndoStack.Count > 0)
+		if (LevelEditorManager.CompensationConversation.UndoStack.Count > 0)
 		{
 			undoButton.Button.Interactable = true;
-			undoButton.AppendText($": {((Conversation<ICompensableCommand, ICompensableCommand>)(object)LevelEditorManager.CompensationConversation).UndoStack.Peek()}");
+			undoButton.AppendText($": {LevelEditorManager.CompensationConversation.UndoStack.Peek()}");
 		}
 		else
 		{
 			undoButton.Button.Interactable = false;
 		}
 		redoButton.InitText("REDO (R)");
-		if (((Conversation<ICompensableCommand, ICompensableCommand>)(object)LevelEditorManager.CompensationConversation).RedoStack.Count > 0)
+		if (LevelEditorManager.CompensationConversation.RedoStack.Count > 0)
 		{
 			redoButton.Button.Interactable = true;
-			redoButton.AppendText($": {((Conversation<ICompensableCommand, ICompensableCommand>)(object)LevelEditorManager.CompensationConversation).RedoStack.Peek()}");
+			redoButton.AppendText($": {LevelEditorManager.CompensationConversation.RedoStack.Peek()}");
 		}
 		else
 		{

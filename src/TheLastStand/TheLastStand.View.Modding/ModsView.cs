@@ -5,7 +5,6 @@ using TPLib;
 using TPLib.Localization;
 using TPLib.Localization.Fonts;
 using TPLib.UI;
-using TheLastStand.Framework.Automaton;
 using TheLastStand.Framework.UI;
 using TheLastStand.Manager;
 using TheLastStand.Manager.Modding;
@@ -248,7 +247,7 @@ public class ModsView : TPSingleton<ModsView>, IOverlayUser
 
 	private void Update()
 	{
-		if (((StateMachine)ApplicationManager.Application).State.GetName() != "ModList")
+		if (ApplicationManager.Application.State.GetName() != "ModList")
 		{
 			return;
 		}

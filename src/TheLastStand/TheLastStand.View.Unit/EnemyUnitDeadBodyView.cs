@@ -65,8 +65,8 @@ public class EnemyUnitDeadBodyView : MonoBehaviour
 		Transform transform = ((Component)this).transform;
 		transform.position += Vector2.op_Implicit(enemyUnit.EnemyUnitTemplateDefinition.VisualOffset);
 		((Component)this).transform.localScale = new Vector3(enemyUnit.EnemyUnitView.OrientationRootTransform.localScale.x, ((Component)this).transform.localScale.y, ((Component)this).transform.localScale.z);
-		string text = ((enemyUnit is EliteEnemyUnit) ? ("View/Sprites/Units/" + enemyUnit.EnemyUnitView.GetDefaultSpritesFolder() + "/DeadBodies/" + enemyUnit.SpecificId + "/" + enemyUnit.VariantId + "/" + enemyUnit.SpecificId + "_" + enemyUnit.VariantId + "_DeadBody_Front") : ("View/Sprites/Units/" + enemyUnit.EnemyUnitView.GetDefaultSpritesFolder() + "/DeadBodies/" + enemyUnit.SpecificAssetsId + "/" + enemyUnit.VariantId + "/" + enemyUnit.SpecificAssetsId + "_Lvl1_" + enemyUnit.VariantId + "_DeadBody_Front"));
-		deadBodySpriteRend.sprite = ResourcePooler.LoadOnce<Sprite>(text, false);
+		string resourcePath = ((enemyUnit is EliteEnemyUnit) ? ("View/Sprites/Units/" + enemyUnit.EnemyUnitView.GetDefaultSpritesFolder() + "/DeadBodies/" + enemyUnit.SpecificId + "/" + enemyUnit.VariantId + "/" + enemyUnit.SpecificId + "_" + enemyUnit.VariantId + "_DeadBody_Front") : ("View/Sprites/Units/" + enemyUnit.EnemyUnitView.GetDefaultSpritesFolder() + "/DeadBodies/" + enemyUnit.SpecificAssetsId + "/" + enemyUnit.VariantId + "/" + enemyUnit.SpecificAssetsId + "_Lvl1_" + enemyUnit.VariantId + "_DeadBody_Front"));
+		deadBodySpriteRend.sprite = ResourcePooler.LoadOnce<Sprite>(resourcePath, failSilently: false);
 		((Renderer)deadBodySpriteRend).sortingOrder = Tile.EnemyUnitDeadBodyViews.Count;
 		if (TPSingleton<GameManager>.Instance.Game.Cycle == Game.E_Cycle.Day && waitCoroutine == null)
 		{

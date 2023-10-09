@@ -138,7 +138,7 @@ public class GaugeMarkersDisplayer
 		//IL_0094: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0099: Unknown result type (might be due to invalid IL or missing references)
 		//IL_00a1: Unknown result type (might be due to invalid IL or missing references)
-		Transform transform = ObjectPooler.GetPooledGameObject("GaugeMarker", UIManager.GaugeMarker, (Transform)(object)markersContainer, true).transform;
+		Transform transform = ObjectPooler.GetPooledGameObject("GaugeMarker", UIManager.GaugeMarker, (Transform)(object)markersContainer, dontSetParent: true).transform;
 		if (enabled)
 		{
 			lastEnabledMarkerIndex++;

@@ -40,7 +40,7 @@ public class InjuryTooltip : TooltipBase
 
 	public void SetContent(InjuryDefinition injuryDefinition, int injuryIndex)
 	{
-		tooltipIcon.sprite = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Units/Injury/Icon_Wounds" + (injuryIndex + 1), false);
+		tooltipIcon.sprite = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Units/Injury/Icon_Wounds" + (injuryIndex + 1), failSilently: false);
 		((TMP_Text)title).text = Localizer.Get("Injury_Title_Wound" + (injuryIndex + 1));
 		int i = 0;
 		int num = 0;

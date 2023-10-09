@@ -29,7 +29,7 @@ public class BufferModule : APerkModule
 
 	public override ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedBufferModule
+		return new SerializedBufferModule
 		{
 			Buffer = Buffer,
 			Buffer2 = Buffer2,

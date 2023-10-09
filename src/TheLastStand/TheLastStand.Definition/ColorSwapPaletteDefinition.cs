@@ -7,9 +7,9 @@ using UnityEngine;
 
 namespace TheLastStand.Definition;
 
-public class ColorSwapPaletteDefinition : Definition
+public class ColorSwapPaletteDefinition : TheLastStand.Framework.Serialization.Definition
 {
-	public class ColorSwapDefinition : Definition
+	public class ColorSwapDefinition : TheLastStand.Framework.Serialization.Definition
 	{
 		public int Index { get; private set; } = -1;
 
@@ -18,7 +18,7 @@ public class ColorSwapPaletteDefinition : Definition
 
 
 		public ColorSwapDefinition(XContainer container)
-			: base(container, (Dictionary<string, string>)null)
+			: base(container)
 		{
 		}//IL_0008: Unknown result type (might be due to invalid IL or missing references)
 		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
@@ -29,14 +29,14 @@ public class ColorSwapPaletteDefinition : Definition
 			//IL_00ae: Unknown result type (might be due to invalid IL or missing references)
 			XElement val = (XElement)(object)((container is XElement) ? container : null);
 			XElement val2 = ((XContainer)val).Element(XName.op_Implicit("Index"));
-			if (XDocumentExtensions.IsNullOrEmpty(val2))
+			if (val2.IsNullOrEmpty())
 			{
 				Debug.LogError((object)"A ColorSwap hasn't an Index!");
 				return;
 			}
 			if (!int.TryParse(val2.Value, out var result) || result < 0 || result > 99)
 			{
-				Debug.Log((object)("A ColorSwap " + ((Definition)this).HasAnInvalidInt(val2.Value)));
+				Debug.Log((object)("A ColorSwap " + HasAnInvalidInt(val2.Value)));
 				return;
 			}
 			Index = result;
@@ -44,7 +44,7 @@ public class ColorSwapPaletteDefinition : Definition
 			Color outputColor = default(Color);
 			if (!ColorUtility.TryParseHtmlString(val3.Value, ref outputColor))
 			{
-				Debug.Log((object)string.Format("The ColorSwap with Index : {0} {1}", result, ((Definition)this).HasAnInvalid("Color", val3.Value)));
+				Debug.Log((object)string.Format("The ColorSwap with Index : {0} {1}", result, HasAnInvalid("Color", val3.Value)));
 			}
 			else
 			{
@@ -61,7 +61,7 @@ public class ColorSwapPaletteDefinition : Definition
 
 
 	public ColorSwapPaletteDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
@@ -69,7 +69,7 @@ public class ColorSwapPaletteDefinition : Definition
 	{
 		XElement val = (XElement)(object)((container is XElement) ? container : null);
 		XAttribute val2 = val.Attribute(XName.op_Implicit("Id"));
-		if (XDocumentExtensions.IsNullOrEmpty(val2))
+		if (val2.IsNullOrEmpty())
 		{
 			Debug.LogError((object)"A ColorSwapPalette hasn't an Id!");
 			return;
@@ -95,7 +95,7 @@ public class ColorSwapPaletteDefinition : Definition
 		{
 			if (!int.TryParse(val3.Value, out var result))
 			{
-				Debug.LogError((object)("The ColorSwapPalette : " + Id + " " + ((Definition)this).HasAnInvalidInt(val3.Value)));
+				Debug.LogError((object)("The ColorSwapPalette : " + Id + " " + HasAnInvalidInt(val3.Value)));
 			}
 			else
 			{

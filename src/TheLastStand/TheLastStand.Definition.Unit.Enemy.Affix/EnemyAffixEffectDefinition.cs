@@ -4,7 +4,7 @@ using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Unit.Enemy.Affix;
 
-public abstract class EnemyAffixEffectDefinition : Definition
+public abstract class EnemyAffixEffectDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public enum E_EnemyAffixEffect
 	{

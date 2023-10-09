@@ -19,8 +19,8 @@ public class CityDatabase : Database<CityDatabase>
 		{
 			return;
 		}
-		Queue<XElement> queue = base.GatherElements((IEnumerable<TextAsset>)cityDefinitionsTextAssets, (IEnumerable<TextAsset>)null, "CityDefinition", (string)null);
-		IEnumerable<XElement> enumerable = base.SortElementsByDependencies((IEnumerable<XElement>)queue);
+		Queue<XElement> elements = GatherElements(cityDefinitionsTextAssets, null, "CityDefinition");
+		IEnumerable<XElement> enumerable = SortElementsByDependencies(elements);
 		CityDefinitions = new Dictionary<string, CityDefinition>();
 		foreach (XElement item in enumerable)
 		{

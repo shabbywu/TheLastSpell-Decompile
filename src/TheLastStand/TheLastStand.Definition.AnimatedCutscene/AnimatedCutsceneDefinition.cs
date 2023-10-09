@@ -4,14 +4,14 @@ using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.AnimatedCutscene;
 
-public class AnimatedCutsceneDefinition : Definition
+public class AnimatedCutsceneDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public string Id { get; private set; }
 
 	public List<AnimatedCutsceneSlideDefinition> SlidesDefinitions { get; private set; }
 
 	public AnimatedCutsceneDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

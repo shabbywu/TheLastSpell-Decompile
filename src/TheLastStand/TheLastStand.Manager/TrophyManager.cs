@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using TPLib;
@@ -104,7 +103,7 @@ public class TrophyManager : Manager<TrophyManager>, ISerializable, IDeserializa
 		float num = 1f;
 		if (TrophyDatabase.DefaultTrophyDefinition.MultiplierPerDay.ContainsKey(TPSingleton<GameManager>.Instance.Game.DayNumber))
 		{
-			num = TrophyDatabase.DefaultTrophyDefinition.MultiplierPerDay[TPSingleton<GameManager>.Instance.Game.DayNumber].EvalToFloat((object)new MultiplierEvalContext());
+			num = TrophyDatabase.DefaultTrophyDefinition.MultiplierPerDay[TPSingleton<GameManager>.Instance.Game.DayNumber].EvalToFloat(new MultiplierEvalContext());
 		}
 		DamnedSoulsEarnedThisNightWithMultiplier = (uint)Mathf.RoundToInt((float)RawDamnedSoulsEarnedThisNight * num);
 		uint num2 = TPSingleton<GlyphManager>.Instance.DamnedSoulsPercentageModifier + TPSingleton<ApocalypseManager>.Instance.DamnedSoulsPercentageModifier;
@@ -174,12 +173,11 @@ public class TrophyManager : Manager<TrophyManager>, ISerializable, IDeserializa
 	{
 		RawDamnedSoulsEarnedThisNight = 0;
 		int trophyDefinitionIndex = 0;
-		Trophy trophy = default(Trophy);
 		for (int count = TrophyDatabase.TrophyDefinitions.Count; trophyDefinitionIndex < count; trophyDefinitionIndex++)
 		{
-			if (ListExtensions.TryFind<Trophy>(Trophies, (Predicate<Trophy>)((Trophy x) => x.TrophyDefinition == TrophyDatabase.TrophyDefinitions[trophyDefinitionIndex]), ref trophy))
+			if (Trophies.TryFind((Trophy x) => x.TrophyDefinition == TrophyDatabase.TrophyDefinitions[trophyDefinitionIndex], out var value))
 			{
-				trophy.TrophyConditionController.Clear();
+				value.TrophyConditionController.Clear();
 			}
 			else
 			{
@@ -203,7 +201,7 @@ public class TrophyManager : Manager<TrophyManager>, ISerializable, IDeserializa
 			{
 				if (trophy.TrophyConditionController.Name == valueIntTrophy.Name)
 				{
-					trophy.TrophyConditionController.Deserialize((ISerializedData)(object)valueIntTrophy, saveVersion);
+					trophy.TrophyConditionController.Deserialize(valueIntTrophy, saveVersion);
 					break;
 				}
 			}
@@ -214,18 +212,18 @@ public class TrophyManager : Manager<TrophyManager>, ISerializable, IDeserializa
 			{
 				if (trophy2.TrophyConditionController.Name == valueIntHeroesTrophy.Name)
 				{
-					trophy2.TrophyConditionController.Deserialize((ISerializedData)(object)valueIntHeroesTrophy, saveVersion);
+					trophy2.TrophyConditionController.Deserialize(valueIntHeroesTrophy, saveVersion);
 					break;
 				}
 			}
 		}
-		Trophies.FirstOrDefault((Trophy t) => t.TrophyConditionController is EnemiesDamagedTrophyConditionController)?.TrophyConditionController.Deserialize((ISerializedData)(object)serializedTrophies.EnemiesDamagedTrophy, saveVersion);
-		Trophies.FirstOrDefault((Trophy t) => t.TrophyConditionController is EnemiesDebuffedSeveralTimesSingleTurnTrophyConditionController)?.TrophyConditionController.Deserialize((ISerializedData)(object)serializedTrophies.EnemiesDebuffedSeveralTimesSingleTurnTrophy, saveVersion);
+		Trophies.FirstOrDefault((Trophy t) => t.TrophyConditionController is EnemiesDamagedTrophyConditionController)?.TrophyConditionController.Deserialize(serializedTrophies.EnemiesDamagedTrophy, saveVersion);
+		Trophies.FirstOrDefault((Trophy t) => t.TrophyConditionController is EnemiesDebuffedSeveralTimesSingleTurnTrophyConditionController)?.TrophyConditionController.Deserialize(serializedTrophies.EnemiesDebuffedSeveralTimesSingleTurnTrophy, saveVersion);
 	}
 
 	public ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedTrophies
+		return new SerializedTrophies
 		{
 			RawDamnedSoulsEarnedThisNight = RawDamnedSoulsEarnedThisNight,
 			ValueIntTrophies = (from t in Trophies

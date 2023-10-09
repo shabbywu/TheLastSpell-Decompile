@@ -3,7 +3,6 @@ using TheLastStand.Controller.Building.BuildingPassive;
 using TheLastStand.Controller.Meta;
 using TheLastStand.Definition.Building.BuildingPassive;
 using TheLastStand.Definition.Meta;
-using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Manager.Meta;
 using TheLastStand.Model.Building.Module;
 using UnityEngine;
@@ -16,7 +15,7 @@ public class FillEffectGauge : BuildingPassiveEffect
 	{
 		get
 		{
-			int num = FillEffectGaugeDefinition.Value.EvalToInt((InterpreterContext)(object)new BuildingInterpreterContext());
+			int num = FillEffectGaugeDefinition.Value.EvalToInt(new BuildingInterpreterContext());
 			int num2 = 0;
 			num2 += UpgradedBonusValue;
 			if (!MetaUpgradesManager.IsThisBuildingUnlockedByDefault(base.BuildingPassivesModule.BuildingParent.Id) && MetaUpgradeEffectsController.TryGetEffectsOfType<BuildingModifierMetaEffectDefinition>(out var effects, MetaUpgradesManager.E_MetaState.Activated))

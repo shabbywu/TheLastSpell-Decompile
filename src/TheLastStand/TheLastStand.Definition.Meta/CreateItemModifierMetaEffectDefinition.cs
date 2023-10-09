@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Framework.Extensions;
@@ -24,6 +23,6 @@ public class CreateItemModifierMetaEffectDefinition : MetaEffectDefinition
 		XElement val = obj.Element(XName.op_Implicit("CreateItemId"));
 		CreateItemId = val.Value;
 		XElement val2 = obj.Element(XName.op_Implicit("Count"));
-		Count = (XDocumentExtensions.IsNullOrEmpty(val2) ? Parser.Parse("1", (Dictionary<string, string>)null) : Parser.Parse(val2.Value, (Dictionary<string, string>)null));
+		Count = (val2.IsNullOrEmpty() ? Parser.Parse("1") : Parser.Parse(val2.Value));
 	}
 }

@@ -59,7 +59,7 @@ public class RepairCategoryButton : MonoBehaviour, IPointerEnterHandler, IEventS
 		((UnityEvent)button.onClick).AddListener(onClick);
 		if ((Object)(object)iconImage != (Object)null)
 		{
-			iconImage.sprite = ResourcePooler.LoadOnce<Sprite>($"View/Sprites/UI/Construction/RepairCategory_{Id}", false);
+			iconImage.sprite = ResourcePooler.LoadOnce<Sprite>($"View/Sprites/UI/Construction/RepairCategory_{Id}", failSilently: false);
 		}
 		else
 		{

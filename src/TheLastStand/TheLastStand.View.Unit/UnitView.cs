@@ -9,7 +9,6 @@ using TheLastStand.Controller;
 using TheLastStand.Definition;
 using TheLastStand.Definition.Unit;
 using TheLastStand.Framework;
-using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Framework.Extensions;
 using TheLastStand.Framework.Sequencing;
 using TheLastStand.Manager;
@@ -22,7 +21,6 @@ using TheLastStand.Model.TileMap;
 using TheLastStand.Model.Unit;
 using TheLastStand.Model.Unit.Enemy;
 using TheLastStand.Model.Unit.Enemy.Affix;
-using TheLastStand.Model.Unit.Perk;
 using TheLastStand.View.Building;
 using TheLastStand.View.Skill.SkillAction;
 using TheLastStand.View.Skill.SkillAction.UI;
@@ -207,7 +205,7 @@ public abstract class UnitView : MonoBehaviour, IDamageableView, ITileObjectView
 		{
 			if ((Object)(object)gainArmorFeedback == (Object)null)
 			{
-				gainArmorFeedback = Object.Instantiate<GainArmorFeedback>(ResourcePooler.LoadOnce<GainArmorFeedback>("Prefab/Displayable Effect/Gain Armor Feedback", false));
+				gainArmorFeedback = Object.Instantiate<GainArmorFeedback>(ResourcePooler.LoadOnce<GainArmorFeedback>("Prefab/Displayable Effect/Gain Armor Feedback", failSilently: false));
 				gainArmorFeedback.Init(this);
 			}
 			return gainArmorFeedback;
@@ -224,7 +222,7 @@ public abstract class UnitView : MonoBehaviour, IDamageableView, ITileObjectView
 		{
 			if ((Object)(object)healFeedback == (Object)null)
 			{
-				healFeedback = Object.Instantiate<HealFeedback>(ResourcePooler.LoadOnce<HealFeedback>("Prefab/Displayable Effect/Heal Feedback", false));
+				healFeedback = Object.Instantiate<HealFeedback>(ResourcePooler.LoadOnce<HealFeedback>("Prefab/Displayable Effect/Heal Feedback", failSilently: false));
 				healFeedback.Init(this);
 			}
 			return healFeedback;
@@ -356,8 +354,6 @@ public abstract class UnitView : MonoBehaviour, IDamageableView, ITileObjectView
 
 	public Task CreateMoveTask(bool followPathOrientation = true, float moveSpeed = -1f, float delay = 0f, bool isMovementInstant = false, bool isCompensate = false)
 	{
-		//IL_005e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0064: Expected O, but got Unknown
 		List<Tile> list = new List<Tile>();
 		int i = 0;
 		for (int count = Unit.Path.Count; i < count; i++)
@@ -371,7 +367,7 @@ public abstract class UnitView : MonoBehaviour, IDamageableView, ITileObjectView
 		{
 			moveSpeed = float.PositiveInfinity;
 		}
-		return (Task)new CoroutineTask((MonoBehaviour)(object)this, MoveUnitCoroutine(list, followPathOrientation, moveSpeed, delay));
+		return new CoroutineTask((MonoBehaviour)(object)this, MoveUnitCoroutine(list, followPathOrientation, moveSpeed, delay));
 	}
 
 	public IEnumerator DisableWhenPossible()
@@ -402,7 +398,7 @@ public abstract class UnitView : MonoBehaviour, IDamageableView, ITileObjectView
 	{
 		SetFrontAndBackActive(active: true);
 		InitAndStartAnimations(playSpawnAnim);
-		AttackFeedback = Object.Instantiate<AttackFeedback>(ResourcePooler.LoadOnce<AttackFeedback>("Prefab/Displayable Effect/Attack Feedback", false));
+		AttackFeedback = Object.Instantiate<AttackFeedback>(ResourcePooler.LoadOnce<AttackFeedback>("Prefab/Displayable Effect/Attack Feedback", failSilently: false));
 		AttackFeedback.Init(this);
 	}
 
@@ -473,7 +469,7 @@ public abstract class UnitView : MonoBehaviour, IDamageableView, ITileObjectView
 			{
 				Debug.Log((object)(Unit.Id + " damaged particles has not been set in the definition, using default particles."));
 			}
-			GameObject pooledGameObject = ObjectPooler.GetPooledGameObject(string.IsNullOrEmpty(Unit.UnitTemplateDefinition.DamagedParticlesId) ? Unit.Id : Unit.UnitTemplateDefinition.DamagedParticlesId, string.IsNullOrEmpty(Unit.UnitTemplateDefinition.DamagedParticlesId) ? damagedParticles : null, (Transform)null, false);
+			GameObject pooledGameObject = ObjectPooler.GetPooledGameObject(string.IsNullOrEmpty(Unit.UnitTemplateDefinition.DamagedParticlesId) ? Unit.Id : Unit.UnitTemplateDefinition.DamagedParticlesId, string.IsNullOrEmpty(Unit.UnitTemplateDefinition.DamagedParticlesId) ? damagedParticles : null);
 			if ((Object)(object)pooledGameObject != (Object)null)
 			{
 				pooledGameObject.transform.position = Vector2.op_Implicit(TileMapView.GetTileCenter(Unit.OriginTile));
@@ -856,7 +852,7 @@ public abstract class UnitView : MonoBehaviour, IDamageableView, ITileObjectView
 				FogController.SetLightFogTilesFromDictionnary(tilesToUpdateByLightFogMode, FogManager.LightFogFadeInEaseAndDuration, FogManager.LightFogFadeOutEaseAndDuration, FogManager.LightFogDisappearEaseAndDuration, instant: false, independently: true);
 				FogController.SetLightFogTilesFromDictionnary(tilesToUpdateByLightFogMode2, FogManager.LightFogFadeInEaseAndDuration, FogManager.LightFogFadeOutEaseAndDuration, FogManager.LightFogDisappearEaseAndDuration, instant: false, independently: true);
 			}
-			DictionaryExtensions.GetValueOrDefault<E_EffectTime, Action<PerkDataContainer>>(unit.Events, E_EffectTime.OnTileCrossed)?.Invoke(null);
+			unit.Events.GetValueOrDefault(E_EffectTime.OnTileCrossed)?.Invoke(null);
 			Vector3 targetPosition = ((GridLayout)TileMapView.BuildingTilemap).CellToWorld(new Vector3Int(tile3.X, tile3.Y, 0)) + Vector3.forward * startZ;
 			((Component)this).transform.position = new Vector3(((Component)this).transform.position.x, ((Component)this).transform.position.y, targetPosition.z);
 			Vector3 positionBuffer = ((Component)this).transform.position;
@@ -890,7 +886,7 @@ public abstract class UnitView : MonoBehaviour, IDamageableView, ITileObjectView
 			lightFogSupplier.LightFogSupplierMoveDatas.DestinationTile = null;
 		}
 		UnitHUD.ToggleFollowElement(toggle: false);
-		DictionaryExtensions.GetValueOrDefault<E_EffectTime, Action<PerkDataContainer>>(unit.Events, E_EffectTime.OnMovementEnd)?.Invoke(null);
+		unit.Events.GetValueOrDefault(E_EffectTime.OnMovementEnd)?.Invoke(null);
 	}
 
 	private void OnSpriteVisibilityToggle(bool toggle)
@@ -929,11 +925,11 @@ public abstract class UnitView : MonoBehaviour, IDamageableView, ITileObjectView
 			yield break;
 		}
 		string text = "Animation/Caster Anims/" + skill.SkillDefinition.SkillCastFxDefinition.CasterAnimDef.Path;
-		AnimationClip val = ResourcePooler.LoadOnce<AnimationClip>(text + "Front", false);
+		AnimationClip val = ResourcePooler.LoadOnce<AnimationClip>(text + "Front", failSilently: false);
 		animatorOverrideController[Constants.Animation.SkillCastDefaultAnimClipFrontName] = val;
-		val = ResourcePooler.LoadOnce<AnimationClip>(text + "Back", false);
+		val = ResourcePooler.LoadOnce<AnimationClip>(text + "Back", failSilently: false);
 		animatorOverrideController[Constants.Animation.SkillCastDefaultAnimClipBackName] = val;
-		float num = skill.SkillDefinition.SkillCastFxDefinition.CasterAnimDef.Delay.EvalToFloat((InterpreterContext)(object)skillExecution.CastFx.CastFXInterpreterContext);
+		float num = skill.SkillDefinition.SkillCastFxDefinition.CasterAnimDef.Delay.EvalToFloat(skillExecution.CastFx.CastFXInterpreterContext);
 		if (num > 0f)
 		{
 			yield return SharedYields.WaitForSeconds(num);

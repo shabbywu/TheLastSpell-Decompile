@@ -251,7 +251,7 @@ public class EnemiesDebuffedSeveralTimesSingleTurnTrophyConditionController : He
 			SerializedEnemiesDebuffedSeveralTimesSingleTurnTrophy.EnemiesDebuffedDictionary item2 = enemiesDebuffedDictionary;
 			list.Add(item2);
 		}
-		return (ISerializedData)(object)new SerializedEnemiesDebuffedSeveralTimesSingleTurnTrophy
+		return new SerializedEnemiesDebuffedSeveralTimesSingleTurnTrophy
 		{
 			EnemiesDebuffedDictionaries = list
 		};

@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit;
 
-public class UnitLevelUpDefinition : Definition
+public class UnitLevelUpDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public ProbabilityTreeEntriesDefinition RaritiesList { get; private set; }
 
@@ -21,7 +21,7 @@ public class UnitLevelUpDefinition : Definition
 
 
 	public UnitLevelUpDefinition(XContainer xContainer)
-		: base(xContainer, (Dictionary<string, string>)null)
+		: base(xContainer)
 	{
 	}
 
@@ -29,7 +29,7 @@ public class UnitLevelUpDefinition : Definition
 	{
 		XElement val = (XElement)(object)((xContainer is XElement) ? xContainer : null);
 		XElement val2 = ((XContainer)val).Element(XName.op_Implicit("RaritiesList"));
-		if (XDocumentExtensions.IsNullOrEmpty(val2))
+		if (val2.IsNullOrEmpty())
 		{
 			Debug.LogError((object)"UnitLevelUpDefinition must have a RaritiesList");
 			return;
@@ -39,7 +39,7 @@ public class UnitLevelUpDefinition : Definition
 		MaxAmountOfReroll = result;
 		foreach (XElement item in ((XContainer)((XContainer)val).Element(XName.op_Implicit("MainStatDraws"))).Elements(XName.op_Implicit("Draw")))
 		{
-			if (XDocumentExtensions.IsNullOrEmpty(item))
+			if (item.IsNullOrEmpty())
 			{
 				TPDebug.Log((object)"ConstructionDefinition must have a Draw", (Object)null);
 				return;
@@ -53,7 +53,7 @@ public class UnitLevelUpDefinition : Definition
 		}
 		foreach (XElement item2 in ((XContainer)((XContainer)val).Element(XName.op_Implicit("SecondaryStatDraws"))).Elements(XName.op_Implicit("Draw")))
 		{
-			if (XDocumentExtensions.IsNullOrEmpty(item2))
+			if (item2.IsNullOrEmpty())
 			{
 				TPDebug.Log((object)"ConstructionDefinition must have a Draw", (Object)null);
 				break;

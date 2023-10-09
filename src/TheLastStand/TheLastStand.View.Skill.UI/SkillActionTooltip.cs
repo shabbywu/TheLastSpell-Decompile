@@ -77,7 +77,7 @@ public abstract class SkillActionTooltip : TooltipBase
 		if (num2 > 0)
 		{
 			((Component)perksLayout).gameObject.SetActive(true);
-			((HorizontalOrVerticalLayoutGroup)perksLayout).spacing = 0f - Maths.NormalizeClamped((float)num2, (float)((Vector2Int)(ref spacingPerksCountMinMax)).x, (float)((Vector2Int)(ref spacingPerksCountMinMax)).y, layoutSpacingMinMax.x, layoutSpacingMinMax.y);
+			((HorizontalOrVerticalLayoutGroup)perksLayout).spacing = 0f - Maths.NormalizeClamped(num2, ((Vector2Int)(ref spacingPerksCountMinMax)).x, ((Vector2Int)(ref spacingPerksCountMinMax)).y, layoutSpacingMinMax.x, layoutSpacingMinMax.y);
 		}
 		else
 		{

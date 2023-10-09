@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Meta;
 
-public class MetaUpgradeDefinition : Definition
+public class MetaUpgradeDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	[Flags]
 	public enum E_MetaUpgradeCategory
@@ -85,7 +85,7 @@ public class MetaUpgradeDefinition : Definition
 
 
 	public MetaUpgradeDefinition(XContainer container, int deserializationIndex)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 		DeserializationIndex = deserializationIndex;
 	}

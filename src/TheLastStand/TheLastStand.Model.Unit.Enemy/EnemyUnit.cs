@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using TPLib;
 using TPLib.Debugging.Console;
@@ -61,10 +60,10 @@ public class EnemyUnit : Unit, IBehaviorModel, ISkillCaster, ITileObject, IEntit
 			{
 				if (BossPhaseActorId != null)
 				{
-					DictionaryExtensions.TryRemoveAtKey<string, IBossPhaseActor>(TPSingleton<BossManager>.Instance.BossPhaseActors, BossPhaseActorId, (IBossPhaseActor)this);
+					TPSingleton<BossManager>.Instance.BossPhaseActors.TryRemoveAtKey(BossPhaseActorId, this);
 				}
 				bossPhaseActorId = value;
-				DictionaryExtensions.AddAtKey<string, IBossPhaseActor>(TPSingleton<BossManager>.Instance.BossPhaseActors, BossPhaseActorId, (IBossPhaseActor)this);
+				TPSingleton<BossManager>.Instance.BossPhaseActors.AddAtKey(BossPhaseActorId, (IBossPhaseActor)this);
 			}
 		}
 	}
@@ -184,7 +183,7 @@ public class EnemyUnit : Unit, IBehaviorModel, ISkillCaster, ITileObject, IEntit
 	public EnemyUnit(UnitTemplateDefinition unitTemplateDefinition, SerializedEnemyUnit serializedUnit, UnitController unitController, UnitView unitView, UnitCreationSettings unitCreationSettings, int saveVersion)
 		: base(unitTemplateDefinition, unitController, unitView)
 	{
-		Deserialize((ISerializedData)(object)serializedUnit, saveVersion);
+		Deserialize(serializedUnit, saveVersion);
 		Init();
 		LinkedBuilding = unitCreationSettings.LinkedBuilding;
 		IsGuardian = unitCreationSettings.IsGuardian;
@@ -236,7 +235,7 @@ public class EnemyUnit : Unit, IBehaviorModel, ISkillCaster, ITileObject, IEntit
 	{
 		if (!BossActorDeathPrepared)
 		{
-			DictionaryExtensions.AddValueOrCreateKey<string, int>(TPSingleton<BossManager>.Instance.BossPhaseActorsKills, BossPhaseActorId, 1, (Func<int, int, int>)((int a, int b) => a + b));
+			TPSingleton<BossManager>.Instance.BossPhaseActorsKills.AddValueOrCreateKey(BossPhaseActorId, 1, (int a, int b) => a + b);
 			BossActorDeathPrepared = true;
 		}
 	}
@@ -309,7 +308,7 @@ public class EnemyUnit : Unit, IBehaviorModel, ISkillCaster, ITileObject, IEntit
 
 	public override ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedEnemyUnit(SerializeUnit())
+		return new SerializedEnemyUnit(SerializeUnit())
 		{
 			Id = EnemyUnitTemplateDefinition.Id,
 			BossPhaseActorId = BossPhaseActorId,
@@ -326,18 +325,18 @@ public class EnemyUnit : Unit, IBehaviorModel, ISkillCaster, ITileObject, IEntit
 
 	protected void ADeserialize(ISerializedData container = null, int saveVersion = -1)
 	{
-		base.Deserialize((ISerializedData)(object)(container as ASerializedEnemyUnit)?.Unit, saveVersion);
+		base.Deserialize((container as ASerializedEnemyUnit)?.Unit, saveVersion);
 	}
 
 	public override void Deserialize(ISerializedData container = null, int saveVersion = -1)
 	{
 		SerializedEnemyUnit container2 = container as SerializedEnemyUnit;
-		ADeserialize((ISerializedData)(object)container2, saveVersion);
+		ADeserialize(container2, saveVersion);
 	}
 
 	public override void DeserializeAfterInit(ISerializedData container, int saveVersion)
 	{
-		DeserializeStats((ISerializedData)(object)(container as SerializedEnemyUnit)?.EnemyUnitStats, saveVersion);
+		DeserializeStats((container as SerializedEnemyUnit)?.EnemyUnitStats, saveVersion);
 	}
 
 	public void DeserializeBehavior(SerializedBehavior serializedBehavior, int saveVersion)
@@ -352,7 +351,7 @@ public class EnemyUnit : Unit, IBehaviorModel, ISkillCaster, ITileObject, IEntit
 			{
 				if (serializedGoal.Id == Goals[i].Id)
 				{
-					Goals[i].Deserialize((ISerializedData)(object)serializedGoal);
+					Goals[i].Deserialize(serializedGoal);
 					break;
 				}
 			}

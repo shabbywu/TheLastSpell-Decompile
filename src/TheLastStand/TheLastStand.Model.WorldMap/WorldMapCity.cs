@@ -111,7 +111,7 @@ public class WorldMapCity : ISerializable, IDeserializable
 
 	public ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedCity
+		return new SerializedCity
 		{
 			Id = CityDefinition.Id,
 			MaxApoPassed = MaxApocalypsePassed,

@@ -88,8 +88,8 @@ public class SkillDatabase : Database<SkillDatabase>
 		}
 		SkillDefinitions = new Dictionary<string, SkillDefinition>();
 		ContextualSkills = new List<string>();
-		Queue<XElement> queue = base.GatherElements((IEnumerable<TextAsset>)groupSkillDefinitions, (IEnumerable<TextAsset>)individualSkillDefinitions, "SkillDefinition", (string)null);
-		foreach (XElement item in base.SortElementsByDependencies((IEnumerable<XElement>)queue))
+		Queue<XElement> elements = GatherElements(groupSkillDefinitions, individualSkillDefinitions, "SkillDefinition");
+		foreach (XElement item in SortElementsByDependencies(elements))
 		{
 			SkillDefinition skillDefinition = new SkillDefinition((XContainer)(object)item);
 			try

@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using TheLastStand.Database.Unit;
 using TheLastStand.Definition.Unit;
 using TheLastStand.Definition.Unit.Perk;
-using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Serialization.Perk;
 using UnityEngine;
 
@@ -28,7 +27,7 @@ public class GaugeModule : BufferModule
 
 	public int GaugeValue => GaugeMaxValue - ValueOffset;
 
-	public int GaugeMaxValue => GaugeModuleDefinition.GaugeValue.EvalToInt((InterpreterContext)(object)base.Perk);
+	public int GaugeMaxValue => GaugeModuleDefinition.GaugeValue.EvalToInt(base.Perk);
 
 	public GaugeModuleDefinition GaugeModuleDefinition => base.PerkModuleDefinition as GaugeModuleDefinition;
 
@@ -86,7 +85,7 @@ public class GaugeModule : BufferModule
 
 	public override ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedGaugeModule
+		return new SerializedGaugeModule
 		{
 			Buffer = base.Buffer,
 			Buffer2 = base.Buffer2,

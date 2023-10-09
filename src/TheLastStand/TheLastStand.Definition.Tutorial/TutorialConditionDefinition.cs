@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Tutorial;
 
-public abstract class TutorialConditionDefinition : Definition
+public abstract class TutorialConditionDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public bool Invert { get; private set; }
 

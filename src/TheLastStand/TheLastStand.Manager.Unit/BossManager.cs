@@ -108,7 +108,7 @@ public class BossManager : BehaviorManager<BossManager>, ISerializable, IDeseria
 	public int NextBossPhaseDelay { get; set; } = -1;
 
 
-	public BossPhase CurrentBossPhase => DictionaryExtensions.GetValueOrDefault<string, BossPhase>(BossPhases, CurrentBossPhaseId);
+	public BossPhase CurrentBossPhase => BossPhases.GetValueOrDefault(CurrentBossPhaseId);
 
 	public string CurrentBossUnitTemplateId { get; private set; }
 
@@ -371,7 +371,7 @@ public class BossManager : BehaviorManager<BossManager>, ISerializable, IDeseria
 
 	public void HandleBossPhaseActorDeath(IBossPhaseActor bossPhaseActor)
 	{
-		if (!DictionaryExtensions.TryRemoveAtKey<string, IBossPhaseActor>(BossPhaseActors, bossPhaseActor.BossPhaseActorId, bossPhaseActor))
+		if (!BossPhaseActors.TryRemoveAtKey(bossPhaseActor.BossPhaseActorId, bossPhaseActor))
 		{
 			((CLogger<BossManager>)this).LogError((object)(bossPhaseActor.BossPhaseActorId + " key was not present in BossPhaseActors, something is wrong"), (CLogLevel)1, true, true);
 		}
@@ -418,7 +418,7 @@ public class BossManager : BehaviorManager<BossManager>, ISerializable, IDeseria
 				yield return SharedYields.WaitForSeconds(CameraView.AnimationMoveSpeed);
 			}
 		}
-		MoveUnitsTaskGroup = new TaskGroup((UnityAction)null);
+		MoveUnitsTaskGroup = new TaskGroup();
 		GameController.SetState(Game.E_State.Wait);
 		HashSet<string> hashSet = new HashSet<string>();
 		for (int num = sortedBossUnits.Count - 1; num >= 0; num--)
@@ -649,7 +649,7 @@ public class BossManager : BehaviorManager<BossManager>, ISerializable, IDeseria
 			bossUnit.EnemyUnitController.UpdateInjuryStage();
 		}
 		currentBossPhaseId = serializedBossData.CurrentBossPhaseId;
-		CurrentBossPhase?.Deserialize((ISerializedData)(object)serializedBossData.BossPhase, saveVersion);
+		CurrentBossPhase?.Deserialize(serializedBossData.BossPhase, saveVersion);
 		foreach (SerializedBossPhaseActorsKills bossPhaseActorsKill in serializedBossData.BossPhaseActorsKills)
 		{
 			BossPhaseActorsKills[bossPhaseActorsKill.ActorId] = bossPhaseActorsKill.Amount;
@@ -661,8 +661,7 @@ public class BossManager : BehaviorManager<BossManager>, ISerializable, IDeseria
 		for (int num = serializedBossData.PendingBossPhaseActions.Count - 1; num >= 0; num--)
 		{
 			SerializedDelayedBossPhaseAction serializedDelayedBossPhaseAction = serializedBossData.PendingBossPhaseActions[num];
-			BossPhase valueOrDefault = DictionaryExtensions.GetValueOrDefault<string, BossPhase>(BossPhases, serializedDelayedBossPhaseAction.PhaseId);
-			ABossPhaseActionController aBossPhaseActionController = ((valueOrDefault != null) ? DictionaryExtensions.GetValueOrDefault<string, BossPhaseHandler>(valueOrDefault.BossPhaseHandlers, serializedDelayedBossPhaseAction.HandlerId).Actions.ElementAtOrDefault(serializedDelayedBossPhaseAction.ActionIndex) : null);
+			ABossPhaseActionController aBossPhaseActionController = BossPhases.GetValueOrDefault(serializedDelayedBossPhaseAction.PhaseId)?.BossPhaseHandlers.GetValueOrDefault(serializedDelayedBossPhaseAction.HandlerId).Actions.ElementAtOrDefault(serializedDelayedBossPhaseAction.ActionIndex);
 			if (aBossPhaseActionController != null)
 			{
 				BossPhasesActionsToExecute.Insert(0, new MutableTuple<int, ABossPhaseActionController>(serializedDelayedBossPhaseAction.Delay, aBossPhaseActionController));
@@ -678,7 +677,7 @@ public class BossManager : BehaviorManager<BossManager>, ISerializable, IDeseria
 		{
 			if (!bossUnit.IsDying && !bossUnit.IsDead)
 			{
-				list.Add((SerializedEnemyUnit)(object)bossUnit.Serialize());
+				list.Add((SerializedEnemyUnit)bossUnit.Serialize());
 			}
 		}
 		List<SerializedBossPhaseActorsKills> list2 = new List<SerializedBossPhaseActorsKills>();
@@ -701,11 +700,11 @@ public class BossManager : BehaviorManager<BossManager>, ISerializable, IDeseria
 				HandlerId = item.Item2.BossPhaseParentHandler.BossPhaseHandlerDefinition.Id
 			});
 		}
-		return (ISerializedData)(object)new SerializedBossData
+		return new SerializedBossData
 		{
 			BossUnits = list,
 			CurrentBossPhaseId = currentBossPhaseId,
-			BossPhase = (SerializedBossPhase)(object)CurrentBossPhase?.Serialize(),
+			BossPhase = (SerializedBossPhase)(CurrentBossPhase?.Serialize()),
 			BossPhaseActorsKills = list2,
 			PendingBossPhaseActions = list3,
 			NightProgressionValue = GameView.TopScreenPanel.TurnPanel.PhasePanel.CurrentNightProgressionValue

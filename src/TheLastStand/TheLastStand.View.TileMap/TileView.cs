@@ -120,7 +120,7 @@ public class TileView : MonoBehaviour, ITileObjectView
 		//IL_0079: Unknown result type (might be due to invalid IL or missing references)
 		if ((Object)(object)skillTargetingMark == (Object)null)
 		{
-			skillTargetingMark = ObjectPooler.GetPooledComponent<SkillTargetingMark>("SkillTargetingMarkSprite", SkillManager.SkillTargetingMarkSpritePrefab, (Transform)null, false);
+			skillTargetingMark = ObjectPooler.GetPooledComponent<SkillTargetingMark>("SkillTargetingMarkSprite", SkillManager.SkillTargetingMarkSpritePrefab, (Transform)null, dontSetParent: false);
 			((Component)skillTargetingMark).transform.SetParent(((Component)this).transform);
 			((Component)skillTargetingMark).transform.localPosition = Vector3.up * 0.5f * TileMapView.Grid.cellSize.y;
 			((Component)skillTargetingMark).transform.localScale = Vector3.one;
@@ -164,6 +164,6 @@ public class TileView : MonoBehaviour, ITileObjectView
 	public Sprite GetPortraitSprite()
 	{
 		string id = TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.Id;
-		return ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Grounds/Portraits/64px/GroundsPortraits_" + Tile.GroundDefinition.Id + "_" + id, false) ?? ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Grounds/Portraits/64px/GroundsPortraits_" + Tile.GroundDefinition.Id, false);
+		return ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Grounds/Portraits/64px/GroundsPortraits_" + Tile.GroundDefinition.Id + "_" + id, failSilently: false) ?? ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Grounds/Portraits/64px/GroundsPortraits_" + Tile.GroundDefinition.Id, failSilently: false);
 	}
 }

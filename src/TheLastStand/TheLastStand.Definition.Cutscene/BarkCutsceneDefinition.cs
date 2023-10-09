@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TPLib.Log;
 using TheLastStand.Database;
@@ -8,7 +7,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Cutscene;
 
-public class BarkCutsceneDefinition : Definition, ICutsceneDefinition
+public class BarkCutsceneDefinition : TheLastStand.Framework.Serialization.Definition, ICutsceneDefinition
 {
 	public enum E_BarkerType
 	{
@@ -48,7 +47,7 @@ public class BarkCutsceneDefinition : Definition, ICutsceneDefinition
 	public E_MoveCamera MoveCamera { get; private set; }
 
 	public BarkCutsceneDefinition(XContainer xContainer)
-		: base(xContainer, (Dictionary<string, string>)null)
+		: base(xContainer)
 	{
 	}
 

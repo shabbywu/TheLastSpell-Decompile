@@ -10,14 +10,14 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.Perk;
 
-public class UnitPerkCollectionSetDefinition : Definition
+public class UnitPerkCollectionSetDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public int Index { get; private set; }
 
 	public HashSet<Tuple<UnitPerkCollectionDefinition, int>> CollectionsPerWeight { get; private set; }
 
 	public UnitPerkCollectionSetDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

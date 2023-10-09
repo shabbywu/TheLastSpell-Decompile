@@ -7,14 +7,14 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit;
 
-public class UnitGenerationDefinition : Definition
+public class UnitGenerationDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public List<string> PlayableUnitGenerationDefinitionArchetypeIds { get; set; }
 
 	public UnitGenerationLevelDefinition UnitGenerationLevelDefinition { get; set; }
 
 	public UnitGenerationDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
@@ -46,7 +46,7 @@ public class UnitGenerationDefinition : Definition
 			return;
 		}
 		XAttribute val4 = val3.Attribute(XName.op_Implicit("Id"));
-		if (XDocumentExtensions.IsNullOrEmpty(val4))
+		if (val4.IsNullOrEmpty())
 		{
 			Debug.LogError((object)"UnitGenerationLevelDefinition must have a valid Id");
 		}

@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.Perk.PerkDataCondition;
 
-public class PerkDataConditionsDefinition : Definition
+public class PerkDataConditionsDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public List<APerkDataConditionDefinition> ConditionDefinitions { get; private set; }
 
@@ -28,10 +28,10 @@ public class PerkDataConditionsDefinition : Definition
 			switch (item.Name.LocalName)
 			{
 			case "IsTrue":
-				ConditionDefinitions.Add(new IsTrueDataConditionDefinition((XContainer)(object)item, ((Definition)this).TokenVariables));
+				ConditionDefinitions.Add(new IsTrueDataConditionDefinition((XContainer)(object)item, base.TokenVariables));
 				break;
 			case "IsFalse":
-				ConditionDefinitions.Add(new IsFalseDataConditionDefinition((XContainer)(object)item, ((Definition)this).TokenVariables));
+				ConditionDefinitions.Add(new IsFalseDataConditionDefinition((XContainer)(object)item, base.TokenVariables));
 				break;
 			default:
 				CLoggerManager.Log((object)("Tried to Deserialize an unimplemented PerkDataCondition: " + item.Name.LocalName), (LogType)0, (CLogLevel)2, true, "PerkDataConditionsDefinition", false);

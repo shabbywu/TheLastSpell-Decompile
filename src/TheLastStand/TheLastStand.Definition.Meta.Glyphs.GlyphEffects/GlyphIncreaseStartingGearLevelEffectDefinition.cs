@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using TPLib.Log;
 using TheLastStand.Framework.Extensions;
-using TheLastStand.Framework.Serialization;
 using UnityEngine;
 
 namespace TheLastStand.Definition.Meta.Glyphs.GlyphEffects;
@@ -35,21 +33,21 @@ public class GlyphIncreaseStartingGearLevelEffectDefinition : GlyphEffectDefinit
 			CLoggerManager.Log((object)"IncreaseStartingGearLevel has an invalid Id or Id doesn't exist !", (LogType)0, (CLogLevel)2, true, "StaticLog", false);
 			return;
 		}
-		LevelTreeId = StringExtensions.Replace(val2.Value, ((Definition)this).TokenVariables);
+		LevelTreeId = val2.Value.Replace(base.TokenVariables);
 		foreach (XElement item in ((XContainer)val).Elements(XName.op_Implicit("Probability")))
 		{
 			XAttribute val3 = item.Attribute(XName.op_Implicit("Weight"));
-			if (val3 == null || !int.TryParse(StringExtensions.Replace(val3.Value, ((Definition)this).TokenVariables), out var result))
+			if (val3 == null || !int.TryParse(val3.Value.Replace(base.TokenVariables), out var result))
 			{
 				CLoggerManager.Log((object)"IncreaseStartingGearLevel Probability has an invalid Weight or Weight doesn't exist !", (LogType)0, (CLogLevel)2, true, "StaticLog", false);
 				continue;
 			}
-			if (!int.TryParse(StringExtensions.Replace(item.Value, ((Definition)this).TokenVariables), out var result2))
+			if (!int.TryParse(item.Value.Replace(base.TokenVariables), out var result2))
 			{
 				CLoggerManager.Log((object)"IncreaseStartingGearLevel Probability has an invalid Value !", (LogType)0, (CLogLevel)2, true, "StaticLog", false);
 				continue;
 			}
-			DictionaryExtensions.AddValueOrCreateKey<int, int>(WeightBonusByLevelProbability, result2, result, (Func<int, int, int>)((int a, int b) => a + b));
+			WeightBonusByLevelProbability.AddValueOrCreateKey(result2, result, (int a, int b) => a + b);
 		}
 	}
 }

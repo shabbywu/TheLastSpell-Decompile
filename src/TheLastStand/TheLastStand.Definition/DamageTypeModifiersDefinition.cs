@@ -7,14 +7,14 @@ using UnityEngine;
 
 namespace TheLastStand.Definition;
 
-public class DamageTypeModifiersDefinition : Definition
+public class DamageTypeModifiersDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public float MeleeArmorShreddingBonus { get; private set; }
 
 	public Dictionary<int, float> DodgeMultiplierByDistance { get; private set; }
 
 	public DamageTypeModifiersDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

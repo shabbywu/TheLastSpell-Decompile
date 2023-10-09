@@ -46,9 +46,7 @@ public class GameConfigurationsView : TPSingleton<GameConfigurationsView>
 
 		internal bool _003CIsThereAnApocalypseSelected_003Eb__39_0(ApocalypseView x)
 		{
-			//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0007: Invalid comparison between Unknown and I4
-			return (int)x.State == 2;
+			return x.State == BetterToggleGauge.E_BetterToggleGaugeState.Selected;
 		}
 
 		internal void _003CUnfold_003Eb__53_0()
@@ -161,7 +159,7 @@ public class GameConfigurationsView : TPSingleton<GameConfigurationsView>
 
 	public static bool IsThereAnApocalypseSelected()
 	{
-		return (Object)(object)TPSingleton<GameConfigurationsView>.Instance.ApocalypseLines.Find((ApocalypseView x) => (int)x.State == 2) != (Object)null;
+		return (Object)(object)TPSingleton<GameConfigurationsView>.Instance.ApocalypseLines.Find((ApocalypseView x) => x.State == BetterToggleGauge.E_BetterToggleGaugeState.Selected) != (Object)null;
 	}
 
 	public static void StartNewGameIfEnoughGlyph()
@@ -187,7 +185,7 @@ public class GameConfigurationsView : TPSingleton<GameConfigurationsView>
 		}
 		else
 		{
-			GUIHelpers.AdjustScrollViewToFocusedItem(item, scrollViewport, scrollBar, 0.01f, 0.01f, (float?)null);
+			GUIHelpers.AdjustScrollViewToFocusedItem(item, scrollViewport, scrollBar, 0.01f, 0.01f);
 		}
 	}
 
@@ -261,7 +259,7 @@ public class GameConfigurationsView : TPSingleton<GameConfigurationsView>
 			((TMP_Text)cityName).text = currentCity.CityDefinition.Name;
 			((TMP_Text)cityDescription).text = currentCity.CityDefinition.Description;
 			((TMP_Text)startingSetupText).text = Localizer.Get("WorldMap_StartingSetup_" + currentCity.CityDefinition.StartingSetup);
-			cityImage.sprite = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/WorldMap/WorldMap_CityPortrait_" + currentCity.CityDefinition.Id, false);
+			cityImage.sprite = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/WorldMap/WorldMap_CityPortrait_" + currentCity.CityDefinition.Id, failSilently: false);
 		}
 		RefreshJoystickNavigation();
 	}
@@ -295,14 +293,14 @@ public class GameConfigurationsView : TPSingleton<GameConfigurationsView>
 			{
 				TweenExtensions.Kill(statusTransitionTween, false);
 			}
-			configurationPanelAnimation.StatusTransitionTween = (Tween)(object)TweenExtensions.SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosX(panelRectTransform, configurationPanelAnimation.StatusOne, configurationPanelAnimation.TransitionDuration, false), configurationPanelAnimation.TransitionEase), "FoldTween", (Component)(object)this);
+			configurationPanelAnimation.StatusTransitionTween = (Tween)(object)TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosX(panelRectTransform, configurationPanelAnimation.StatusOne, configurationPanelAnimation.TransitionDuration, false), configurationPanelAnimation.TransitionEase).SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>("FoldTween", (Component)(object)this);
 			configurationPanelAnimation.InStatusOne = true;
 			Tween statusTransitionTween2 = closeButtonAnimation.StatusTransitionTween;
 			if (statusTransitionTween2 != null)
 			{
 				TweenExtensions.Kill(statusTransitionTween2, false);
 			}
-			closeButtonAnimation.StatusTransitionTween = (Tween)(object)TweenExtensions.SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosX(pannelCloseButton, closeButtonAnimation.StatusOne, closeButtonAnimation.TransitionDuration, false), closeButtonAnimation.TransitionEase), "CloseButtonFoldTween", (Component)(object)this);
+			closeButtonAnimation.StatusTransitionTween = (Tween)(object)TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosX(pannelCloseButton, closeButtonAnimation.StatusOne, closeButtonAnimation.TransitionDuration, false), closeButtonAnimation.TransitionEase).SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>("CloseButtonFoldTween", (Component)(object)this);
 			closeButtonAnimation.InStatusOne = true;
 			((Component)backButtonGamepadInputDisplay).gameObject.SetActive(true);
 			Tween statusTransitionTween3 = backButtonAnimation.StatusTransitionTween;
@@ -310,7 +308,7 @@ public class GameConfigurationsView : TPSingleton<GameConfigurationsView>
 			{
 				TweenExtensions.Kill(statusTransitionTween3, false);
 			}
-			backButtonAnimation.StatusTransitionTween = (Tween)(object)TweenExtensions.SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosX(backButtonRect, backButtonAnimation.StatusOne, backButtonAnimation.TransitionDuration, false), backButtonAnimation.TransitionEase), "BackButtonFoldTween", (Component)(object)this);
+			backButtonAnimation.StatusTransitionTween = (Tween)(object)TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosX(backButtonRect, backButtonAnimation.StatusOne, backButtonAnimation.TransitionDuration, false), backButtonAnimation.TransitionEase).SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>("BackButtonFoldTween", (Component)(object)this);
 			backButtonAnimation.InStatusOne = true;
 			if (InputManager.IsLastControllerJoystick)
 			{
@@ -338,7 +336,7 @@ public class GameConfigurationsView : TPSingleton<GameConfigurationsView>
 		{
 			TweenExtensions.Kill(statusTransitionTween, false);
 		}
-		configurationPanelAnimation.StatusTransitionTween = (Tween)(object)TweenExtensions.SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosX(panelRectTransform, configurationPanelAnimation.StatusTwo, configurationPanelAnimation.TransitionDuration, false), configurationPanelAnimation.TransitionEase), "UnfoldTween", (Component)(object)this);
+		configurationPanelAnimation.StatusTransitionTween = (Tween)(object)TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosX(panelRectTransform, configurationPanelAnimation.StatusTwo, configurationPanelAnimation.TransitionDuration, false), configurationPanelAnimation.TransitionEase).SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>("UnfoldTween", (Component)(object)this);
 		RefreshBoxSize();
 		configurationPanelAnimation.InStatusOne = false;
 		Tween statusTransitionTween2 = closeButtonAnimation.StatusTransitionTween;
@@ -346,7 +344,7 @@ public class GameConfigurationsView : TPSingleton<GameConfigurationsView>
 		{
 			TweenExtensions.Kill(statusTransitionTween2, false);
 		}
-		closeButtonAnimation.StatusTransitionTween = (Tween)(object)TweenExtensions.SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosX(pannelCloseButton, closeButtonAnimation.StatusTwo, closeButtonAnimation.TransitionDuration, false), closeButtonAnimation.TransitionEase), "CloseButtonUnfoldTween", (Component)(object)this);
+		closeButtonAnimation.StatusTransitionTween = (Tween)(object)TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosX(pannelCloseButton, closeButtonAnimation.StatusTwo, closeButtonAnimation.TransitionDuration, false), closeButtonAnimation.TransitionEase).SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>("CloseButtonUnfoldTween", (Component)(object)this);
 		closeButtonAnimation.InStatusOne = false;
 		((Component)backButtonGamepadInputDisplay).gameObject.SetActive(false);
 		Tween statusTransitionTween3 = backButtonAnimation.StatusTransitionTween;
@@ -354,7 +352,7 @@ public class GameConfigurationsView : TPSingleton<GameConfigurationsView>
 		{
 			TweenExtensions.Kill(statusTransitionTween3, false);
 		}
-		backButtonAnimation.StatusTransitionTween = (Tween)(object)TweenExtensions.SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>(TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosX(backButtonRect, backButtonAnimation.StatusTwo, backButtonAnimation.TransitionDuration, false), backButtonAnimation.TransitionEase), "BackButtonUnfoldTween", (Component)(object)this);
+		backButtonAnimation.StatusTransitionTween = (Tween)(object)TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosX(backButtonRect, backButtonAnimation.StatusTwo, backButtonAnimation.TransitionDuration, false), backButtonAnimation.TransitionEase).SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>("BackButtonUnfoldTween", (Component)(object)this);
 		backButtonAnimation.InStatusOne = false;
 		if (InputManager.IsLastControllerJoystick)
 		{
@@ -434,22 +432,22 @@ public class GameConfigurationsView : TPSingleton<GameConfigurationsView>
 		for (int i = 0; i < ApocalypseLines.Count; i++)
 		{
 			ApocalypseView apocalypseView = ApocalypseLines[i];
-			SelectableExtensions.SetMode((Selectable)(object)apocalypseView.JoystickSelectable, (Mode)4);
+			((Selectable)(object)apocalypseView.JoystickSelectable).SetMode((Mode)4);
 			if (i < ApocalypseLines.Count - 1)
 			{
-				SelectableExtensions.SetSelectOnDown((Selectable)(object)apocalypseView.JoystickSelectable, (Selectable)(object)ApocalypseLines[i + 1].JoystickSelectable);
+				((Selectable)(object)apocalypseView.JoystickSelectable).SetSelectOnDown((Selectable)(object)ApocalypseLines[i + 1].JoystickSelectable);
 			}
 			if (i == 0)
 			{
-				SelectableExtensions.SetSelectOnUp((Selectable)(object)apocalypseView.JoystickSelectable, (Selectable)(((Object)(object)val != (Object)null) ? ((object)val) : ((object)GlyphSelectionPreview.EditButton)));
+				((Selectable)(object)apocalypseView.JoystickSelectable).SetSelectOnUp((Selectable)(((Object)(object)val != (Object)null) ? ((object)val) : ((object)GlyphSelectionPreview.EditButton)));
 			}
 			else
 			{
-				SelectableExtensions.SetSelectOnUp((Selectable)(object)apocalypseView.JoystickSelectable, (Selectable)(object)ApocalypseLines[i - 1].JoystickSelectable);
+				((Selectable)(object)apocalypseView.JoystickSelectable).SetSelectOnUp((Selectable)(object)ApocalypseLines[i - 1].JoystickSelectable);
 			}
 		}
-		SelectableExtensions.SetMode((Selectable)(object)GlyphSelectionPreview.EditButton, (Mode)4);
-		SelectableExtensions.SetSelectOnDown((Selectable)(object)GlyphSelectionPreview.EditButton, (Selectable)(object)(((Object)(object)val != (Object)null) ? ((JoystickSelectable)(object)val) : ((ApocalypseLines.Count > 0) ? ApocalypseLines[0].JoystickSelectable : null)));
+		((Selectable)(object)GlyphSelectionPreview.EditButton).SetMode((Mode)4);
+		((Selectable)(object)GlyphSelectionPreview.EditButton).SetSelectOnDown((Selectable)(object)(((Object)(object)val != (Object)null) ? ((JoystickSelectable)(object)val) : ((ApocalypseLines.Count > 0) ? ApocalypseLines[0].JoystickSelectable : null)));
 	}
 
 	private void Start()

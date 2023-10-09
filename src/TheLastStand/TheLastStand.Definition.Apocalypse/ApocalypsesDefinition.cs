@@ -5,13 +5,13 @@ using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Apocalypse;
 
-public class ApocalypsesDefinition : Definition
+public class ApocalypsesDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public List<ApocalypseDefinition> ApocalypseDefinitions { get; private set; } = new List<ApocalypseDefinition>();
 
 
 	public ApocalypsesDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

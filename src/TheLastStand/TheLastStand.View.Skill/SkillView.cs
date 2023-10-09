@@ -12,16 +12,16 @@ public class SkillView
 
 	public static Sprite GetIconSprite(string skillDefinitionId)
 	{
-		return ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Skills/Icons/" + skillDefinitionId, false);
+		return ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Skills/Icons/" + skillDefinitionId, failSilently: false);
 	}
 
 	public static Sprite GetPatternSprite(string skillDefinitionId, int level)
 	{
-		Sprite val = ResourcePooler.LoadOnce<Sprite>($"View/Sprites/UI/Skills/Patterns/{skillDefinitionId}_Lvl{level}", false);
+		Sprite val = ResourcePooler.LoadOnce<Sprite>($"View/Sprites/UI/Skills/Patterns/{skillDefinitionId}_Lvl{level}", failSilently: false);
 		if ((Object)(object)val != (Object)null)
 		{
 			return val;
 		}
-		return ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Skills/Tmp/PatternPlaceholder", false);
+		return ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Skills/Tmp/PatternPlaceholder", failSilently: false);
 	}
 }

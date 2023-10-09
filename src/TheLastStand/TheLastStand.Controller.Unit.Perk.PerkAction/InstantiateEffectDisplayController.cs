@@ -1,5 +1,4 @@
 using TheLastStand.Definition.Unit.Perk.PerkAction;
-using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Model.Unit;
 using TheLastStand.Model.Unit.Perk;
 using TheLastStand.Model.Unit.Perk.PerkAction;
@@ -19,7 +18,7 @@ public abstract class InstantiateEffectDisplayController : APerkActionController
 
 	public override void Trigger(PerkDataContainer data)
 	{
-		int num = (int)InstantiateEffectDisplay.InstantiateEffectDisplayDefinition.ValueExpression.EvalToFloat((InterpreterContext)(object)PerkAction.PerkEvent.PerkModule.Perk);
+		int num = (int)InstantiateEffectDisplay.InstantiateEffectDisplayDefinition.ValueExpression.EvalToFloat(PerkAction.PerkEvent.PerkModule.Perk);
 		if (num != 0)
 		{
 			PlayableUnit owner = PerkAction.PerkEvent.PerkModule.Perk.Owner;

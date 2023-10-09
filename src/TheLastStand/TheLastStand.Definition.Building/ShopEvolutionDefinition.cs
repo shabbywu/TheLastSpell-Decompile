@@ -5,12 +5,12 @@ using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Building;
 
-public class ShopEvolutionDefinition : Definition
+public class ShopEvolutionDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public List<Tuple<int, int>> LevelsPerDay { get; private set; }
 
 	public ShopEvolutionDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

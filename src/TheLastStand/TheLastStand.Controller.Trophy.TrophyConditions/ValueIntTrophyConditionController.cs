@@ -74,7 +74,7 @@ public abstract class ValueIntTrophyConditionController : TrophyConditionControl
 
 	public override ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedValueIntTrophy
+		return new SerializedValueIntTrophy
 		{
 			Name = Name,
 			ValueProgression = ValueProgression

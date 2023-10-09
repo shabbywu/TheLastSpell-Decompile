@@ -1,10 +1,9 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Cutscene;
 
-public class LookAtCircleCutsceneDefinition : Definition, ICutsceneDefinition
+public class LookAtCircleCutsceneDefinition : TheLastStand.Framework.Serialization.Definition, ICutsceneDefinition
 {
 	public static class Constants
 	{
@@ -12,7 +11,7 @@ public class LookAtCircleCutsceneDefinition : Definition, ICutsceneDefinition
 	}
 
 	public LookAtCircleCutsceneDefinition(XContainer xContainer)
-		: base(xContainer, (Dictionary<string, string>)null)
+		: base(xContainer)
 	{
 	}
 

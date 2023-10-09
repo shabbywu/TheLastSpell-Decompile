@@ -62,7 +62,7 @@ public class UpgradeStatBuildingActionEffectController : BuildingActionEffectCon
 
 	private void UpgradeStat(PlayableUnit playableUnit, UnitStatDefinition.E_Stat stat, int bonus)
 	{
-		UpgradeStatDisplay pooledComponent = ObjectPooler.GetPooledComponent<UpgradeStatDisplay>("UpgradeStatDisplay", ResourcePooler.LoadOnce<UpgradeStatDisplay>("Prefab/Displayable Effect/UI Effect Displays/UpgradeStatDisplay", false), EffectManager.EffectDisplaysParent, false);
+		UpgradeStatDisplay pooledComponent = ObjectPooler.GetPooledComponent<UpgradeStatDisplay>("UpgradeStatDisplay", ResourcePooler.LoadOnce<UpgradeStatDisplay>("Prefab/Displayable Effect/UI Effect Displays/UpgradeStatDisplay", failSilently: false), EffectManager.EffectDisplaysParent, dontSetParent: false);
 		pooledComponent.Init(stat, bonus);
 		playableUnit.PlayableUnitController.AddEffectDisplay(pooledComponent);
 		if (bonus >= 0)

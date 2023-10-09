@@ -16,7 +16,7 @@ public class BuildingUpgradeLevel : ILevelOwner, ISerializable, IDeserializable
 
 	public BuildingUpgradeLevel(SerializedBuildingUpgradeLevel container)
 	{
-		Deserialize((ISerializedData)(object)container);
+		Deserialize(container);
 	}
 
 	public BuildingUpgradeLevel()
@@ -36,7 +36,7 @@ public class BuildingUpgradeLevel : ILevelOwner, ISerializable, IDeserializable
 
 	public ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedBuildingUpgradeLevel
+		return new SerializedBuildingUpgradeLevel
 		{
 			Level = Level,
 			UpgradeLevel = UpgradeLevel

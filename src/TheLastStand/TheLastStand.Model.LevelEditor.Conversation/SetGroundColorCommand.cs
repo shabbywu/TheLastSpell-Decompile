@@ -64,10 +64,10 @@ public class SetGroundColorCommand : ICompensableCommand, ICommand
 		switch (groundDefinition.GroundCategory)
 		{
 		case GroundDefinition.E_GroundCategory.City:
-			TileMapView.GroundCityTilemap.color = ColorExtensions.WithA(color, TileMapView.GroundCityTilemap.color.a);
+			TileMapView.GroundCityTilemap.color = color.WithA(TileMapView.GroundCityTilemap.color.a);
 			break;
 		case GroundDefinition.E_GroundCategory.NoBuilding:
-			TileMapView.GroundCraterTilemap.color = ColorExtensions.WithA(color, TileMapView.GroundCraterTilemap.color.a);
+			TileMapView.GroundCraterTilemap.color = color.WithA(TileMapView.GroundCraterTilemap.color.a);
 			break;
 		}
 	}

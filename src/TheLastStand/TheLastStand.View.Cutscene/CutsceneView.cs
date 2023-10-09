@@ -33,7 +33,7 @@ public abstract class CutsceneView : MonoBehaviour
 		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0034: Expected O, but got Unknown
 		//IL_0039: Expected O, but got Unknown
-		CutsceneDefinition = DictionaryExtensions.GetValueOrDefault<string, CutsceneDefinition>(GameDatabase.CutsceneDefinitions, unitCutsceneId);
+		CutsceneDefinition = GameDatabase.CutsceneDefinitions.GetValueOrDefault(unitCutsceneId);
 		CutsceneData = cutsceneData;
 		if (WaitUntilIsOver == null)
 		{

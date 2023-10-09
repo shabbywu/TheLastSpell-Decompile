@@ -4,7 +4,7 @@ using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Unit.Perk.PerkEffect;
 
-public abstract class APerkEffectDefinition : Definition
+public abstract class APerkEffectDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public bool CanBeTriggeredByPerk;
 

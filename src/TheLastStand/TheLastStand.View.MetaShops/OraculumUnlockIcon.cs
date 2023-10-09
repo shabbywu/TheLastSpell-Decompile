@@ -37,10 +37,10 @@ public class OraculumUnlockIcon : MonoBehaviour, ISelectHandler, IEventSystemHan
 		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
 		Selectable obj = Selectable;
 		Navigation navigation = ((Selectable)metaUpgradeLineView.JoystickSelectable).navigation;
-		SelectableExtensions.SetSelectOnUp(obj, ((Navigation)(ref navigation)).selectOnUp);
+		obj.SetSelectOnUp(((Navigation)(ref navigation)).selectOnUp);
 		Selectable obj2 = Selectable;
 		navigation = ((Selectable)metaUpgradeLineView.JoystickSelectable).navigation;
-		SelectableExtensions.SetSelectOnDown(obj2, ((Navigation)(ref navigation)).selectOnDown);
+		obj2.SetSelectOnDown(((Navigation)(ref navigation)).selectOnDown);
 	}
 
 	public virtual void OnDeselect(BaseEventData eventData)
@@ -55,12 +55,12 @@ public class OraculumUnlockIcon : MonoBehaviour, ISelectHandler, IEventSystemHan
 		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
 		//IL_004c: Unknown result type (might be due to invalid IL or missing references)
 		this.metaUpgradeLineView = metaUpgradeLineView;
-		SelectableExtensions.SetMode(Selectable, (Mode)4);
+		Selectable.SetMode((Mode)4);
 		Selectable obj = Selectable;
 		Navigation navigation = ((Selectable)this.metaUpgradeLineView.JoystickSelectable).navigation;
-		SelectableExtensions.SetSelectOnUp(obj, ((Navigation)(ref navigation)).selectOnUp);
+		obj.SetSelectOnUp(((Navigation)(ref navigation)).selectOnUp);
 		Selectable obj2 = Selectable;
 		navigation = ((Selectable)this.metaUpgradeLineView.JoystickSelectable).navigation;
-		SelectableExtensions.SetSelectOnDown(obj2, ((Navigation)(ref navigation)).selectOnDown);
+		obj2.SetSelectOnDown(((Navigation)(ref navigation)).selectOnDown);
 	}
 }

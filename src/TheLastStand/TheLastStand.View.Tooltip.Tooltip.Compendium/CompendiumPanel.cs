@@ -285,20 +285,20 @@ public class CompendiumPanel : TooltipBase
 				{
 					return;
 				}
-				GameConceptTooltip obj = (usePooler ? ObjectPooler.GetPooledComponent<GameConceptTooltip>("CompendiumGameConceptEntry", ResourcePooler.LoadOnce<GameConceptTooltip>("Prefab/Tooltip/Game Concept Tooltip", false), (Transform)(object)parent, false) : Object.Instantiate<GameConceptTooltip>(ResourcePooler.LoadOnce<GameConceptTooltip>("Prefab/Tooltip/Game Concept Tooltip", false), (Transform)(object)parent));
+				GameConceptTooltip obj = (usePooler ? ObjectPooler.GetPooledComponent<GameConceptTooltip>("CompendiumGameConceptEntry", ResourcePooler.LoadOnce<GameConceptTooltip>("Prefab/Tooltip/Game Concept Tooltip", failSilently: false), (Transform)(object)parent, dontSetParent: false) : Object.Instantiate<GameConceptTooltip>(ResourcePooler.LoadOnce<GameConceptTooltip>("Prefab/Tooltip/Game Concept Tooltip", failSilently: false), (Transform)(object)parent));
 				obj.GameConceptId = gameConceptEntryDefinition.GameConceptId;
 				compendiumEntryTooltip = obj;
 			}
 			else
 			{
-				AttackTypeTooltip obj2 = (usePooler ? ObjectPooler.GetPooledComponent<AttackTypeTooltip>("CompendiumAttackTypeEntry", ResourcePooler.LoadOnce<AttackTypeTooltip>("Prefab/Tooltip/Attack Type Tooltip", false), (Transform)(object)parent, false) : Object.Instantiate<AttackTypeTooltip>(ResourcePooler.LoadOnce<AttackTypeTooltip>("Prefab/Tooltip/Attack Type Tooltip", false), (Transform)(object)parent));
+				AttackTypeTooltip obj2 = (usePooler ? ObjectPooler.GetPooledComponent<AttackTypeTooltip>("CompendiumAttackTypeEntry", ResourcePooler.LoadOnce<AttackTypeTooltip>("Prefab/Tooltip/Attack Type Tooltip", failSilently: false), (Transform)(object)parent, dontSetParent: false) : Object.Instantiate<AttackTypeTooltip>(ResourcePooler.LoadOnce<AttackTypeTooltip>("Prefab/Tooltip/Attack Type Tooltip", failSilently: false), (Transform)(object)parent));
 				obj2.AttackType = attackTypeEntryDefinition.AttackType;
 				compendiumEntryTooltip = obj2;
 			}
 		}
 		else
 		{
-			SkillEffectTooltip obj3 = (usePooler ? ObjectPooler.GetPooledComponent<SkillEffectTooltip>("CompendiumSkillEffectEntry", ResourcePooler.LoadOnce<SkillEffectTooltip>("Prefab/Tooltip/Skill Effect Tooltip", false), (Transform)(object)parent, false) : Object.Instantiate<SkillEffectTooltip>(ResourcePooler.LoadOnce<SkillEffectTooltip>("Prefab/Tooltip/Skill Effect Tooltip", false), (Transform)(object)parent));
+			SkillEffectTooltip obj3 = (usePooler ? ObjectPooler.GetPooledComponent<SkillEffectTooltip>("CompendiumSkillEffectEntry", ResourcePooler.LoadOnce<SkillEffectTooltip>("Prefab/Tooltip/Skill Effect Tooltip", failSilently: false), (Transform)(object)parent, dontSetParent: false) : Object.Instantiate<SkillEffectTooltip>(ResourcePooler.LoadOnce<SkillEffectTooltip>("Prefab/Tooltip/Skill Effect Tooltip", failSilently: false), (Transform)(object)parent));
 			obj3.SkillEffectId = skillEffectEntryDefinition.SkillEffectId;
 			compendiumEntryTooltip = obj3;
 		}

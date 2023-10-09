@@ -5,7 +5,6 @@ using TheLastStand.Database;
 using TheLastStand.Definition.Item;
 using TheLastStand.Definition.Unit.Perk.PerkEffect;
 using TheLastStand.Definition.Unit.Trait;
-using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Model.Item;
 using TheLastStand.Model.Unit.Perk;
 using TheLastStand.Model.Unit.Perk.PerkEffect;
@@ -31,7 +30,7 @@ public class EquipmentSlotModifierEffectController : APerkEffectController
 		if (!onLoad)
 		{
 			List<EquipmentSlotView> availableViews = CharacterSheetPanel.EquipmentSlots[EquipmentSlotModifierEffect.EquipmentSlotModifierEffectDefinition.SlotId];
-			int num = EquipmentSlotModifierEffect.EquipmentSlotModifierEffectDefinition.ValueExpression.EvalToInt((InterpreterContext)(object)Perk);
+			int num = EquipmentSlotModifierEffect.EquipmentSlotModifierEffectDefinition.ValueExpression.EvalToInt(Perk);
 			if (!Perk.Owner.EquipmentSlots.ContainsKey(EquipmentSlotModifierEffect.EquipmentSlotModifierEffectDefinition.SlotId))
 			{
 				Perk.Owner.EquipmentSlots.Add(EquipmentSlotModifierEffect.EquipmentSlotModifierEffectDefinition.SlotId, new List<EquipmentSlot>());
@@ -51,7 +50,7 @@ public class EquipmentSlotModifierEffectController : APerkEffectController
 	public override void Lock(bool onLoad)
 	{
 		List<EquipmentSlotView> availableViews = CharacterSheetPanel.EquipmentSlots[EquipmentSlotModifierEffect.EquipmentSlotModifierEffectDefinition.SlotId];
-		int num = EquipmentSlotModifierEffect.EquipmentSlotModifierEffectDefinition.ValueExpression.EvalToInt((InterpreterContext)(object)Perk) * -1;
+		int num = EquipmentSlotModifierEffect.EquipmentSlotModifierEffectDefinition.ValueExpression.EvalToInt(Perk) * -1;
 		if (Perk.Owner.EquipmentSlots.ContainsKey(EquipmentSlotModifierEffect.EquipmentSlotModifierEffectDefinition.SlotId))
 		{
 			UnitTraitDefinition.SlotModifier slotModifier = new UnitTraitDefinition.SlotModifier(EquipmentSlotModifierEffect.EquipmentSlotModifierEffectDefinition.SlotId, num, num > 0, string.Empty);

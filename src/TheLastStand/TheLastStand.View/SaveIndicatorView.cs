@@ -161,7 +161,7 @@ public class SaveIndicatorView : MonoBehaviour
 	{
 		if (!isSuccessful)
 		{
-			GenericPopUp.Open("Popup_SaveWriting_ErrorTitle", "Popup_SaveWriting_ErrorText", ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Stats/Icons/VerySmall_Critical", false));
+			GenericPopUp.Open("Popup_SaveWriting_ErrorTitle", "Popup_SaveWriting_ErrorText", ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Stats/Icons/VerySmall_Critical", failSilently: false));
 			if (hideCoroutine != null)
 			{
 				((MonoBehaviour)this).StopCoroutine(hideCoroutine);

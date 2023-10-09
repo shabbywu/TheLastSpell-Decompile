@@ -7,7 +7,7 @@ using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Modding;
 
-public class FontAssemblyDefinition : Definition
+public class FontAssemblyDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public class Constants
 	{
@@ -25,7 +25,7 @@ public class FontAssemblyDefinition : Definition
 	public List<FontAssetsDefinition> FontAssetsDefinition => fontAssetsDefinitions;
 
 	public FontAssemblyDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

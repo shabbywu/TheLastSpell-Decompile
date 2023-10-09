@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.BonePile;
 
-public class BonePileGeneratorDefinition : Definition
+public class BonePileGeneratorDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public static class Constants
 	{

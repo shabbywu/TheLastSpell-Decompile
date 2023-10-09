@@ -26,7 +26,7 @@ public class TileHasHazardConditionDefinition : GoalConditionDefinition
 		}
 		else
 		{
-			CLoggerManager.Log((object)("Error while parsing HazardType : " + ((val != null) ? val.Value : null) + " is not a correct HazardType"), (LogType)0, (CLogLevel)1, true, ((object)this).GetType().Name, false);
+			CLoggerManager.Log((object)("Error while parsing HazardType : " + ((val != null) ? val.Value : null) + " is not a correct HazardType"), (LogType)0, (CLogLevel)1, true, GetType().Name, false);
 		}
 	}
 }

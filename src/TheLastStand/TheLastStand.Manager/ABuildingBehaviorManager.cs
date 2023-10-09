@@ -28,12 +28,12 @@ public abstract class ABuildingBehaviorManager<T> : BehaviorManager<T> where T :
 
 	protected override OneShotSound GetPooledSkillSoundAudioSource()
 	{
-		return ObjectPooler.GetPooledComponent<OneShotSound>("BuildingSkillSFX", SoundManager.BuildingSkillSFXPrefab, (Transform)null, false);
+		return ObjectPooler.GetPooledComponent<OneShotSound>("BuildingSkillSFX", SoundManager.BuildingSkillSFXPrefab, (Transform)null, dontSetParent: false);
 	}
 
 	protected override OneShotSound GetSpatializedPooledSkillSoundAudioSource()
 	{
-		return ObjectPooler.GetPooledComponent<OneShotSound>("BuildingSkillSFX Spatialized", SoundManager.BuildingSkillSpatializedSFXPrefab, (Transform)null, false);
+		return ObjectPooler.GetPooledComponent<OneShotSound>("BuildingSkillSFX Spatialized", SoundManager.BuildingSkillSpatializedSFXPrefab, (Transform)null, dontSetParent: false);
 	}
 
 	protected override string GetSkillSoundClipPathFormat()

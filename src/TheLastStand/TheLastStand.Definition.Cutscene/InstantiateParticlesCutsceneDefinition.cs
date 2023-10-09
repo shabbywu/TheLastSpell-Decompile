@@ -5,7 +5,7 @@ using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Cutscene;
 
-public class InstantiateParticlesCutsceneDefinition : Definition, ICutsceneDefinition
+public class InstantiateParticlesCutsceneDefinition : TheLastStand.Framework.Serialization.Definition, ICutsceneDefinition
 {
 	public static class Constants
 	{

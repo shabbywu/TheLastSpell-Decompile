@@ -40,7 +40,7 @@ public class EnemyAffixDisplay : MonoBehaviour
 
 	public void Refresh(EnemyAffixEffectDefinition.E_EnemyAffixEffect enemyAffixEffect, EnemyAffixEffectDefinition.E_EnemyAffixBoxType boxType, params string[] localizedParameters)
 	{
-		eliteAffixIcon.sprite = ResourcePooler.LoadOnce<Sprite>($"View/Sprites/UI/Units/EnemiesAffixes/Icons/EnemyAffix_Icon_{enemyAffixEffect}", false);
+		eliteAffixIcon.sprite = ResourcePooler.LoadOnce<Sprite>($"View/Sprites/UI/Units/EnemiesAffixes/Icons/EnemyAffix_Icon_{enemyAffixEffect}", failSilently: false);
 		if (boxType != 0 && boxType == EnemyAffixEffectDefinition.E_EnemyAffixBoxType.Elite)
 		{
 			eliteAffixBoxImage.sprite = eliteAffixBoxes._Sprites[localizedParameters.Length - 1];

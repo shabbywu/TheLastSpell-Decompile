@@ -2,7 +2,6 @@ using TheLastStand.Controller.Building;
 using TheLastStand.Controller.Meta;
 using TheLastStand.Definition.Building;
 using TheLastStand.Definition.Meta;
-using TheLastStand.Framework.Automaton;
 using TheLastStand.Manager;
 using TheLastStand.Manager.Meta;
 using TheLastStand.Model.TileMap;
@@ -62,13 +61,13 @@ public class MagicCircle : Building
 
 	private void ApplyGlyphsHealthBonus()
 	{
-		_ = ((StateMachine)ApplicationManager.Application).State.GetName() == "LevelEditor";
+		_ = ApplicationManager.Application.State.GetName() == "LevelEditor";
 	}
 
 	public override void Deserialize(ISerializedData container = null, int saveVersion = -1)
 	{
 		SerializedBuilding serializedBuilding = container as SerializedBuilding;
-		base.Deserialize((ISerializedData)(object)serializedBuilding, saveVersion);
+		base.Deserialize(serializedBuilding, saveVersion);
 		SerializedMagicCicleSettings magicCircleSettings = serializedBuilding.MagicCircleSettings;
 		MageSlots = magicCircleSettings.MageSlots;
 		MageCount = magicCircleSettings.MageCount;
@@ -83,6 +82,6 @@ public class MagicCircle : Building
 			MageCount = MageCount
 		};
 		obj.MagicCircleSettings = magicCircleSettings;
-		return (ISerializedData)(object)obj;
+		return obj;
 	}
 }

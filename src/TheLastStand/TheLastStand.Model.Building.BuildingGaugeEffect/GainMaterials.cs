@@ -1,6 +1,5 @@
 using TheLastStand.Controller.Building.BuildingGaugeEffect;
 using TheLastStand.Definition.Building.BuildingGaugeEffect;
-using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Model.Building.Module;
 using TheLastStand.View.Building.BuildingGaugeEffect;
 using UnityEngine;
@@ -25,6 +24,6 @@ public class GainMaterials : BuildingGaugeEffect
 
 	public int ComputeMaterialsValue()
 	{
-		return Mathf.RoundToInt(GainMaterialsDefinition.MaterialsGain.EvalToFloat((InterpreterContext)(object)new FormulaInterpreterContext()) + (float)UpgradedBonusValue);
+		return Mathf.RoundToInt(GainMaterialsDefinition.MaterialsGain.EvalToFloat(new FormulaInterpreterContext()) + (float)UpgradedBonusValue);
 	}
 }

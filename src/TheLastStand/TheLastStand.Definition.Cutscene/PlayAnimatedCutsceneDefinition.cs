@@ -1,10 +1,9 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Cutscene;
 
-public class PlayAnimatedCutsceneDefinition : Definition, ICutsceneDefinition
+public class PlayAnimatedCutsceneDefinition : TheLastStand.Framework.Serialization.Definition, ICutsceneDefinition
 {
 	public static class Constants
 	{
@@ -14,7 +13,7 @@ public class PlayAnimatedCutsceneDefinition : Definition, ICutsceneDefinition
 	public string CutsceneId { get; private set; }
 
 	public PlayAnimatedCutsceneDefinition(XContainer xContainer)
-		: base(xContainer, (Dictionary<string, string>)null)
+		: base(xContainer)
 	{
 	}
 

@@ -1,10 +1,9 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Modding;
 
-public class FontAssetsDefinition : Definition
+public class FontAssetsDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public class Constants
 	{
@@ -55,7 +54,7 @@ public class FontAssetsDefinition : Definition
 	public int Importance => importance;
 
 	public FontAssetsDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

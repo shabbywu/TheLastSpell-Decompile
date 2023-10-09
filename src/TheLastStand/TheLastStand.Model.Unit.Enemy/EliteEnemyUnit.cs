@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using TPLib;
 using TPLib.Debugging.Console;
@@ -82,7 +81,7 @@ public class EliteEnemyUnit : EnemyUnit
 		: base(eliteEnemyUnitTemplateDefinition, unitController, unitView, unitCreationSettings)
 	{
 		EliteEnemyUnitTemplateDefinition = eliteEnemyUnitTemplateDefinition;
-		Deserialize((ISerializedData)(object)serializedEliteEnemyUnit, saveVersion);
+		Deserialize(serializedEliteEnemyUnit, saveVersion);
 	}
 
 	private void PickRandomAffix()
@@ -116,21 +115,20 @@ public class EliteEnemyUnit : EnemyUnit
 	public override void Deserialize(ISerializedData container = null, int saveVersion = -1)
 	{
 		SerializedEliteEnemyUnit serializedEliteEnemyUnit = container as SerializedEliteEnemyUnit;
-		EnemyAffixDefinition affixDefinition = default(EnemyAffixDefinition);
-		if (EnemyUnitDatabase.EliteToAffixDefinitions.TryGetValue(SpecificId, out var value) && ListExtensions.TryFind<EnemyAffixDefinition>(value, (Predicate<EnemyAffixDefinition>)((EnemyAffixDefinition x) => x.Id == serializedEliteEnemyUnit.AffixId), ref affixDefinition))
+		if (EnemyUnitDatabase.EliteToAffixDefinitions.TryGetValue(SpecificId, out var value) && value.TryFind((EnemyAffixDefinition x) => x.Id == serializedEliteEnemyUnit.AffixId, out var value2))
 		{
-			base.Affixes.Insert(0, CreateAffix(affixDefinition));
+			base.Affixes.Insert(0, CreateAffix(value2));
 		}
 		else
 		{
 			PickRandomAffix();
 		}
-		ADeserialize((ISerializedData)(object)serializedEliteEnemyUnit, saveVersion);
+		ADeserialize(serializedEliteEnemyUnit, saveVersion);
 	}
 
 	public override void DeserializeAfterInit(ISerializedData container, int saveVersion)
 	{
-		DeserializeStats((ISerializedData)(object)(container as SerializedEliteEnemyUnit)?.EliteEnemyUnitStats, saveVersion);
+		DeserializeStats((container as SerializedEliteEnemyUnit)?.EliteEnemyUnitStats, saveVersion);
 	}
 
 	public override void DeserializeStats(ISerializedData serializedUnitStats, int saveVersion)
@@ -141,7 +139,7 @@ public class EliteEnemyUnit : EnemyUnit
 
 	public override ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedEliteEnemyUnit(SerializeUnit())
+		return new SerializedEliteEnemyUnit(SerializeUnit())
 		{
 			Id = EliteEnemyUnitTemplateDefinition.EliteId,
 			BossPhaseActorId = base.BossPhaseActorId,

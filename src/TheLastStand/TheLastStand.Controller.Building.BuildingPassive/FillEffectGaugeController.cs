@@ -3,7 +3,6 @@ using TPLib.Log;
 using TheLastStand.Controller.Meta;
 using TheLastStand.Definition.Building.BuildingPassive;
 using TheLastStand.Definition.Meta;
-using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Manager.Building;
 using TheLastStand.Manager.Meta;
 using TheLastStand.Model.Building.BuildingPassive;
@@ -43,7 +42,7 @@ public class FillEffectGaugeController : BuildingPassiveEffectController
 
 	public int ComputePassiveValue()
 	{
-		int num = FillEffectGauge.FillEffectGaugeDefinition.Value.EvalToInt((InterpreterContext)(object)new BuildingInterpreterContext());
+		int num = FillEffectGauge.FillEffectGaugeDefinition.Value.EvalToInt(new BuildingInterpreterContext());
 		int num2 = 0;
 		num2 += FillEffectGauge.UpgradedBonusValue;
 		if (!MetaUpgradesManager.IsThisBuildingUnlockedByDefault(base.BuildingPassiveEffect.BuildingPassivesModule.BuildingParent.Id) && MetaUpgradeEffectsController.TryGetEffectsOfType<BuildingModifierMetaEffectDefinition>(out var effects, MetaUpgradesManager.E_MetaState.Activated))

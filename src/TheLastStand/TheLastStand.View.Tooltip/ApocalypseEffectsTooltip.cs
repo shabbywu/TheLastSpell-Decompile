@@ -64,7 +64,7 @@ public class ApocalypseEffectsTooltip : TooltipBase
 		for (int i = Mathf.Max(0, ((Vector2Int)(ref apocalypseRange)).x); i <= ((Vector2Int)(ref apocalypseRange)).y; i++)
 		{
 			TextMeshProUGUI val = effectsDescription;
-			((TMP_Text)val).text = ((TMP_Text)val).text + "  <style=KeyWord>" + IntExtensions.ToRoman(i) + ".</style>  " + Localizer.Get(string.Format("{0}{1:00}", "WorldMap_ApocalypseDescription_", i)) + "\r\n";
+			((TMP_Text)val).text = ((TMP_Text)val).text + "  <style=KeyWord>" + i.ToRoman() + ".</style>  " + Localizer.Get(string.Format("{0}{1:00}", "WorldMap_ApocalypseDescription_", i)) + "\r\n";
 		}
 	}
 }

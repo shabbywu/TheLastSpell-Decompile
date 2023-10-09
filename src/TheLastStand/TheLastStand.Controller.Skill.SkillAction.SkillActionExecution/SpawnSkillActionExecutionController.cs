@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using TheLastStand.Database.Unit;
-using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Manager;
 using TheLastStand.Manager.Unit;
 using TheLastStand.Model;
@@ -79,7 +78,7 @@ public class SpawnSkillActionExecutionController : SkillActionExecutionControlle
 			base.SkillActionExecution.CastFx.CastFxController.PlayCastFxs(orientationFromTileToTile, default(Vector2), caster);
 			if (num <= 0f)
 			{
-				num = skill.SkillDefinition.SkillCastFxDefinition.CastTotalDuration.EvalToFloat((InterpreterContext)(object)base.SkillActionExecution.CastFx.CastFXInterpreterContext);
+				num = skill.SkillDefinition.SkillCastFxDefinition.CastTotalDuration.EvalToFloat(base.SkillActionExecution.CastFx.CastFXInterpreterContext);
 			}
 		}
 		return num;

@@ -32,7 +32,7 @@ public class CreateItemGaugeEffectController : BuildingGaugeEffectController
 	{
 		base.BuildingGaugeEffect = new CreateItemGaugeEffect(productionBuilding, definition, this, new CreateItemView());
 		base.BuildingGaugeEffect.BuildingGaugeEffectView.BuildingGaugeEffect = base.BuildingGaugeEffect;
-		base.BuildingGaugeEffect.Deserialize((ISerializedData)(object)container);
+		base.BuildingGaugeEffect.Deserialize(container);
 	}
 
 	public CreateItemGaugeEffectController(ProductionModule productionBuilding, BuildingGaugeEffectDefinition definition)
@@ -54,7 +54,7 @@ public class CreateItemGaugeEffectController : BuildingGaugeEffectController
 			productionItem.Items.Add(item);
 			((CLogger<ItemManager>)TPSingleton<ItemManager>.Instance).Log((object)("(" + base.BuildingGaugeEffect.ProductionBuilding.BuildingParent.BuildingDefinition.Id + ") Item created: " + item.ItemDefinition.Id + "."), (CLogLevel)2, false, false);
 		}
-		CreateItemDisplay pooledComponent = ObjectPooler.GetPooledComponent<CreateItemDisplay>("CreateItemDisplay", ResourcePooler.LoadOnce<CreateItemDisplay>("Prefab/Displayable Effect/UI Effect Displays/CreateItemDisplay", false), EffectManager.EffectDisplaysParent, false);
+		CreateItemDisplay pooledComponent = ObjectPooler.GetPooledComponent<CreateItemDisplay>("CreateItemDisplay", ResourcePooler.LoadOnce<CreateItemDisplay>("Prefab/Displayable Effect/UI Effect Displays/CreateItemDisplay", failSilently: false), EffectManager.EffectDisplaysParent, dontSetParent: false);
 		pooledComponent.Init(productionItem);
 		base.BuildingGaugeEffect.ProductionBuilding.BuildingParent.BuildingController.BlueprintModuleController.AddEffectDisplay(pooledComponent);
 		list.Add(base.BuildingGaugeEffect.ProductionBuilding.BuildingParent.BuildingController.BlueprintModuleController);

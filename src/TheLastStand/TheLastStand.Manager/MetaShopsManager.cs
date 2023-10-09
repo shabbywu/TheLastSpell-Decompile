@@ -5,7 +5,6 @@ using TPLib.Debugging.Console;
 using TPLib.Log;
 using TheLastStand.Controller;
 using TheLastStand.Definition.Meta;
-using TheLastStand.Framework.Automaton;
 using TheLastStand.Framework.Serialization;
 using TheLastStand.Manager.Meta;
 using TheLastStand.Manager.Sound;
@@ -136,7 +135,7 @@ public class MetaShopsManager : Manager<MetaShopsManager>, ISerializable, IDeser
 		{
 			return false;
 		}
-		switch (((StateMachine)ApplicationManager.Application).State.GetName())
+		switch (ApplicationManager.Application.State.GetName())
 		{
 		case "Settings":
 			if (!TPSingleton<GameManager>.Exist())
@@ -188,7 +187,7 @@ public class MetaShopsManager : Manager<MetaShopsManager>, ISerializable, IDeser
 	public void LeaveShops()
 	{
 		((MonoBehaviour)TPSingleton<MetaShopsManager>.Instance).StopAllCoroutines();
-		switch (((StateMachine)ApplicationManager.Application).State.GetName())
+		switch (ApplicationManager.Application.State.GetName())
 		{
 		case "Game":
 			OraculumHub<OraculumView>.Display(show: false);
@@ -212,14 +211,14 @@ public class MetaShopsManager : Manager<MetaShopsManager>, ISerializable, IDeser
 			ApplicationManager.Application.ApplicationController.SetState("LoadWorldMap");
 			break;
 		default:
-			((CLogger<MetaShopsManager>)TPSingleton<MetaShopsManager>.Instance).LogWarning((object)("Invalid state " + ((StateMachine)ApplicationManager.Application).State.GetName() + " to leave shops."), (CLogLevel)1, true, false);
+			((CLogger<MetaShopsManager>)TPSingleton<MetaShopsManager>.Instance).LogWarning((object)("Invalid state " + ApplicationManager.Application.State.GetName() + " to leave shops."), (CLogLevel)1, true, false);
 			break;
 		}
 	}
 
 	public void OpenShops()
 	{
-		switch (((StateMachine)ApplicationManager.Application).State.GetName())
+		switch (ApplicationManager.Application.State.GetName())
 		{
 		case "Game":
 			TileObjectSelectionManager.DeselectAll();
@@ -240,14 +239,14 @@ public class MetaShopsManager : Manager<MetaShopsManager>, ISerializable, IDeser
 			break;
 		}
 		default:
-			((CLogger<MetaShopsManager>)TPSingleton<MetaShopsManager>.Instance).LogWarning((object)("Unhandled Application State " + ((StateMachine)ApplicationManager.Application).State.GetName() + " to open MetaShops hub! Aborting."), (CLogLevel)1, true, false);
+			((CLogger<MetaShopsManager>)TPSingleton<MetaShopsManager>.Instance).LogWarning((object)("Unhandled Application State " + ApplicationManager.Application.State.GetName() + " to open MetaShops hub! Aborting."), (CLogLevel)1, true, false);
 			break;
 		}
 	}
 
 	public void OpenMetaShop(bool darkShop)
 	{
-		string name = ((StateMachine)ApplicationManager.Application).State.GetName();
+		string name = ApplicationManager.Application.State.GetName();
 		if (name != null && name == "Game")
 		{
 			GameController.SetState(Game.E_State.MetaShops);
@@ -272,7 +271,7 @@ public class MetaShopsManager : Manager<MetaShopsManager>, ISerializable, IDeser
 
 	public ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedMetaShops
+		return new SerializedMetaShops
 		{
 			MetaUpgradesAlreadySeen = metaUpgradesAlreadySeen,
 			CurrentFilter = CurrentFilter
@@ -304,9 +303,9 @@ public class MetaShopsManager : Manager<MetaShopsManager>, ISerializable, IDeser
 
 	private void Update()
 	{
-		bool flag = ((StateMachine)ApplicationManager.Application).State.GetName() == "Game";
-		bool flag2 = ((StateMachine)ApplicationManager.Application).State.GetName() == "WorldMap";
-		bool flag3 = ((StateMachine)ApplicationManager.Application).State.GetName() == "MetaShops";
+		bool flag = ApplicationManager.Application.State.GetName() == "Game";
+		bool flag2 = ApplicationManager.Application.State.GetName() == "WorldMap";
+		bool flag3 = ApplicationManager.Application.State.GetName() == "MetaShops";
 		if (!flag && !flag3 && !flag2)
 		{
 			return;

@@ -3,7 +3,6 @@ using System.Linq;
 using Sirenix.Utilities;
 using TheLastStand.Controller.TileMap;
 using TheLastStand.Definition.Unit.Perk;
-using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Model.Skill.SkillAction.SkillActionExecution.SkillActionExecutionTileData;
 using TheLastStand.Model.TileMap;
 
@@ -42,10 +41,8 @@ public class PerkTargeting
 	private HashSet<Tile> GetTargetFromBase(PerkDataContainer data, Perk perk, List<ITileObject> TargetingReferenceTileObjects, List<Tile> validTargets)
 	{
 		HashSet<Tile> hashSet = new HashSet<Tile>();
-		Node amountExpression = PerkTargetingDefinition.AmountExpression;
-		int num = ((amountExpression != null) ? amountExpression.EvalToInt((InterpreterContext)(object)perk) : int.MaxValue);
-		Node rangeExpression = PerkTargetingDefinition.RangeExpression;
-		int maxRange = ((rangeExpression == null) ? 1 : rangeExpression.EvalToInt((InterpreterContext)(object)perk));
+		int num = PerkTargetingDefinition.AmountExpression?.EvalToInt(perk) ?? int.MaxValue;
+		int maxRange = PerkTargetingDefinition.RangeExpression?.EvalToInt(perk) ?? 1;
 		foreach (ITileObject TargetingReferenceTileObject in TargetingReferenceTileObjects)
 		{
 			switch (PerkTargetingDefinition.TargetingMethod)

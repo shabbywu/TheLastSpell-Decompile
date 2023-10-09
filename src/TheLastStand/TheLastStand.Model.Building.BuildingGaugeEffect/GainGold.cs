@@ -1,6 +1,5 @@
 using TheLastStand.Controller.Building.BuildingGaugeEffect;
 using TheLastStand.Definition.Building.BuildingGaugeEffect;
-using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Model.Building.Module;
 using TheLastStand.View.Building.BuildingGaugeEffect;
 using UnityEngine;
@@ -25,6 +24,6 @@ public class GainGold : BuildingGaugeEffect
 
 	public int ComputeGoldValue()
 	{
-		return Mathf.RoundToInt(GainGoldDefinition.GoldGain.EvalToFloat((InterpreterContext)(object)new FormulaInterpreterContext()) + (float)UpgradedBonusValue);
+		return Mathf.RoundToInt(GainGoldDefinition.GoldGain.EvalToFloat(new FormulaInterpreterContext()) + (float)UpgradedBonusValue);
 	}
 }

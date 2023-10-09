@@ -27,11 +27,11 @@ public abstract class BuildingGaugeEffectView
 	public Sprite GetProductionRewardIconSpriteBig()
 	{
 		string productionRewardIconId = GetProductionRewardIconId();
-		string text = ((!(BuildingGaugeEffect.ProductionBuilding.BuildingParent is MagicCircle)) ? ("View/Sprites/UI/Buildings/ProductionRewards/Big/WorldUI_Gauges_Prod_Reward_" + productionRewardIconId) : ("View/Sprites/UI/Buildings/ProductionRewards/Big/WorldUI_Gauges_Prod_Reward_" + productionRewardIconId + "_" + TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.Id));
-		Sprite val = ResourcePooler.LoadOnce<Sprite>(text, false);
+		string resourcePath = ((!(BuildingGaugeEffect.ProductionBuilding.BuildingParent is MagicCircle)) ? ("View/Sprites/UI/Buildings/ProductionRewards/Big/WorldUI_Gauges_Prod_Reward_" + productionRewardIconId) : ("View/Sprites/UI/Buildings/ProductionRewards/Big/WorldUI_Gauges_Prod_Reward_" + productionRewardIconId + "_" + TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.Id));
+		Sprite val = ResourcePooler.LoadOnce<Sprite>(resourcePath, failSilently: false);
 		if (!((Object)(object)val != (Object)null))
 		{
-			return ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Buildings/ProductionRewards/Big/WorldUI_Gauges_Prod_Reward_" + productionRewardIconId, false);
+			return ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Buildings/ProductionRewards/Big/WorldUI_Gauges_Prod_Reward_" + productionRewardIconId, failSilently: false);
 		}
 		return val;
 	}
@@ -39,7 +39,7 @@ public abstract class BuildingGaugeEffectView
 	public Sprite GetProductionRewardIconSpriteSmall()
 	{
 		string productionRewardIconId = GetProductionRewardIconId();
-		return ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Buildings/ProductionRewards/Small/WorldUI_Gauges_Prod_Reward_" + productionRewardIconId, false);
+		return ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Buildings/ProductionRewards/Small/WorldUI_Gauges_Prod_Reward_" + productionRewardIconId, failSilently: false);
 	}
 
 	protected abstract string GetProductionRewardIconId();

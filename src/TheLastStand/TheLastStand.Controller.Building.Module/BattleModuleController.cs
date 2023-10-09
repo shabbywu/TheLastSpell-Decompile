@@ -4,7 +4,6 @@ using TPLib;
 using TPLib.Log;
 using TheLastStand.Controller.Unit.Enemy;
 using TheLastStand.Definition.Building.Module;
-using TheLastStand.Framework.Automaton;
 using TheLastStand.Manager;
 using TheLastStand.Manager.Building;
 using TheLastStand.Manager.Unit;
@@ -136,7 +135,7 @@ public class BattleModuleController : BuildingModuleController, IBehaviorControl
 
 	public void HookToModifyingDamagePerks()
 	{
-		if (((StateMachine)ApplicationManager.Application).State.GetName() == "LevelEditor")
+		if (ApplicationManager.Application.State.GetName() == "LevelEditor")
 		{
 			return;
 		}

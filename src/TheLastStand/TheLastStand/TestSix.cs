@@ -21,8 +21,8 @@ public class TestSix : MonoBehaviour
 		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
 		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
-		RectTransformExtensions.SetAnchors(globalRect, pivot);
-		RectTransformExtensions.SetPivot(globalRect, pivot);
+		globalRect.SetAnchors(pivot);
+		globalRect.SetPivot(pivot);
 		tween = (Tween)(object)TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosX(globalRect, 0f, 1f, false), ease);
 	}
 

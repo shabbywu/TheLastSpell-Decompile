@@ -134,7 +134,7 @@ public class AttackSkillActionController : SkillActionController
 			if (caster is PlayableUnit playableUnit)
 			{
 				float final = playableUnit.UnitStatsController.GetStat(UnitStatDefinition.E_Stat.Reliability).Final;
-				final += (float)(int)((statModifiers != null) ? DictionaryExtensions.GetValueOrDefault<UnitStatDefinition.E_Stat, float>(statModifiers, UnitStatDefinition.E_Stat.Reliability) : 0f);
+				final += (float)(int)(statModifiers?.GetValueOrDefault(UnitStatDefinition.E_Stat.Reliability) ?? 0f);
 				final += playableUnit.GetPerkModifierForComputationStat(TheLastStand.Model.Skill.Skill.E_ComputationStat.Reliability, base.SkillAction.PerkDataContainer);
 				final = playableUnit.UnitStatsController.ClampToBoundaries(final, UnitStatDefinition.E_Stat.Reliability);
 				val2.x = Mathf.Min(val2.y, val2.x + (val2.y - val2.x) / 100f * final);
@@ -145,7 +145,7 @@ public class AttackSkillActionController : SkillActionController
 				num += TPSingleton<GlyphManager>.Instance.DefensesDamagePercentageModifier;
 				if (num != 0)
 				{
-					val2 = Vector2Int.op_Implicit(VectorExtensions.AddPercentage(val, (float)num * 0.01f));
+					val2 = Vector2Int.op_Implicit(val.AddPercentage((float)num * 0.01f));
 				}
 			}
 			float num2 = 100f;
@@ -154,16 +154,16 @@ public class AttackSkillActionController : SkillActionController
 			{
 				num2 = AttackSkillAction.AttackType switch
 				{
-					AttackSkillActionDefinition.E_AttackType.Physical => unit.GetClampedStatValueWithModifier(UnitStatDefinition.E_Stat.PhysicalDamage, (statModifiers != null) ? new float?(DictionaryExtensions.GetValueOrDefault<UnitStatDefinition.E_Stat, float>(statModifiers, UnitStatDefinition.E_Stat.PhysicalDamage)) : null), 
-					AttackSkillActionDefinition.E_AttackType.Magical => unit.GetClampedStatValueWithModifier(UnitStatDefinition.E_Stat.MagicalDamage, (statModifiers != null) ? new float?(DictionaryExtensions.GetValueOrDefault<UnitStatDefinition.E_Stat, float>(statModifiers, UnitStatDefinition.E_Stat.MagicalDamage)) : null), 
-					AttackSkillActionDefinition.E_AttackType.Ranged => unit.GetClampedStatValueWithModifier(UnitStatDefinition.E_Stat.RangedDamage, (statModifiers != null) ? new float?(DictionaryExtensions.GetValueOrDefault<UnitStatDefinition.E_Stat, float>(statModifiers, UnitStatDefinition.E_Stat.RangedDamage)) : null), 
+					AttackSkillActionDefinition.E_AttackType.Physical => unit.GetClampedStatValueWithModifier(UnitStatDefinition.E_Stat.PhysicalDamage, statModifiers?.GetValueOrDefault(UnitStatDefinition.E_Stat.PhysicalDamage)), 
+					AttackSkillActionDefinition.E_AttackType.Magical => unit.GetClampedStatValueWithModifier(UnitStatDefinition.E_Stat.MagicalDamage, statModifiers?.GetValueOrDefault(UnitStatDefinition.E_Stat.MagicalDamage)), 
+					AttackSkillActionDefinition.E_AttackType.Ranged => unit.GetClampedStatValueWithModifier(UnitStatDefinition.E_Stat.RangedDamage, statModifiers?.GetValueOrDefault(UnitStatDefinition.E_Stat.RangedDamage)), 
 					_ => num2, 
 				};
 			}
 			val2 *= num2 / 100f;
 			if (unit != null)
 			{
-				val2 *= (100f + unit.GetClampedStatValueWithModifier(UnitStatDefinition.E_Stat.OverallDamage, (statModifiers != null) ? new float?(DictionaryExtensions.GetValueOrDefault<UnitStatDefinition.E_Stat, float>(statModifiers, UnitStatDefinition.E_Stat.OverallDamage)) : null)) / 100f;
+				val2 *= (100f + unit.GetClampedStatValueWithModifier(UnitStatDefinition.E_Stat.OverallDamage, statModifiers?.GetValueOrDefault(UnitStatDefinition.E_Stat.OverallDamage))) / 100f;
 				val2 *= unit.GetClampedStatValue(UnitStatDefinition.E_Stat.InjuryDamageMultiplier) / 100f;
 				if (unit is EnemyUnit)
 				{
@@ -243,7 +243,7 @@ public class AttackSkillActionController : SkillActionController
 	{
 		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
-		return VectorExtensions.GetRangeFromPercentage(damageRange, ComputeIsolatedPercentage(targetUnit, caster));
+		return damageRange.GetRangeFromPercentage(ComputeIsolatedPercentage(targetUnit, caster));
 	}
 
 	public float ComputeIsolatedPercentage(TheLastStand.Model.Unit.Unit targetUnit, ISkillCaster caster)
@@ -271,7 +271,7 @@ public class AttackSkillActionController : SkillActionController
 	{
 		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
-		return VectorExtensions.GetRangeFromPercentage(damageRange, ComputeMomentumPercentage(caster));
+		return damageRange.GetRangeFromPercentage(ComputeMomentumPercentage(caster));
 	}
 
 	public float ComputeMomentumPercentage(ISkillCaster caster)
@@ -284,7 +284,7 @@ public class AttackSkillActionController : SkillActionController
 	{
 		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
-		return VectorExtensions.GetRangeFromPercentage(damageRange, ComputeOpportunisticPercentage(targetUnit, caster));
+		return damageRange.GetRangeFromPercentage(ComputeOpportunisticPercentage(targetUnit, caster));
 	}
 
 	public float ComputeOpportunisticPercentage(TheLastStand.Model.Unit.Unit targetUnit, ISkillCaster caster)
@@ -314,7 +314,7 @@ public class AttackSkillActionController : SkillActionController
 		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
 		//IL_004c: Unknown result type (might be due to invalid IL or missing references)
-		Vector2Int rangeFromPercentage = VectorExtensions.GetRangeFromPercentage(damageRange, caster.GetPerkModifierForComputationStat(TheLastStand.Model.Skill.Skill.E_ComputationStat.OverallDamage, base.SkillAction.PerkDataContainer) / 100f);
+		Vector2Int rangeFromPercentage = damageRange.GetRangeFromPercentage(caster.GetPerkModifierForComputationStat(TheLastStand.Model.Skill.Skill.E_ComputationStat.OverallDamage, base.SkillAction.PerkDataContainer) / 100f);
 		int num = (int)caster.GetPerkModifierForComputationStat(TheLastStand.Model.Skill.Skill.E_ComputationStat.FlatDamage, base.SkillAction.PerkDataContainer);
 		return rangeFromPercentage + new Vector2Int(num, num);
 	}
@@ -555,7 +555,7 @@ public class AttackSkillActionController : SkillActionController
 			}
 			if (attackData.DamageRangeData != null && ((Vector2Int)(ref attackData.DamageRangeData.ResistanceReductionRange)).magnitude > 0f && (float)((Vector2Int)(ref attackData.DamageRangeData.ResistanceReductionRange)).x < 0f && attacker is EnemyUnit && unit is PlayableUnit playableUnit2)
 			{
-				int num3 = Mathf.Abs(Mathf.FloorToInt(VectorExtensions.Lerp(attackData.DamageRangeData.ResistanceReductionRange, attackData.ComputationRandom)));
+				int num3 = Mathf.Abs(Mathf.FloorToInt(attackData.DamageRangeData.ResistanceReductionRange.Lerp(attackData.ComputationRandom)));
 				playableUnit2.LifetimeStats.LifetimeStatsController.IncreaseDamagesMitigatedByResistance(num3);
 			}
 			if (!(base.SkillAction.Skill.SkillContainer is Perk))
@@ -563,10 +563,7 @@ public class AttackSkillActionController : SkillActionController
 				target.DamageableController.OnHit(attacker);
 			}
 			SplitDamageBetweenArmorAndHealth(target, attackData, (attacker is TheLastStand.Model.Unit.Unit unit2) ? (unit2.GetClampedStatValue(UnitStatDefinition.E_Stat.ArmorShreddingAttacks) / 100f) : 0f, ignoreSkillEffects);
-			if (unit != null)
-			{
-				DictionaryExtensions.GetValueOrDefault<E_EffectTime, Action<PerkDataContainer>>(unit.Events, E_EffectTime.OnAttackDataComputed)?.Invoke(base.SkillAction.PerkDataContainer);
-			}
+			unit?.Events.GetValueOrDefault(E_EffectTime.OnAttackDataComputed)?.Invoke(base.SkillAction.PerkDataContainer);
 			TPSingleton<AchievementManager>.Instance.HandleOnAttackDataComputed(attackData);
 			if (attackData.TotalDamage > 0f && target is PlayableUnit playableUnit3 && entity is EnemyUnit enemyUnit)
 			{
@@ -655,17 +652,11 @@ public class AttackSkillActionController : SkillActionController
 				}
 				base.ApplySkillEffectsOnTile(attackData.TargetTile, attacker, resultDatas, list, hitsUnit: true, hitsBuilding: false);
 			}
-			if (unit != null)
+			unit?.Events.GetValueOrDefault(E_EffectTime.OnHitTaken)?.Invoke(base.SkillAction.PerkDataContainer);
+			playableUnit?.Events.GetValueOrDefault(E_EffectTime.OnTargetHit)?.Invoke(base.SkillAction.PerkDataContainer);
+			if (attackData.TargetRemainingHealth <= 0f)
 			{
-				DictionaryExtensions.GetValueOrDefault<E_EffectTime, Action<PerkDataContainer>>(unit.Events, E_EffectTime.OnHitTaken)?.Invoke(base.SkillAction.PerkDataContainer);
-			}
-			if (playableUnit != null)
-			{
-				DictionaryExtensions.GetValueOrDefault<E_EffectTime, Action<PerkDataContainer>>(playableUnit.Events, E_EffectTime.OnTargetHit)?.Invoke(base.SkillAction.PerkDataContainer);
-			}
-			if (attackData.TargetRemainingHealth <= 0f && playableUnit != null)
-			{
-				DictionaryExtensions.GetValueOrDefault<E_EffectTime, Action<PerkDataContainer>>(playableUnit.Events, E_EffectTime.OnTargetKilled)?.Invoke(base.SkillAction.PerkDataContainer);
+				playableUnit?.Events.GetValueOrDefault(E_EffectTime.OnTargetKilled)?.Invoke(base.SkillAction.PerkDataContainer);
 			}
 			unit?.UnitController.UpdateInjuryStage(updateHud: false);
 		}
@@ -678,14 +669,8 @@ public class AttackSkillActionController : SkillActionController
 			AttackFeedback attackFeedback2 = target.DamageableView.AttackFeedback;
 			attackFeedback2.AddDamageInstance(attackData);
 			target.DamageableController.AddEffectDisplay(attackFeedback2);
-			if (unit != null)
-			{
-				DictionaryExtensions.GetValueOrDefault<E_EffectTime, Action<PerkDataContainer>>(unit.Events, E_EffectTime.OnDodge)?.Invoke(base.SkillAction.PerkDataContainer);
-			}
-			if (playableUnit != null)
-			{
-				DictionaryExtensions.GetValueOrDefault<E_EffectTime, Action<PerkDataContainer>>(playableUnit.Events, E_EffectTime.OnTargetDodge)?.Invoke(base.SkillAction.PerkDataContainer);
-			}
+			unit?.Events.GetValueOrDefault(E_EffectTime.OnDodge)?.Invoke(base.SkillAction.PerkDataContainer);
+			playableUnit?.Events.GetValueOrDefault(E_EffectTime.OnTargetDodge)?.Invoke(base.SkillAction.PerkDataContainer);
 		}
 		if (playableUnit != null)
 		{

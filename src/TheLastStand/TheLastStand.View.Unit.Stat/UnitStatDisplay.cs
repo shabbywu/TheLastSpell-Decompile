@@ -216,12 +216,12 @@ public class UnitStatDisplay : MonoBehaviour
 
 	public static Sprite GetStatIconSprite(UnitStatDefinition.E_Stat statDefinitionId, E_IconSize size)
 	{
-		return ResourcePooler.LoadOnce<Sprite>($"View/Sprites/UI/Stats/Icons/{size}_{statDefinitionId}", true);
+		return ResourcePooler.LoadOnce<Sprite>($"View/Sprites/UI/Stats/Icons/{size}_{statDefinitionId}", failSilently: true);
 	}
 
 	public static Sprite GetStatIconHoverSprite(UnitStatDefinition.E_Stat statDefinitionId, E_IconSize size)
 	{
-		return ResourcePooler.LoadOnce<Sprite>($"View/Sprites/UI/Stats/Icons/{size}_{statDefinitionId}_On", true);
+		return ResourcePooler.LoadOnce<Sprite>($"View/Sprites/UI/Stats/Icons/{size}_{statDefinitionId}_On", failSilently: true);
 	}
 
 	public static string GetStatIconToString(UnitStatDefinition.E_Stat statDefinitionId)
@@ -231,7 +231,7 @@ public class UnitStatDisplay : MonoBehaviour
 
 	public static Sprite GetStatGaugeSprite(UnitStatDefinition.E_Stat statDefinitionId)
 	{
-		return ResourcePooler.LoadOnce<Sprite>($"View/Sprites/UI/Stats/Gauges/{statDefinitionId}", false);
+		return ResourcePooler.LoadOnce<Sprite>($"View/Sprites/UI/Stats/Gauges/{statDefinitionId}", failSilently: false);
 	}
 
 	public void DisplayHover(bool hover)

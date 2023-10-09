@@ -5,7 +5,7 @@ using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Apocalypse.LightFogSpawner;
 
-public class LightFogSpawnersGenerationDefinition : Definition
+public class LightFogSpawnersGenerationDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public int InitialCount { get; private set; }
 

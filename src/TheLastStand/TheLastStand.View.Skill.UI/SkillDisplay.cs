@@ -428,7 +428,7 @@ public class SkillDisplay : SerializedMonoBehaviour
 	{
 		if (skillEffectDefinition.ShouldBeDisplayed)
 		{
-			SkillEffectDisplay skillEffectDisplay = (((Object)(object)SingletonBehaviour<ObjectPooler>.Instance == (Object)null) ? Object.Instantiate<SkillEffectDisplay>(skillEffectPrefab, (Transform)(object)effectsParent) : ObjectPooler.GetPooledComponent<SkillEffectDisplay>("SkillEffectDisplay", skillEffectPrefab, (Transform)(object)effectsParent, false));
+			SkillEffectDisplay skillEffectDisplay = (((Object)(object)SingletonBehaviour<ObjectPooler>.Instance == (Object)null) ? Object.Instantiate<SkillEffectDisplay>(skillEffectPrefab, (Transform)(object)effectsParent) : ObjectPooler.GetPooledComponent<SkillEffectDisplay>("SkillEffectDisplay", skillEffectPrefab, (Transform)(object)effectsParent, dontSetParent: false));
 			skillEffectDisplay.Init(skillEffectDefinition, SkillOwner, Skill.SkillAction, isSurrounding, casterEffect, statModifiers);
 			effectDisplays.Add(skillEffectDisplay);
 		}
@@ -498,13 +498,13 @@ public class SkillDisplay : SerializedMonoBehaviour
 		switch (attackSkillAction.AttackType)
 		{
 		case AttackSkillActionDefinition.E_AttackType.Physical:
-			damageTypeIcon.sprite = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Skills/DamageType/Icon_PhysicalDamage", false);
+			damageTypeIcon.sprite = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Skills/DamageType/Icon_PhysicalDamage", failSilently: false);
 			break;
 		case AttackSkillActionDefinition.E_AttackType.Magical:
-			damageTypeIcon.sprite = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Skills/DamageType/Icon_MagicalDamage", false);
+			damageTypeIcon.sprite = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Skills/DamageType/Icon_MagicalDamage", failSilently: false);
 			break;
 		case AttackSkillActionDefinition.E_AttackType.Ranged:
-			damageTypeIcon.sprite = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Skills/DamageType/Icon_RangedDamage", false);
+			damageTypeIcon.sprite = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Skills/DamageType/Icon_RangedDamage", failSilently: false);
 			break;
 		}
 	}
@@ -733,10 +733,10 @@ public class SkillDisplay : SerializedMonoBehaviour
 			((Component)damageDisplay).gameObject.SetActive(attackSkillAction != null);
 			if (attackSkillAction != null)
 			{
-				Vector2Int val = ((damageValueIsBaseDamage || SkillOwner == null) ? attackSkillAction.AttackSkillActionController.ComputeBaseDamageRange() : attackSkillAction.AttackSkillActionController.ComputeCasterDamageRange(SkillOwner, isSurroundingTile: false, statModifiers));
+				Vector2Int v = ((damageValueIsBaseDamage || SkillOwner == null) ? attackSkillAction.AttackSkillActionController.ComputeBaseDamageRange() : attackSkillAction.AttackSkillActionController.ComputeCasterDamageRange(SkillOwner, isSurroundingTile: false, statModifiers));
 				DataColorDictionary obj = damageTypeColor;
 				Color? valueColor = ((obj != null) ? new Color?(obj.GetColorById(attackSkillAction.AttackType.ToString()).Value) : null);
-				damageDisplay.Refresh("SkillTooltip_Damage", VectorExtensions.GetSimplifiedRange(val, "-", (Func<int, int>)null), valueColor);
+				damageDisplay.Refresh("SkillTooltip_Damage", v.GetSimplifiedRange(), valueColor);
 			}
 		}
 		if ((Object)(object)additionalDamageIcon != (Object)null)
@@ -744,7 +744,7 @@ public class SkillDisplay : SerializedMonoBehaviour
 			if (attackSkillAction != null && attackSkillAction.AttackSkillActionDefinition.AttackType == AttackSkillActionDefinition.E_AttackType.Adaptative)
 			{
 				((Component)additionalDamageIconContainer).gameObject.SetActive(true);
-				additionalDamageIcon.sprite = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Skills/DamageType/Icon_AdaptativeDamage_Modifier", false) ?? ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Skills/DamageType/Icon_AdaptativeDamage", false);
+				additionalDamageIcon.sprite = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Skills/DamageType/Icon_AdaptativeDamage_Modifier", failSilently: false) ?? ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Skills/DamageType/Icon_AdaptativeDamage", failSilently: false);
 			}
 			else
 			{
@@ -816,11 +816,11 @@ public class SkillDisplay : SerializedMonoBehaviour
 		}
 		if ((Object)(object)verticalSeparatorRect != (Object)null)
 		{
-			verticalSeparatorRect.sizeDelta = new Vector2(verticalSeparatorRect.sizeDelta.x, skillParametersContainer.sizeDelta.y - (float)((PixelPerfectLayoutGroup)skillParametersLayout).padding.top - (float)((PixelPerfectLayoutGroup)skillParametersLayout).padding.bottom - skillDescriptionRect.sizeDelta.y);
+			verticalSeparatorRect.sizeDelta = new Vector2(verticalSeparatorRect.sizeDelta.x, skillParametersContainer.sizeDelta.y - (float)skillParametersLayout.padding.top - (float)skillParametersLayout.padding.bottom - skillDescriptionRect.sizeDelta.y);
 		}
 		if ((Object)(object)skillParametersParent != (Object)null && (Object)(object)skillParametersContainer != (Object)null)
 		{
-			skillParametersParent.sizeDelta = new Vector2(skillParametersParent.sizeDelta.x, skillParametersContainer.sizeDelta.y + (float)((PixelPerfectLayoutGroup)skillParametersLayout).padding.bottom);
+			skillParametersParent.sizeDelta = new Vector2(skillParametersParent.sizeDelta.x, skillParametersContainer.sizeDelta.y + (float)skillParametersLayout.padding.bottom);
 		}
 		if ((Object)(object)skillAreaOfEffectGrid != (Object)null)
 		{

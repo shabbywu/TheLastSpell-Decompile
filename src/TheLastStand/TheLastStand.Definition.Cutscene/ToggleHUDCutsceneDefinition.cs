@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TPLib.Log;
 using TheLastStand.Framework.Serialization;
@@ -6,7 +5,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Cutscene;
 
-public class ToggleHUDCutsceneDefinition : Definition, ICutsceneDefinition
+public class ToggleHUDCutsceneDefinition : TheLastStand.Framework.Serialization.Definition, ICutsceneDefinition
 {
 	public class Constants
 	{
@@ -18,7 +17,7 @@ public class ToggleHUDCutsceneDefinition : Definition, ICutsceneDefinition
 	public bool OnlyIfVictoryTriggered { get; private set; }
 
 	public ToggleHUDCutsceneDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

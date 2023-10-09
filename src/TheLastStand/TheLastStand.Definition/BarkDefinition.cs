@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Globalization;
 using System.Xml.Linq;
 using TPLib;
@@ -8,7 +7,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition;
 
-public class BarkDefinition : Definition
+public class BarkDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public static class Constants
 	{
@@ -59,7 +58,7 @@ public class BarkDefinition : Definition
 	public int SentencesCount { get; private set; }
 
 	public BarkDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
@@ -67,21 +66,21 @@ public class BarkDefinition : Definition
 	{
 		XElement val = (XElement)(object)((container is XElement) ? container : null);
 		XAttribute val2 = val.Attribute(XName.op_Implicit("Id"));
-		if (XDocumentExtensions.IsNullOrEmpty(val2))
+		if (val2.IsNullOrEmpty())
 		{
 			TPDebug.LogError((object)"BarkDefinition must have an Id", (Object)null);
 			return;
 		}
 		Id = val2.Value;
 		XElement val3 = ((XContainer)val).Element(XName.op_Implicit("Proba"));
-		if (XDocumentExtensions.IsNullOrEmpty(val3))
+		if (val3.IsNullOrEmpty())
 		{
 			TPDebug.LogError((object)("Bark " + Id + " hasn't a Proba !"), (Object)null);
 			return;
 		}
 		if (!float.TryParse(val3.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var result))
 		{
-			TPDebug.LogError((object)("Bark " + Id + "'s Proba " + ((Definition)this).HasAnInvalidFloat(val3.Value)), (Object)null);
+			TPDebug.LogError((object)("Bark " + Id + "'s Proba " + HasAnInvalidFloat(val3.Value)), (Object)null);
 			return;
 		}
 		Proba = result * 0.01f;
@@ -92,11 +91,11 @@ public class BarkDefinition : Definition
 			return;
 		}
 		XAttribute val5 = val4.Attribute(XName.op_Implicit("Count"));
-		if (!XDocumentExtensions.IsNullOrEmpty(val5))
+		if (!val5.IsNullOrEmpty())
 		{
 			if (!int.TryParse(val5.Value, out var result2))
 			{
-				TPDebug.LogError((object)("Bark " + Id + "'s Sentences Count " + ((Definition)this).HasAnInvalidInt(val5.Value)), (Object)null);
+				TPDebug.LogError((object)("Bark " + Id + "'s Sentences Count " + HasAnInvalidInt(val5.Value)), (Object)null);
 			}
 			else
 			{

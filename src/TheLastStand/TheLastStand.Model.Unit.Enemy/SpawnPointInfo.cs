@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using TheLastStand.Definition.Unit.Enemy;
@@ -28,23 +27,18 @@ public class SpawnPointInfo : ISerializable, IDeserializable
 
 	public SpawnPointInfo(SerializedSpawnPointInfo serializedSpawnPointInfo, int saveVersion)
 	{
-		Deserialize((ISerializedData)(object)serializedSpawnPointInfo, saveVersion);
+		Deserialize(serializedSpawnPointInfo, saveVersion);
 	}
 
 	public void Deserialize(ISerializedData container = null, int saveVersion = -1)
 	{
-		//IL_004c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0051: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0055: Unknown result type (might be due to invalid IL or missing references)
 		//IL_005a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b5: Unknown result type (might be due to invalid IL or missing references)
 		//IL_00b9: Unknown result type (might be due to invalid IL or missing references)
 		//IL_00be: Unknown result type (might be due to invalid IL or missing references)
 		SerializedSpawnPointInfo serializedSpawnPointInfo = container as SerializedSpawnPointInfo;
 		Direction = (SpawnDirectionsDefinition.E_Direction)serializedSpawnPointInfo.Direction;
 		int count = serializedSpawnPointInfo.SpawnPointsPositions.Count;
-		SerializableVector2Int val;
 		for (int i = 0; i < count; i++)
 		{
 			List<SerializableVector2Int> list = serializedSpawnPointInfo.SpawnPointsPositions[i];
@@ -52,29 +46,27 @@ public class SpawnPointInfo : ISerializable, IDeserializable
 			List<Tile> list2 = new List<Tile>(count2);
 			for (int j = 0; j < count2; j++)
 			{
-				val = list[j];
-				Vector2Int val2 = ((SerializableVector2Int)(ref val)).Deserialize();
-				list2.Add(TileMapManager.GetTile(((Vector2Int)(ref val2)).x, ((Vector2Int)(ref val2)).y));
+				Vector2Int val = list[j].Deserialize();
+				list2.Add(TileMapManager.GetTile(((Vector2Int)(ref val)).x, ((Vector2Int)(ref val)).y));
 			}
 			SpawnPoints.Add(list2);
 		}
 		int count3 = serializedSpawnPointInfo.SpawnPointsBasesPositions.Count;
 		for (int k = 0; k < count3; k++)
 		{
-			val = serializedSpawnPointInfo.SpawnPointsBasesPositions[k];
-			Vector2Int val3 = ((SerializableVector2Int)(ref val)).Deserialize();
-			SpawnPointsBases.Add(TileMapManager.GetTile(((Vector2Int)(ref val3)).x, ((Vector2Int)(ref val3)).y));
+			Vector2Int val2 = serializedSpawnPointInfo.SpawnPointsBasesPositions[k].Deserialize();
+			SpawnPointsBases.Add(TileMapManager.GetTile(((Vector2Int)(ref val2)).x, ((Vector2Int)(ref val2)).y));
 		}
 		SpawnDirectionInfo = serializedSpawnPointInfo.SpawnDirectionInfo;
 	}
 
 	public ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedSpawnPointInfo
+		return new SerializedSpawnPointInfo
 		{
 			Direction = (int)Direction,
-			SpawnPointsPositions = SpawnPoints.Select((List<Tile> spawnPoints) => ((IEnumerable<Tile>)spawnPoints).Select((Func<Tile, SerializableVector2Int>)((Tile tile) => new SerializableVector2Int(tile.Position))).ToList()).ToList(),
-			SpawnPointsBasesPositions = ((IEnumerable<Tile>)SpawnPointsBases).Select((Func<Tile, SerializableVector2Int>)((Tile tile) => new SerializableVector2Int(tile.Position))).ToList(),
+			SpawnPointsPositions = SpawnPoints.Select((List<Tile> spawnPoints) => spawnPoints.Select((Tile tile) => new SerializableVector2Int(tile.Position)).ToList()).ToList(),
+			SpawnPointsBasesPositions = SpawnPointsBases.Select((Tile tile) => new SerializableVector2Int(tile.Position)).ToList(),
 			SpawnDirectionInfo = SpawnDirectionInfo
 		};
 	}

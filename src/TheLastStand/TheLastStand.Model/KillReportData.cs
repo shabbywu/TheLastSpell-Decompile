@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using TheLastStand.Controller.Unit.Enemy;
@@ -66,17 +65,17 @@ public struct KillReportData
 
 	public float GetTotalExperienceForEntity(IEntity entity)
 	{
-		return EnemyUnitController.ComputeExperienceGain(BaseExperience * (float)DictionaryExtensions.GetValueOrDefault<int, int>(KillAmountPerKillerId, entity.RandomId) * PlayableUnitDatabase.KillerBonusExperienceFactor);
+		return EnemyUnitController.ComputeExperienceGain(BaseExperience * (float)KillAmountPerKillerId.GetValueOrDefault(entity.RandomId) * PlayableUnitDatabase.KillerBonusExperienceFactor);
 	}
 
 	public int GetKillAmountForEntity(IEntity entity)
 	{
-		return DictionaryExtensions.GetValueOrDefault<int, int>(KillAmountPerKillerId, entity.RandomId);
+		return KillAmountPerKillerId.GetValueOrDefault(entity.RandomId);
 	}
 
 	public void AddKillForEntity(IEntity killer, int amount = 1)
 	{
-		DictionaryExtensions.AddValueOrCreateKey<int, int>(KillAmountPerKillerId, killer?.RandomId ?? (-1), amount, (Func<int, int, int>)((int a, int b) => a + b));
+		KillAmountPerKillerId.AddValueOrCreateKey(killer?.RandomId ?? (-1), amount, (int a, int b) => a + b);
 	}
 
 	public SerializedKillReportData Serialize()

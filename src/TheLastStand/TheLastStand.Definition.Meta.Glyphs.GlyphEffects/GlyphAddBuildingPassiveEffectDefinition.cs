@@ -6,7 +6,6 @@ using TheLastStand.Database;
 using TheLastStand.Database.Building;
 using TheLastStand.Definition.Building.BuildingPassive;
 using TheLastStand.Framework.Extensions;
-using TheLastStand.Framework.Serialization;
 using UnityEngine;
 
 namespace TheLastStand.Definition.Meta.Glyphs.GlyphEffects;
@@ -28,7 +27,7 @@ public class GlyphAddBuildingPassiveEffectDefinition : GlyphEffectDefinition
 	public override void Deserialize(XContainer container)
 	{
 		XElement val = (XElement)(object)((container is XElement) ? container : null);
-		string text = StringExtensions.Replace(val.Attribute(XName.op_Implicit("PassiveId")).Value, ((Definition)this).TokenVariables);
+		string text = val.Attribute(XName.op_Implicit("PassiveId")).Value.Replace(base.TokenVariables);
 		if (BuildingDatabase.BuildingPassiveDefinitions.TryGetValue(text, out var value))
 		{
 			BuildingPassiveDefinition = value;

@@ -3,7 +3,6 @@ using System.Xml.Linq;
 using TheLastStand.Definition.Skill.SkillAction;
 using TheLastStand.Definition.Skill.SkillEffect;
 using TheLastStand.Definition.Unit.Perk.PerkDataCondition;
-using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Unit.Perk.PerkEffect;
 
@@ -31,7 +30,7 @@ public class AddSkillEffectDefinition : APerkEffectDefinition
 		{
 			AddEffect(SkillActionDefinition.DeserializeSkillEffect(item));
 		}
-		PerkDataConditionsDefinition = new PerkDataConditionsDefinition((XContainer)(object)((XContainer)val).Element(XName.op_Implicit("Conditions")), ((Definition)this).TokenVariables);
+		PerkDataConditionsDefinition = new PerkDataConditionsDefinition((XContainer)(object)((XContainer)val).Element(XName.op_Implicit("Conditions")), base.TokenVariables);
 	}
 
 	private void AddEffect(SkillEffectDefinition skillEffectDefinition)

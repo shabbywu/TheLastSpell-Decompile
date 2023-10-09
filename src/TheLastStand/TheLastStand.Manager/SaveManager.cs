@@ -367,7 +367,7 @@ public class SaveManager : Manager<SaveManager>
 				serializedApplicationState = null;
 			}
 		}
-		TPSingleton<ApplicationManager>.Instance.Deserialize((ISerializedData)(object)serializedApplicationState, ((int?)serializedApplicationState?.SaveVersion) ?? (-1));
+		TPSingleton<ApplicationManager>.Instance.Deserialize(serializedApplicationState, ((int?)serializedApplicationState?.SaveVersion) ?? (-1));
 		((CLogger<SaveManager>)TPSingleton<SaveManager>.Instance).Log((object)"Application save loaded!", (CLogLevel)2, false, false);
 	}
 
@@ -416,7 +416,7 @@ public class SaveManager : Manager<SaveManager>
 			BackupSaveFilesBeforeVersionUpdate();
 			Load();
 			Save();
-			if (!(((StateMachine)ApplicationManager.Application).State is SplashScreen))
+			if (!(ApplicationManager.Application.State is SplashScreen))
 			{
 				SafeLoadGameSave();
 			}
@@ -503,7 +503,7 @@ public class SaveManager : Manager<SaveManager>
 	[DevConsoleCommand("ChangeProfile")]
 	public static void DebugChangeProfile(int profile)
 	{
-		if (((StateMachine)ApplicationManager.Application).State.GetName() == "GameLobby" && CurrentProfileIndex != profile)
+		if (ApplicationManager.Application.State.GetName() == "GameLobby" && CurrentProfileIndex != profile)
 		{
 			ChangeCurrentProfile(profile);
 			if ((Object)(object)TPSingleton<SaveManager>.Instance.devConsole != (Object)null)

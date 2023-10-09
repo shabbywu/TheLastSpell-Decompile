@@ -4,7 +4,6 @@ using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
 using TPLib;
-using TheLastStand.Framework.Automaton;
 using TheLastStand.Framework.Extensions;
 using TheLastStand.Manager;
 using TheLastStand.Model;
@@ -225,13 +224,13 @@ public class FogView : MonoBehaviour
 		{
 			TweenExtensions.Kill(obj, false);
 		}
-		fogAreaIntensityTween = (Tween)(object)TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(TweenExtensions.SetFullId<TweenerCore<float, float, FloatOptions>>(DOTween.To((DOGetter<float>)GetFogAlpha, (DOSetter<float>)SetFogAlpha, num, fogAreaTransitionDuration), "FogAreaIntensity", (Component)(object)this), show ? appearFogAreaTransitionEasing : disappearFogAreaTransitionEasing);
+		fogAreaIntensityTween = (Tween)(object)TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(DOTween.To((DOGetter<float>)GetFogAlpha, (DOSetter<float>)SetFogAlpha, num, fogAreaTransitionDuration).SetFullId<TweenerCore<float, float, FloatOptions>>("FogAreaIntensity", (Component)(object)this), show ? appearFogAreaTransitionEasing : disappearFogAreaTransitionEasing);
 	}
 
 	private float GetFogAlpha()
 	{
 		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-		if (!(((StateMachine)ApplicationManager.Application).State.GetName() == "Game"))
+		if (!(ApplicationManager.Application.State.GetName() == "Game"))
 		{
 			return 0f;
 		}
@@ -241,7 +240,7 @@ public class FogView : MonoBehaviour
 	private void SetFogAlpha(float value)
 	{
 		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		if (!(((StateMachine)ApplicationManager.Application).State.GetName() != "Game"))
+		if (!(ApplicationManager.Application.State.GetName() != "Game"))
 		{
 			TileMapView.FogAreaTilemap.color = new Color(fogAreaColorInit.r, fogAreaColorInit.g, fogAreaColorInit.b, value);
 		}

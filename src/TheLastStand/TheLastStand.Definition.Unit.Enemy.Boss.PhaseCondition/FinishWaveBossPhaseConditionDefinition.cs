@@ -4,7 +4,7 @@ using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Unit.Enemy.Boss.PhaseCondition;
 
-public class FinishWaveBossPhaseConditionDefinition : Definition, IBossPhaseConditionDefinition
+public class FinishWaveBossPhaseConditionDefinition : TheLastStand.Framework.Serialization.Definition, IBossPhaseConditionDefinition
 {
 	public FinishWaveBossPhaseConditionDefinition(XContainer container, Dictionary<string, string> tokenVariables = null)
 		: base(container, tokenVariables)

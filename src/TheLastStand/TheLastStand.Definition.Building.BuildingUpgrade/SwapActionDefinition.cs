@@ -23,14 +23,14 @@ public class SwapActionDefinition : BuildingUpgradeEffectDefinition
 		base.Deserialize(xContainer);
 		XElement val = (XElement)(object)((xContainer is XElement) ? xContainer : null);
 		XAttribute val2 = val.Attribute(XName.op_Implicit("OldActionId"));
-		if (XDocumentExtensions.IsNullOrEmpty(val2))
+		if (val2.IsNullOrEmpty())
 		{
 			TPDebug.LogError((object)"SwapActionDefinition must have an OldActionId", (Object)null);
 			return;
 		}
 		OldActionId = val2.Value;
 		XAttribute val3 = val.Attribute(XName.op_Implicit("NewActionId"));
-		if (XDocumentExtensions.IsNullOrEmpty(val3))
+		if (val3.IsNullOrEmpty())
 		{
 			TPDebug.LogError((object)"SwapkActionDefinition must have an NewActionId", (Object)null);
 		}

@@ -412,14 +412,14 @@ public class PlayableUnit : Unit, ISkillContainer
 		}
 	}
 
-	public bool IsManaCostLocked => DictionaryExtensions.GetValueOrDefault<TheLastStand.Model.Skill.Skill.E_ComputationStat, int>(PerkComputationStatsLocksBuffer, TheLastStand.Model.Skill.Skill.E_ComputationStat.ManaCost) > 0;
+	public bool IsManaCostLocked => PerkComputationStatsLocksBuffer.GetValueOrDefault(TheLastStand.Model.Skill.Skill.E_ComputationStat.ManaCost) > 0;
 
-	public bool IsHealthCostLocked => DictionaryExtensions.GetValueOrDefault<TheLastStand.Model.Skill.Skill.E_ComputationStat, int>(PerkComputationStatsLocksBuffer, TheLastStand.Model.Skill.Skill.E_ComputationStat.HealthCost) > 0;
+	public bool IsHealthCostLocked => PerkComputationStatsLocksBuffer.GetValueOrDefault(TheLastStand.Model.Skill.Skill.E_ComputationStat.HealthCost) > 0;
 
 	public PlayableUnit(UnitTemplateDefinition unitTemplateDefinition, SerializedPlayableUnit serializedPlayableUnit, UnitController unitController, int saveVersion, bool isDead)
 		: base(unitTemplateDefinition, unitController)
 	{
-		Deserialize((ISerializedData)(object)serializedPlayableUnit, saveVersion, isDead);
+		Deserialize(serializedPlayableUnit, saveVersion, isDead);
 		Init();
 		InitLifetimeStats(serializedPlayableUnit.LifetimeStats);
 	}
@@ -447,27 +447,27 @@ public class PlayableUnit : Unit, ISkillContainer
 		int num = 0;
 		if ((statusType & TheLastStand.Model.Status.Status.E_StatusType.Poison) != 0)
 		{
-			num += (int)GetClampedStatValueWithModifier(UnitStatDefinition.E_Stat.PoisonDurationModifier, (statModifiers != null) ? new float?(DictionaryExtensions.GetValueOrDefault<UnitStatDefinition.E_Stat, float>(statModifiers, UnitStatDefinition.E_Stat.PoisonDurationModifier)) : null);
+			num += (int)GetClampedStatValueWithModifier(UnitStatDefinition.E_Stat.PoisonDurationModifier, statModifiers?.GetValueOrDefault(UnitStatDefinition.E_Stat.PoisonDurationModifier));
 			num += (int)GetPerkModifierForComputationStat(TheLastStand.Model.Skill.Skill.E_ComputationStat.PoisonDurationModifier, perkDataContainer);
 		}
 		if ((statusType & TheLastStand.Model.Status.Status.E_StatusType.Debuff) != 0)
 		{
-			num += (int)GetClampedStatValueWithModifier(UnitStatDefinition.E_Stat.DebuffDurationModifier, (statModifiers != null) ? new float?(DictionaryExtensions.GetValueOrDefault<UnitStatDefinition.E_Stat, float>(statModifiers, UnitStatDefinition.E_Stat.DebuffDurationModifier)) : null);
+			num += (int)GetClampedStatValueWithModifier(UnitStatDefinition.E_Stat.DebuffDurationModifier, statModifiers?.GetValueOrDefault(UnitStatDefinition.E_Stat.DebuffDurationModifier));
 			num += (int)GetPerkModifierForComputationStat(TheLastStand.Model.Skill.Skill.E_ComputationStat.DebuffDurationModifier, perkDataContainer);
 		}
 		if ((statusType & TheLastStand.Model.Status.Status.E_StatusType.Buff) != 0)
 		{
-			num += (int)GetClampedStatValueWithModifier(UnitStatDefinition.E_Stat.BuffDurationModifier, (statModifiers != null) ? new float?(DictionaryExtensions.GetValueOrDefault<UnitStatDefinition.E_Stat, float>(statModifiers, UnitStatDefinition.E_Stat.BuffDurationModifier)) : null);
+			num += (int)GetClampedStatValueWithModifier(UnitStatDefinition.E_Stat.BuffDurationModifier, statModifiers?.GetValueOrDefault(UnitStatDefinition.E_Stat.BuffDurationModifier));
 			num += (int)GetPerkModifierForComputationStat(TheLastStand.Model.Skill.Skill.E_ComputationStat.BuffDurationModifier, perkDataContainer);
 		}
 		if ((statusType & TheLastStand.Model.Status.Status.E_StatusType.Stun) != 0)
 		{
-			num += (int)GetClampedStatValueWithModifier(UnitStatDefinition.E_Stat.StunDurationModifier, (statModifiers != null) ? new float?(DictionaryExtensions.GetValueOrDefault<UnitStatDefinition.E_Stat, float>(statModifiers, UnitStatDefinition.E_Stat.StunDurationModifier)) : null);
+			num += (int)GetClampedStatValueWithModifier(UnitStatDefinition.E_Stat.StunDurationModifier, statModifiers?.GetValueOrDefault(UnitStatDefinition.E_Stat.StunDurationModifier));
 			num += (int)GetPerkModifierForComputationStat(TheLastStand.Model.Skill.Skill.E_ComputationStat.StunDurationModifier, perkDataContainer);
 		}
 		if ((statusType & TheLastStand.Model.Status.Status.E_StatusType.Contagion) != 0)
 		{
-			num += (int)GetClampedStatValueWithModifier(UnitStatDefinition.E_Stat.ContagionDurationModifier, (statModifiers != null) ? new float?(DictionaryExtensions.GetValueOrDefault<UnitStatDefinition.E_Stat, float>(statModifiers, UnitStatDefinition.E_Stat.ContagionDurationModifier)) : null);
+			num += (int)GetClampedStatValueWithModifier(UnitStatDefinition.E_Stat.ContagionDurationModifier, statModifiers?.GetValueOrDefault(UnitStatDefinition.E_Stat.ContagionDurationModifier));
 			num += (int)GetPerkModifierForComputationStat(TheLastStand.Model.Skill.Skill.E_ComputationStat.ContagionDurationModifier, perkDataContainer);
 		}
 		return Mathf.Max(1, baseValue + num);
@@ -651,7 +651,7 @@ public class PlayableUnit : Unit, ISkillContainer
 	public void Deserialize(ISerializedData container = null, int saveVersion = -1, bool isDead = false)
 	{
 		SerializedPlayableUnit serializedPlayableUnit = container as SerializedPlayableUnit;
-		base.Deserialize((ISerializedData)(object)serializedPlayableUnit.Unit, saveVersion);
+		base.Deserialize(serializedPlayableUnit.Unit, saveVersion);
 		PlayableUnitName = serializedPlayableUnit.Name;
 		ArchetypeId = serializedPlayableUnit.ArchetypeId;
 		Gender = serializedPlayableUnit.Portrait.Gender;
@@ -704,7 +704,7 @@ public class PlayableUnit : Unit, ISkillContainer
 				{
 					equipmentSlot = new EquipmentSlotController(itemSlot, equipmentSlotView, this).EquipmentSlot;
 				}
-				catch (MissingAssetException<ItemDatabase> arg)
+				catch (Database<ItemDatabase>.MissingAssetException arg)
 				{
 					((CLogger<InventoryManager>)TPSingleton<InventoryManager>.Instance).LogError((object)$"Could not find equipment {itemSlot.Item.Id} for slot {itemSlot.Id}, this equipment will be skipped.\n{arg}", (CLogLevel)0, true, true);
 					continue;
@@ -727,7 +727,7 @@ public class PlayableUnit : Unit, ISkillContainer
 		SerializedPlayableUnit serializedPlayableUnit = container as SerializedPlayableUnit;
 		if (serializedPlayableUnit.Stats != null)
 		{
-			DeserializeStats((ISerializedData)(object)serializedPlayableUnit.Stats, saveVersion);
+			DeserializeStats(serializedPlayableUnit.Stats, saveVersion);
 		}
 		PlayableUnitStatsController.RefreshEquipmentValues();
 		if ((Object)(object)UnitView != (Object)null)
@@ -747,7 +747,7 @@ public class PlayableUnit : Unit, ISkillContainer
 
 	public override ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedPlayableUnit((SerializedUnit)(object)base.Serialize())
+		return new SerializedPlayableUnit((SerializedUnit)base.Serialize())
 		{
 			Name = PlayableUnitName,
 			ArchetypeId = ArchetypeId,
@@ -759,31 +759,31 @@ public class PlayableUnit : Unit, ISkillContainer
 			},
 			LastTurnHealth = LastTurnHealth,
 			PerksPoints = PerksPoints,
-			SerializedLevelUpPoints = UnitLevelUpPoints.Select((UnitLevelUpPoint o) => (SerializedLevelUpPoint)(object)o.Serialize()).ToList(),
+			SerializedLevelUpPoints = UnitLevelUpPoints.Select((UnitLevelUpPoint o) => (SerializedLevelUpPoint)o.Serialize()).ToList(),
 			Experience = Experience,
 			ExperienceInCurrentLevel = ExperienceInCurrentLevel,
-			ContextualSkills = ContextualSkills.Select((TheLastStand.Model.Skill.Skill o) => (SerializedSkill)(object)o.Serialize()).ToList(),
+			ContextualSkills = ContextualSkills.Select((TheLastStand.Model.Skill.Skill o) => (SerializedSkill)o.Serialize()).ToList(),
 			Level = Level,
-			LevelUp = (SerializedLevelUpBonuses)(object)LevelUp.Serialize(),
+			LevelUp = (SerializedLevelUpBonuses)LevelUp.Serialize(),
 			EquippedWeaponSetIndex = EquippedWeaponSetIndex,
 			EquipmentSlots = EquipmentSlots.Select((KeyValuePair<ItemSlotDefinition.E_ItemSlotId, List<EquipmentSlot>> o) => new SerializedEquipmentSlot
 			{
 				Id = o.Key,
-				ItemSlots = o.Value.Select((EquipmentSlot equipSlot) => (SerializedItemSlot)(object)equipSlot.Serialize()).ToList()
+				ItemSlots = o.Value.Select((EquipmentSlot equipSlot) => (SerializedItemSlot)equipSlot.Serialize()).ToList()
 			}).ToList(),
 			Traits = UnitTraitDefinitions.Select((UnitTraitDefinition o) => o.Id).ToList(),
 			PerkCollections = PerkTree.Serialize(),
 			NativePerks = (from p in Perks
 				where p.Value.PerkTier == null
-				select (SerializedPerk)(object)p.Value.Serialize()).ToList(),
-			LifetimeStats = (SerializedLifetimeStats)(object)LifetimeStats.Serialize(),
+				select (SerializedPerk)p.Value.Serialize()).ToList(),
+			LifetimeStats = (SerializedLifetimeStats)LifetimeStats.Serialize(),
 			MovedThisDay = MovedThisDay,
 			HelmetDisplayed = HelmetDisplayed,
 			ActionPointsSpentThisTurn = ActionPointsSpentThisTurn,
 			MomentumTilesActive = MomentumTilesActive,
 			TotalMomentumTilesCrossedThisTurn = TotalMomentumTilesCrossedThisTurn,
 			TilesCrossedThisTurn = TilesCrossedThisTurn,
-			Stats = (SerializedUnitStats)(object)base.UnitStatsController.UnitStats.Serialize()
+			Stats = (SerializedUnitStats)base.UnitStatsController.UnitStats.Serialize()
 		};
 	}
 }

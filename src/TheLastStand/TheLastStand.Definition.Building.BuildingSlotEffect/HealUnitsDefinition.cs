@@ -17,8 +17,7 @@ public class HealUnitsDefinition : BuildingSlotEffectDefinition
 	public override BuildingSlotEffectDefinition Clone()
 	{
 		HealUnitsDefinition obj = base.Clone() as HealUnitsDefinition;
-		Node value = Value;
-		obj.Value = ((value != null) ? value.Clone() : null);
+		obj.Value = Value?.Clone();
 		return obj;
 	}
 }

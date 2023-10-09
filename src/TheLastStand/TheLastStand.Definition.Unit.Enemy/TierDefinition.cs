@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.Enemy;
 
-public class TierDefinition : Definition
+public class TierDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public int Index { get; private set; }
 

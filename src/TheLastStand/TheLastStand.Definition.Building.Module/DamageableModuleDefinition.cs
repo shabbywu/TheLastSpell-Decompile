@@ -5,7 +5,6 @@ using System.Xml.Linq;
 using TPLib;
 using TPLib.Log;
 using TheLastStand.Framework.Extensions;
-using TheLastStand.Framework.Serialization;
 using TheLastStand.Manager.Building;
 using TheLastStand.Manager.Meta;
 using UnityEngine;
@@ -37,7 +36,7 @@ public class DamageableModuleDefinition : BuildingModuleDefinition
 			{
 				foreach (string idListId in BuildingDefinition.IdListIds)
 				{
-					num += DictionaryExtensions.GetValueOrDefault<string, int>(TPSingleton<GlyphManager>.Instance.BuildingHealthModifiers, idListId);
+					num += TPSingleton<GlyphManager>.Instance.BuildingHealthModifiers.GetValueOrDefault(idListId);
 				}
 			}
 			return num;
@@ -70,7 +69,7 @@ public class DamageableModuleDefinition : BuildingModuleDefinition
 		{
 			if (!float.TryParse(val2.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var result))
 			{
-				CLoggerManager.Log((object)("Building " + BuildingDefinition.Id + "'s Health " + ((Definition)this).HasAnInvalidFloat(val2.Value)), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+				CLoggerManager.Log((object)("Building " + BuildingDefinition.Id + "'s Health " + HasAnInvalidFloat(val2.Value)), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 				return;
 			}
 			NativeHealthTotal = result;
@@ -84,7 +83,7 @@ public class DamageableModuleDefinition : BuildingModuleDefinition
 			}
 			else
 			{
-				CLoggerManager.Log((object)("Building " + BuildingDefinition.Id + "'s FlameCount " + ((Definition)this).HasAnInvalid("byte", val3.Value)), (LogType)2, (CLogLevel)1, true, "StaticLog", false);
+				CLoggerManager.Log((object)("Building " + BuildingDefinition.Id + "'s FlameCount " + HasAnInvalid("byte", val3.Value)), (LogType)2, (CLogLevel)1, true, "StaticLog", false);
 			}
 		}
 		XElement val4 = ((XContainer)val).Element(XName.op_Implicit("FlameAnchorPoints"));

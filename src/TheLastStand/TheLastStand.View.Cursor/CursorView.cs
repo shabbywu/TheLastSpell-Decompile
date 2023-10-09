@@ -5,7 +5,6 @@ using DG.Tweening.Plugins.Options;
 using Rewired;
 using TPLib;
 using TheLastStand.Controller.TileMap;
-using TheLastStand.Framework.Automaton;
 using TheLastStand.Manager;
 using TheLastStand.Manager.Building;
 using TheLastStand.Manager.LevelEditor;
@@ -128,7 +127,7 @@ public class CursorView : TPSingleton<CursorView>
 		//IL_005c: Unknown result type (might be due to invalid IL or missing references)
 		//IL_007b: Unknown result type (might be due to invalid IL or missing references)
 		//IL_009b: Unknown result type (might be due to invalid IL or missing references)
-		if (!(((StateMachine)ApplicationManager.Application).State.GetName() != "Game") && InputManager.IsLastControllerJoystick && joystickCursorSnapTween == null)
+		if (!(ApplicationManager.Application.State.GetName() != "Game") && InputManager.IsLastControllerJoystick && joystickCursorSnapTween == null)
 		{
 			Vector3 val = Vector2.op_Implicit(TileMapView.GetTileCenter(TPSingleton<GameManager>.Instance.Game.Cursor.Tile));
 			if (!(Vector3.SqrMagnitude(((Component)joystickCursor).transform.position - val) < 0.01f))
@@ -142,7 +141,7 @@ public class CursorView : TPSingleton<CursorView>
 	{
 		//IL_0048: Unknown result type (might be due to invalid IL or missing references)
 		//IL_004d: Unknown result type (might be due to invalid IL or missing references)
-		if (!(((StateMachine)ApplicationManager.Application).State.GetName() != "Game") && InputManager.IsLastControllerJoystick)
+		if (!(ApplicationManager.Application.State.GetName() != "Game") && InputManager.IsLastControllerJoystick)
 		{
 			Tween obj = joystickCursorSnapTween;
 			if (obj != null)
@@ -158,7 +157,7 @@ public class CursorView : TPSingleton<CursorView>
 	{
 		base.Awake();
 		TPSingleton<InputManager>.Instance.LastActiveControllerChanged += OnLastActiveControllerChanged;
-		if (((StateMachine)ApplicationManager.Application).State.GetName() == "Game")
+		if (ApplicationManager.Application.State.GetName() == "Game")
 		{
 			TPSingleton<HUDJoystickNavigationManager>.Instance.HUDNavigationToggled += OnHUDNavigationToggled;
 		}
@@ -219,7 +218,7 @@ public class CursorView : TPSingleton<CursorView>
 
 	private void FocusCameraOnCursorTile()
 	{
-		if (!(((StateMachine)ApplicationManager.Application).State.GetName() != "Game") && TPSingleton<GameManager>.Instance.Game.Cursor.Tile != null)
+		if (!(ApplicationManager.Application.State.GetName() != "Game") && TPSingleton<GameManager>.Instance.Game.Cursor.Tile != null)
 		{
 			ACameraView.MoveTo(((Component)TPSingleton<GameManager>.Instance.Game.Cursor.Tile.TileView).transform);
 		}
@@ -288,17 +287,17 @@ public class CursorView : TPSingleton<CursorView>
 		//IL_0380: Unknown result type (might be due to invalid IL or missing references)
 		//IL_02fc: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0327: Unknown result type (might be due to invalid IL or missing references)
-		if (((StateMachine)ApplicationManager.Application).State.GetName() == "Game" && (TPSingleton<GameManager>.Instance.Game.State == Game.E_State.CharacterSheet || TPSingleton<GameManager>.Instance.Game.State == Game.E_State.Recruitment || TPSingleton<GameManager>.Instance.Game.State == Game.E_State.Shopping || TPSingleton<GameManager>.Instance.Game.State == Game.E_State.BuildingUpgrade || TPSingleton<GameManager>.Instance.Game.State == Game.E_State.NightReport || TPSingleton<GameManager>.Instance.Game.State == Game.E_State.ProductionReport || TPSingleton<GameManager>.Instance.Game.State == Game.E_State.HowToPlay || TPSingleton<GameManager>.Instance.Game.State == Game.E_State.CutscenePlaying))
+		if (ApplicationManager.Application.State.GetName() == "Game" && (TPSingleton<GameManager>.Instance.Game.State == Game.E_State.CharacterSheet || TPSingleton<GameManager>.Instance.Game.State == Game.E_State.Recruitment || TPSingleton<GameManager>.Instance.Game.State == Game.E_State.Shopping || TPSingleton<GameManager>.Instance.Game.State == Game.E_State.BuildingUpgrade || TPSingleton<GameManager>.Instance.Game.State == Game.E_State.NightReport || TPSingleton<GameManager>.Instance.Game.State == Game.E_State.ProductionReport || TPSingleton<GameManager>.Instance.Game.State == Game.E_State.HowToPlay || TPSingleton<GameManager>.Instance.Game.State == Game.E_State.CutscenePlaying))
 		{
 			return;
 		}
-		if (((StateMachine)ApplicationManager.Application).State.GetName() == "WorldMap" && TPSingleton<WorldMapCityManager>.Instance.SelectedCity != null)
+		if (ApplicationManager.Application.State.GetName() == "WorldMap" && TPSingleton<WorldMapCityManager>.Instance.SelectedCity != null)
 		{
 			joystickCursor.Show(show: false);
 			return;
 		}
 		UpdateCursor();
-		if (!(((StateMachine)ApplicationManager.Application).State.GetName() == "Game"))
+		if (!(ApplicationManager.Application.State.GetName() == "Game"))
 		{
 			return;
 		}
@@ -340,7 +339,7 @@ public class CursorView : TPSingleton<CursorView>
 					TPSingleton<TileObjectSelectionManager>.Instance.UpdateUnitInfoPanel(cursor.Tile.Unit);
 				}
 			}
-			if (((StateMachine)ApplicationManager.Application).State.GetName() == "LevelEditor" && TPSingleton<LevelEditorManager>.Instance.RectFillTileSource != null)
+			if (ApplicationManager.Application.State.GetName() == "LevelEditor" && TPSingleton<LevelEditorManager>.Instance.RectFillTileSource != null)
 			{
 				CursorFeedbacksTilemap.ClearAllTiles();
 				Tile[] tilesInRect = TileMapController.GetTilesInRect(TileMapController.GetRectFromTileToTile(TPSingleton<LevelEditorManager>.Instance.RectFillTileSource, cursor.Tile));
@@ -469,7 +468,7 @@ public class CursorView : TPSingleton<CursorView>
 				}
 				if (flag)
 				{
-					if (joystickNoMovementTimer > InputManager.JoystickConfig.Cursor.TileSnapDelay && ((StateMachine)ApplicationManager.Application).State.GetName() == "Game" && TPSingleton<GameManager>.Instance.Game.Cursor.Tile != null)
+					if (joystickNoMovementTimer > InputManager.JoystickConfig.Cursor.TileSnapDelay && ApplicationManager.Application.State.GetName() == "Game" && TPSingleton<GameManager>.Instance.Game.Cursor.Tile != null)
 					{
 						SnapJoystickViewToCursorTile();
 					}

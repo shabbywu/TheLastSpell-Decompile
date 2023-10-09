@@ -6,13 +6,13 @@ using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Modding.ModuleConfig.Perks;
 
-public class ModdedPerkCollectionsDefinition : Definition
+public class ModdedPerkCollectionsDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public List<UnitPerkCollectionDefinition> PerkCollectionDefinitions { get; } = new List<UnitPerkCollectionDefinition>();
 
 
 	public ModdedPerkCollectionsDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

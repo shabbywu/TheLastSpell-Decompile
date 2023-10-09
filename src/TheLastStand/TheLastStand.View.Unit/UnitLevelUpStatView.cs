@@ -341,11 +341,11 @@ public class UnitLevelUpStatView : MonoBehaviour, ISelectHandler, IEventSystemHa
 		{
 			if (InputManager.IsLastControllerJoystick)
 			{
-				SelectableExtensions.ClearNavigation(Selectable);
+				Selectable.ClearNavigation();
 			}
 			TweenSettingsExtensions.SetEase<TweenerCore<Color, Color, ColorOptions>>(DOTweenModuleUI.DOFade(statArrowImage, 0f, 0.5f), (Ease)9);
 			DOTweenModuleUI.DOColor((Graphic)(object)statResultText, Color.white, 1f);
-			DOTweenModuleUI.DOColor((Graphic)(object)statDisplay.StatValueText, ColorExtensions.WithA(Color.grey, 0f), 1f);
+			DOTweenModuleUI.DOColor((Graphic)(object)statDisplay.StatValueText, Color.grey.WithA(0f), 1f);
 			ShortcutExtensions.DOPunchScale(((TMP_Text)statResultText).transform, Vector3.one * 0.3f, 0.2f, 0, 0.1f);
 			((Behaviour)statBoxValidationAnimator).enabled = true;
 			TweenSettingsExtensions.SetEase<TweenerCore<float, float, FloatOptions>>(DOTweenModuleUI.DOFade(statBoxValidationCanvasGroup, 1f, 0.2f), (Ease)9);
@@ -381,7 +381,7 @@ public class UnitLevelUpStatView : MonoBehaviour, ISelectHandler, IEventSystemHa
 
 	private Sprite GetRarityBackgroundSprite(int rarityLevel, bool isHovered = false)
 	{
-		return ResourcePooler<Sprite>.LoadOnce(string.Format(isHovered ? Constants.LevelUpRarityBackgroundPathSelected : Constants.LevelUpRarityBackgroundPath, (rarityLevel + 1).ToString("00")), false);
+		return ResourcePooler<Sprite>.LoadOnce(string.Format(isHovered ? Constants.LevelUpRarityBackgroundPathSelected : Constants.LevelUpRarityBackgroundPath, (rarityLevel + 1).ToString("00")));
 	}
 
 	private void OnDestroy()

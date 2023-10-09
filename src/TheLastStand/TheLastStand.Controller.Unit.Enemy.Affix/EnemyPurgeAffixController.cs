@@ -33,7 +33,7 @@ public class EnemyPurgeAffixController : EnemyAffixController
 			base.EnemyAffix.EnemyUnit.UnitController.RemoveStatus(EnemyPurgeAffix.EnemyPurgeAffixEffectDefinition.StatusType);
 			if (EnemyPurgeAffix.EnemyPurgeAffixEffectDefinition.StatusType != TheLastStand.Model.Status.Status.E_StatusType.Charged)
 			{
-				DispelDisplay pooledComponent = ObjectPooler.GetPooledComponent<DispelDisplay>("DispelDisplay", ResourcePooler.LoadOnce<DispelDisplay>("Prefab/Displayable Effect/UI Effect Displays/DispelDisplay", false), EffectManager.EffectDisplaysParent, false);
+				DispelDisplay pooledComponent = ObjectPooler.GetPooledComponent<DispelDisplay>("DispelDisplay", ResourcePooler.LoadOnce<DispelDisplay>("Prefab/Displayable Effect/UI Effect Displays/DispelDisplay", failSilently: false), EffectManager.EffectDisplaysParent, dontSetParent: false);
 				pooledComponent.Init(EnemyPurgeAffix.EnemyPurgeAffixEffectDefinition.StatusType);
 				base.EnemyAffix.EnemyUnit.UnitController.AddEffectDisplay(pooledComponent);
 				EffectManager.DisplayEffects();

@@ -31,13 +31,13 @@ public class EnemyUnitStats : UnitStats
 		});
 		serializedEnemyUnitStats.Stats.ForEach(delegate(SerializedEnemyUnitStat o)
 		{
-			EnemyUnitStatsController.InitStat((ISerializedData)(object)o);
+			EnemyUnitStatsController.InitStat(o);
 		});
 	}
 
 	public override ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedEnemyUnitStats
+		return new SerializedEnemyUnitStats
 		{
 			Stats = (from s in base.Stats
 				where s.Value.IsChildStat

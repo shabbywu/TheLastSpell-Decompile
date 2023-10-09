@@ -5,7 +5,6 @@ using TPLib;
 using TPLib.Log;
 using TheLastStand.Database.Unit;
 using TheLastStand.Framework.ExpressionInterpreter;
-using TheLastStand.Framework.Serialization;
 using UnityEngine;
 
 namespace TheLastStand.Definition.Unit.Enemy.Affix;
@@ -34,7 +33,7 @@ public class EnemyReinforcedAffixEffectDefinition : EnemyAffixEffectDefinition
 				continue;
 			}
 			XAttribute val2 = item.Attribute(XName.op_Implicit("Value"));
-			ModifiedStatsEveryXDay.Add(result, Parser.Parse(val2.Value, ((Definition)this).TokenVariables));
+			ModifiedStatsEveryXDay.Add(result, Parser.Parse(val2.Value, base.TokenVariables));
 		}
 	}
 }

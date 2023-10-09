@@ -17,8 +17,7 @@ public class GainManaSlotEffectDefinition : BuildingSlotEffectDefinition
 	public override BuildingSlotEffectDefinition Clone()
 	{
 		GainManaSlotEffectDefinition obj = base.Clone() as GainManaSlotEffectDefinition;
-		Node value = Value;
-		obj.Value = ((value != null) ? value.Clone() : null);
+		obj.Value = Value?.Clone();
 		return obj;
 	}
 }

@@ -7,7 +7,6 @@ using TPLib.Log;
 using TheLastStand.Controller.Meta;
 using TheLastStand.Database;
 using TheLastStand.Definition.Meta;
-using TheLastStand.Framework.Automaton;
 using TheLastStand.Framework.Extensions;
 using TheLastStand.Framework.Serialization;
 using TheLastStand.Manager.Achievements;
@@ -511,7 +510,7 @@ public class MetaUpgradesManager : Manager<MetaUpgradesManager>, ISerializable, 
 
 	public ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedMetaUpgrades
+		return new SerializedMetaUpgrades
 		{
 			ActivatedUpgrades = ActivatedUpgrades.Select((MetaUpgrade o) => o.Serialize() as SerializedMetaUpgrade).ToList(),
 			FullfilledUpgrades = FulfilledUpgrades.Select((MetaUpgrade o) => o.Serialize() as SerializedMetaUpgrade).ToList(),
@@ -539,25 +538,25 @@ public class MetaUpgradesManager : Manager<MetaUpgradesManager>, ISerializable, 
 
 	private void ActivateUpgrade(string upgradeId, bool shouldRefresh = true)
 	{
-		MetaUpgrade metaUpgrade = TPSingleton<MetaUpgradesManager>.Instance.FulfilledUpgrades.Find((MetaUpgrade u) => u.MetaUpgradeDefinition.Id == upgradeId);
-		if (metaUpgrade != null)
+		MetaUpgrade value = TPSingleton<MetaUpgradesManager>.Instance.FulfilledUpgrades.Find((MetaUpgrade u) => u.MetaUpgradeDefinition.Id == upgradeId);
+		if (value != null)
 		{
-			RemoveOrAddThisMetaUpgradeFromFulfilled(metaUpgrade);
-			RemoveOrAddThisMetaUpgradeFromActivated(metaUpgrade, remove: false);
+			RemoveOrAddThisMetaUpgradeFromFulfilled(value);
+			RemoveOrAddThisMetaUpgradeFromActivated(value, remove: false);
 		}
-		else if (ListExtensions.TryFind<MetaUpgrade>(TPSingleton<MetaUpgradesManager>.Instance.UnlockedUpgrades, (Predicate<MetaUpgrade>)((MetaUpgrade u) => u.MetaUpgradeDefinition.Id == upgradeId), ref metaUpgrade))
+		else if (TPSingleton<MetaUpgradesManager>.Instance.UnlockedUpgrades.TryFind((MetaUpgrade u) => u.MetaUpgradeDefinition.Id == upgradeId, out value))
 		{
-			RemoveOrAddThisMetaUpgradeFromUnlocked(metaUpgrade);
-			RemoveOrAddThisMetaUpgradeFromActivated(metaUpgrade, remove: false);
+			RemoveOrAddThisMetaUpgradeFromUnlocked(value);
+			RemoveOrAddThisMetaUpgradeFromActivated(value, remove: false);
 		}
-		else if (ListExtensions.TryFind<MetaUpgrade>(TPSingleton<MetaUpgradesManager>.Instance.LockedUpgrades, (Predicate<MetaUpgrade>)((MetaUpgrade u) => u.MetaUpgradeDefinition.Id == upgradeId), ref metaUpgrade))
+		else if (TPSingleton<MetaUpgradesManager>.Instance.LockedUpgrades.TryFind((MetaUpgrade u) => u.MetaUpgradeDefinition.Id == upgradeId, out value))
 		{
-			RemoveOrAddThisMetaUpgradeFromLocked(metaUpgrade);
-			RemoveOrAddThisMetaUpgradeFromActivated(metaUpgrade, remove: false);
+			RemoveOrAddThisMetaUpgradeFromLocked(value);
+			RemoveOrAddThisMetaUpgradeFromActivated(value, remove: false);
 		}
 		if (shouldRefresh)
 		{
-			MetaUpgradesManager.MetaUpgradeActivated?.Invoke(metaUpgrade);
+			MetaUpgradesManager.MetaUpgradeActivated?.Invoke(value);
 		}
 		TPSingleton<AchievementManager>.Instance.HandleMetaUpgrade(upgradeId);
 	}
@@ -678,7 +677,7 @@ public class MetaUpgradesManager : Manager<MetaUpgradesManager>, ISerializable, 
 		}
 		InsertIntoMetaUpgradeList(upgrade, ActivatedUpgrades);
 		ActivatedUpgradesEffects.MetaUpgradeEffectsController.AddUpgradeEffects(upgrade);
-		if (((StateMachine)ApplicationManager.Application).State.GetName() != "Game")
+		if (ApplicationManager.Application.State.GetName() != "Game")
 		{
 			return;
 		}

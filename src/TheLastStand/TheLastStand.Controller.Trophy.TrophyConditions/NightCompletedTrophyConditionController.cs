@@ -86,7 +86,7 @@ public class NightCompletedTrophyConditionController : TrophyConditionController
 
 	public override ISerializedData Serialize()
 	{
-		return (ISerializedData)(object)new SerializedNightCompletedTrophy
+		return new SerializedNightCompletedTrophy
 		{
 			Name = Name,
 			ValueProgression = ValueProgression,

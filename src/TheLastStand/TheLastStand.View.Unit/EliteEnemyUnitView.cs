@@ -57,8 +57,8 @@ public class EliteEnemyUnitView : EnemyUnitView
 
 	protected override void InitDefaultSprites(string unitId)
 	{
-		base.EnemyUnit.DefaultSpriteFront = ResourcePooler.LoadOnce<Sprite>("View/Sprites/Units/" + GetDefaultSpritesFolder() + "/DefaultSprites/" + unitId + "/" + base.EnemyUnit.VariantId + "/" + unitId + "_" + base.EnemyUnit.VariantId + "_Idle_Front_00", false);
-		Sprite val = ResourcePooler.LoadOnce<Sprite>("View/Sprites/Units/" + GetDefaultSpritesFolder() + "/DefaultSprites/" + unitId + "/" + base.EnemyUnit.VariantId + "/" + unitId + "_" + base.EnemyUnit.VariantId + "_Idle_Back_00", false);
+		base.EnemyUnit.DefaultSpriteFront = ResourcePooler.LoadOnce<Sprite>("View/Sprites/Units/" + GetDefaultSpritesFolder() + "/DefaultSprites/" + unitId + "/" + base.EnemyUnit.VariantId + "/" + unitId + "_" + base.EnemyUnit.VariantId + "_Idle_Front_00", failSilently: false);
+		Sprite val = ResourcePooler.LoadOnce<Sprite>("View/Sprites/Units/" + GetDefaultSpritesFolder() + "/DefaultSprites/" + unitId + "/" + base.EnemyUnit.VariantId + "/" + unitId + "_" + base.EnemyUnit.VariantId + "_Idle_Back_00", failSilently: false);
 		base.EnemyUnit.DefaultSpriteBack = val ?? base.EnemyUnit.DefaultSpriteFront;
 	}
 
@@ -67,7 +67,7 @@ public class EliteEnemyUnitView : EnemyUnitView
 		//IL_005a: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0060: Expected O, but got Unknown
 		base.InitVisuals(playSpawnAnim);
-		AnimationClip val = ResourcePooler.LoadOnce<AnimationClip>("Animation/EliteAffixes/FX_EliteAffixes_" + EliteEnemyUnit.Affixes[0].EnemyAffixDefinition.EnemyAffixEffectDefinition.EnemyAffixEffect, false);
+		AnimationClip val = ResourcePooler.LoadOnce<AnimationClip>("Animation/EliteAffixes/FX_EliteAffixes_" + EliteEnemyUnit.Affixes[0].EnemyAffixDefinition.EnemyAffixEffectDefinition.EnemyAffixEffect, failSilently: false);
 		if ((Object)(object)val != (Object)null)
 		{
 			AnimatorOverrideController val2 = new AnimatorOverrideController(affixAnimator.runtimeAnimatorController);

@@ -33,7 +33,7 @@ public class SpawnWaveController
 	{
 		SpawnWave = new SpawnWave(definition, this, spawnWaveView);
 		SpawnWave.SpawnWaveView.SpawnWave = SpawnWave;
-		float num = SpawnWaveManager.SpawnDefinition.SpawnsCountPerWave.EvalToFloat((object)TPSingleton<SpawnWaveManager>.Instance.SpawnWaveInterpreterObject);
+		float num = SpawnWaveManager.SpawnDefinition.SpawnsCountPerWave.EvalToFloat(TPSingleton<SpawnWaveManager>.Instance.SpawnWaveInterpreterObject);
 		SpawnWave.SpawnsCount = ComputeCountWithExternalModifiers(Mathf.RoundToInt(num * SpawnWave.SpawnWaveDefinition.SpawnsCountMultiplier));
 		((CLogger<SpawnWaveManager>)TPSingleton<SpawnWaveManager>.Instance).Log((object)("Spawn wave: " + SpawnWave.SpawnWaveDefinition.Id), (CLogLevel)2, false, false);
 		((CLogger<SpawnWaveManager>)TPSingleton<SpawnWaveManager>.Instance).Log((object)$"I'm evaluating the formula {SpawnWaveManager.SpawnDefinition.SpawnsCountPerWave} to the value {num}.\nMultiplying this value with the scm {SpawnWave.SpawnWaveDefinition.SpawnsCountMultiplier}, rounding and obtaining a SpawnCount of {SpawnWave.SpawnsCount}", (CLogLevel)0, false, false);
@@ -250,11 +250,11 @@ public class SpawnWaveController
 				}
 			}
 		}
-		TaskGroup spawnTasks = new TaskGroup((UnityAction)null);
+		TaskGroup spawnTasks = new TaskGroup();
 		foreach (KeyValuePair<SpawnDirectionsDefinition.E_Direction, int> item4 in dictionary)
 		{
-			Task val = (Task)new CoroutineTask((MonoBehaviour)(object)TPSingleton<NightTurnsManager>.Instance, SpawnEnemiesFromDirection(item4.Value, item4.Key));
-			spawnTasks.AddTask(val);
+			Task task = new CoroutineTask((MonoBehaviour)(object)TPSingleton<NightTurnsManager>.Instance, SpawnEnemiesFromDirection(item4.Value, item4.Key));
+			spawnTasks.AddTask(task);
 		}
 		spawnTasks.OnCompleteAction = (UnityAction)delegate
 		{
@@ -267,7 +267,7 @@ public class SpawnWaveController
 
 	public static int ComputeCountWithExternalModifiers(SpawnWave spawnWave, SpawnDefinition spawnDefinition)
 	{
-		return ComputeCountWithExternalModifiers(Mathf.RoundToInt(spawnDefinition.SpawnsCountPerWave.EvalToFloat((object)TPSingleton<SpawnWaveManager>.Instance.SpawnWaveInterpreterObject) * spawnWave.SpawnWaveDefinition.SpawnsCountMultiplier));
+		return ComputeCountWithExternalModifiers(Mathf.RoundToInt(spawnDefinition.SpawnsCountPerWave.EvalToFloat(TPSingleton<SpawnWaveManager>.Instance.SpawnWaveInterpreterObject) * spawnWave.SpawnWaveDefinition.SpawnsCountMultiplier));
 	}
 
 	private static int ComputeCountWithExternalModifiers(int originalCount)
@@ -322,15 +322,15 @@ public class SpawnWaveController
 		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0065: Unknown result type (might be due to invalid IL or missing references)
 		List<Tile> list = new List<Tile> { baseTile };
-		Vector2Int val = SpawnWaveManager.SpawnDefinition.SpawnPointRect;
+		Vector2Int v = SpawnWaveManager.SpawnDefinition.SpawnPointRect;
 		if (spawnDirectionDefinition == SpawnDirectionsDefinition.E_Direction.Left || spawnDirectionDefinition == SpawnDirectionsDefinition.E_Direction.Right)
 		{
-			val = VectorExtensions.Swap(val);
+			v = v.Swap();
 		}
 		Vector2Int position = baseTile.Position;
-		int num = ((Vector2Int)(ref position)).x - ((Vector2Int)(ref val)).x;
+		int num = ((Vector2Int)(ref position)).x - ((Vector2Int)(ref v)).x;
 		position = baseTile.Position;
-		List<Tile> list2 = TileMapController.GetTilesInRect(new RectInt(num, ((Vector2Int)(ref position)).y - ((Vector2Int)(ref val)).y, ((Vector2Int)(ref val)).x * 2, ((Vector2Int)(ref val)).y * 2)).ToList();
+		List<Tile> list2 = TileMapController.GetTilesInRect(new RectInt(num, ((Vector2Int)(ref position)).y - ((Vector2Int)(ref v)).y, ((Vector2Int)(ref v)).x * 2, ((Vector2Int)(ref v)).y * 2)).ToList();
 		for (int num2 = list2.Count - 1; num2 >= 0; num2--)
 		{
 			Tile tile = list2[num2];
@@ -505,7 +505,7 @@ public class SpawnWaveController
 				{
 					list.Add(0);
 				}
-				list[item.Key - 1] += item.Value.EvalToInt((InterpreterContext)(object)spawnWave.Interpreter);
+				list[item.Key - 1] += item.Value.EvalToInt(spawnWave.Interpreter);
 			}
 		}
 		if (list.Count > 0)

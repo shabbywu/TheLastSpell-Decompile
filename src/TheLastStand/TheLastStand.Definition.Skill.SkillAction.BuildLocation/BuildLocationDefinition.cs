@@ -1,10 +1,9 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using TheLastStand.Framework.Serialization;
 
 namespace TheLastStand.Definition.Skill.SkillAction.BuildLocation;
 
-public abstract class BuildLocationDefinition : Definition
+public abstract class BuildLocationDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public static class Names
 	{
@@ -14,7 +13,7 @@ public abstract class BuildLocationDefinition : Definition
 	public abstract string Name { get; }
 
 	public BuildLocationDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 

@@ -24,8 +24,6 @@ using TheLastStand.Definition.Unit.Perk;
 using TheLastStand.Definition.Unit.PlayableUnitGeneration;
 using TheLastStand.Definition.Unit.Trait;
 using TheLastStand.Framework;
-using TheLastStand.Framework.Command.Conversation;
-using TheLastStand.Framework.ExpressionInterpreter;
 using TheLastStand.Framework.Sequencing;
 using TheLastStand.Manager;
 using TheLastStand.Manager.Achievements;
@@ -111,7 +109,7 @@ public class PlayableUnitController : UnitController
 	public PlayableUnitController(SerializedPlayableUnit serializedPlayableUnit, int saveVersion = -1, bool isDead = false)
 	{
 		base.Unit = new PlayableUnit(PlayableUnitDatabase.PlayableUnitTemplateDefinition, serializedPlayableUnit, this, saveVersion, isDead);
-		base.Unit.DeserializeAfterInit((ISerializedData)(object)serializedPlayableUnit, saveVersion);
+		base.Unit.DeserializeAfterInit(serializedPlayableUnit, saveVersion);
 		ComputeExperienceNeededToNextLevel();
 		foreach (KeyValuePair<ItemSlotDefinition.E_ItemSlotId, List<EquipmentSlot>> equipmentSlot in PlayableUnit.EquipmentSlots)
 		{
@@ -714,7 +712,7 @@ public class PlayableUnitController : UnitController
 		{
 			base.Unit.UnitView.UnitHUD.DisplayIconAndTileFeedback(show: false);
 		}
-		((Conversation<ICompensableCommand, ICompensableCommand>)(object)PlayableUnitManager.UnitsConversation).Execute((ICompensableCommand)(object)moveUnitCommand);
+		PlayableUnitManager.UnitsConversation.Execute(moveUnitCommand);
 		if (base.Unit.WillDieByPoison)
 		{
 			Task moveUnitTask = moveUnitCommand.MoveUnitTask;
@@ -786,7 +784,7 @@ public class PlayableUnitController : UnitController
 		((CLogger<PlayableUnitManager>)TPSingleton<PlayableUnitManager>.Instance).Log((object)$"Daily XP for {PlayableUnit.Name}: {experienceShare} shared + {num} from kills + {PlayableUnit.AdditionalNightExperience} additional.", (CLogLevel)0, false, false);
 		if ((Object)(object)PlayableUnit.PlayableUnitView != (Object)null && num2 > 0f)
 		{
-			GainExperienceDisplay pooledComponent = ObjectPooler.GetPooledComponent<GainExperienceDisplay>("GainExperienceDisplay", ResourcePooler.LoadOnce<GainExperienceDisplay>("Prefab/Displayable Effect/UI Effect Displays/GainExperienceDisplay", false), EffectManager.EffectDisplaysParent, false);
+			GainExperienceDisplay pooledComponent = ObjectPooler.GetPooledComponent<GainExperienceDisplay>("GainExperienceDisplay", ResourcePooler.LoadOnce<GainExperienceDisplay>("Prefab/Displayable Effect/UI Effect Displays/GainExperienceDisplay", failSilently: false), EffectManager.EffectDisplaysParent, dontSetParent: false);
 			pooledComponent.Init((int)num2);
 			PlayableUnit.UnitController.AddEffectDisplay(pooledComponent);
 		}
@@ -832,7 +830,7 @@ public class PlayableUnitController : UnitController
 	{
 		foreach (KeyValuePair<string, TheLastStand.Model.Unit.Perk.Perk> perk in PlayableUnit.Perks)
 		{
-			((InterpreterContext)perk.Value).TargetObject = perkDataContainer;
+			perk.Value.TargetObject = perkDataContainer;
 		}
 	}
 
@@ -894,7 +892,7 @@ public class PlayableUnitController : UnitController
 					float num3 = GainMana(PlayableUnit.UnitStatsController.GetStat(UnitStatDefinition.E_Stat.ManaRegen).FinalClamped);
 					if (num3 > 0f)
 					{
-						RestoreStatDisplay pooledComponent = ObjectPooler.GetPooledComponent<RestoreStatDisplay>("RestoreStatDisplay", ResourcePooler.LoadOnce<RestoreStatDisplay>("Prefab/Displayable Effect/UI Effect Displays/RestoreStatDisplay", false), EffectManager.EffectDisplaysParent, false);
+						RestoreStatDisplay pooledComponent = ObjectPooler.GetPooledComponent<RestoreStatDisplay>("RestoreStatDisplay", ResourcePooler.LoadOnce<RestoreStatDisplay>("Prefab/Displayable Effect/UI Effect Displays/RestoreStatDisplay", failSilently: false), EffectManager.EffectDisplaysParent, dontSetParent: false);
 						pooledComponent.Init(UnitStatDefinition.E_Stat.Mana, (int)num3);
 						AddEffectDisplay(pooledComponent);
 					}
@@ -1083,7 +1081,7 @@ public class PlayableUnitController : UnitController
 
 	private void ComputeExperienceNeededToNextLevel()
 	{
-		PlayableUnit.ExperienceNeededToNextLevel = PlayableUnitDatabase.ExperienceNeededToNextLevel.EvalToFloat((InterpreterContext)(object)PlayableUnit);
+		PlayableUnit.ExperienceNeededToNextLevel = PlayableUnitDatabase.ExperienceNeededToNextLevel.EvalToFloat(PlayableUnit);
 	}
 
 	private void Generate(int traitPoints, int level = 1)
@@ -1482,8 +1480,8 @@ public class PlayableUnitController : UnitController
 		}
 		else
 		{
-			Sprite val = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Units/Portaits/Playable Unit/Foreground/" + PlayableUnit.Gender + "/" + PlayableUnit.FaceId + "/" + portraitId, false);
-			Sprite portraitBackgroundSprite = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Units/Portaits/Playable Unit/Background/" + PlayableUnit.Gender + "/" + PlayableUnit.FaceId + "/" + portraitId, false);
+			Sprite val = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Units/Portaits/Playable Unit/Foreground/" + PlayableUnit.Gender + "/" + PlayableUnit.FaceId + "/" + portraitId, failSilently: false);
+			Sprite portraitBackgroundSprite = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/Units/Portaits/Playable Unit/Background/" + PlayableUnit.Gender + "/" + PlayableUnit.FaceId + "/" + portraitId, failSilently: false);
 			PlayableUnit.PortraitSprite = val;
 			PlayableUnit.PortraitBackgroundSprite = portraitBackgroundSprite;
 			PlayableUnitView.AddUsedPortrait(val);

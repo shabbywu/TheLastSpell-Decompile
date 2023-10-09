@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace TheLastStand.Definition.Item;
 
-public class ItemsListDefinition : Definition
+public class ItemsListDefinition : TheLastStand.Framework.Serialization.Definition
 {
 	public string Id { get; private set; }
 
@@ -15,7 +15,7 @@ public class ItemsListDefinition : Definition
 
 
 	public ItemsListDefinition(XContainer container)
-		: base(container, (Dictionary<string, string>)null)
+		: base(container)
 	{
 	}
 
@@ -23,7 +23,7 @@ public class ItemsListDefinition : Definition
 	{
 		XElement val = (XElement)(object)((container is XElement) ? container : null);
 		XAttribute val2 = val.Attribute(XName.op_Implicit("Id"));
-		if (XDocumentExtensions.IsNullOrEmpty(val2))
+		if (val2.IsNullOrEmpty())
 		{
 			CLoggerManager.Log((object)"xItemCategoriesListDefinition must have a valid Id", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 			return;
@@ -32,13 +32,13 @@ public class ItemsListDefinition : Definition
 		foreach (XElement item in ((XContainer)val).Elements(XName.op_Implicit("Item")))
 		{
 			XAttribute val3 = item.Attribute(XName.op_Implicit("Odd"));
-			if (XDocumentExtensions.IsNullOrEmpty(val3) || !int.TryParse(val3.Value, out var result))
+			if (val3.IsNullOrEmpty() || !int.TryParse(val3.Value, out var result))
 			{
 				CLoggerManager.Log((object)(Id + " Invalid odd!"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 				continue;
 			}
 			XAttribute val4 = item.Attribute(XName.op_Implicit("Id"));
-			if (XDocumentExtensions.IsNullOrEmpty(val4))
+			if (val4.IsNullOrEmpty())
 			{
 				CLoggerManager.Log((object)(Id + " Invalid category!"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 			}

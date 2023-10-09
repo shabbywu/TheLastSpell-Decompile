@@ -187,7 +187,7 @@ public class UnitLevelUpView : TPSingleton<UnitLevelUpView>, IOverlayUser
 			secondStatBoxToggleGroup = ((Component)secondaryStatBoxParent).GetComponent<ToggleGroup>();
 			mainAttributesTitleTransform = ((Component)mainAttributesTitle).GetComponent<RectTransform>();
 			secondaryAttributesTitleTransform = ((Component)secondaryAttributesTitle).GetComponent<RectTransform>();
-			rerollAudioClips = ResourcePooler.LoadAllOnce<AudioClip>("Sounds/SFX/UI_Reroll/UI_Reroll_LevelUp", false);
+			rerollAudioClips = ResourcePooler.LoadAllOnce<AudioClip>("Sounds/SFX/UI_Reroll/UI_Reroll_LevelUp", failSilently: false);
 			TPSingleton<HUDJoystickNavigationManager>.Instance.TooltipsToggled += OnTooltipsToggled;
 		}
 	}
@@ -213,8 +213,8 @@ public class UnitLevelUpView : TPSingleton<UnitLevelUpView>, IOverlayUser
 			ToggleStatTooltipDisplayers(state: false);
 			((Component)mainStatBoxParent).gameObject.SetActive(true);
 			((Component)secondaryStatBoxParent).gameObject.SetActive(true);
-			TransformExtensions.DestroyChildren((Transform)(object)mainStatBoxParent);
-			TransformExtensions.DestroyChildren((Transform)(object)secondaryStatBoxParent);
+			((Transform)(object)mainStatBoxParent).DestroyChildren();
+			((Transform)(object)secondaryStatBoxParent).DestroyChildren();
 			mainStatBoxes.Clear();
 			secondaryStatBoxes.Clear();
 			IsOpened = false;
@@ -313,7 +313,7 @@ public class UnitLevelUpView : TPSingleton<UnitLevelUpView>, IOverlayUser
 
 	public void OnRerollButtonClick()
 	{
-		SoundManager.PlayAudioClip(ListExtensions.PickRandom<AudioClip>((IEnumerable<AudioClip>)rerollAudioClips));
+		SoundManager.PlayAudioClip(rerollAudioClips.PickRandom());
 		switch (CurrentLevelUpShownStat)
 		{
 		case E_LevelUpShownStat.Main:
@@ -455,18 +455,18 @@ public class UnitLevelUpView : TPSingleton<UnitLevelUpView>, IOverlayUser
 		secondaryStatsNavigationInitializer.InitNavigation();
 		foreach (UnitLevelUpStatView mainStatBox in mainStatBoxes)
 		{
-			SelectableExtensions.SetMode(mainStatBox.Selectable, (Mode)4);
+			mainStatBox.Selectable.SetMode((Mode)4);
 			if (rerollButton.Interactable)
 			{
-				SelectableExtensions.SetSelectOnLeft(mainStatBox.Selectable, (Selectable)(object)rerollButton);
+				mainStatBox.Selectable.SetSelectOnLeft((Selectable)(object)rerollButton);
 			}
 		}
 		foreach (UnitLevelUpStatView secondaryStatBox in secondaryStatBoxes)
 		{
-			SelectableExtensions.SetMode(secondaryStatBox.Selectable, (Mode)4);
+			secondaryStatBox.Selectable.SetMode((Mode)4);
 			if (rerollButton.Interactable)
 			{
-				SelectableExtensions.SetSelectOnLeft(secondaryStatBox.Selectable, (Selectable)(object)rerollButton);
+				secondaryStatBox.Selectable.SetSelectOnLeft((Selectable)(object)rerollButton);
 			}
 		}
 		RefreshRerollButtonJoystickNavigation();
@@ -477,8 +477,8 @@ public class UnitLevelUpView : TPSingleton<UnitLevelUpView>, IOverlayUser
 
 	private void RefreshRerollButtonJoystickNavigation()
 	{
-		SelectableExtensions.SetMode((Selectable)(object)rerollButton, (Mode)4);
-		SelectableExtensions.SetSelectOnRight((Selectable)(object)rerollButton, (CurrentLevelUpShownStat == E_LevelUpShownStat.Main) ? mainStatBoxes[0].Selectable : secondaryStatBoxes[0].Selectable);
+		((Selectable)(object)rerollButton).SetMode((Mode)4);
+		((Selectable)(object)rerollButton).SetSelectOnRight((CurrentLevelUpShownStat == E_LevelUpShownStat.Main) ? mainStatBoxes[0].Selectable : secondaryStatBoxes[0].Selectable);
 	}
 
 	private void Update()
@@ -658,8 +658,8 @@ public class UnitLevelUpView : TPSingleton<UnitLevelUpView>, IOverlayUser
 		((Behaviour)statBoxesMask).enabled = true;
 		((Component)mainStatBoxParent).gameObject.SetActive(true);
 		((Component)secondaryStatBoxParent).gameObject.SetActive(true);
-		TransformExtensions.DestroyChildren((Transform)(object)mainStatBoxParent);
-		TransformExtensions.DestroyChildren((Transform)(object)secondaryStatBoxParent);
+		((Transform)(object)mainStatBoxParent).DestroyChildren();
+		((Transform)(object)secondaryStatBoxParent).DestroyChildren();
 		mainStatBoxes.Clear();
 		secondaryStatBoxes.Clear();
 		int i = 0;
