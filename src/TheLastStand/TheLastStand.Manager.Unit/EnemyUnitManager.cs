@@ -1143,7 +1143,7 @@ public class EnemyUnitManager : BehaviorManager<EnemyUnitManager>, ISerializable
 	private bool TryDisplayHoveredEnemyReachableTiles()
 	{
 		Tile tile = TPSingleton<GameManager>.Instance.Game.Cursor.Tile;
-		if (tile != null && !tile.HasFog && tile.Unit is EnemyUnit enemyUnit && enemyUnit.State != TheLastStand.Model.Unit.Unit.E_State.Dead && !enemyUnit.IsDeathRattling)
+		if (tile != null && !tile.HasFog && tile.Unit is EnemyUnit { State: not TheLastStand.Model.Unit.Unit.E_State.Dead, IsDeathRattling: false } enemyUnit)
 		{
 			DisplayOneEnemyReachableTiles(enemyUnit);
 			return true;
@@ -1303,7 +1303,7 @@ public class EnemyUnitManager : BehaviorManager<EnemyUnitManager>, ISerializable
 		List<SerializedEliteEnemyUnit> list3 = new List<SerializedEliteEnemyUnit>();
 		foreach (EnemyUnit enemyUnit2 in EnemyUnits)
 		{
-			if (enemyUnit2 is EliteEnemyUnit eliteEnemyUnit && !eliteEnemyUnit.IsDying && !eliteEnemyUnit.IsDead)
+			if (enemyUnit2 is EliteEnemyUnit { IsDying: false, IsDead: false } eliteEnemyUnit)
 			{
 				list3.Add((SerializedEliteEnemyUnit)eliteEnemyUnit.Serialize());
 			}
@@ -1450,10 +1450,10 @@ public class EnemyUnitManager : BehaviorManager<EnemyUnitManager>, ISerializable
 	[DevConsoleCommand(Name = "EnemiesSetStatAll")]
 	private static void DebugEnemiesSetStatAll([StringConverter(typeof(PlayableUnit.StringToStatIdConverter))] string statId, float newStatValue)
 	{
-		UnitStatDefinition.E_Stat stat = (UnitStatDefinition.E_Stat)Enum.Parse(typeof(UnitStatDefinition.E_Stat), statId);
+		UnitStatDefinition.E_Stat statType = (UnitStatDefinition.E_Stat)Enum.Parse(typeof(UnitStatDefinition.E_Stat), statId);
 		foreach (EnemyUnit enemyUnit in TPSingleton<EnemyUnitManager>.Instance.EnemyUnits)
 		{
-			enemyUnit.UnitStatsController.SetBaseStat(stat, newStatValue);
+			enemyUnit.UnitStatsController.SetBaseStat(statType, newStatValue);
 			enemyUnit.UnitController.UpdateInjuryStage();
 			enemyUnit.UnitView.RefreshInjuryStage();
 			enemyUnit.UnitController.DisplayEffects();

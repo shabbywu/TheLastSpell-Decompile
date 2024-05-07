@@ -36,4 +36,12 @@ public class BufferModule : APerkModule
 			Buffer3 = Buffer3
 		};
 	}
+
+	public override void ResetDynamicData()
+	{
+		base.ResetDynamicData();
+		Buffer = BufferModuleDefinition.DefaultBufferValue;
+		Buffer2 = 0;
+		Buffer3 = 0;
+	}
 }

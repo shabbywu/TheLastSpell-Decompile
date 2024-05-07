@@ -17,6 +17,7 @@ using TheLastStand.Database.Unit;
 using TheLastStand.Definition;
 using TheLastStand.Definition.Item;
 using TheLastStand.Definition.Unit;
+using TheLastStand.Definition.Unit.Race;
 using TheLastStand.Definition.Unit.Trait;
 using TheLastStand.Framework.Database;
 using TheLastStand.Framework.Extensions;
@@ -40,7 +41,7 @@ using UnityEngine;
 
 namespace TheLastStand.Model.Unit;
 
-public class PlayableUnit : Unit, ISkillContainer
+public class PlayableUnit : Unit, ISkillContainer, IPerkUnlocker
 {
 	public static class Constants
 	{
@@ -121,6 +122,11 @@ public class PlayableUnit : Unit, ISkillContainer
 		}
 	}
 
+	public class StringToRaceIdConverter : StringToStringCollectionEntryConverter
+	{
+		protected override List<string> Entries => new List<string>(PlayableUnitDatabase.RaceDefinitions.Keys);
+	}
+
 	public class StringToSkinPaletteIdConverter : StringToStringCollectionEntryConverter
 	{
 		protected override List<string> Entries => new List<string>(PlayableUnitDatabase.PlayableUnitSkinColorDefinitions.Keys);
@@ -158,6 +164,8 @@ public class PlayableUnit : Unit, ISkillContainer
 	public float AdditionalNightExperience { get; set; }
 
 	public string ArchetypeId { get; set; }
+
+	public override RaceDefinition BarkerRaceDefinition => RaceDefinition;
 
 	public Dictionary<string, BodyPart> BodyParts { get; } = new Dictionary<string, BodyPart>();
 
@@ -267,6 +275,8 @@ public class PlayableUnit : Unit, ISkillContainer
 
 	public PlayableUnitController PlayableUnitController => base.UnitController as PlayableUnitController;
 
+	public PlayableUnitPerksController PlayableUnitPerksController { get; private set; }
+
 	public PlayableUnitStatsController PlayableUnitStatsController => base.UnitStatsController as PlayableUnitStatsController;
 
 	public string PlayableUnitName { get; set; }
@@ -290,6 +300,8 @@ public class PlayableUnit : Unit, ISkillContainer
 	public Sprite PortraitBackgroundSprite { get; set; }
 
 	public CodeData PortraitCodeData { get; set; }
+
+	public RaceDefinition RaceDefinition { get; set; }
 
 	public int SecondaryStatsPoints
 	{
@@ -347,7 +359,7 @@ public class PlayableUnit : Unit, ISkillContainer
 			int num = 0;
 			foreach (KeyValuePair<string, TheLastStand.Model.Unit.Perk.Perk> perk in Perks)
 			{
-				if (!perk.Value.IsNative)
+				if (perk.Value.UnlockedInPerkTree)
 				{
 					num++;
 				}
@@ -376,6 +388,8 @@ public class PlayableUnit : Unit, ISkillContainer
 	public float PhysicalDamage => base.UnitStatsController.GetStat(UnitStatDefinition.E_Stat.PhysicalDamage).FinalClamped;
 
 	public float RangedDamage => base.UnitStatsController.GetStat(UnitStatDefinition.E_Stat.RangedDamage).FinalClamped;
+
+	public float OverallDamage => base.UnitStatsController.GetStat(UnitStatDefinition.E_Stat.OverallDamage).FinalClamped;
 
 	public float ResistanceReduction => GetClampedStatValue(UnitStatDefinition.E_Stat.ResistanceReduction);
 
@@ -429,6 +443,7 @@ public class PlayableUnit : Unit, ISkillContainer
 	{
 		ArchetypeId = archetypeId;
 		base.RandomId = RandomManager.GetRandomRange(TPSingleton<PlayableUnitManager>.Instance, 0, int.MaxValue);
+		PlayableUnitPerksController = new PlayableUnitPerksController(this);
 		Init();
 		InitLifetimeStats();
 	}
@@ -575,7 +590,10 @@ public class PlayableUnit : Unit, ISkillContainer
 		name += "\n";
 		foreach (KeyValuePair<string, TheLastStand.Model.Unit.Perk.Perk> perk in Perks)
 		{
-			name = name + "Perk " + perk.Value.PerkDefinition.Id + "\n";
+			if (perk.Value.Unlocked)
+			{
+				name = name + "Perk " + perk.Value.PerkDefinition.Id + "\n";
+			}
 		}
 		return name;
 	}
@@ -663,10 +681,25 @@ public class PlayableUnit : Unit, ISkillContainer
 		MomentumTilesActive = serializedPlayableUnit.MomentumTilesActive;
 		TotalMomentumTilesCrossedThisTurn = serializedPlayableUnit.TotalMomentumTilesCrossedThisTurn;
 		TilesCrossedThisTurn = serializedPlayableUnit.TilesCrossedThisTurn;
+		RaceDefinition value;
+		if (string.IsNullOrEmpty(serializedPlayableUnit.RaceId))
+		{
+			RaceDefinition = PlayableUnitDatabase.RaceDefinitions["Human"];
+		}
+		else if (PlayableUnitDatabase.RaceDefinitions.TryGetValue(serializedPlayableUnit.RaceId, out value))
+		{
+			RaceDefinition = value;
+		}
+		else
+		{
+			((CLogger<PlayableUnitManager>)TPSingleton<PlayableUnitManager>.Instance).LogWarning((object)("Trying to load RaceDefinition " + serializedPlayableUnit.RaceId + " but it wasn't found in Database. Assigning default race definition."), (CLogLevel)1, true, false);
+			RaceDefinition = PlayableUnitDatabase.RaceDefinitions["Human"];
+		}
 		Level = serializedPlayableUnit.Level;
 		LevelUp = new UnitLevelUpController(PlayableUnitDatabase.UnitLevelUpDefinition, serializedPlayableUnit.LevelUp).UnitLevelUp;
 		LevelUp.PlayableUnit = this;
 		PerksPoints = serializedPlayableUnit.PerksPoints;
+		PlayableUnitPerksController = new PlayableUnitPerksController(this);
 		UnitLevelUpPoints = new List<UnitLevelUpPoint>();
 		foreach (SerializedLevelUpPoint serializedLevelUpPoint in serializedPlayableUnit.SerializedLevelUpPoints)
 		{
@@ -682,13 +715,13 @@ public class PlayableUnit : Unit, ISkillContainer
 		}
 		foreach (string trait in serializedPlayableUnit.Traits)
 		{
-			if (!PlayableUnitDatabase.UnitTraitDefinitions.TryGetValue(trait, out var value))
+			if (!PlayableUnitDatabase.UnitTraitDefinitions.TryGetValue(trait, out var value2))
 			{
 				((CLogger<PlayableUnitManager>)TPSingleton<PlayableUnitManager>.Instance).LogWarning((object)("Trying to load TraitDefinition " + trait + " but it wasn't found in Database. Skipping it."), (CLogLevel)1, true, false);
 			}
 			else
 			{
-				UnitTraitDefinitions.Add(value);
+				UnitTraitDefinitions.Add(value2);
 			}
 		}
 		foreach (SerializedEquipmentSlot equipmentSlot2 in serializedPlayableUnit.EquipmentSlots)
@@ -725,6 +758,10 @@ public class PlayableUnit : Unit, ISkillContainer
 	{
 		base.DeserializeAfterInit(container, saveVersion);
 		SerializedPlayableUnit serializedPlayableUnit = container as SerializedPlayableUnit;
+		if (!EquipmentSlots.ContainsKey(ItemSlotDefinition.E_ItemSlotId.LeftHand))
+		{
+			BodyParts["Arm_L"].ChangeAdditionalConstraint("Hide", add: true);
+		}
 		if (serializedPlayableUnit.Stats != null)
 		{
 			DeserializeStats(serializedPlayableUnit.Stats, saveVersion);
@@ -774,7 +811,13 @@ public class PlayableUnit : Unit, ISkillContainer
 			Traits = UnitTraitDefinitions.Select((UnitTraitDefinition o) => o.Id).ToList(),
 			PerkCollections = PerkTree.Serialize(),
 			NativePerks = (from p in Perks
-				where p.Value.PerkTier == null
+				where p.Value.IsNative
+				select (SerializedPerk)p.Value.Serialize()).ToList(),
+			DynamicPerks = (from p in Perks
+				where !p.Value.IsNative && !p.Value.IsFromRace && p.Value.PerkTier == null
+				select (SerializedPerk)p.Value.Serialize()).ToList(),
+			RacePerks = (from p in Perks
+				where p.Value.IsFromRace
 				select (SerializedPerk)p.Value.Serialize()).ToList(),
 			LifetimeStats = (SerializedLifetimeStats)LifetimeStats.Serialize(),
 			MovedThisDay = MovedThisDay,
@@ -783,7 +826,8 @@ public class PlayableUnit : Unit, ISkillContainer
 			MomentumTilesActive = MomentumTilesActive,
 			TotalMomentumTilesCrossedThisTurn = TotalMomentumTilesCrossedThisTurn,
 			TilesCrossedThisTurn = TilesCrossedThisTurn,
-			Stats = (SerializedUnitStats)base.UnitStatsController.UnitStats.Serialize()
+			Stats = (SerializedUnitStats)base.UnitStatsController.UnitStats.Serialize(),
+			RaceId = RaceDefinition.Id
 		};
 	}
 }

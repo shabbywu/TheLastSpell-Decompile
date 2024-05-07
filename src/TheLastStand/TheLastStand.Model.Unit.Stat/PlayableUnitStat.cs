@@ -16,6 +16,8 @@ public class PlayableUnitStat : UnitStat
 		UnitStatDefinition.E_Stat.RangedDamage
 	};
 
+	public static bool AllowPerkRefreshInjuries = true;
+
 	private float perks;
 
 	public PlayableUnitStatsController PlayableUnitStatsController => base.UnitStatsController as PlayableUnitStatsController;
@@ -34,7 +36,7 @@ public class PlayableUnitStat : UnitStat
 				flag = true;
 				if (base.StatId == UnitStatDefinition.E_Stat.Health)
 				{
-					flag2 = true;
+					flag2 = AllowPerkRefreshInjuries;
 					if (Base + num <= 0f && Base + perks > 0f)
 					{
 						PlayableUnitStatsController.SetBaseStat(base.StatId, 0f - num + 1f);
@@ -58,6 +60,8 @@ public class PlayableUnitStat : UnitStat
 		}
 	}
 
+	public float Race { get; set; }
+
 	public float Traits { get; set; }
 
 	public List<StatModifierEffect> PerkStatModifierEffects { get; set; } = new List<StatModifierEffect>();
@@ -79,7 +83,7 @@ public class PlayableUnitStat : UnitStat
 			{
 				return 0f;
 			}
-			return base.Final + Equipment + Perks + Traits;
+			return base.Final + Equipment + Perks + Traits + Race;
 		}
 	}
 

@@ -263,9 +263,8 @@ public class InjuryDefinition : TheLastStand.Framework.Serialization.Definition
 	public static string GetFormatedStatusInjury(StatusEffectDefinition statusDefinition, bool canShowAsPercentage)
 	{
 		string result = string.Empty;
-		if (statusDefinition is StatModifierEffectDefinition statModifierEffectDefinition)
+		if (statusDefinition is StatModifierEffectDefinition { Stat: var stat } statModifierEffectDefinition)
 		{
-			UnitStatDefinition.E_Stat stat = statModifierEffectDefinition.Stat;
 			result = GetFormatedBuffStatusInjury(statModifierEffectDefinition.ModifierValue, stat, statusDefinition.TurnsCount, statModifierEffectDefinition is BuffEffectDefinition, canShowAsPercentage);
 		}
 		else if (statusDefinition is PoisonEffectDefinition poisonEffectDefinition)

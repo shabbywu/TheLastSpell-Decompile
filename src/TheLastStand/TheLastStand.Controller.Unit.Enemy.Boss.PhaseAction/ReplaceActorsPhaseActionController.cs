@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using DG.Tweening;
 using TPLib;
 using TheLastStand.Definition.Building;
@@ -8,11 +9,13 @@ using TheLastStand.Definition.Unit.Enemy.Boss;
 using TheLastStand.Definition.Unit.Enemy.Boss.PhaseAction;
 using TheLastStand.Framework.Extensions;
 using TheLastStand.Framework.Serialization;
+using TheLastStand.Manager;
 using TheLastStand.Manager.Building;
 using TheLastStand.Manager.Unit;
 using TheLastStand.Model;
 using TheLastStand.Model.Building;
 using TheLastStand.Model.TileMap;
+using TheLastStand.Model.Unit;
 using TheLastStand.Model.Unit.Boss;
 using TheLastStand.Model.Unit.Enemy;
 using TheLastStand.View.Camera;
@@ -22,6 +25,14 @@ namespace TheLastStand.Controller.Unit.Enemy.Boss.PhaseAction;
 
 public class ReplaceActorsPhaseActionController : ABossPhaseActionController
 {
+	private List<IBossPhaseActor> availableActorsToReplace;
+
+	private UnitCreationSettings currentUnitCreationSettings;
+
+	private ActorDefinition currentActorToSpawnDefinition;
+
+	private TheLastStand.Framework.Serialization.Definition currentActorTypeToSpawnDefinition;
+
 	public ReplaceActorsPhaseActionDefinition ReplaceActorsPhaseActionDefinition => base.ABossPhaseActionDefinition as ReplaceActorsPhaseActionDefinition;
 
 	public ReplaceActorsPhaseActionController(ABossPhaseActionDefinition aBossPhaseActionDefinition, BossPhaseHandler bossPhaseHandlerParent, int actionIndex)
@@ -31,9 +42,9 @@ public class ReplaceActorsPhaseActionController : ABossPhaseActionController
 
 	public override IEnumerator Execute()
 	{
-		ActorDefinition actorDefinition = TPSingleton<BossManager>.Instance.CurrentBossPhase?.BossPhaseDefinition.ActorDefinitions.GetValueOrDefault(ReplaceActorsPhaseActionDefinition.ReplacementId);
-		TheLastStand.Framework.Serialization.Definition actorTypedDefinition = actorDefinition?.GetCorrespondingDefinition();
-		if (!TPSingleton<BossManager>.Instance.BossPhaseActors.TryGetValue(ReplaceActorsPhaseActionDefinition.ActorId, out var actors))
+		PickRandomActorToSpawn();
+		InitActorsToReplace();
+		if (availableActorsToReplace.Count == 0)
 		{
 			yield break;
 		}
@@ -43,19 +54,26 @@ public class ReplaceActorsPhaseActionController : ABossPhaseActionController
 			ACameraView.AllowUserZoom = false;
 			ACameraView.Zoom(zoomIn: true);
 		}
-		for (int i = actors.Count - 1; i >= 0; i--)
+		int currentReplacedActorsNb = 0;
+		int actorsToReplaceNb = ((ReplaceActorsPhaseActionDefinition.Amount <= 0) ? availableActorsToReplace.Count : ReplaceActorsPhaseActionDefinition.Amount);
+		while (availableActorsToReplace.Count > 0 && currentReplacedActorsNb < actorsToReplaceNb)
 		{
-			Tile tile = actors[i].OriginTile;
-			if (ReplaceActorsPhaseActionDefinition.CameraFocus && actors[i] != null)
+			int randomRange = RandomManager.GetRandomRange(this, 0, availableActorsToReplace.Count);
+			IBossPhaseActor currentBossPhaseActor = availableActorsToReplace[randomRange];
+			Tile tile = currentBossPhaseActor.OriginTile;
+			if (ReplaceActorsPhaseActionDefinition.CameraFocus && currentBossPhaseActor != null)
 			{
-				ACameraView.MoveTo(actors[i].TileObjectView.GameObject.transform.position, 0f, (Ease)0);
+				ACameraView.MoveTo(currentBossPhaseActor.TileObjectView.GameObject.transform.position, 0f, (Ease)0);
 			}
-			IBossPhaseActor bossPhaseActor = actors[i];
-			if (!(bossPhaseActor is EnemyUnit enemyUnit2))
+			if (!(currentBossPhaseActor is EnemyUnit enemyUnit2))
 			{
-				if (bossPhaseActor is TheLastStand.Model.Building.Building building)
+				if (currentBossPhaseActor is TheLastStand.Model.Building.Building building)
 				{
 					BuildingManager.DestroyBuilding(building.OriginTile, updateView: true, addDeadBuilding: false, triggerEvent: true, triggerOnDeathEvent: false);
+					if (ReplaceActorsPhaseActionDefinition.WaitDeathAnim)
+					{
+						yield return building.BuildingView.WaitUntilDestructionAnimationIsFinished;
+					}
 				}
 			}
 			else
@@ -67,12 +85,17 @@ public class ReplaceActorsPhaseActionController : ABossPhaseActionController
 					yield return enemyUnit2.EnemyUnitView.WaitUntilDeathCanBeFinalized;
 				}
 			}
-			switch (actorDefinition.ActorType)
+			availableActorsToReplace.Remove(currentBossPhaseActor);
+			if (ReplaceActorsPhaseActionDefinition.HasMultipleReplacementId && currentReplacedActorsNb > 0)
+			{
+				PickRandomActorToSpawn();
+			}
+			switch (currentActorToSpawnDefinition.ActorType)
 			{
 			case DamageableType.Enemy:
 			{
-				EnemyUnit enemyUnit = EnemyUnitManager.CreateEnemyUnit(actorTypedDefinition as EnemyUnitTemplateDefinition, tile, ReplaceActorsPhaseActionDefinition.UnitCreationSettings);
-				if (ReplaceActorsPhaseActionDefinition.UnitCreationSettings.WaitSpawnAnim)
+				EnemyUnit enemyUnit = EnemyUnitManager.CreateEnemyUnit(currentActorTypeToSpawnDefinition as EnemyUnitTemplateDefinition, tile, currentUnitCreationSettings);
+				if (currentUnitCreationSettings.WaitSpawnAnim)
 				{
 					yield return (object)new WaitUntil((Func<bool>)(() => enemyUnit.EnemyUnitView.AreAnimationsInitialized));
 					yield return enemyUnit.EnemyUnitView.WaitUntilAnimatorStateIsIdle;
@@ -80,17 +103,103 @@ public class ReplaceActorsPhaseActionController : ABossPhaseActionController
 				break;
 			}
 			case DamageableType.Boss:
-				yield return BossManager.CreateBossUnit(actorTypedDefinition as BossUnitTemplateDefinition, tile, ReplaceActorsPhaseActionDefinition.UnitCreationSettings);
+				yield return BossManager.CreateBossUnit(currentActorTypeToSpawnDefinition as BossUnitTemplateDefinition, tile, currentUnitCreationSettings);
 				break;
 			case DamageableType.Building:
-				BuildingManager.CreateBuilding(actorTypedDefinition as BuildingDefinition, tile);
+			{
+				TheLastStand.Model.Building.Building building2 = BuildingManager.CreateBuilding(currentActorTypeToSpawnDefinition as BuildingDefinition, tile, updateView: true, playSound: true, instantly: false, triggerEvent: true, currentUnitCreationSettings.BossPhaseActorId);
+				if (currentUnitCreationSettings.WaitSpawnAnim)
+				{
+					yield return building2.BuildingView.WaitUntilConstructionAnimationIsFinished;
+				}
 				break;
 			}
+			}
+			currentReplacedActorsNb++;
 		}
 		if (ReplaceActorsPhaseActionDefinition.CameraFocus)
 		{
 			ACameraView.AllowUserPan = true;
 			ACameraView.AllowUserZoom = true;
 		}
+	}
+
+	private void InitActorsToReplace()
+	{
+		availableActorsToReplace = new List<IBossPhaseActor>();
+		for (int i = 0; i < ReplaceActorsPhaseActionDefinition.ActorsIds.Count; i++)
+		{
+			string text = ReplaceActorsPhaseActionDefinition.ActorsIds[i];
+			bool flag = false;
+			if (!TPSingleton<BossManager>.Instance.BossPhaseActors.TryGetValue(text, out var value))
+			{
+				value = new List<IBossPhaseActor>();
+				TryAddNonActorsToActorsList(value, text);
+				if (value.Count == 0)
+				{
+					continue;
+				}
+				flag = true;
+			}
+			if (!flag)
+			{
+				TryAddNonActorsToActorsList(value, text);
+			}
+			if (value.Count > 0)
+			{
+				availableActorsToReplace.AddRange(value);
+			}
+		}
+	}
+
+	private void PickRandomActorToSpawn()
+	{
+		currentUnitCreationSettings = ReplaceActorsPhaseActionDefinition.GetUnitCreationSettings();
+		currentActorToSpawnDefinition = TPSingleton<BossManager>.Instance.CurrentBossPhase?.BossPhaseDefinition.ActorDefinitions.GetValueOrDefault(currentUnitCreationSettings.BossPhaseActorId);
+		currentActorTypeToSpawnDefinition = currentActorToSpawnDefinition?.GetCorrespondingDefinition();
+	}
+
+	private bool TryAddNonActorsToActorsList(List<IBossPhaseActor> actors, string actorToReplaceId)
+	{
+		if (!ReplaceActorsPhaseActionDefinition.IncludeNonActor)
+		{
+			return false;
+		}
+		ActorDefinition actorDefinition = TPSingleton<BossManager>.Instance.CurrentBossPhase?.BossPhaseDefinition.ActorDefinitions.GetValueOrDefault(actorToReplaceId);
+		if (actorDefinition == null)
+		{
+			return false;
+		}
+		switch (actorDefinition.ActorType)
+		{
+		case DamageableType.Enemy:
+			foreach (EnemyUnit enemyUnit in TPSingleton<EnemyUnitManager>.Instance.EnemyUnits)
+			{
+				if (enemyUnit.EnemyUnitTemplateDefinition.Id == actorDefinition.UnitId && string.IsNullOrEmpty(enemyUnit.BossPhaseActorId))
+				{
+					actors.Add(enemyUnit);
+				}
+			}
+			break;
+		case DamageableType.Boss:
+			foreach (BossUnit bossUnit in TPSingleton<BossManager>.Instance.BossUnits)
+			{
+				if (bossUnit.EnemyUnitTemplateDefinition.Id == actorDefinition.UnitId && string.IsNullOrEmpty(bossUnit.BossPhaseActorId))
+				{
+					actors.Add(bossUnit);
+				}
+			}
+			break;
+		case DamageableType.Building:
+			foreach (TheLastStand.Model.Building.Building item in BuildingManager.GetBuildingsById(actorDefinition.UnitId))
+			{
+				if (string.IsNullOrEmpty(item.BossPhaseActorId))
+				{
+					actors.Add(item);
+				}
+			}
+			break;
+		}
+		return true;
 	}
 }

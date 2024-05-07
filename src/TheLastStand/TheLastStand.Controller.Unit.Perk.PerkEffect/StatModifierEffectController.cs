@@ -4,6 +4,7 @@ using TheLastStand.Definition.Unit;
 using TheLastStand.Definition.Unit.Perk.PerkEffect;
 using TheLastStand.Model.Unit.Perk.PerkEffect;
 using TheLastStand.Model.Unit.Perk.PerkModule;
+using TheLastStand.Model.Unit.Stat;
 
 namespace TheLastStand.Controller.Unit.Perk.PerkEffect;
 
@@ -28,18 +29,23 @@ public class StatModifierEffectController : APerkEffectController
 		{
 			perkStatModifierEffects.Add(StatModifierEffect);
 		}
-		if (!StatModifierEffect.StatModifierEffectDefinition.ChildStatFollows)
+		UnitStatDefinition.E_Stat childStatIfExists = UnitDatabase.UnitStatDefinitions[StatModifierEffect.StatModifierEffectDefinition.Stat].GetChildStatIfExists();
+		if (childStatIfExists == UnitStatDefinition.E_Stat.Undefined)
 		{
 			return;
 		}
-		UnitStatDefinition.E_Stat childStatIfExists = UnitDatabase.UnitStatDefinitions[StatModifierEffect.StatModifierEffectDefinition.Stat].GetChildStatIfExists();
-		if (childStatIfExists != UnitStatDefinition.E_Stat.Undefined)
+		PlayableUnitStat stat = StatModifierEffect.APerkModule.Perk.Owner.PlayableUnitStatsController.GetStat(childStatIfExists);
+		if (StatModifierEffect.StatModifierEffectDefinition.ChildStatFollows)
 		{
-			perkStatModifierEffects = StatModifierEffect.APerkModule.Perk.Owner.PlayableUnitStatsController.GetStat(childStatIfExists).PerkStatModifierEffects;
+			perkStatModifierEffects = stat.PerkStatModifierEffects;
 			if (!perkStatModifierEffects.Contains(StatModifierEffect))
 			{
 				perkStatModifierEffects.Add(StatModifierEffect);
 			}
+		}
+		else
+		{
+			StatModifierEffect.APerkModule.Perk.Owner.PlayableUnitStatsController.SetBaseStat(childStatIfExists, stat.Base);
 		}
 	}
 

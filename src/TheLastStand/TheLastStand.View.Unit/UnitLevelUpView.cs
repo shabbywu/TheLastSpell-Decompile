@@ -188,7 +188,7 @@ public class UnitLevelUpView : TPSingleton<UnitLevelUpView>, IOverlayUser
 			mainAttributesTitleTransform = ((Component)mainAttributesTitle).GetComponent<RectTransform>();
 			secondaryAttributesTitleTransform = ((Component)secondaryAttributesTitle).GetComponent<RectTransform>();
 			rerollAudioClips = ResourcePooler.LoadAllOnce<AudioClip>("Sounds/SFX/UI_Reroll/UI_Reroll_LevelUp", failSilently: false);
-			TPSingleton<HUDJoystickNavigationManager>.Instance.TooltipsToggled += OnTooltipsToggled;
+			HUDJoystickNavigationManager.TooltipsToggled += OnTooltipsToggled;
 		}
 	}
 
@@ -547,10 +547,7 @@ public class UnitLevelUpView : TPSingleton<UnitLevelUpView>, IOverlayUser
 
 	private void OnDestroy()
 	{
-		if (TPSingleton<HUDJoystickNavigationManager>.Exist())
-		{
-			TPSingleton<HUDJoystickNavigationManager>.Instance.TooltipsToggled -= OnTooltipsToggled;
-		}
+		HUDJoystickNavigationManager.TooltipsToggled -= OnTooltipsToggled;
 	}
 
 	private void OnStatBoxSelectedChanged(UnitLevelUpStatView sender, bool selected)

@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using PortraitAPI;
 using TMPro;
 using TPLib;
-using TheLastStand.Database.Unit;
 using TheLastStand.Framework.UI;
 using TheLastStand.Manager;
 using TheLastStand.Model.Unit;
@@ -44,14 +43,14 @@ public class RenameHeader : RandomizableCustomizationElement
 		switch ((int)currentGender)
 		{
 		case 0:
-			list.AddRange(PlayableUnitDatabase.GetNamesForGender("Male"));
+			list.AddRange(playableUnit.RaceDefinition.GetNamesForGender("Male"));
 			break;
 		case 1:
-			list.AddRange(PlayableUnitDatabase.GetNamesForGender("Female"));
+			list.AddRange(playableUnit.RaceDefinition.GetNamesForGender("Female"));
 			break;
 		case 2:
-			list.AddRange(PlayableUnitDatabase.GetNamesForGender("Male"));
-			list.AddRange(PlayableUnitDatabase.GetNamesForGender("Female"));
+			list.AddRange(playableUnit.RaceDefinition.GetNamesForGender("Male"));
+			list.AddRange(playableUnit.RaceDefinition.GetNamesForGender("Female"));
 			break;
 		}
 		CurrentName = RandomManager.GetRandomElement(TPSingleton<PlayableUnitCustomisationPanel>.Instance, list);

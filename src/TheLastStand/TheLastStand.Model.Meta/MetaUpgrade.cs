@@ -6,6 +6,7 @@ using TheLastStand.Controller.Meta;
 using TheLastStand.Database;
 using TheLastStand.Definition.Meta;
 using TheLastStand.Framework.Serialization;
+using TheLastStand.Manager.DLC;
 using TheLastStand.Manager.Meta;
 using TheLastStand.Serialization.Meta;
 using TheLastStand.View.MetaShops;
@@ -24,6 +25,18 @@ public class MetaUpgrade : ISerializable, IDeserializable
 	public string Name => Localizer.Get("Meta_UpgradeName_" + MetaUpgradeDefinition.Id);
 
 	public string Description => Localizer.Get("Meta_UpgradeDescription_" + MetaUpgradeDefinition.Id);
+
+	public bool IsLinkedDLCOwned
+	{
+		get
+		{
+			if (MetaUpgradeDefinition.IsLinkedToDLC)
+			{
+				return TPSingleton<DLCManager>.Instance.IsDLCOwned(MetaUpgradeDefinition.DLCId);
+			}
+			return false;
+		}
+	}
 
 	public MetaUpgradeController MetaUpgradeController { get; }
 

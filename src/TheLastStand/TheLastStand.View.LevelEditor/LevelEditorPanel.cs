@@ -4,7 +4,6 @@ using TPLib;
 using TheLastStand.Database.Fog;
 using TheLastStand.Database.WorldMap;
 using TheLastStand.Definition.Fog;
-using TheLastStand.Definition.WorldMap;
 using TheLastStand.Manager;
 using TheLastStand.Manager.LevelEditor;
 using TheLastStand.Serialization.LevelEditor;
@@ -209,10 +208,17 @@ public class LevelEditorPanel : MonoBehaviour
 
 	public void ResetFogMinMaxValues()
 	{
-		CityDefinition cityDefinition = CityDatabase.CityDefinitions[LevelEditorManager.CityToLoadId];
-		FogDefinition fogDefinition = FogDatabase.FogsDefinitions[cityDefinition.FogDefinitionId];
-		inputFieldFogMin.text = fogDefinition.FogDensities.Last().Value.ToString();
-		inputFieldFogMax.text = fogDefinition.FogDensities.First().Value.ToString();
+		if (CityDatabase.CityDefinitions.TryGetValue(LevelEditorManager.CityToLoadId, out var value))
+		{
+			FogDefinition fogDefinition = FogDatabase.FogsDefinitions[value.FogDefinitionId];
+			inputFieldFogMin.text = fogDefinition.FogDensities.Last().Value.ToString();
+			inputFieldFogMax.text = fogDefinition.FogDensities.First().Value.ToString();
+		}
+		else
+		{
+			inputFieldFogMin.text = "0";
+			inputFieldFogMax.text = "0";
+		}
 		OnFogMinMaxToggleValueChanged(value: true);
 	}
 

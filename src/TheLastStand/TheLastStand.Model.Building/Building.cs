@@ -66,6 +66,8 @@ public class Building : ISerializable, IDeserializable, IBossPhaseActor, ITileOb
 			public const string Temple = "Temple";
 
 			public const string ManaWell = "ManaWell";
+
+			public const string Crystal = "Crystal";
 		}
 
 		public static class ShadowsType
@@ -138,6 +140,8 @@ public class Building : ISerializable, IDeserializable, IBossPhaseActor, ITileOb
 			return true;
 		}
 	}
+
+	public bool IsCrystal => BuildingDefinition.Id.Contains("Crystal");
 
 	public bool IsDefensive => BuildingDefinition.BlueprintModuleDefinition.Category.HasFlag(BuildingDefinition.E_BuildingCategory.Defensive);
 

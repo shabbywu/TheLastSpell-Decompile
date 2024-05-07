@@ -116,6 +116,7 @@ public class GenericSkillActionController : SkillActionController
 			{
 				TPSingleton<MetaConditionManager>.Instance.IncreaseDoubleValue(MetaConditionSpecificContext.E_ValueCategory.PotionsUsed, 1.0);
 				TPSingleton<AchievementManager>.Instance.SetAchievementProgression(StatContainer.STAT_POTION_USES_AMOUNT, (int)TPSingleton<MetaConditionManager>.Instance.CampaignContext.GetDouble(MetaConditionSpecificContext.E_ValueCategory.PotionsUsed));
+				TPSingleton<AchievementManager>.Instance.HandlePotionUsed(item, targetTile);
 				if (targetTile.Unit != caster)
 				{
 					TPSingleton<MetaConditionManager>.Instance.IncreaseDoubleValue(MetaConditionSpecificContext.E_ValueCategory.PotionsOnAllies, 1.0);

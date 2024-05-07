@@ -257,14 +257,14 @@ public class SkillManager : Manager<SkillManager>
 
 	public static bool CheckSkillCastValidity(Tile targetTile, out E_InvalidSkillCause cause, TheLastStand.Model.Skill.Skill skillToCheck = null)
 	{
-		//IL_017f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0184: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0191: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0196: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ad: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01b2: Unknown result type (might be due to invalid IL or missing references)
+		//IL_019c: Unknown result type (might be due to invalid IL or missing references)
+		//IL_01a1: Unknown result type (might be due to invalid IL or missing references)
+		//IL_01ae: Unknown result type (might be due to invalid IL or missing references)
+		//IL_01b3: Unknown result type (might be due to invalid IL or missing references)
+		//IL_01bd: Unknown result type (might be due to invalid IL or missing references)
+		//IL_01c3: Unknown result type (might be due to invalid IL or missing references)
+		//IL_01ca: Unknown result type (might be due to invalid IL or missing references)
+		//IL_01cf: Unknown result type (might be due to invalid IL or missing references)
 		if (debugToggleSkillCastValidityCheck)
 		{
 			TheLastStand.Model.Skill.Skill skill = skillToCheck ?? SelectedSkill;
@@ -274,7 +274,7 @@ public class SkillManager : Manager<SkillManager>
 				cause = E_InvalidSkillCause.OutOfRange;
 				return false;
 			}
-			if (flag && !skill.SkillAction.SkillActionExecution.SkillExecutionController.IsManeuverValid(targetTile, skill.CursorDependantOrientation))
+			if (flag && (!skill.SkillAction.SkillActionExecution.SkillExecutionController.IsManeuverValid(targetTile, skill.CursorDependantOrientation) || !skill.SkillAction.SkillActionExecution.InRangeTiles.Range.ContainsKey(targetTile)))
 			{
 				cause = E_InvalidSkillCause.ManeuverInvalid;
 				return false;
@@ -366,14 +366,14 @@ public class SkillManager : Manager<SkillManager>
 					}
 					if (flag2 && flag3 && flag5 && flag6)
 					{
-						goto end_IL_0329;
+						goto end_IL_0346;
 					}
 				}
 				continue;
-				end_IL_0329:
+				end_IL_0346:
 				break;
 			}
-			bool flag10 = skill.SkillAction is AttackSkillAction || (skill.SkillAction is GenericSkillAction genericSkillAction && (genericSkillAction.HasEffect("Stun") || genericSkillAction.HasEffect("Poison") || genericSkillAction.HasEffect("Debuff")));
+			bool flag10 = skill.SkillAction is AttackSkillAction || (skill.SkillAction is GenericSkillAction genericSkillAction && (genericSkillAction.HasEffect("Stun") || genericSkillAction.HasEffect("Poison") || genericSkillAction.HasEffect("Debuff") || genericSkillAction.HasEffect("Contagion")));
 			if ((flag2 || flag6) && !flag3 && flag10)
 			{
 				if (!skill.SkillDefinition.AllowFriendlyFire)
@@ -417,7 +417,7 @@ public class SkillManager : Manager<SkillManager>
 	public static float GetSelectedSkillDodgeMultiplierWithDistance()
 	{
 		float num = 1f;
-		if (TPSingleton<GameManager>.Instance.Game.Cursor.Tile != null && SelectedSkill.SkillAction is AttackSkillAction attackSkillAction && attackSkillAction.AttackType == AttackSkillActionDefinition.E_AttackType.Ranged && SelectedSkill.SkillAction.SkillActionExecution.SkillSourceTile != null && SelectedSkill.SkillAction.SkillActionExecution.InRangeTiles.IsInRange(TPSingleton<GameManager>.Instance.Game.Cursor.Tile) && !SelectedSkill.SkillAction.HasEffect("NoDodge"))
+		if (TPSingleton<GameManager>.Instance.Game.Cursor.Tile != null && SelectedSkill.SkillAction is AttackSkillAction { AttackType: AttackSkillActionDefinition.E_AttackType.Ranged } && SelectedSkill.SkillAction.SkillActionExecution.SkillSourceTile != null && SelectedSkill.SkillAction.SkillActionExecution.InRangeTiles.IsInRange(TPSingleton<GameManager>.Instance.Game.Cursor.Tile) && !SelectedSkill.SkillAction.HasEffect("NoDodge"))
 		{
 			int num2 = TileMapController.DistanceBetweenTiles(TPSingleton<GameManager>.Instance.Game.Cursor.Tile, SelectedSkill.SkillAction.SkillActionExecution.SkillSourceTile);
 			foreach (KeyValuePair<int, float> item in SkillDatabase.DamageTypeModifiersDefinition.DodgeMultiplierByDistance)

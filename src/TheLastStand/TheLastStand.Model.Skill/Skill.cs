@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using TPLib.Localization;
 using TheLastStand.Controller.Skill;
 using TheLastStand.Database.Unit;
@@ -17,6 +19,7 @@ using TheLastStand.Model.Item;
 using TheLastStand.Model.Skill.SkillAction;
 using TheLastStand.Model.TileMap;
 using TheLastStand.Model.Unit;
+using TheLastStand.Model.Unit.Perk;
 using TheLastStand.Serialization;
 using UnityEngine;
 
@@ -71,6 +74,8 @@ public class Skill : ISerializable, IDeserializable
 			public const string FinishHim = "FinishHim";
 
 			public const string Punch = "Punch";
+
+			public const string EmergencyTunnel = "EmergencyTunnelSkill";
 		}
 	}
 
@@ -124,11 +129,15 @@ public class Skill : ISerializable, IDeserializable
 	{
 		get
 		{
-			if (!(SkillContainer is PlayableUnit playableUnit))
+			if (SkillContainer is PlayableUnit playableUnit)
 			{
-				return 0;
+				return playableUnit.SkillLocksBuffers.GetValueOrDefault(SkillDefinition.Id);
 			}
-			return playableUnit.SkillLocksBuffers.GetValueOrDefault(SkillDefinition.Id);
+			if (SkillContainer is Perk { Owner: not null } perk)
+			{
+				return perk.Owner.SkillLocksBuffers.GetValueOrDefault(SkillDefinition.Id);
+			}
+			return 0;
 		}
 	}
 
@@ -216,7 +225,7 @@ public class Skill : ISerializable, IDeserializable
 	{
 		get
 		{
-			if (SkillAction is AttackSkillAction attackSkillAction && Owner is TheLastStand.Model.Unit.Unit unit && unit.LastSkillType != 0)
+			if (SkillAction is AttackSkillAction attackSkillAction && Owner is TheLastStand.Model.Unit.Unit { LastSkillType: not AttackSkillActionDefinition.E_AttackType.None } unit)
 			{
 				return attackSkillAction.AttackType != unit.LastSkillType;
 			}
@@ -241,6 +250,8 @@ public class Skill : ISerializable, IDeserializable
 	public int BaseHealthCost => SkillAction.SkillActionController.ComputeBaseHealthCost();
 
 	public int BaseMovePointsCost => SkillDefinition.MovePointsCost;
+
+	public string Id => SkillDefinition.Id;
 
 	public bool IsAttack => SkillAction is AttackSkillAction;
 
@@ -505,5 +516,32 @@ public class Skill : ISerializable, IDeserializable
 			return -1;
 		}
 		return 0;
+	}
+
+	public bool IsFromItemWithCategory(string category)
+	{
+		if (SkillContainer is TheLastStand.Model.Item.Item item)
+		{
+			string[] array = category.Split(new char[1] { ',' });
+			for (int i = 0; i < array.Length; i++)
+			{
+				if (Enum.TryParse<ItemDefinition.E_Category>(array[i].Trim(), out var result) && item.ItemDefinition.Category.HasFlag(result))
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public bool IsFromItemWithTag(string tag)
+	{
+		ISkillContainer skillContainer = SkillContainer;
+		TheLastStand.Model.Item.Item item = skillContainer as TheLastStand.Model.Item.Item;
+		if (item != null)
+		{
+			return tag.Split(new char[1] { ',' }).Any((string aTag) => item.ItemDefinition.HasTag(aTag.Trim()));
+		}
+		return false;
 	}
 }

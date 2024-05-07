@@ -80,7 +80,7 @@ public abstract class BehaviorManager<T> : Manager<T> where T : SerializedMonoBe
 	{
 		foreach (ComputedGoal item in attackGroup.GoalsToExecute)
 		{
-			if (!(item.Goal.Owner is IDamageable damageable) || !damageable.IsDead)
+			if (!(item.Goal.Owner is IDamageable { IsDead: not false }))
 			{
 				item.Goal.Owner.BehaviorController.ExecuteGoal(item);
 			}

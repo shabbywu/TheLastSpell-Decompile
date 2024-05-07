@@ -1,14 +1,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using TPLib;
+using TPLib.Localization;
 using TheLastStand.Controller.WorldMap;
 using TheLastStand.Database.Meta;
+using TheLastStand.Database.WorldMap;
+using TheLastStand.Definition.DLC;
 using TheLastStand.Definition.Meta.Glyphs;
 using TheLastStand.Definition.WorldMap;
 using TheLastStand.Framework.Serialization;
 using TheLastStand.Manager;
+using TheLastStand.Manager.DLC;
 using TheLastStand.Manager.Meta;
 using TheLastStand.Manager.WorldMap;
+using TheLastStand.Model.Meta;
 using TheLastStand.Serialization;
 using TheLastStand.View.WorldMap;
 using UnityEngine;
@@ -39,6 +44,32 @@ public class WorldMapCity : ISerializable, IDeserializable
 
 	public bool IsUnlocked { get; private set; }
 
+	public bool IsLinkedCityUnlocked
+	{
+		get
+		{
+			if (!string.IsNullOrEmpty(CityDefinition.LinkedCityId))
+			{
+				return !TPSingleton<MetaUpgradesManager>.Instance.GetLockedCitiesIds().Contains(CityDefinition.LinkedCityId);
+			}
+			return true;
+		}
+	}
+
+	public bool IsLinkedDLCOwned
+	{
+		get
+		{
+			if (!string.IsNullOrEmpty(CityDefinition.LinkedDLCId))
+			{
+				return TPSingleton<DLCManager>.Instance.IsDLCOwned(CityDefinition.LinkedDLCId);
+			}
+			return true;
+		}
+	}
+
+	public bool IsVisible { get; private set; }
+
 	public WorldMapCityController WorldMapCityController { get; private set; }
 
 	public WorldMapCity(CityDefinition definition, WorldMapCityController controller, WorldMapCityView view)
@@ -50,7 +81,17 @@ public class WorldMapCity : ISerializable, IDeserializable
 		{
 			SelectedGlyphs = new List<GlyphDefinition>()
 		};
+		RefreshIsVisible();
 		RefreshIsUnlocked();
+	}
+
+	public void CheckRefreshIsUnlocked()
+	{
+		bool isUnlocked = IsUnlocked;
+		if (RefreshIsUnlocked() != isUnlocked && (Object)(object)WorldMapCityView != (Object)null)
+		{
+			WorldMapCityView.RefreshAnimation();
+		}
 	}
 
 	public int GetCustomModeBonusPoints()
@@ -60,14 +101,84 @@ public class WorldMapCity : ISerializable, IDeserializable
 
 	public bool RefreshIsSelectable()
 	{
-		IsSelectable = !CityDefinition.Hidden && (!CityDefinition.IsTutorialMap || TPSingleton<WorldMapCityManager>.Instance.Cities.Count((WorldMapCity c) => !c.CityDefinition.Hidden && c.IsUnlocked && c != this) <= 0);
+		IsSelectable = !CityDefinition.Hidden && (!CityDefinition.IsTutorialMap || TPSingleton<WorldMapCityManager>.Instance.Cities.Count((WorldMapCity c) => !c.CityDefinition.Hidden && c.IsVisible && c != this) <= 0);
 		return IsSelectable;
 	}
 
 	public bool RefreshIsUnlocked()
 	{
-		IsUnlocked = !TPSingleton<MetaUpgradesManager>.Instance.GetLockedCitiesIds().Contains(CityDefinition.Id);
+		if (CityDefinition.IsStoryMap)
+		{
+			IsUnlocked = true;
+		}
+		else if (!string.IsNullOrEmpty(CityDefinition.LinkedDLCId))
+		{
+			IsUnlocked = IsLinkedDLCOwned && !TPSingleton<MetaUpgradesManager>.Instance.GetLockedCitiesIds().Contains(CityDefinition.Id);
+		}
+		else
+		{
+			IsUnlocked = !TPSingleton<MetaUpgradesManager>.Instance.GetLockedCitiesIds().Contains(CityDefinition.Id);
+		}
 		return IsUnlocked;
+	}
+
+	public bool RefreshIsVisible()
+	{
+		if (CityDefinition.IsStoryMap)
+		{
+			IsVisible = !TPSingleton<MetaUpgradesManager>.Instance.GetLockedCitiesIds().Contains(CityDefinition.Id);
+		}
+		else if (!string.IsNullOrEmpty(CityDefinition.LinkedCityId))
+		{
+			IsVisible = !TPSingleton<MetaUpgradesManager>.Instance.GetLockedCitiesIds().Contains(CityDefinition.LinkedCityId);
+		}
+		else
+		{
+			IsVisible = !TPSingleton<MetaUpgradesManager>.Instance.GetLockedCitiesIds().Contains(CityDefinition.Id);
+		}
+		return IsVisible;
+	}
+
+	public string GetLockedCityText()
+	{
+		if (IsUnlocked)
+		{
+			return string.Empty;
+		}
+		switch (GetLinkedMetaUpgradeState())
+		{
+		case MetaUpgradesManager.E_MetaState.Locked:
+		{
+			if (CityDefinition.HasLinkedCity && CityDatabase.CityDefinitions.TryGetValue(CityDefinition.LinkedCityId, out var value))
+			{
+				return "<style=Bad>" + Localizer.Format("MapPanel_ReduxMap_Tooltip_Locked", new object[1] { value.Name }) + "</style>";
+			}
+			break;
+		}
+		case MetaUpgradesManager.E_MetaState.Unlocked:
+			return "<style=Bad>" + Localizer.Format("WorldMap_CantStartNewGame_MetaNotActivated", new object[1] { CityDefinition.Name }) + "</style>";
+		}
+		return string.Empty;
+	}
+
+	public string GetMissingDLCText()
+	{
+		if (!CityDefinition.HasLinkedDLC)
+		{
+			return string.Empty;
+		}
+		DLCDefinition dLCFromId = TPSingleton<DLCManager>.Instance.GetDLCFromId(CityDefinition.LinkedDLCId);
+		if ((Object)(object)dLCFromId != (Object)null)
+		{
+			return Localizer.Format("MapPanel_ReduxMap_Tooltip_DLCNotOwned", new object[1] { dLCFromId.LocalizedName });
+		}
+		return string.Empty;
+	}
+
+	public MetaUpgradesManager.E_MetaState GetLinkedMetaUpgradeState()
+	{
+		MetaUpgrade upgrade;
+		return MetaUpgradesManager.TryGetUpgradeState($"Unlock{CityDefinition.Id}City", out upgrade, includeFulfilledList: true);
 	}
 
 	public void Deserialize(ISerializedData container = null, int saveVersion = -1)

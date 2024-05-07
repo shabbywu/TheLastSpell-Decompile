@@ -156,10 +156,10 @@ public class CursorView : TPSingleton<CursorView>
 	protected override void Awake()
 	{
 		base.Awake();
-		TPSingleton<InputManager>.Instance.LastActiveControllerChanged += OnLastActiveControllerChanged;
+		InputManager.LastActiveControllerChanged += OnLastActiveControllerChanged;
 		if (ApplicationManager.Application.State.GetName() == "Game")
 		{
-			TPSingleton<HUDJoystickNavigationManager>.Instance.HUDNavigationToggled += OnHUDNavigationToggled;
+			HUDJoystickNavigationManager.HUDNavigationToggled += OnHUDNavigationToggled;
 		}
 	}
 
@@ -232,14 +232,8 @@ public class CursorView : TPSingleton<CursorView>
 
 	private void OnDestroy()
 	{
-		if (TPSingleton<InputManager>.Exist())
-		{
-			TPSingleton<InputManager>.Instance.LastActiveControllerChanged -= OnLastActiveControllerChanged;
-		}
-		if (TPSingleton<HUDJoystickNavigationManager>.Exist())
-		{
-			TPSingleton<HUDJoystickNavigationManager>.Instance.HUDNavigationToggled -= OnHUDNavigationToggled;
-		}
+		InputManager.LastActiveControllerChanged -= OnLastActiveControllerChanged;
+		HUDJoystickNavigationManager.HUDNavigationToggled -= OnHUDNavigationToggled;
 	}
 
 	private void OnHUDNavigationToggled(bool state)
@@ -283,15 +277,15 @@ public class CursorView : TPSingleton<CursorView>
 
 	private void Update()
 	{
-		//IL_036f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0380: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02fc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0327: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0376: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0387: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0303: Unknown result type (might be due to invalid IL or missing references)
+		//IL_032e: Unknown result type (might be due to invalid IL or missing references)
 		if (ApplicationManager.Application.State.GetName() == "Game" && (TPSingleton<GameManager>.Instance.Game.State == Game.E_State.CharacterSheet || TPSingleton<GameManager>.Instance.Game.State == Game.E_State.Recruitment || TPSingleton<GameManager>.Instance.Game.State == Game.E_State.Shopping || TPSingleton<GameManager>.Instance.Game.State == Game.E_State.BuildingUpgrade || TPSingleton<GameManager>.Instance.Game.State == Game.E_State.NightReport || TPSingleton<GameManager>.Instance.Game.State == Game.E_State.ProductionReport || TPSingleton<GameManager>.Instance.Game.State == Game.E_State.HowToPlay || TPSingleton<GameManager>.Instance.Game.State == Game.E_State.CutscenePlaying))
 		{
 			return;
 		}
-		if (ApplicationManager.Application.State.GetName() == "WorldMap" && TPSingleton<WorldMapCityManager>.Instance.SelectedCity != null)
+		if (ApplicationManager.Application.State.GetName() == "WorldMap" && (TPSingleton<WorldMapCityManager>.Instance.SelectedCity != null || !WorldMapCityManager.CanSelectAnyCity))
 		{
 			joystickCursor.Show(show: false);
 			return;

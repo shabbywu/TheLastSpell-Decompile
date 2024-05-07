@@ -118,15 +118,12 @@ public class DismissHeroButton : MonoBehaviour, IPointerEnterHandler, IEventSyst
 
 	private void OnEnable()
 	{
-		TPSingleton<HUDJoystickNavigationManager>.Instance.TooltipsToggled += OnTooltipsToggled;
+		HUDJoystickNavigationManager.TooltipsToggled += OnTooltipsToggled;
 	}
 
 	private void OnDisable()
 	{
-		if (TPSingleton<HUDJoystickNavigationManager>.Exist())
-		{
-			TPSingleton<HUDJoystickNavigationManager>.Instance.TooltipsToggled -= OnTooltipsToggled;
-		}
+		HUDJoystickNavigationManager.TooltipsToggled -= OnTooltipsToggled;
 	}
 
 	private void OnDismissClicked()

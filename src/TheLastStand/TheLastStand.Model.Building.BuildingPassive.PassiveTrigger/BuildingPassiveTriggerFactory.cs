@@ -32,31 +32,39 @@ public static class BuildingPassiveTriggerFactory
 			{
 				if (!(triggerDefinition is AfterXNightTurnsTriggerDefinition definition3))
 				{
-					if (!(triggerDefinition is StartOfProductionTriggerDefinition definition4))
+					if (!(triggerDefinition is StartOfNightEnemyTurnTriggerDefinition definition4))
 					{
-						if (!(triggerDefinition is EndOfProductionTriggerDefinition definition5))
+						if (!(triggerDefinition is StartOfNightPlayableTurnTriggerDefinition definition5))
 						{
-							if (!(triggerDefinition is OnDeathTriggerDefinition definition6))
+							if (!(triggerDefinition is StartOfProductionTriggerDefinition definition6))
 							{
-								if (!(triggerDefinition is PermanentTriggerDefinition definition7))
+								if (!(triggerDefinition is EndOfProductionTriggerDefinition definition7))
 								{
-									if (!(triggerDefinition is OnConstructionTriggerDefinition definition8))
+									if (!(triggerDefinition is OnDeathTriggerDefinition definition8))
 									{
-										if (triggerDefinition is OnExtinguishTriggerDefinition definition9)
+										if (!(triggerDefinition is PermanentTriggerDefinition definition9))
 										{
-											return new OnExtinguishTriggerController(definition9).PassiveTrigger;
+											if (!(triggerDefinition is OnConstructionTriggerDefinition definition10))
+											{
+												if (triggerDefinition is OnExtinguishTriggerDefinition definition11)
+												{
+													return new OnExtinguishTriggerController(definition11).PassiveTrigger;
+												}
+												return null;
+											}
+											return new OnConstructionTriggerController(definition10).PassiveTrigger;
 										}
-										return null;
+										return new PermanentTriggerController(definition9).PassiveTrigger;
 									}
-									return new OnConstructionTriggerController(definition8).PassiveTrigger;
+									return new OnDeathTriggerController(definition8).PassiveTrigger;
 								}
-								return new PermanentTriggerController(definition7).PassiveTrigger;
+								return new EndOfProductionTriggerController(definition7).PassiveTrigger;
 							}
-							return new OnDeathTriggerController(definition6).PassiveTrigger;
+							return new StartOfProductionTriggerController(definition6).PassiveTrigger;
 						}
-						return new EndOfProductionTriggerController(definition5).PassiveTrigger;
+						return new StartOfNightPlayableTurnTriggerController(definition5).PassiveTrigger;
 					}
-					return new StartOfProductionTriggerController(definition4).PassiveTrigger;
+					return new StartOfNightEnemyTurnTriggerController(definition4).PassiveTrigger;
 				}
 				return (serializedData?.Container?.AfterXNightTurnsTriggers != null && serializedData.AfterXNightTurnsTriggerIndex < serializedData.Container.AfterXNightTurnsTriggers.Count) ? new AfterXNightTurnsTriggerController(serializedData.Container.AfterXNightTurnsTriggers[serializedData.AfterXNightTurnsTriggerIndex++], definition3).PassiveTrigger : new AfterXNightTurnsTriggerController(definition3).PassiveTrigger;
 			}

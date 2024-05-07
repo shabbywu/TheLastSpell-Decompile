@@ -71,7 +71,8 @@ public class UnitStatDefinition : TheLastStand.Framework.Serialization.Definitio
 		BonusUsableItemsUses,
 		StunDurationModifier,
 		ContagionDurationModifier,
-		EnemyEvolutionDamageMultiplier
+		EnemyEvolutionDamageMultiplier,
+		GauntletRangeModifier
 	}
 
 	[StructLayout(LayoutKind.Sequential, Size = 1)]

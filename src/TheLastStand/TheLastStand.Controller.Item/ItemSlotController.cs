@@ -73,6 +73,11 @@ public abstract class ItemSlotController
 			return;
 		}
 		TheLastStand.Model.Item.Item item = otherItemSlot.Item;
+		if (item != null && item == ItemSlot.Item)
+		{
+			otherItemSlot.ItemSlotController.SetItem(ItemSlot.Item, onLoad);
+			return;
+		}
 		otherItemSlot.ItemSlotController.SetItem(ItemSlot.Item, onLoad);
 		SetItem(item, onLoad);
 	}

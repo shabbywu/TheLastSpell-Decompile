@@ -1,19 +1,27 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using TPLib;
 using TPLib.Localization;
+using TPLib.Yield;
+using TheLastStand.Controller.Skill;
 using TheLastStand.Database.Unit;
 using TheLastStand.Definition.Item;
+using TheLastStand.Definition.Tooltip.Compendium;
 using TheLastStand.Definition.Unit;
+using TheLastStand.Definition.Unit.Perk;
 using TheLastStand.Framework;
 using TheLastStand.Manager;
 using TheLastStand.Model.Item;
 using TheLastStand.Model.Skill;
 using TheLastStand.Model.Skill.SkillAction;
 using TheLastStand.Model.Unit;
+using TheLastStand.Model.Unit.Perk;
 using TheLastStand.View.Generic;
 using TheLastStand.View.Skill.UI;
+using TheLastStand.View.Unit.Perk;
 using TheLastStand.View.Unit.Stat;
 using UnityEngine;
 using UnityEngine.UI;
@@ -29,6 +37,8 @@ public class ItemTooltip : TooltipBase
 		public const float PanelMinWidth = 275f;
 
 		public const float PanelWidthOffest = -20f;
+
+		public const float PerkPanelTileAndBackgroundOffset = 50f;
 	}
 
 	[SerializeField]
@@ -36,6 +46,9 @@ public class ItemTooltip : TooltipBase
 
 	[SerializeField]
 	private SkillTooltip skillTooltip;
+
+	[SerializeField]
+	private RectTransform itemTooltipPanel;
 
 	[SerializeField]
 	private RectTransform spaceRectTransform;
@@ -143,16 +156,19 @@ public class ItemTooltip : TooltipBase
 	private AffixStatView affixTextPrefab;
 
 	[SerializeField]
+	private ItemCarouselEntryListDisplay carouselEntriesListDisplay;
+
+	[SerializeField]
+	private ItemCarouselEntryIconDisplay selectedCarouselEntryDisplayPrefab;
+
+	[SerializeField]
+	private GameObject carouselPanel;
+
+	[SerializeField]
+	private Canvas carouselPanelCanvas;
+
+	[SerializeField]
 	private GameObject spaceGameObject;
-
-	[SerializeField]
-	private SkillListDisplay skillsListDisplay;
-
-	[SerializeField]
-	private SkillDisplay selectedSkillDisplayPrefab;
-
-	[SerializeField]
-	private GameObject skillsPanel;
 
 	[SerializeField]
 	private SkillDisplay skillDisplay;
@@ -170,10 +186,41 @@ public class ItemTooltip : TooltipBase
 	private RectTransform skillEffectsRect;
 
 	[SerializeField]
+	private UnitPerkDisplay unitPerkDisplay;
+
+	[SerializeField]
+	private GameObject perkDisplayPanel;
+
+	[SerializeField]
+	private RectTransform perkDisplayPanelRect;
+
+	[SerializeField]
+	private RectTransform perkDisplayPanelContentRectTransform;
+
+	[SerializeField]
+	private RectTransform[] perkDisplayPanelRectTransforms;
+
+	[SerializeField]
+	private GameObject perkSkillTooltipContainer;
+
+	[SerializeField]
+	private SkillWithoutCompendiumTooltip perkSkillTooltip;
+
+	[SerializeField]
+	private bool displayPerkSkillTooltipToTheRight = true;
+
+	[SerializeField]
+	private GameObject perkSkillCycleHelper;
+
+	[SerializeField]
 	private GameObject epicParticles;
 
 	[SerializeField]
 	private GameObject rareParticles;
+
+	private int skillsNb;
+
+	private int perksNb;
 
 	private VerticalLayoutGroup additionalAffixeVerticalLayoutGroup;
 
@@ -183,9 +230,9 @@ public class ItemTooltip : TooltipBase
 
 	private PlayableUnit itemOwner;
 
-	private int skillIndex;
+	private int carouselEntryIndex;
 
-	private SkillDisplay selectedSkillDisplay;
+	private ItemCarouselEntryIconDisplay selectedCarouselEntryDisplay;
 
 	private bool useDefaultValues;
 
@@ -240,6 +287,10 @@ public class ItemTooltip : TooltipBase
 		}
 	}
 
+	public Perk CurrentPerk { get; private set; }
+
+	public TheLastStand.Model.Skill.Skill CurrentPerkSkill { get; private set; }
+
 	public TheLastStand.Model.Item.Item Item { get; set; }
 
 	public ItemTooltipSkillCycle ItemTooltipSkillCycle { get; set; }
@@ -248,91 +299,183 @@ public class ItemTooltip : TooltipBase
 
 	public event OnItemTooltipDisplayedChange ItemTooltipDisplayedChangeEvent;
 
+	public void RefreshCarousel()
+	{
+		//IL_024b: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0256: Unknown result type (might be due to invalid IL or missing references)
+		if (Item == null)
+		{
+			return;
+		}
+		skillsNb = 0;
+		perksNb = 0;
+		if ((Item.Skills != null && Item.Skills.Count > 0) || (Item.Perks != null && Item.Perks.Count > 0))
+		{
+			((MonoBehaviour)this).StartCoroutine(RefreshCarouselPanelCanvasSortingOrder());
+			carouselPanel.SetActive(true);
+			spaceGameObject.SetActive(true);
+			carouselEntriesListDisplay.SetContent(Item.Skills, Item.Perks.Values.ToList());
+			if (Item.Skills != null)
+			{
+				skillsNb = Item.Skills.Count;
+			}
+			if (Item.Perks != null)
+			{
+				perksNb = Item.Perks.Count;
+			}
+			int num = skillsNb + perksNb;
+			if ((Object)(object)selectedCarouselEntryDisplay == (Object)null)
+			{
+				selectedCarouselEntryDisplay = Object.Instantiate<ItemCarouselEntryIconDisplay>(selectedCarouselEntryDisplayPrefab, ((Component)carouselEntriesListDisplay).transform);
+			}
+			if (carouselEntryIndex < num)
+			{
+				carouselEntriesListDisplay.DisplayElement(carouselEntryIndex, show: true);
+			}
+			carouselEntryIndex = Mathf.Clamp(ItemTooltipSkillCycle.SkillTabIndex, 0, num - 1);
+			((Component)selectedCarouselEntryDisplay).transform.SetSiblingIndex(carouselEntryIndex);
+			if (carouselEntryIndex < skillsNb)
+			{
+				selectedCarouselEntryDisplay.SetContent(Item.Skills[carouselEntryIndex].SkillDefinition);
+			}
+			else
+			{
+				selectedCarouselEntryDisplay.SetContent(Item.Perks.Values.ToList()[carouselEntryIndex - skillsNb].PerkDefinition);
+			}
+			bool isNextEntryASkill = skillsNb > 0 && (carouselEntryIndex + 1 < skillsNb || carouselEntryIndex + 1 >= num);
+			selectedCarouselEntryDisplay.Refresh();
+			selectedCarouselEntryDisplay.ToggleNextElementLabel(num > 1, isNextEntryASkill);
+			float num2 = ((num > 1) ? maxSpaceSize : minSpaceSize);
+			spaceRectTransform.sizeDelta = new Vector2(spaceRectTransform.sizeDelta.x, num2);
+			carouselEntriesListDisplay.DisplayElement(carouselEntryIndex, show: false);
+		}
+		else
+		{
+			carouselPanel.SetActive(false);
+			spaceGameObject.SetActive(false);
+		}
+	}
+
 	public void RefreshSkill()
 	{
-		//IL_03a8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03c5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03fe: Unknown result type (might be due to invalid IL or missing references)
-		//IL_040e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_041f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_037b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01b5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01c0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_023d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_024d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_025d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0268: Unknown result type (might be due to invalid IL or missing references)
-		//IL_026d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_027e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_028f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02a0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02b9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02c4: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00cf: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00df: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00ef: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00fa: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00ff: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0110: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0121: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0132: Unknown result type (might be due to invalid IL or missing references)
+		//IL_014b: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0156: Unknown result type (might be due to invalid IL or missing references)
 		if (Item == null)
 		{
 			skillDisplay.Skill = null;
 			return;
 		}
-		skillsPanel.GetComponent<RectTransform>();
 		TheLastStand.Model.Skill.Skill skill = skillDisplay.Skill;
-		if (Item.Skills != null && Item.Skills.Count > 0)
+		if (Item.Skills != null && Item.Skills.Count > 0 && carouselEntryIndex < Item.Skills.Count)
 		{
-			skillsPanel.SetActive(true);
-			spaceGameObject.SetActive(true);
 			skillDisplayPanel.SetActive(true);
-			skillsListDisplay.SetSkills(Item.Skills, TileObjectSelectionManager.SelectedUnit, skillTooltip);
-			if ((Object)(object)selectedSkillDisplay == (Object)null)
-			{
-				selectedSkillDisplay = Object.Instantiate<SkillDisplay>(selectedSkillDisplayPrefab, ((Component)skillsListDisplay).transform);
-			}
-			if (skillIndex < Item.Skills.Count)
-			{
-				skillsListDisplay.DisplaySkill(skillIndex, show: true);
-			}
-			skillIndex = Mathf.Clamp(ItemTooltipSkillCycle.SkillTabIndex, 0, Item.Skills.Count - 1);
-			((Component)selectedSkillDisplay).transform.SetSiblingIndex(skillIndex);
-			selectedSkillDisplay.Skill = Item.Skills[skillIndex];
-			selectedSkillDisplay.Init(skillTooltip);
-			selectedSkillDisplay.Refresh();
-			selectedSkillDisplay.ToggleBrowseLabel(Item.Skills.Count > 1);
-			float num = ((Item.Skills.Count > 1) ? maxSpaceSize : minSpaceSize);
-			spaceRectTransform.sizeDelta = new Vector2(spaceRectTransform.sizeDelta.x, num);
-			skillsListDisplay.DisplaySkill(skillIndex, show: false);
 			skillDisplay.SkillOwner = itemOwner;
-			skillDisplay.Skill = Item.Skills[skillIndex];
+			skillDisplay.Skill = Item.Skills[carouselEntryIndex];
 			skillDisplay.Init(skillTooltip);
 			skillDisplay.Refresh();
-			float num2 = 0f;
+			float num = 0f;
 			((Transform)skillEffectsRect).localPosition = Vector2.op_Implicit(new Vector2(((Transform)skillEffectsRect).localPosition.x, ((Transform)skillDetailsRect).localPosition.y - skillDetailsRect.sizeDelta.y));
-			num2 += 0f - ((Transform)skillDetailsRect).localPosition.y + skillDetailsRect.sizeDelta.y + skillEffectsRect.sizeDelta.y;
-			skillDisplayPanelRect.sizeDelta = new Vector2(skillDisplayPanelRect.sizeDelta.x, num2);
+			num += 0f - ((Transform)skillDetailsRect).localPosition.y + skillDetailsRect.sizeDelta.y + skillEffectsRect.sizeDelta.y;
+			skillDisplayPanelRect.sizeDelta = new Vector2(skillDisplayPanelRect.sizeDelta.x, num);
 		}
 		else
 		{
 			skillDisplay.Skill = null;
-			skillsPanel.SetActive(false);
-			spaceGameObject.SetActive(false);
 			skillDisplayPanel.SetActive(false);
 		}
 		if (skillDisplay.Skill != skill)
 		{
 			ItemTooltipSkillCycle.UpdateCompendium();
 		}
-		LayoutRebuilder.ForceRebuildLayoutImmediate(allStatsPanel);
 		LayoutRebuilder.ForceRebuildLayoutImmediate(skillDisplay.SkillAreaOfEffectGrid.RectTransform);
-		float num3 = 0f;
-		for (int i = 0; i < ((Transform)tooltipPanel).childCount; i++)
+	}
+
+	public void RefreshPerk()
+	{
+		//IL_02bf: Unknown result type (might be due to invalid IL or missing references)
+		//IL_02ca: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0291: Unknown result type (might be due to invalid IL or missing references)
+		if (Item == null)
 		{
-			if ((Object)(object)((Transform)tooltipPanel).GetChild(i) != (Object)(object)((Component)glowImage).transform)
-			{
-				float num4 = num3;
-				Transform transform = ((Component)((Transform)tooltipPanel).GetChild(i)).transform;
-				num3 = num4 + ((RectTransform)((transform is RectTransform) ? transform : null)).sizeDelta.y;
-			}
+			RemovePerkLink();
 		}
-		tooltipPanel.sizeDelta = new Vector2(tooltipPanel.sizeDelta.x, num3 - (float)((LayoutGroup)allStatsLayout).padding.top);
-		glowImage.sprite = glowSprites.GetSpriteAt((int)(Item.Rarity - 1));
-		glowRectTransform.sizeDelta = new Vector2(glowRectTransform.sizeDelta.x, tooltipPanel.sizeDelta.y + glowDeltaHeight);
+		else if (perksNb > 0 && carouselEntryIndex >= skillsNb)
+		{
+			RefreshTooltipWidth();
+			RemovePerkLink();
+			int index = carouselEntryIndex - skillsNb;
+			perkDisplayPanel.SetActive(true);
+			CurrentPerkSkill = null;
+			CurrentPerk = Item.Perks.Values.ToList()[index];
+			if (CurrentPerk != null)
+			{
+				PerkDefinition perkDefinition = CurrentPerk.PerkDefinition;
+				if (itemOwner != null)
+				{
+					if (itemOwner.Perks.ContainsKey(perkDefinition.Id))
+					{
+						unitPerkDisplay.SetContent(itemOwner.Perks[perkDefinition.Id]);
+					}
+					else
+					{
+						CurrentPerk.PerkController.ChangeOwner(itemOwner);
+						unitPerkDisplay.SetContent(CurrentPerk);
+					}
+				}
+				else
+				{
+					unitPerkDisplay.SetContent(null, perkDefinition);
+				}
+				perkSkillCycleHelper.SetActive(unitPerkDisplay.PerkDefinition != null && unitPerkDisplay.PerkDefinition.SkillsToShow.Count > 1);
+				int num = Mathf.Min(ItemTooltipSkillCycle.PerkSkillTabIndex, (unitPerkDisplay.PerkDefinition != null) ? (unitPerkDisplay.PerkDefinition.SkillsToShow.Count - 1) : 0);
+				if (CurrentPerk.PerkDefinition.SkillsToShow.Count > 0 && num < CurrentPerk.PerkDefinition.SkillsToShow.Count)
+				{
+					string item = unitPerkDisplay.PerkDefinition.SkillsToShow[num].Item1;
+					if (SkillDatabase.SkillDefinitions.TryGetValue(item, out var value))
+					{
+						CurrentPerkSkill = new SkillController(value, unitPerkDisplay.Perk, unitPerkDisplay.PerkDefinition.SkillsToShow[num].Item2).Skill;
+						perkSkillTooltip.SetContent(CurrentPerkSkill, TileObjectSelectionManager.SelectedPlayableUnit);
+						perkSkillTooltip.DisplayInvalidityPanel = false;
+						SetPerkSkillTooltipVisible(isVisible: true);
+					}
+				}
+				else
+				{
+					SetPerkSkillTooltipVisible(isVisible: false);
+				}
+			}
+			unitPerkDisplay.Init();
+			ItemTooltipSkillCycle.UpdateCompendium();
+			LayoutRebuilder.ForceRebuildLayoutImmediate(perkDisplayPanelContentRectTransform);
+			float num2 = 0f;
+			RectTransform[] array = perkDisplayPanelRectTransforms;
+			foreach (RectTransform val in array)
+			{
+				if (((Component)val).gameObject.activeSelf)
+				{
+					num2 += val.sizeDelta.y;
+				}
+			}
+			num2 += 50f;
+			perkDisplayPanelRect.sizeDelta = new Vector2(skillDisplayPanelRect.sizeDelta.x, num2);
+		}
+		else
+		{
+			CurrentPerkSkill = null;
+			RemovePerkLink();
+			perkSkillCycleHelper.SetActive(false);
+			SetPerkSkillTooltipVisible(isVisible: false);
+			unitPerkDisplay.SetContent(null);
+			perkDisplayPanel.SetActive(false);
+		}
 	}
 
 	public void SetContent(TheLastStand.Model.Item.Item item, PlayableUnit itemOwner = null, bool newUseDefaultValues = false)
@@ -365,6 +508,14 @@ public class ItemTooltip : TooltipBase
 				rareParticles
 			}
 		};
+		if (displayPerkSkillTooltipToTheRight)
+		{
+			perkSkillTooltipContainer.transform.SetAsLastSibling();
+		}
+		else
+		{
+			perkSkillTooltipContainer.transform.SetAsFirstSibling();
+		}
 	}
 
 	protected override bool CanBeDisplayed()
@@ -487,23 +638,29 @@ public class ItemTooltip : TooltipBase
 			}
 		}
 		skillDisplay.SkillAreaOfEffectGridPlacedEvent += RefreshTooltipWidth;
+		RefreshCarousel();
 		RefreshSkill();
+		RefreshPerk();
+		if (Item != null)
+		{
+			ResizeGlow();
+		}
 	}
 
 	private void RefreshTooltipWidth()
 	{
-		//IL_0098: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0054: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006f: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00a5: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00af: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0061: Unknown result type (might be due to invalid IL or missing references)
+		//IL_007c: Unknown result type (might be due to invalid IL or missing references)
 		skillDisplay.SkillAreaOfEffectGridPlacedEvent -= RefreshTooltipWidth;
 		float num = 275f;
-		if (skillDisplay.SkillAreaOfEffectGrid.Displayed)
+		if (skillDisplayPanel.activeSelf && skillDisplay.SkillAreaOfEffectGrid.Displayed)
 		{
 			num = Mathf.Max(((Transform)skillDisplay.SkillParametersContainer).localPosition.x + ((Transform)skillDisplay.SkillAreaOfEffectGrid.RectTransform).localPosition.x + skillDisplay.SkillAreaOfEffectGrid.RectTransform.sizeDelta.x + -20f, 275f);
 		}
-		base.RectTransform.sizeDelta = new Vector2(num, base.RectTransform.sizeDelta.y);
+		itemTooltipPanel.sizeDelta = new Vector2(num, itemTooltipPanel.sizeDelta.y);
 		Transform transform = ((Component)horizontalLayoutGroup).transform;
 		Transform obj = ((transform is RectTransform) ? transform : null);
 		LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)(object)obj);
@@ -526,6 +683,30 @@ public class ItemTooltip : TooltipBase
 		}
 	}
 
+	public void AddPerkEffectEntries()
+	{
+		if (!((Object)(object)unitPerkDisplay != (Object)null) || unitPerkDisplay.PerkDefinition == null)
+		{
+			return;
+		}
+		foreach (CompendiumEntryDefinition compendiumEntry in unitPerkDisplay.PerkDefinition.CompendiumEntries)
+		{
+			ItemTooltipSkillCycle.CompendiumPanel.AddCompendiumEntry(compendiumEntry.Id, compendiumEntry.DisplayLinkedEntries);
+		}
+		if (unitPerkDisplay.PerkDefinition.SkillsToShow.Count > 0)
+		{
+			string item = unitPerkDisplay.PerkDefinition.SkillsToShow[Mathf.Min(ItemTooltipSkillCycle.PerkSkillTabIndex, unitPerkDisplay.PerkDefinition.SkillsToShow.Count - 1)].Item1;
+			if (SkillDatabase.SkillDefinitions.TryGetValue(item, out var value) && value.SkillActionDefinition.SkillEffectDefinitions != null)
+			{
+				ItemTooltipSkillCycle.CompendiumPanel.AddSkillEffectIds(value.SkillActionDefinition.SkillEffectDefinitions);
+			}
+			if (CurrentPerkSkill?.SkillAction is AttackSkillAction attackSkillAction)
+			{
+				ItemTooltipSkillCycle.CompendiumPanel.AddDamageType(attackSkillAction);
+			}
+		}
+	}
+
 	protected override void OnDisplay()
 	{
 		base.OnDisplay();
@@ -538,6 +719,8 @@ public class ItemTooltip : TooltipBase
 		this.ItemTooltipDisplayedChangeEvent?.Invoke(isDisplayed: false);
 		Item = null;
 		RefreshSkill();
+		RefreshPerk();
+		SetPerkSkillTooltipVisible(isVisible: false);
 		if ((Object)(object)ItemTooltipSkillCycle != (Object)null)
 		{
 			ItemTooltipSkillCycle.UpdateCompendium();
@@ -593,5 +776,62 @@ public class ItemTooltip : TooltipBase
 				((TMP_Text)mainStatValueText).text = string.Empty;
 			}
 		}
+	}
+
+	private void ResizeGlow()
+	{
+		//IL_0074: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0091: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00ca: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00da: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00eb: Unknown result type (might be due to invalid IL or missing references)
+		//IL_004a: Unknown result type (might be due to invalid IL or missing references)
+		LayoutRebuilder.ForceRebuildLayoutImmediate(allStatsPanel);
+		float num = 0f;
+		for (int i = 0; i < ((Transform)tooltipPanel).childCount; i++)
+		{
+			if ((Object)(object)((Transform)tooltipPanel).GetChild(i) != (Object)(object)((Component)glowImage).transform)
+			{
+				float num2 = num;
+				Transform transform = ((Component)((Transform)tooltipPanel).GetChild(i)).transform;
+				num = num2 + ((RectTransform)((transform is RectTransform) ? transform : null)).sizeDelta.y;
+			}
+		}
+		tooltipPanel.sizeDelta = new Vector2(tooltipPanel.sizeDelta.x, num - (float)((LayoutGroup)allStatsLayout).padding.top);
+		glowImage.sprite = glowSprites.GetSpriteAt((int)(Item.Rarity - 1));
+		glowRectTransform.sizeDelta = new Vector2(glowRectTransform.sizeDelta.x, tooltipPanel.sizeDelta.y + glowDeltaHeight);
+	}
+
+	private void RemovePerkLink()
+	{
+		if (CurrentPerk != null)
+		{
+			CurrentPerk.PerkController.ChangeOwner(null);
+			CurrentPerk = null;
+		}
+	}
+
+	private void SetPerkSkillTooltipVisible(bool isVisible)
+	{
+		perkSkillTooltipContainer.SetActive(isVisible);
+		if (isVisible)
+		{
+			perkSkillTooltip.Display();
+		}
+		else
+		{
+			perkSkillTooltip.Hide();
+		}
+	}
+
+	private IEnumerator RefreshCarouselPanelCanvasSortingOrder()
+	{
+		Canvas obj = carouselPanelCanvas;
+		int sortingOrder = obj.sortingOrder;
+		obj.sortingOrder = sortingOrder + 1;
+		yield return SharedYields.WaitForEndOfFrame;
+		Canvas obj2 = carouselPanelCanvas;
+		sortingOrder = obj2.sortingOrder;
+		obj2.sortingOrder = sortingOrder - 1;
 	}
 }

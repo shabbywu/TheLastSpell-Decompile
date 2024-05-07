@@ -3,6 +3,7 @@ using System.Linq;
 using System.Xml.Linq;
 using TPLib.Log;
 using TheLastStand.Definition;
+using TheLastStand.Definition.DLC;
 using TheLastStand.Framework.Database;
 using TheLastStand.Framework.Maths;
 using UnityEngine;
@@ -15,6 +16,19 @@ public class GenericDatabase : Database<GenericDatabase>
 	private TextAsset[] idsListsDefinitionsTextAssets;
 
 	public static Dictionary<string, IdsListDefinition> IdsListDefinitions { get; private set; }
+
+	public static List<TextAsset> GetDLCTextAssets(DLCTextAssetDefinition[] dlcTextAssetDefinitions, bool forceGetAllTextAssetDefinitions = false)
+	{
+		List<TextAsset> list = new List<TextAsset>();
+		foreach (DLCTextAssetDefinition dLCTextAssetDefinition in dlcTextAssetDefinitions)
+		{
+			if (!dLCTextAssetDefinition.IsLinkedToDLC || dLCTextAssetDefinition.IsDLCOwned() || forceGetAllTextAssetDefinitions)
+			{
+				list.Add(dLCTextAssetDefinition.TextAsset);
+			}
+		}
+		return list;
+	}
 
 	public static List<IdsListDefinition> GetIdListDefinitionForEntity(string entityId)
 	{

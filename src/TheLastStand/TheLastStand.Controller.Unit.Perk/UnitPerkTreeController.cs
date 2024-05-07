@@ -40,7 +40,7 @@ public class UnitPerkTreeController
 	{
 		if (UnitPerkTree.CanBuyPerk())
 		{
-			UnitPerkTree.UnitPerkTreeView.SelectedPerk.Perk.PerkController.Unlock();
+			UnitPerkTree.UnitPerkTreeView.SelectedPerk.Perk.PerkController.Unlock(UnitPerkTree.PlayableUnit);
 			UnitPerkTree.PlayableUnit.PerksPoints--;
 			UnitPerkTree.UnitPerkTreeView.RefreshSelectedPerk(UnitPerkTree.UnitPerkTreeView.SelectedPerk);
 			OnSetNewPerk(UnitPerkTree.UnitPerkTreeView.SelectedPerk.PerkDefinition.Id, UnitPerkTree.UnitPerkTreeView.SelectedPerk.Perk);
@@ -69,7 +69,13 @@ public class UnitPerkTreeController
 			{
 				PerkDefinition perkDefinition = PickRandomPerkDefinition(list, i, j);
 				UnitPerkDisplay perkView = TPSingleton<CharacterSheetPanel>.Instance.UnitPerkTreeView.UnitPerkTierViews[i].PerkDisplays[j];
-				unitPerkTier.Perks.Add((perkDefinition == null) ? null : new PerkController(perkDefinition, perkView, owner, unitPerkTier, list[j].Id, isNative: false).Perk);
+				TheLastStand.Model.Unit.Perk.Perk perk = null;
+				if (perkDefinition != null)
+				{
+					perk = new PerkController(perkDefinition, perkView, owner, unitPerkTier, list[j].Id, isNative: false, isFromRace: false).Perk;
+					owner.PlayableUnitPerksController.TryAddPerk(perk);
+				}
+				unitPerkTier.Perks.Add((perkDefinition == null) ? null : perk);
 			}
 			if (i == 0)
 			{
@@ -80,6 +86,7 @@ public class UnitPerkTreeController
 
 	public void GeneratePerkTree(List<SerializedPerkCollection> perkCollections, PlayableUnit owner, bool isOwnerDead)
 	{
+		FixHumanPerkCollectionNotBeingSet(perkCollections, owner);
 		UnitPerkTree.SetCollectionIds(perkCollections.Select((SerializedPerkCollection perkCollection) => perkCollection.Id).ToList());
 		for (int i = 0; i < PlayableUnitDatabase.UnitPerkTemplateDefinition.TierCount; i++)
 		{
@@ -97,7 +104,7 @@ public class UnitPerkTreeController
 				{
 					PerkDefinition perkDefinition = PlayableUnitDatabase.PerkDefinitions[perkCollections[j].Perks[i].Id];
 					UnitPerkDisplay perkView = TPSingleton<CharacterSheetPanel>.Instance.UnitPerkTreeView.UnitPerkTierViews[i].PerkDisplays[j];
-					unitPerkTier.Perks.Add(new PerkController(serializedPerk, perkDefinition, perkView, owner, unitPerkTier, perkCollections[j].Id, isOwnerDead, isNative: false).Perk);
+					unitPerkTier.Perks.Add(new PerkController(serializedPerk, perkDefinition, perkView, owner, unitPerkTier, perkCollections[j].Id, isOwnerDead, isNative: false, isFromRace: false).Perk);
 				}
 				else
 				{
@@ -134,7 +141,26 @@ public class UnitPerkTreeController
 				TheLastStand.Model.Unit.Perk.Perk perk = UnitPerkTree.UnitPerkTiers[num].Perks[num2];
 				if (perk != null && perk.PerkDefinition.Id == perkDefinitionId)
 				{
-					perk.PerkController.Unlock();
+					perk.PerkController.Unlock(UnitPerkTree.PlayableUnit);
+					TPSingleton<CharacterSheetPanel>.Instance.RefreshStats();
+					TPSingleton<CharacterSheetPanel>.Instance.RefreshOpenedPage();
+					UnitPerkTree.UnitPerkTreeView.RefreshSelectedPerk(UnitPerkTree.UnitPerkTreeView.SelectedPerk);
+				}
+			}
+		}
+		UpdateTiersAvailability(1, refreshView: false);
+	}
+
+	public void LockPerk(string perkDefinitionId)
+	{
+		for (int num = UnitPerkTree.UnitPerkTiers.Count - 1; num >= 0; num--)
+		{
+			for (int num2 = UnitPerkTree.UnitPerkTiers[num].Perks.Count - 1; num2 >= 0; num2--)
+			{
+				TheLastStand.Model.Unit.Perk.Perk perk = UnitPerkTree.UnitPerkTiers[num].Perks[num2];
+				if (perk != null && perk.PerkDefinition.Id == perkDefinitionId)
+				{
+					perk.PerkController.Lock(UnitPerkTree.PlayableUnit);
 					TPSingleton<CharacterSheetPanel>.Instance.RefreshStats();
 					TPSingleton<CharacterSheetPanel>.Instance.RefreshOpenedPage();
 					UnitPerkTree.UnitPerkTreeView.RefreshSelectedPerk(UnitPerkTree.UnitPerkTreeView.SelectedPerk);
@@ -161,15 +187,15 @@ public class UnitPerkTreeController
 	private List<UnitPerkCollectionDefinition> PickRandomCollections()
 	{
 		List<UnitPerkCollectionDefinition> list = new List<UnitPerkCollectionDefinition>();
-		List<Tuple<UnitPerkCollectionDefinition, int>> list2 = new List<Tuple<UnitPerkCollectionDefinition, int>>();
+		List<Tuple<UnitPerkCollectionDefinition, int, string>> list2 = new List<Tuple<UnitPerkCollectionDefinition, int, string>>();
 		HashSet<UnitPerkCollectionDefinition> hashSet = new HashSet<UnitPerkCollectionDefinition>();
 		for (int i = 0; i < PlayableUnitDatabase.UnitPerkTemplateDefinition.UnitPerkCollectionSetDefinitions.Count; i++)
 		{
 			int num = 0;
 			list2.Clear();
-			foreach (Tuple<UnitPerkCollectionDefinition, int> tupleCollectionWeight in PlayableUnitDatabase.UnitPerkTemplateDefinition.UnitPerkCollectionSetDefinitions[i].CollectionsPerWeight)
+			foreach (Tuple<UnitPerkCollectionDefinition, int, string> tupleCollectionWeight in PlayableUnitDatabase.UnitPerkTemplateDefinition.UnitPerkCollectionSetDefinitions[i].CollectionsPerWeight)
 			{
-				if (tupleCollectionWeight.Item1.MultipleAllowed || !hashSet.Any((UnitPerkCollectionDefinition collection) => collection == tupleCollectionWeight.Item1))
+				if (IsPerkCollectionAvailableToRace(tupleCollectionWeight.Item3) && (tupleCollectionWeight.Item1.MultipleAllowed || !hashSet.Any((UnitPerkCollectionDefinition collection) => collection == tupleCollectionWeight.Item1)))
 				{
 					num += tupleCollectionWeight.Item2;
 					list2.Add(tupleCollectionWeight);
@@ -182,7 +208,7 @@ public class UnitPerkTreeController
 				continue;
 			}
 			int randomRange = RandomManager.GetRandomRange(TPSingleton<PlayableUnitManager>.Instance, 0, num);
-			foreach (Tuple<UnitPerkCollectionDefinition, int> item in list2)
+			foreach (Tuple<UnitPerkCollectionDefinition, int, string> item in list2)
 			{
 				num -= item.Item2;
 				if (randomRange >= num)
@@ -194,6 +220,19 @@ public class UnitPerkTreeController
 			}
 		}
 		return list;
+	}
+
+	private bool IsPerkCollectionAvailableToRace(string perkCollectionRaceId)
+	{
+		if (UnitPerkTree.PlayableUnit == null)
+		{
+			return false;
+		}
+		if (!string.IsNullOrEmpty(perkCollectionRaceId))
+		{
+			return perkCollectionRaceId == UnitPerkTree.PlayableUnit.RaceDefinition.Id;
+		}
+		return true;
 	}
 
 	private PerkDefinition PickRandomPerkDefinition(List<UnitPerkCollectionDefinition> collections, int perkTierIndex, int perkIndex)
@@ -244,6 +283,40 @@ public class UnitPerkTreeController
 				UnitPerkTree.UnitPerkTiers[i].UnitPerkTierView.RefreshAvailability(flag && !UnitPerkTree.UnitPerkTiers[i].Available);
 			}
 			flag = UnitPerkTree.UnitPerkTiers[i].Available;
+		}
+	}
+
+	private void FixHumanPerkCollectionNotBeingSet(List<SerializedPerkCollection> perkCollections, PlayableUnit owner)
+	{
+		if (owner.RaceDefinition?.Id != "Human" || perkCollections.Any((SerializedPerkCollection perkCollection) => perkCollection.Id == "Human"))
+		{
+			return;
+		}
+		string text = "Human";
+		int num = -1;
+		HashSet<string> hashSet = new HashSet<string>();
+		for (int i = 0; i < PlayableUnitDatabase.UnitPerkTemplateDefinition.UnitPerkCollectionSetDefinitions.Count; i++)
+		{
+			foreach (Tuple<UnitPerkCollectionDefinition, int, string> item in PlayableUnitDatabase.UnitPerkTemplateDefinition.UnitPerkCollectionSetDefinitions[i].CollectionsPerWeight)
+			{
+				if (item.Item3 == text)
+				{
+					num = i;
+					break;
+				}
+			}
+		}
+		if (num == -1)
+		{
+			return;
+		}
+		foreach (Tuple<UnitPerkCollectionDefinition, int, string> item2 in PlayableUnitDatabase.UnitPerkTemplateDefinition.UnitPerkCollectionSetDefinitions[num].CollectionsPerWeight)
+		{
+			hashSet.Add(item2.Item3);
+		}
+		if (num < perkCollections.Count && hashSet.Contains(text) && !hashSet.Contains(perkCollections[num].Id) && perkCollections[num].Id == "Misc")
+		{
+			perkCollections[num].Id = text;
 		}
 	}
 

@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
+using TPLib;
 using TheLastStand.Controller.Item;
 using TheLastStand.Database;
 using TheLastStand.Definition.Item;
 using TheLastStand.Definition.Unit.Perk.PerkEffect;
 using TheLastStand.Definition.Unit.Trait;
+using TheLastStand.Manager;
 using TheLastStand.Model.Item;
+using TheLastStand.Model.Unit;
 using TheLastStand.Model.Unit.Perk;
 using TheLastStand.Model.Unit.Perk.PerkEffect;
 using TheLastStand.Model.Unit.Perk.PerkModule;
@@ -114,7 +117,7 @@ public class EquipmentSlotModifierEffectController : APerkEffectController
 			}
 			if (equipmentSlot.Item != null)
 			{
-				if (equippedWeaponSetIndex == 1)
+				if (equippedWeaponSetIndex == 1 && flag)
 				{
 					Perk.Owner.PlayableUnitController.EquipItem(equipmentSlot.Item, value[0]);
 				}
@@ -133,6 +136,13 @@ public class EquipmentSlotModifierEffectController : APerkEffectController
 		if (flag)
 		{
 			Perk.Owner.PlayableUnitView.RefreshSnapshot();
+			return;
+		}
+		Perk.Owner.PlayableUnitView.RefreshBodyParts();
+		PlayableUnit selectedPlayableUnit = TileObjectSelectionManager.SelectedPlayableUnit;
+		if (selectedPlayableUnit != null && selectedPlayableUnit.Id == Perk.Owner.Id && TPSingleton<CharacterSheetPanel>.Instance.IsOpened)
+		{
+			TPSingleton<CharacterSheetPanel>.Instance.RefreshAvatar(selectedPlayableUnit);
 		}
 	}
 }

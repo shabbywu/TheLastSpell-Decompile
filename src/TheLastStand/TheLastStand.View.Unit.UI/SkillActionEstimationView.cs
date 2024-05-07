@@ -352,7 +352,7 @@ public class SkillActionEstimationView : MonoBehaviour
 			{
 				continue;
 			}
-			if (allEffect.Key != "Buff" && allEffect.Key != "Debuff" && allEffect.Key != "CasterEffect" && allEffect.Key != "RegenStat" && allEffect.Key != "Charged" && allEffect.Key != "RemoveStatus" && allEffect.Key != "Dispel" && allEffect.Key != "NegativeStatusImmunityEffect")
+			if (allEffect.Key != "Buff" && allEffect.Key != "Debuff" && allEffect.Key != "CasterEffect" && allEffect.Key != "RegenStat" && allEffect.Key != "Charged" && allEffect.Key != "RemoveStatus" && allEffect.Key != "Dispel" && allEffect.Key != "NegativeStatusImmunityEffect" && !allEffect.Key.Contains("DecreaseStat"))
 			{
 				mainSpritesPath += "FriendlyFire";
 				mainIconHasBeenSet = true;

@@ -76,24 +76,21 @@ public class JoystickSelectable : Selectable, ISelectHandler, IEventSystemHandle
 
 	public void ClearEvents()
 	{
-		if (TPSingleton<HUDJoystickNavigationManager>.Exist())
-		{
-			TPSingleton<HUDJoystickNavigationManager>.Instance.TooltipsToggled -= OnTooltipsToggled;
-		}
-		if (TPSingleton<InputManager>.Exist())
-		{
-			TPSingleton<InputManager>.Instance.LastActiveControllerChanged -= OnLastActiveControllerChanged;
-		}
+		HUDJoystickNavigationManager.TooltipsToggled -= OnTooltipsToggled;
+		InputManager.LastActiveControllerChanged -= OnLastActiveControllerChanged;
 	}
 
 	protected override void Awake()
 	{
 		((Selectable)this).Awake();
-		if (TPSingleton<HUDJoystickNavigationManager>.Exist())
-		{
-			TPSingleton<HUDJoystickNavigationManager>.Instance.TooltipsToggled += OnTooltipsToggled;
-		}
-		TPSingleton<InputManager>.Instance.LastActiveControllerChanged += OnLastActiveControllerChanged;
+		HUDJoystickNavigationManager.TooltipsToggled += OnTooltipsToggled;
+		InputManager.LastActiveControllerChanged += OnLastActiveControllerChanged;
+	}
+
+	protected override void OnDestroy()
+	{
+		((UIBehaviour)this).OnDestroy();
+		ClearEvents();
 	}
 
 	private void OnTooltipsToggled(bool showTooltips)

@@ -76,6 +76,8 @@ public class SeerEnemyPortraitPreview : MonoBehaviour
 		}
 	}
 
+	public bool ForceHideQuantity { get; private set; }
+
 	public void Display(bool show)
 	{
 		Displayed = show;
@@ -89,9 +91,10 @@ public class SeerEnemyPortraitPreview : MonoBehaviour
 		portraitImage.sprite = (HiddenEnemy ? hiddenPortraitSprite : ((IsBossEnemy && (Object)(object)bossPortrait != (Object)null) ? bossPortrait : enemyPortraitSprite));
 	}
 
-	public void SetEnemyQuantity(int enemyQuantity, bool display)
+	public void SetEnemyQuantity(int enemyQuantity, bool display, bool forceHideQuantity)
 	{
 		quantity = enemyQuantity;
+		ForceHideQuantity = forceHideQuantity;
 		infiniteQuantityIcon.SetActive(enemyQuantity == -1);
 		((Component)quantityText).gameObject.SetActive(enemyQuantity > -1);
 		if (enemyQuantity > -1)

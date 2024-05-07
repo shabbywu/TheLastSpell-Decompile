@@ -1,6 +1,4 @@
-using TPLib.Localization;
 using TheLastStand.Definition;
-using TheLastStand.Manager;
 using TheLastStand.Model;
 using TheLastStand.View;
 
@@ -10,11 +8,11 @@ public class BarkController
 {
 	public Bark Bark { get; private set; }
 
-	public BarkController(BarkDefinition definition, BarkView view)
+	public BarkController(BarkDefinition definition, BarkView view, IBarker barker)
 	{
 		Bark = new Bark(definition, this, view);
 		view.Bark = Bark;
-		int randomRange = RandomManager.GetRandomRange(this, 0, definition.SentencesCount);
-		Bark.Sentence = Localizer.Get($"Bark_{definition.Id}_{randomRange}");
+		Bark.Barker = barker;
+		Bark.Sentence = BarkDefinition.GetSentence(definition, barker);
 	}
 }

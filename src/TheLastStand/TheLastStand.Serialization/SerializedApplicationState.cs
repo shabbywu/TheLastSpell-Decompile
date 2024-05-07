@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using TheLastStand.Manager;
 using TheLastStand.Serialization.Achievements;
+using TheLastStand.Serialization.Item.ItemRestriction;
 using TheLastStand.Serialization.Meta;
 
 namespace TheLastStand.Serialization;
@@ -42,6 +43,8 @@ public class SerializedApplicationState : SerializedContainer
 	public List<SerializedGlyphData> Glyphs;
 
 	public List<string> TutorialsRead;
+
+	public SerializedItemRestrictions ItemRestrictions;
 
 	public override byte GetSaveVersion()
 	{

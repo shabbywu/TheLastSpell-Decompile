@@ -59,6 +59,10 @@ public class LightShopManager : AMetaShopManager<LightShopManager>
 
 	protected override bool IsValidUpgradeForShop(MetaUpgrade metaUpgrade)
 	{
+		if (metaUpgrade.MetaUpgradeDefinition.IsLinkedToDLC && !metaUpgrade.IsLinkedDLCOwned)
+		{
+			return false;
+		}
 		return !metaUpgrade.MetaUpgradeDefinition.DamnedSoulsShop;
 	}
 

@@ -136,10 +136,7 @@ public class ModsView : TPSingleton<ModsView>, IOverlayUser
 
 	private void OnDestroy()
 	{
-		if (TPSingleton<InputManager>.Exist())
-		{
-			TPSingleton<InputManager>.Instance.LastActiveControllerChanged -= OnLastActiveControllerChanged;
-		}
+		InputManager.LastActiveControllerChanged -= OnLastActiveControllerChanged;
 	}
 
 	private void OnLastActiveControllerChanged(ControllerType controllerType)
@@ -212,15 +209,15 @@ public class ModsView : TPSingleton<ModsView>, IOverlayUser
 
 	private void Start()
 	{
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004d: Expected O, but got Unknown
-		//IL_005f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0069: Expected O, but got Unknown
-		//IL_007b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0085: Expected O, but got Unknown
-		//IL_0097: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a1: Expected O, but got Unknown
-		TPSingleton<InputManager>.Instance.LastActiveControllerChanged += OnLastActiveControllerChanged;
+		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0048: Expected O, but got Unknown
+		//IL_005a: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0064: Expected O, but got Unknown
+		//IL_0076: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0080: Expected O, but got Unknown
+		//IL_0092: Unknown result type (might be due to invalid IL or missing references)
+		//IL_009c: Expected O, but got Unknown
+		InputManager.LastActiveControllerChanged += OnLastActiveControllerChanged;
 		if (ShouldEnableOpenButton())
 		{
 			PopulateWindow(ModManager.SubscribedMods, ModManager.OutdatedMods);

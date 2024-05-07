@@ -3,19 +3,24 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Text;
 using TPLib;
 using TPLib.Debugging;
 using TPLib.Debugging.Console;
 using TPLib.Log;
 using TheLastStand.Controller;
 using TheLastStand.Database;
+using TheLastStand.Definition.DLC;
 using TheLastStand.Framework.Serialization;
 using TheLastStand.Manager.Achievements;
+using TheLastStand.Manager.DLC;
+using TheLastStand.Manager.Item;
 using TheLastStand.Manager.Meta;
 using TheLastStand.Manager.Modding;
 using TheLastStand.Manager.WorldMap;
 using TheLastStand.Model;
 using TheLastStand.Serialization;
+using TheLastStand.Serialization.Item.ItemRestriction;
 using TheLastStand.Serialization.Meta;
 using TheLastStand.View;
 using UnityEngine;
@@ -35,22 +40,29 @@ public class ApplicationManager : Manager<ApplicationManager>, ISerializable, ID
 		Release
 	}
 
+	public static class Constants
+	{
+		public const string SteamPlatformVersionIdentifier = ".s";
+
+		public const string GoGPlatformVersionIdentifier = ".g";
+	}
+
 	[Serializable]
 	[CompilerGenerated]
 	private sealed class _003C_003Ec
 	{
 		public static readonly _003C_003Ec _003C_003E9 = new _003C_003Ec();
 
-		public static GetGameVersionFunction _003C_003E9__39_0;
+		public static GetGameVersionFunction _003C_003E9__43_0;
 
-		public static Func<bool> _003C_003E9__41_0;
+		public static Func<bool> _003C_003E9__45_0;
 
-		internal string _003CAwake_003Eb__39_0()
+		internal string _003CAwake_003Eb__43_0()
 		{
 			return VersionString;
 		}
 
-		internal bool _003CQuitCoroutine_003Eb__41_0()
+		internal bool _003CQuitCoroutine_003Eb__45_0()
 		{
 			return SaverLoader.AreSavesCompleted();
 		}
@@ -108,7 +120,7 @@ public class ApplicationManager : Manager<ApplicationManager>, ISerializable, ID
 
 	public static int HotfixVersion => TPSingleton<ApplicationManager>.Instance.hotfixVersion;
 
-	public static string VersionString => string.Format("v{0}.{1}.{2}.{3}{4}{5}", TPSingleton<ApplicationManager>.Instance.majorVersion, TPSingleton<ApplicationManager>.Instance.minorVersion, TPSingleton<ApplicationManager>.Instance.patchVersion, TPSingleton<ApplicationManager>.Instance.hotfixVersion, TPSingleton<ApplicationManager>.Instance.BuildTypeString, ModManager.GameHasMods ? "_MODDED" : "");
+	public static string VersionString => string.Format("v{0}.{1}.{2}.{3}{4}{5}{6}{7}", TPSingleton<ApplicationManager>.Instance.majorVersion, TPSingleton<ApplicationManager>.Instance.minorVersion, TPSingleton<ApplicationManager>.Instance.patchVersion, TPSingleton<ApplicationManager>.Instance.hotfixVersion, TPSingleton<ApplicationManager>.Instance.PlatformVersion, TPSingleton<ApplicationManager>.Instance.OwnedDLCVersion, TPSingleton<ApplicationManager>.Instance.BuildTypeString, ModManager.GameHasMods ? "_MODDED" : "");
 
 	public string BuildTypeString => buildType switch
 	{
@@ -118,6 +130,33 @@ public class ApplicationManager : Manager<ApplicationManager>, ISerializable, ID
 		E_BuildType.Beta => "_beta", 
 		_ => string.Empty, 
 	};
+
+	public string OwnedDLCVersion
+	{
+		get
+		{
+			if (!TPSingleton<DLCManager>.Exist())
+			{
+				return string.Empty;
+			}
+			if (TPSingleton<DLCManager>.Instance.OwnedDLCIds.Count > 0)
+			{
+				StringBuilder stringBuilder = new StringBuilder(".");
+				foreach (string ownedDLCId in TPSingleton<DLCManager>.Instance.OwnedDLCIds)
+				{
+					DLCDefinition dLCFromId = TPSingleton<DLCManager>.Instance.GetDLCFromId(ownedDLCId);
+					if ((Object)(object)dLCFromId != (Object)null)
+					{
+						stringBuilder.Append(dLCFromId.VersionIdentifier);
+					}
+				}
+				return stringBuilder.ToString();
+			}
+			return string.Empty;
+		}
+	}
+
+	public string PlatformVersion => ".s";
 
 	[DevConsoleCommand(/*Could not decode attribute arguments.*/)]
 	public static string DebugDamnedSouls
@@ -195,6 +234,7 @@ public class ApplicationManager : Manager<ApplicationManager>, ISerializable, ID
 		TPSingleton<MetaUpgradesManager>.Instance.Deserialize(serializedApplicationState?.MetaUpgrades);
 		TPSingleton<MetaConditionManager>.Instance.DeserializeFromAppSave(serializedApplicationState?.MetaConditions);
 		MetaUpgradesManager.ActivateNewAvailableUpgradesInApplication();
+		MetaUpgradesManager.RefreshLockedDLCMetaUpgrades();
 		Application.DamnedSouls = serializedApplicationState?.DamnedSouls ?? 0;
 		Application.DamnedSoulsObtained = serializedApplicationState?.DamnedSoulsObtained ?? 0;
 		Application.HasSeenIntroduction = serializedApplicationState?.HasSeenIntroduction ?? false;
@@ -209,6 +249,7 @@ public class ApplicationManager : Manager<ApplicationManager>, ISerializable, ID
 		TPSingleton<MetaShopsManager>.Instance.Deserialize(serializedApplicationState?.MetaShops, saveVersion);
 		TPSingleton<MetaNarrationsManager>.Instance.Deserialize(serializedApplicationState?.MetaNarrations, saveVersion);
 		TPSingleton<GlyphManager>.Instance.Deserialize(serializedApplicationState, saveVersion);
+		TPSingleton<ItemRestrictionManager>.Instance.Deserialize(serializedApplicationState?.ItemRestrictions, saveVersion);
 		if (saveVersion <= 12)
 		{
 			TPSingleton<AchievementManager>.Instance.TriggerApplicationBackwardCompatibility(saveVersion);
@@ -235,7 +276,8 @@ public class ApplicationManager : Manager<ApplicationManager>, ISerializable, ID
 			MetaShops = (TPSingleton<MetaShopsManager>.Instance.Serialize() as SerializedMetaShops),
 			MetaNarrations = (TPSingleton<MetaNarrationsManager>.Instance.Serialize() as SerializedNarrations),
 			Glyphs = TPSingleton<GlyphManager>.Instance.Serialize(),
-			TutorialsRead = new List<string>(Application.TutorialsRead)
+			TutorialsRead = new List<string>(Application.TutorialsRead),
+			ItemRestrictions = (TPSingleton<ItemRestrictionManager>.Instance.Serialize() as SerializedItemRestrictions)
 		};
 	}
 
@@ -250,11 +292,11 @@ public class ApplicationManager : Manager<ApplicationManager>, ISerializable, ID
 			return;
 		}
 		TPSingleton<DebugManager>.Instance.RegisterAssemblyCommands();
-		object obj = _003C_003Ec._003C_003E9__39_0;
+		object obj = _003C_003Ec._003C_003E9__43_0;
 		if (obj == null)
 		{
 			GetGameVersionFunction val = () => VersionString;
-			_003C_003Ec._003C_003E9__39_0 = val;
+			_003C_003Ec._003C_003E9__43_0 = val;
 			obj = (object)val;
 		}
 		TPGameVersion.__GetGameVersion = (GetGameVersionFunction)obj;
@@ -271,6 +313,11 @@ public class ApplicationManager : Manager<ApplicationManager>, ISerializable, ID
 		CLoggerManager.Start("TLS", logBatchingFrequency, (byte)logFilesToKeep);
 		Application = new ApplicationController().Application;
 		InitState();
+		((CLogger<ApplicationManager>)this).Log((object)("Game version: " + VersionString), (CLogLevel)2, false, false);
+		if (TPSingleton<DLCManager>.Exist())
+		{
+			TPSingleton<DLCManager>.Instance.LogOwnedDLCs();
+		}
 	}
 
 	private void InitState()

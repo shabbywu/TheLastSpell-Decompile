@@ -62,7 +62,7 @@ public class TrophyDisplay : MonoBehaviour
 	{
 		parentRect = parent;
 		scrollViewPort = viewPort;
-		TPSingleton<HUDJoystickNavigationManager>.Instance.TooltipsToggled += OnTooltipsToggled;
+		HUDJoystickNavigationManager.TooltipsToggled += OnTooltipsToggled;
 	}
 
 	public void Refresh(TheLastStand.Model.Trophy.Trophy trophy)
@@ -131,10 +131,7 @@ public class TrophyDisplay : MonoBehaviour
 
 	private void OnDestroy()
 	{
-		if (TPSingleton<HUDJoystickNavigationManager>.Exist())
-		{
-			TPSingleton<HUDJoystickNavigationManager>.Instance.TooltipsToggled -= OnTooltipsToggled;
-		}
+		HUDJoystickNavigationManager.TooltipsToggled -= OnTooltipsToggled;
 	}
 
 	private void OnDisable()

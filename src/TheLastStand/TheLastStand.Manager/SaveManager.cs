@@ -23,7 +23,8 @@ public class SaveManager : Manager<SaveManager>
 		WRONG_VERSION,
 		LOADING_ERROR,
 		FILE_NOT_FOUND,
-		MISSING_MOD
+		MISSING_MOD,
+		MISSING_DLC
 	}
 
 	public class Constants
@@ -311,7 +312,7 @@ public class SaveManager : Manager<SaveManager>
 		{
 			return null;
 		}
-		return (e is SaverLoader.FileDoesNotExistException) ? E_BrokenSaveReason.FILE_NOT_FOUND : ((e is SaverLoader.WrongSaveVersionException) ? E_BrokenSaveReason.WRONG_VERSION : ((e is SaverLoader.MissingModException) ? E_BrokenSaveReason.MISSING_MOD : ((e is SaverLoader.SaveLoadingFailedException) ? E_BrokenSaveReason.LOADING_ERROR : E_BrokenSaveReason.UNKNOWN)));
+		return (e is SaverLoader.FileDoesNotExistException) ? E_BrokenSaveReason.FILE_NOT_FOUND : ((e is SaverLoader.WrongSaveVersionException) ? E_BrokenSaveReason.WRONG_VERSION : ((e is SaverLoader.MissingDLCException) ? E_BrokenSaveReason.MISSING_DLC : ((e is SaverLoader.MissingModException) ? E_BrokenSaveReason.MISSING_MOD : ((e is SaverLoader.SaveLoadingFailedException) ? E_BrokenSaveReason.LOADING_ERROR : E_BrokenSaveReason.UNKNOWN))));
 	}
 
 	public static string GetSaveSubFolderPath()

@@ -28,6 +28,7 @@ using TheLastStand.View.Generic;
 using TheLastStand.View.HUD;
 using TheLastStand.View.Skill.UI;
 using TheLastStand.View.Unit.Perk;
+using TheLastStand.View.Unit.Race;
 using TheLastStand.View.Unit.Stat;
 using TheLastStand.View.Unit.Trait;
 using TheLastStand.View.Unit.UI;
@@ -53,16 +54,16 @@ public class RecruitmentView : TPSingleton<RecruitmentView>, IOverlayUser
 	{
 		public static readonly _003C_003Ec _003C_003E9 = new _003C_003Ec();
 
-		public static TweenCallback _003C_003E9__76_0;
+		public static TweenCallback _003C_003E9__77_0;
 
-		public static Func<KeyValuePair<Toggle, RecruitmentUnitDisplay>, bool> _003C_003E9__85_0;
+		public static Func<KeyValuePair<Toggle, RecruitmentUnitDisplay>, bool> _003C_003E9__86_0;
 
-		internal void _003COpen_003Eb__76_0()
+		internal void _003COpen_003Eb__77_0()
 		{
 			TPSingleton<HUDJoystickNavigationManager>.Instance.JoystickHighlight.ToggleAlwaysFollow(state: false);
 		}
 
-		internal bool _003CSelectPreviousRecruit_003Eb__85_0(KeyValuePair<Toggle, RecruitmentUnitDisplay> o)
+		internal bool _003CSelectPreviousRecruit_003Eb__86_0(KeyValuePair<Toggle, RecruitmentUnitDisplay> o)
 		{
 			return ((Component)o.Value).gameObject.activeSelf;
 		}
@@ -118,6 +119,9 @@ public class RecruitmentView : TPSingleton<RecruitmentView>, IOverlayUser
 
 	[SerializeField]
 	private UnitLevelDisplay unitLevel;
+
+	[SerializeField]
+	private UnitRaceDisplay unitRaceDisplay;
 
 	[SerializeField]
 	private UnitTraitDisplay[] traits = new UnitTraitDisplay[3];
@@ -367,14 +371,14 @@ public class RecruitmentView : TPSingleton<RecruitmentView>, IOverlayUser
 		Refresh();
 		TPSingleton<HUDJoystickNavigationManager>.Instance.JoystickHighlight.ToggleAlwaysFollow(state: true);
 		TweenerCore<Vector2, Vector2, VectorOptions> obj2 = TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosY(rectTransform, 0f, 0.25f, false), (Ease)27);
-		object obj3 = _003C_003Ec._003C_003E9__76_0;
+		object obj3 = _003C_003Ec._003C_003E9__77_0;
 		if (obj3 == null)
 		{
 			TweenCallback val = delegate
 			{
 				TPSingleton<HUDJoystickNavigationManager>.Instance.JoystickHighlight.ToggleAlwaysFollow(state: false);
 			};
-			_003C_003Ec._003C_003E9__76_0 = val;
+			_003C_003Ec._003C_003E9__77_0 = val;
 			obj3 = (object)val;
 		}
 		moveTween = (Tween)(object)TweenSettingsExtensions.OnComplete<TweenerCore<Vector2, Vector2, VectorOptions>>(obj2, (TweenCallback)obj3);
@@ -527,6 +531,8 @@ public class RecruitmentView : TPSingleton<RecruitmentView>, IOverlayUser
 		((TMP_Text)TPSingleton<RecruitmentView>.Instance.unitName).text = TPSingleton<RecruitmentView>.Instance.recruitmentUnitDisplays[TPSingleton<RecruitmentView>.Instance.selectedUnit].Unit.Name;
 		TPSingleton<RecruitmentView>.Instance.unitLevel.PlayableUnit = TPSingleton<RecruitmentView>.Instance.recruitmentUnitDisplays[TPSingleton<RecruitmentView>.Instance.selectedUnit].Unit;
 		TPSingleton<RecruitmentView>.Instance.unitLevel.Refresh();
+		TPSingleton<RecruitmentView>.Instance.unitRaceDisplay.SetContent(TPSingleton<RecruitmentView>.Instance.recruitmentUnitDisplays[TPSingleton<RecruitmentView>.Instance.selectedUnit].Unit.RaceDefinition);
+		TPSingleton<RecruitmentView>.Instance.unitRaceDisplay.Refresh();
 		HashSet<int> lockedPerkCollectionSlots = TPSingleton<MetaUpgradesManager>.Instance.GetLockedPerkCollectionSlots();
 		if (!lockedPerkCollectionSlots.Contains(4) && TPSingleton<RecruitmentView>.Instance.recruitmentUnitDisplays[TPSingleton<RecruitmentView>.Instance.selectedUnit].Unit.PerkTree.UnitPerkCollectionIds.TryGetAtIndex(3, out var value))
 		{

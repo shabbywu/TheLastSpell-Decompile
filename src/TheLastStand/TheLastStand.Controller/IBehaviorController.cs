@@ -14,7 +14,7 @@ public interface IBehaviorController
 
 	void ExecuteDeathRattle();
 
-	void ExecuteGoal(ComputedGoal computedGoal);
+	bool ExecuteGoal(ComputedGoal computedGoal);
 
 	void PrepareForDeathRattle();
 }

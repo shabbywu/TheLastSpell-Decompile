@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Sirenix.Utilities;
 using TPLib;
 using TPLib.Debugging.Console;
 using TPLib.Log;
@@ -74,12 +75,28 @@ public class MetaUpgradesManager : Manager<MetaUpgradesManager>, ISerializable, 
 		{
 			((CLogger<MetaUpgradesManager>)TPSingleton<MetaUpgradesManager>.Instance).Log((object)("Activating new upgrade in definition compared to save: " + item.MetaUpgradeDefinition.Id + " since its activation conditions are fulfilled already."), (CLogLevel)0, false, false);
 			TPSingleton<MetaConditionManager>.Instance.RefreshUpgradeProgression(item);
-			if (item.MetaUpgradeController.AreActivationConditionsFulfilled())
+			if (item.MetaUpgradeController.AreActivationConditionsFulfilled() && !item.MetaUpgradeDefinition.IsLinkedToDLC)
 			{
 				TPSingleton<MetaUpgradesManager>.Instance.ActivateUpgrade(item, shouldRefresh: false);
 			}
 		}
 		TPSingleton<MetaUpgradesManager>.Instance.newUpgradesInApplication.Clear();
+	}
+
+	public static void RefreshLockedDLCMetaUpgrades()
+	{
+		List<MetaUpgrade> list = new List<MetaUpgrade>();
+		foreach (MetaUpgrade lockedUpgrade in TPSingleton<MetaUpgradesManager>.Instance.LockedUpgrades)
+		{
+			if (lockedUpgrade.MetaUpgradeDefinition.IsLinkedToDLC)
+			{
+				list.Add(lockedUpgrade);
+			}
+		}
+		foreach (MetaUpgrade item in list)
+		{
+			TPSingleton<MetaConditionManager>.Instance.RefreshUpgradeProgression(item);
+		}
 	}
 
 	public static bool IsThisAffixUnlockedByDefault(string id)
@@ -137,7 +154,7 @@ public class MetaUpgradesManager : Manager<MetaUpgradesManager>, ISerializable, 
 		TPSingleton<MetaConditionManager>.Instance.RenewRunContext();
 	}
 
-	public static E_MetaState TryGetUpgradeState(string upgradeId, out MetaUpgrade upgrade)
+	public static E_MetaState TryGetUpgradeState(string upgradeId, out MetaUpgrade upgrade, bool includeFulfilledList = false)
 	{
 		upgrade = TPSingleton<MetaUpgradesManager>.Instance.ActivatedUpgrades.Find((MetaUpgrade u) => u.MetaUpgradeDefinition.Id == upgradeId);
 		if (upgrade != null)
@@ -153,6 +170,14 @@ public class MetaUpgradesManager : Manager<MetaUpgradesManager>, ISerializable, 
 		if (upgrade != null)
 		{
 			return E_MetaState.Locked;
+		}
+		if (includeFulfilledList)
+		{
+			upgrade = TPSingleton<MetaUpgradesManager>.Instance.FulfilledUpgrades.Find((MetaUpgrade u) => u.MetaUpgradeDefinition.Id == upgradeId);
+			if (upgrade != null)
+			{
+				return E_MetaState.Unlocked;
+			}
 		}
 		upgrade = null;
 		return E_MetaState.NA;
@@ -421,6 +446,28 @@ public class MetaUpgradesManager : Manager<MetaUpgradesManager>, ISerializable, 
 		return hashSet;
 	}
 
+	public HashSet<string> GetLockedRacesIds()
+	{
+		HashSet<string> hashSet = new HashSet<string>();
+		if (MetaUpgradeEffectsController.TryGetEffectsOfType<UnlockRacesMetaEffectDefinition>(out var effects, E_MetaState.Locked))
+		{
+			UnlockRacesMetaEffectDefinition[] array = effects;
+			foreach (UnlockRacesMetaEffectDefinition unlockRacesMetaEffectDefinition in array)
+			{
+				LinqExtensions.AddRange<string>(hashSet, (IEnumerable<string>)unlockRacesMetaEffectDefinition.RacesToUnlock);
+			}
+		}
+		if (MetaUpgradeEffectsController.TryGetEffectsOfType<UnlockRacesMetaEffectDefinition>(out var effects2, E_MetaState.Unlocked))
+		{
+			UnlockRacesMetaEffectDefinition[] array = effects2;
+			foreach (UnlockRacesMetaEffectDefinition unlockRacesMetaEffectDefinition2 in array)
+			{
+				LinqExtensions.AddRange<string>(hashSet, (IEnumerable<string>)unlockRacesMetaEffectDefinition2.RacesToUnlock);
+			}
+		}
+		return hashSet;
+	}
+
 	public string[] GetLockedTraitsIds()
 	{
 		List<string> list = new List<string>();
@@ -603,7 +650,7 @@ public class MetaUpgradesManager : Manager<MetaUpgradesManager>, ISerializable, 
 			{
 				MetaUpgradeController metaUpgradeController = new MetaUpgradeController(MetaDatabase.MetaUpgradesDefinitions[activatedUpgrade.Id]);
 				metaUpgradeController.MetaUpgrade.InvestedSouls = activatedUpgrade.InvestedSouls;
-				RemoveOrAddThisMetaUpgradeFromActivated(metaUpgradeController.MetaUpgrade, remove: false);
+				RemoveOrAddThisMetaUpgradeFromActivated(metaUpgradeController.MetaUpgrade, remove: false, isLoading: true);
 			}
 		}
 		foreach (SerializedMetaUpgrade fullfilledUpgrade in metaUpgradesElement.FullfilledUpgrades)
@@ -612,7 +659,7 @@ public class MetaUpgradesManager : Manager<MetaUpgradesManager>, ISerializable, 
 			{
 				MetaUpgradeController metaUpgradeController = new MetaUpgradeController(MetaDatabase.MetaUpgradesDefinitions[fullfilledUpgrade.Id]);
 				metaUpgradeController.MetaUpgrade.InvestedSouls = fullfilledUpgrade.InvestedSouls;
-				RemoveOrAddThisMetaUpgradeFromFulfilled(metaUpgradeController.MetaUpgrade, remove: false);
+				RemoveOrAddThisMetaUpgradeFromFulfilled(metaUpgradeController.MetaUpgrade, remove: false, isLoading: true);
 			}
 		}
 		foreach (SerializedMetaUpgrade unlockedUpgrade in metaUpgradesElement.UnlockedUpgrades)
@@ -621,7 +668,7 @@ public class MetaUpgradesManager : Manager<MetaUpgradesManager>, ISerializable, 
 			{
 				MetaUpgradeController metaUpgradeController = new MetaUpgradeController(MetaDatabase.MetaUpgradesDefinitions[unlockedUpgrade.Id]);
 				metaUpgradeController.MetaUpgrade.InvestedSouls = unlockedUpgrade.InvestedSouls;
-				RemoveOrAddThisMetaUpgradeFromUnlocked(metaUpgradeController.MetaUpgrade, remove: false);
+				RemoveOrAddThisMetaUpgradeFromUnlocked(metaUpgradeController.MetaUpgrade, remove: false, isLoading: true);
 			}
 		}
 		foreach (SerializedMetaUpgrade lockedUpgrade in metaUpgradesElement.LockedUpgrades)
@@ -630,7 +677,7 @@ public class MetaUpgradesManager : Manager<MetaUpgradesManager>, ISerializable, 
 			{
 				MetaUpgradeController metaUpgradeController = new MetaUpgradeController(MetaDatabase.MetaUpgradesDefinitions[lockedUpgrade.Id]);
 				metaUpgradeController.MetaUpgrade.InvestedSouls = lockedUpgrade.InvestedSouls;
-				RemoveOrAddThisMetaUpgradeFromLocked(metaUpgradeController.MetaUpgrade, remove: false);
+				RemoveOrAddThisMetaUpgradeFromLocked(metaUpgradeController.MetaUpgrade, remove: false, isLoading: true);
 			}
 		}
 		foreach (MetaUpgradeDefinition upgradeDefinition in MetaDatabase.MetaUpgradesDefinitions.Values)
@@ -667,7 +714,7 @@ public class MetaUpgradesManager : Manager<MetaUpgradesManager>, ISerializable, 
 		RemoveOrAddThisMetaUpgradeFromUnlocked(upgrade, remove: false);
 	}
 
-	private void RemoveOrAddThisMetaUpgradeFromActivated(MetaUpgrade upgrade, bool remove = true)
+	private void RemoveOrAddThisMetaUpgradeFromActivated(MetaUpgrade upgrade, bool remove = true, bool isLoading = false)
 	{
 		if (remove)
 		{
@@ -676,8 +723,7 @@ public class MetaUpgradesManager : Manager<MetaUpgradesManager>, ISerializable, 
 			return;
 		}
 		InsertIntoMetaUpgradeList(upgrade, ActivatedUpgrades);
-		ActivatedUpgradesEffects.MetaUpgradeEffectsController.AddUpgradeEffects(upgrade);
-		if (ApplicationManager.Application.State.GetName() != "Game")
+		if (!TryAddingEffect(upgrade, ActivatedUpgradesEffects.MetaUpgradeEffectsController) || ApplicationManager.Application.State.GetName() != "Game")
 		{
 			return;
 		}
@@ -693,7 +739,7 @@ public class MetaUpgradesManager : Manager<MetaUpgradesManager>, ISerializable, 
 		}
 	}
 
-	private void RemoveOrAddThisMetaUpgradeFromFulfilled(MetaUpgrade upgrade, bool remove = true)
+	private void RemoveOrAddThisMetaUpgradeFromFulfilled(MetaUpgrade upgrade, bool remove = true, bool isLoading = false)
 	{
 		if (remove)
 		{
@@ -703,11 +749,11 @@ public class MetaUpgradesManager : Manager<MetaUpgradesManager>, ISerializable, 
 		else
 		{
 			InsertIntoMetaUpgradeList(upgrade, FulfilledUpgrades);
-			FulfilledUpgradesEffects.MetaUpgradeEffectsController.AddUpgradeEffects(upgrade);
+			TryAddingEffect(upgrade, FulfilledUpgradesEffects.MetaUpgradeEffectsController);
 		}
 	}
 
-	private void RemoveOrAddThisMetaUpgradeFromLocked(MetaUpgrade upgrade, bool remove = true)
+	private void RemoveOrAddThisMetaUpgradeFromLocked(MetaUpgrade upgrade, bool remove = true, bool isLoading = false)
 	{
 		if (remove)
 		{
@@ -721,7 +767,7 @@ public class MetaUpgradesManager : Manager<MetaUpgradesManager>, ISerializable, 
 		}
 	}
 
-	private void RemoveOrAddThisMetaUpgradeFromUnlocked(MetaUpgrade upgrade, bool remove = true)
+	private void RemoveOrAddThisMetaUpgradeFromUnlocked(MetaUpgrade upgrade, bool remove = true, bool isLoading = false)
 	{
 		if (remove)
 		{
@@ -731,7 +777,7 @@ public class MetaUpgradesManager : Manager<MetaUpgradesManager>, ISerializable, 
 		else
 		{
 			InsertIntoMetaUpgradeList(upgrade, UnlockedUpgrades);
-			UnlockedUpgradesEffects.MetaUpgradeEffectsController.AddUpgradeEffects(upgrade);
+			TryAddingEffect(upgrade, UnlockedUpgradesEffects.MetaUpgradeEffectsController);
 		}
 	}
 
@@ -743,5 +789,16 @@ public class MetaUpgradesManager : Manager<MetaUpgradesManager>, ISerializable, 
 			num--;
 		}
 		upgradeList.Insert(num, upgrade);
+	}
+
+	private bool TryAddingEffect(MetaUpgrade metaUpgrade, MetaUpgradeEffectsController metaUpgradeEffectsController)
+	{
+		if (metaUpgrade.MetaUpgradeDefinition.IsLinkedToDLC && !metaUpgrade.IsLinkedDLCOwned)
+		{
+			LockedUpgradesEffects.MetaUpgradeEffectsController.AddUpgradeEffects(metaUpgrade);
+			return false;
+		}
+		metaUpgradeEffectsController.AddUpgradeEffects(metaUpgrade);
+		return true;
 	}
 }

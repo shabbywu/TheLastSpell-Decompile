@@ -20,6 +20,8 @@ public class AttackSkillActionExecutionTileData : SkillActionExecutionTileData
 
 	public float ArmorDamage { get; set; }
 
+	public float BlockedDamage { get; set; }
+
 	public bool Dodged { get; set; }
 
 	public float HealthDamage { get; set; }
@@ -49,6 +51,6 @@ public class AttackSkillActionExecutionTileData : SkillActionExecutionTileData
 	public override string ToString()
 	{
 		string text = (IsCrit ? "Critical " : string.Empty) + (IsInstantKill ? "InstantKill " : string.Empty) + (IsPoison ? "Poison " : string.Empty) + (IsPropagatedTile ? "Propagated " : string.Empty);
-		return $"ComputationRandom\t:\t{ComputationRandom}\n" + "DamageRangeData\t:\t" + DamageRangeData?.ToString("\n\t\t\t\t") + "\n" + $"Dodged\t\t\t:\t{Dodged}\n" + "Specifics\t\t:\t" + text + "\n" + $"ArmorDamage\t\t:\t{ArmorDamage}\n" + $"HealthDamage\t\t:\t{HealthDamage}\n" + $"TargetArmorTotal\t:\t{TargetArmorTotal}\n" + $"TargetHealthTotal\t:\t{TargetHealthTotal}\n" + $"TargetRemainingArmor\t:\t{TargetRemainingArmor}\n" + $"TargetRemainingHealth\t:\t{TargetRemainingHealth}\n" + $"TotalDamage\t\t:\t{TotalDamage}\n" + $"OverkillDamage\t\t:\t{OverkillDamage}";
+		return $"ComputationRandom\t:\t{ComputationRandom}\n" + "DamageRangeData\t:\t" + DamageRangeData?.ToString("\n\t\t\t\t") + "\n" + $"Dodged\t\t\t:\t{Dodged}\n" + "Specifics\t\t:\t" + text + "\n" + $"ArmorDamage\t\t:\t{ArmorDamage}\n" + $"HealthDamage\t\t:\t{HealthDamage}\n" + $"TargetArmorTotal\t:\t{TargetArmorTotal}\n" + $"TargetHealthTotal\t:\t{TargetHealthTotal}\n" + $"TargetRemainingArmor\t:\t{TargetRemainingArmor}\n" + $"TargetRemainingHealth\t:\t{TargetRemainingHealth}\n" + $"TotalDamage\t\t:\t{TotalDamage}\n" + $"OverkillDamage\t\t:\t{OverkillDamage}\n" + $"BlockedDamage\t\t:\t{BlockedDamage}";
 	}
 }

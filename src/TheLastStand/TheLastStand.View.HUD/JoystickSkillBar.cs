@@ -32,7 +32,7 @@ public class JoystickSkillBar : MonoBehaviour
 		{
 			return;
 		}
-		if (currentSkillSelected is IJoystickSkillConfirmHandler joystickSkillConfirmHandler && joystickSkillConfirmHandler.IsConfirmSelected)
+		if (currentSkillSelected is IJoystickSkillConfirmHandler { IsConfirmSelected: not false } joystickSkillConfirmHandler)
 		{
 			joystickSkillConfirmHandler.DeselectConfirmButton(deselectConfirmAndSkill);
 			if (!deselectConfirmAndSkill)
@@ -153,17 +153,14 @@ public class JoystickSkillBar : MonoBehaviour
 
 	private void Awake()
 	{
-		TPSingleton<HUDJoystickNavigationManager>.Instance.TooltipsToggled += OnTooltipsToggled;
-		TPSingleton<HUDJoystickNavigationManager>.Instance.HUDNavigationToggled += OnHUDNavigationToggled;
+		HUDJoystickNavigationManager.TooltipsToggled += OnTooltipsToggled;
+		HUDJoystickNavigationManager.HUDNavigationToggled += OnHUDNavigationToggled;
 	}
 
 	private void OnDestroy()
 	{
-		if (TPSingleton<HUDJoystickNavigationManager>.Exist())
-		{
-			TPSingleton<HUDJoystickNavigationManager>.Instance.TooltipsToggled -= OnTooltipsToggled;
-			TPSingleton<HUDJoystickNavigationManager>.Instance.HUDNavigationToggled -= OnHUDNavigationToggled;
-		}
+		HUDJoystickNavigationManager.TooltipsToggled -= OnTooltipsToggled;
+		HUDJoystickNavigationManager.HUDNavigationToggled -= OnHUDNavigationToggled;
 	}
 
 	private void OnHUDNavigationToggled(bool state)

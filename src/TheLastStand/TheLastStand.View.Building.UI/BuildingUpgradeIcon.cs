@@ -24,7 +24,7 @@ public class BuildingUpgradeIcon : OraculumUnlockIcon
 
 	private void OnDisable()
 	{
-		if (BuildingUpgradeTooltipDisplayer.Displayed)
+		if (BuildingUpgradeTooltipDisplayer.IsDisplayingTargetTooltip)
 		{
 			BuildingUpgradeTooltipDisplayer.HideTooltip();
 		}

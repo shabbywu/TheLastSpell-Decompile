@@ -1,5 +1,4 @@
 using Rewired;
-using TPLib;
 using TheLastStand.Manager;
 using UnityEngine;
 
@@ -15,14 +14,14 @@ public class SkillsCycleText : MonoBehaviour
 
 	private void OnEnable()
 	{
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		TPSingleton<InputManager>.Instance.LastActiveControllerChanged += OnLastActiveControllerChanged;
+		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
+		InputManager.LastActiveControllerChanged += OnLastActiveControllerChanged;
 		OnLastActiveControllerChanged(InputManager.GetLastControllerType());
 	}
 
 	private void OnDisable()
 	{
-		TPSingleton<InputManager>.Instance.LastActiveControllerChanged -= OnLastActiveControllerChanged;
+		InputManager.LastActiveControllerChanged -= OnLastActiveControllerChanged;
 	}
 
 	private void OnLastActiveControllerChanged(ControllerType controllerType)

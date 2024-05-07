@@ -51,9 +51,8 @@ public class InjuriedStatDisplay : MonoBehaviour
 	public void RefreshAsStatus(StatusEffectDefinition statusDefinition)
 	{
 		string text = $"({AtlasIcons.TimeIcon} {statusDefinition.TurnsCount})";
-		if (statusDefinition is StatModifierEffectDefinition statModifierEffectDefinition)
+		if (statusDefinition is StatModifierEffectDefinition { Stat: var stat } statModifierEffectDefinition)
 		{
-			UnitStatDefinition.E_Stat stat = statModifierEffectDefinition.Stat;
 			valueString = $"{statModifierEffectDefinition.ModifierValue}";
 			valueString = ((statModifierEffectDefinition is BuffEffectDefinition) ? "+" : "-") + valueString;
 			valueString += ((stat.ShownAsPercentage() && canShowAsPercentage) ? "<size=80%>%</size>" : string.Empty);

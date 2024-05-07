@@ -11,7 +11,11 @@ public class UnitFaceIdDefinitions : List<UnitFaceIdDefinition>
 	{
 		foreach (XElement item in ((XContainer)((XContainer)idsDocument).Element(XName.op_Implicit("UnitFaceIdsDefinition"))).Elements(XName.op_Implicit("UnitFaceId")))
 		{
-			Add(new UnitFaceIdDefinition((XContainer)(object)item));
+			UnitFaceIdDefinition unitFaceIdDefinition = new UnitFaceIdDefinition((XContainer)(object)item);
+			if (!unitFaceIdDefinition.IsLinkedToDLC || unitFaceIdDefinition.IsLinkedDLCOwned)
+			{
+				Add(unitFaceIdDefinition);
+			}
 		}
 	}
 

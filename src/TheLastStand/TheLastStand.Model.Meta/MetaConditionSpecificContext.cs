@@ -355,7 +355,14 @@ public class MetaConditionSpecificContext : MetaConditionContext
 
 	public double RunsCompletedCount => RunsCompleted.FindAll((CompletedRun run) => run.IsVictorious).Count;
 
-	public double RunsLostCount => RunsCompleted.FindAll((CompletedRun run) => !run.IsVictorious && !CityDatabase.CityDefinitions[run.CityId].IsTutorialMap).Count;
+	public double RunsLostCount
+	{
+		get
+		{
+			CityDefinition value;
+			return RunsCompleted.FindAll((CompletedRun run) => !run.IsVictorious && CityDatabase.CityDefinitions.TryGetValue(run.CityId, out value) && !value.IsTutorialMap).Count;
+		}
+	}
 
 	public double MaxNightReached
 	{
@@ -625,10 +632,9 @@ public class MetaConditionSpecificContext : MetaConditionContext
 		double num = 0.0;
 		foreach (NightReached item in NightsReached)
 		{
-			if (string.IsNullOrEmpty(cityId) || !(item.CityId != cityId))
+			if ((string.IsNullOrEmpty(cityId) || !(item.CityId != cityId)) && CityDatabase.CityDefinitions.TryGetValue(item.CityId, out var value))
 			{
-				CityDefinition cityDefinition = CityDatabase.CityDefinitions[item.CityId];
-				FogDefinition fogDefinition = FogDatabase.FogsDefinitions[cityDefinition.FogDefinitionId];
+				FogDefinition fogDefinition = FogDatabase.FogsDefinitions[value.FogDefinitionId];
 				if (item.FogDensityIndex >= (double)(fogDefinition.FogDensities.Count - 1))
 				{
 					num += 1.0;
@@ -643,10 +649,9 @@ public class MetaConditionSpecificContext : MetaConditionContext
 		double num = 0.0;
 		foreach (NightReached item in NightsReached)
 		{
-			if (string.IsNullOrEmpty(cityId) || !(item.CityId == cityId))
+			if ((string.IsNullOrEmpty(cityId) || !(item.CityId == cityId)) && CityDatabase.CityDefinitions.TryGetValue(item.CityId, out var value))
 			{
-				CityDefinition cityDefinition = CityDatabase.CityDefinitions[item.CityId];
-				FogDefinition fogDefinition = FogDatabase.FogsDefinitions[cityDefinition.FogDefinitionId];
+				FogDefinition fogDefinition = FogDatabase.FogsDefinitions[value.FogDefinitionId];
 				if (item.FogDensityIndex >= (double)(fogDefinition.FogDensities.Count - 1))
 				{
 					num += 1.0;

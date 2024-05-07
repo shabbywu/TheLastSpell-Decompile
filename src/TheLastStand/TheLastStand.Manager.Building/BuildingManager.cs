@@ -271,23 +271,26 @@ public sealed class BuildingManager : Manager<BuildingManager>
 		}
 		set
 		{
-			//IL_0119: Unknown result type (might be due to invalid IL or missing references)
-			//IL_011e: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0153: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0158: Unknown result type (might be due to invalid IL or missing references)
-			//IL_017e: Unknown result type (might be due to invalid IL or missing references)
-			//IL_0183: Unknown result type (might be due to invalid IL or missing references)
-			//IL_01b5: Unknown result type (might be due to invalid IL or missing references)
-			//IL_01ba: Unknown result type (might be due to invalid IL or missing references)
-			//IL_01db: Unknown result type (might be due to invalid IL or missing references)
-			//IL_01e0: Unknown result type (might be due to invalid IL or missing references)
+			//IL_012c: Unknown result type (might be due to invalid IL or missing references)
+			//IL_0131: Unknown result type (might be due to invalid IL or missing references)
+			//IL_0166: Unknown result type (might be due to invalid IL or missing references)
+			//IL_016b: Unknown result type (might be due to invalid IL or missing references)
+			//IL_0191: Unknown result type (might be due to invalid IL or missing references)
+			//IL_0196: Unknown result type (might be due to invalid IL or missing references)
+			//IL_01c8: Unknown result type (might be due to invalid IL or missing references)
+			//IL_01cd: Unknown result type (might be due to invalid IL or missing references)
+			//IL_01ee: Unknown result type (might be due to invalid IL or missing references)
+			//IL_01f3: Unknown result type (might be due to invalid IL or missing references)
 			TheLastStand.Model.Skill.Skill skill = TPSingleton<BuildingManager>.Instance.selectedSkill;
 			TPSingleton<BuildingManager>.Instance.selectedSkill = value;
 			if (TPSingleton<BuildingManager>.Instance.selectedSkill == skill)
 			{
 				return;
 			}
-			skill?.SkillAction.SkillActionExecution.SkillExecutionController.Reset();
+			if (skill != null && TPSingleton<GameManager>.Instance.Game.State != Game.E_State.GameOver)
+			{
+				skill.SkillAction.SkillActionExecution.SkillExecutionController.Reset();
+			}
 			if (TPSingleton<BuildingManager>.Instance.selectedSkill != null)
 			{
 				GameController.SetState(Game.E_State.BuildingPreparingSkill);
@@ -315,7 +318,7 @@ public sealed class BuildingManager : Manager<BuildingManager>
 								origin = TPSingleton<BuildingManager>.Instance.selectedSkill.SkillDefinition.AreaOfEffectDefinition.Origin;
 								if (list[((Vector2Int)(ref origin)).y] != 'X')
 								{
-									goto IL_02aa;
+									goto IL_02bd;
 								}
 							}
 						}
@@ -341,8 +344,8 @@ public sealed class BuildingManager : Manager<BuildingManager>
 					SkillManager.GenericActionInfoPanel.Hide();
 				}
 			}
-			goto IL_02aa;
-			IL_02aa:
+			goto IL_02bd;
+			IL_02bd:
 			if (TPSingleton<BuildingManager>.Instance.selectedSkill == null)
 			{
 				SkillManager.AttackInfoPanel.Hide();
@@ -1811,7 +1814,7 @@ public sealed class BuildingManager : Manager<BuildingManager>
 				{
 					SelectedSkill.SkillAction.SkillActionExecution.SkillExecutionController.Reset();
 					SelectedSkill = null;
-					if (tile != null && !tile.HasFog && tile.Unit is EnemyUnit enemyUnit && enemyUnit.State != TheLastStand.Model.Unit.Unit.E_State.Dead)
+					if (tile != null && !tile.HasFog && tile.Unit is EnemyUnit { State: not TheLastStand.Model.Unit.Unit.E_State.Dead } enemyUnit)
 					{
 						TPSingleton<EnemyUnitManager>.Instance.DisplayOneEnemyReachableTiles(enemyUnit);
 					}
@@ -2179,9 +2182,10 @@ public sealed class BuildingManager : Manager<BuildingManager>
 				BuildingId = o.Value.Id
 			}).ToList()
 		};
-		for (int num = Buildings.Count - 1; num >= 0; num--)
+		int count = Buildings.Count;
+		for (int i = 0; i < count; i++)
 		{
-			serializedBuildings.Buildings.Add(Buildings[num].Serialize() as SerializedBuilding);
+			serializedBuildings.Buildings.Add(Buildings[i].Serialize() as SerializedBuilding);
 		}
 		return serializedBuildings;
 	}

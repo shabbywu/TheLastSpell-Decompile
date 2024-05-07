@@ -3,9 +3,12 @@ using TPLib;
 using TPLib.Log;
 using TheLastStand.Framework.UI;
 using TheLastStand.Helpers;
+using TheLastStand.Manager.Item;
 using TheLastStand.Manager.Sound;
+using TheLastStand.Model.Tutorial;
 using TheLastStand.Model.WorldMap;
 using TheLastStand.View.WorldMap;
+using TheLastStand.View.WorldMap.ItemRestriction;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -19,6 +22,9 @@ public class WorldMapUIManager : Manager<WorldMapUIManager>
 
 	[SerializeField]
 	private Button metaShopsButton;
+
+	[SerializeField]
+	private OpenWeaponRestrictionsView openWeaponRestrictionsView;
 
 	private AudioSource audioSource;
 
@@ -40,11 +46,13 @@ public class WorldMapUIManager : Manager<WorldMapUIManager>
 		{
 			if (!MetaShopsManager.OraculumForceAccess)
 			{
-				return TPSingleton<WorldMapCityManager>.Instance.Cities.Any((WorldMapCity city) => !city.CityDefinition.IsTutorialMap && city.RefreshIsUnlocked());
+				return TPSingleton<WorldMapCityManager>.Instance.Cities.Any((WorldMapCity city) => !city.CityDefinition.IsTutorialMap && city.RefreshIsVisible() && city.RefreshIsUnlocked());
 			}
 			return true;
 		}
 	}
+
+	public static bool CanOpenWeaponRestrictionsPanel => TPSingleton<ItemRestrictionManager>.Instance.WeaponsRestrictionsCategories.IsAvailable;
 
 	public static int GetApocalypseSelectedLevel()
 	{
@@ -60,6 +68,12 @@ public class WorldMapUIManager : Manager<WorldMapUIManager>
 			}
 		}
 		return 0;
+	}
+
+	public static void OnReturnedFromOraculum()
+	{
+		TPSingleton<WorldMapUIManager>.Instance.openWeaponRestrictionsView.DisplayOrRefresh();
+		TPSingleton<TutorialManager>.Instance.OnTrigger(E_TutorialTrigger.OnWorldMapOpen);
 	}
 
 	public void PlayAudioClip(AudioClip audioClip)

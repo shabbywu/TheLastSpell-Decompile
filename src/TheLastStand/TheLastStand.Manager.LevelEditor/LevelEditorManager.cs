@@ -280,10 +280,10 @@ public class LevelEditorManager : Manager<LevelEditorManager>
 	{
 		//IL_0071: Unknown result type (might be due to invalid IL or missing references)
 		//IL_00be: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01fa: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0216: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0209: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0225: Unknown result type (might be due to invalid IL or missing references)
 		//IL_010b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0277: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0286: Unknown result type (might be due to invalid IL or missing references)
 		switch (state)
 		{
 		case E_State.Default:
@@ -309,6 +309,7 @@ public class LevelEditorManager : Manager<LevelEditorManager>
 		case E_State.SetTileFlag:
 			((Component)TPSingleton<LevelEditorManager>.Instance.tileFlagPanel).gameObject.SetActive(true);
 			((TMP_Text)TPSingleton<LevelEditorManager>.Instance.currentActionText).text = "<b>Select a flag to start painting</b>";
+			TPSingleton<LevelEditorManager>.Instance.tileFlagPanel.RefreshText();
 			break;
 		case E_State.PlaceGround:
 			((TMP_Text)TPSingleton<LevelEditorManager>.Instance.currentActionText).text = "<b>" + TPSingleton<LevelEditorManager>.Instance.currentGround.Id + "</b>" + $"\n({TPSingleton<LevelEditorManager>.Instance.bucketFillKey} + click to use bucket tool)" + $"\n({TPSingleton<LevelEditorManager>.Instance.rectFillKey} + drag to use rect fill)" + "\n(Right click to cancel)";
@@ -380,9 +381,9 @@ public class LevelEditorManager : Manager<LevelEditorManager>
 		//IL_014e: Unknown result type (might be due to invalid IL or missing references)
 		//IL_040e: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0429: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0441: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0447: Unknown result type (might be due to invalid IL or missing references)
 		//IL_01da: Unknown result type (might be due to invalid IL or missing references)
-		//IL_04d2: Unknown result type (might be due to invalid IL or missing references)
+		//IL_04ea: Unknown result type (might be due to invalid IL or missing references)
 		//IL_020e: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0278: Unknown result type (might be due to invalid IL or missing references)
 		if ((InputManager.GetButtonDown(23) || InputManager.GetButtonDown(137)) && (state == E_State.SelectBuilding || state == E_State.SelectGroundType || state == E_State.SelectGroundColor || state == E_State.SetTileFlag || state == E_State.DestroyBuilding))
@@ -540,6 +541,7 @@ public class LevelEditorManager : Manager<LevelEditorManager>
 					{
 						CompensationConversation.Execute(new SetTileFlagCommand(TileMapManager.TileFlagDefinitions.FirstOrDefault((TileFlagDefinition o) => o.TileFlagTag == CurrentTileFlag), tile, key));
 						TPSingleton<LevelEditorManager>.Instance.levelEditorPanel.Refresh();
+						TPSingleton<LevelEditorManager>.Instance.tileFlagPanel.RefreshText();
 						lastFlagTile = tile;
 						lastFlagEraseState = key;
 					}
@@ -554,6 +556,7 @@ public class LevelEditorManager : Manager<LevelEditorManager>
 				Tile[] tilesInRect = TileMapController.GetTilesInRect(TileMapController.GetRectFromTileToTile(RectFillTileSource, tile));
 				CompensationConversation.Execute(new SetTileFlagCommand(TileMapManager.TileFlagDefinitions.FirstOrDefault((TileFlagDefinition o) => o.TileFlagTag == CurrentTileFlag), tilesInRect, key));
 				TPSingleton<LevelEditorManager>.Instance.levelEditorPanel.Refresh();
+				TPSingleton<LevelEditorManager>.Instance.tileFlagPanel.RefreshText();
 				lastFlagTile = tile;
 				lastFlagEraseState = key;
 				ClearRectFill();

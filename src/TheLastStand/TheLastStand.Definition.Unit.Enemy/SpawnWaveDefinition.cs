@@ -10,6 +10,18 @@ namespace TheLastStand.Definition.Unit.Enemy;
 
 public class SpawnWaveDefinition : TheLastStand.Framework.Serialization.Definition
 {
+	public bool DisplayBossInSeer
+	{
+		get
+		{
+			if (IsBossWave)
+			{
+				return WaveEnemiesDefinition.BossWaveSettings.DisplayBossInSeer;
+			}
+			return false;
+		}
+	}
+
 	public int Duration { get; private set; }
 
 	public SpawnWaveEnemiesDefinition WaveEnemiesDefinition { get; private set; }

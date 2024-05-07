@@ -3,6 +3,7 @@ using TPLib;
 using TPLib.Log;
 using TPLib.Yield;
 using TheLastStand.Manager.Building;
+using TheLastStand.Model.Building;
 using TheLastStand.View.TileMap;
 using UnityEngine;
 
@@ -28,6 +29,21 @@ public class ConstructionAnimationView : MonoBehaviour
 	private Sprite[] spritesDiffuse;
 
 	private Sprite[] spritesLUT;
+
+	private TheLastStand.Model.Building.Building building;
+
+	public void ChangeBuilding(TheLastStand.Model.Building.Building newBuilding)
+	{
+		if (building != null && (Object)(object)building.BuildingView != (Object)null)
+		{
+			building.BuildingView.ActiveConstructionAnimationViewNb--;
+		}
+		building = newBuilding;
+		if (newBuilding != null && (Object)(object)newBuilding.BuildingView != (Object)null)
+		{
+			newBuilding.BuildingView.ActiveConstructionAnimationViewNb++;
+		}
+	}
 
 	public int GetAnimationFrameRate()
 	{
@@ -91,5 +107,6 @@ public class ConstructionAnimationView : MonoBehaviour
 			spriteIndex = num;
 		}
 		((Component)this).gameObject.SetActive(false);
+		ChangeBuilding(null);
 	}
 }

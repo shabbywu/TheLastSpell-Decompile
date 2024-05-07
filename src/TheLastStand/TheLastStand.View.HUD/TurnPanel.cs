@@ -3,6 +3,7 @@ using TPLib;
 using TheLastStand.Framework;
 using TheLastStand.Framework.Extensions;
 using TheLastStand.Manager;
+using TheLastStand.Manager.Item;
 using TheLastStand.Manager.WorldMap;
 using TheLastStand.Model;
 using TheLastStand.View.ToDoList;
@@ -42,6 +43,9 @@ public class TurnPanel : MonoBehaviour
 	private TextMeshProUGUI glyphsCustomModeText;
 
 	[SerializeField]
+	private GameObject weaponsRestrictionsObject;
+
+	[SerializeField]
 	private Selectable nightEndTurnButton;
 
 	[SerializeField]
@@ -67,6 +71,9 @@ public class TurnPanel : MonoBehaviour
 
 	[SerializeField]
 	private Selectable glyphsSelectable;
+
+	[SerializeField]
+	private Selectable weaponsRestrictionsSelectable;
 
 	public Canvas TurnPanelCanvas => turnPanelCanvas;
 
@@ -131,11 +138,14 @@ public class TurnPanel : MonoBehaviour
 		}
 		apocalypseSelectable.SetMode((Mode)4);
 		glyphsSelectable.SetMode((Mode)4);
-		val.SetSelectOnRight(((Component)glyphsSelectable).gameObject.activeSelf ? glyphsSelectable : apocalypseSelectable);
-		enemiesLeftSelectable.SetSelectOnRight(((Component)glyphsSelectable).gameObject.activeSelf ? glyphsSelectable : apocalypseSelectable);
-		apocalypseSelectable.SetSelectOnLeft(((Component)glyphsSelectable).gameObject.activeSelf ? glyphsSelectable : val);
+		weaponsRestrictionsSelectable.SetMode((Mode)4);
+		val.SetSelectOnRight(GetEndTurnSelectableRight());
+		enemiesLeftSelectable.SetSelectOnRight(GetEndTurnSelectableRight());
 		glyphsSelectable.SetSelectOnLeft(val);
-		glyphsSelectable.SetSelectOnRight(apocalypseSelectable);
+		glyphsSelectable.SetSelectOnRight(GetGlyphSelectableRight());
+		apocalypseSelectable.SetSelectOnLeft(((Component)glyphsSelectable).gameObject.activeSelf ? glyphsSelectable : val);
+		apocalypseSelectable.SetSelectOnRight(((Component)weaponsRestrictionsSelectable).gameObject.activeSelf ? weaponsRestrictionsSelectable : null);
+		weaponsRestrictionsSelectable.SetSelectOnLeft(GetWeaponsRestrictionsSelectableLeft(val));
 		if (TPSingleton<GameManager>.Instance.Game.Cycle == Game.E_Cycle.Day)
 		{
 			Selectable foldButton = TPSingleton<ToDoListView>.Instance.GetFoldButton();
@@ -146,6 +156,49 @@ public class TurnPanel : MonoBehaviour
 		{
 			workersSelectable.SetSelectOnDown(null);
 		}
+	}
+
+	private Selectable GetEndTurnSelectableRight()
+	{
+		if (((Component)glyphsSelectable).gameObject.activeSelf)
+		{
+			return glyphsSelectable;
+		}
+		if (((Component)apocalypseSelectable).gameObject.activeSelf)
+		{
+			return apocalypseSelectable;
+		}
+		if (!((Component)weaponsRestrictionsSelectable).gameObject.activeSelf)
+		{
+			return null;
+		}
+		return weaponsRestrictionsSelectable;
+	}
+
+	private Selectable GetGlyphSelectableRight()
+	{
+		if (((Component)apocalypseSelectable).gameObject.activeSelf)
+		{
+			return apocalypseSelectable;
+		}
+		if (!((Component)weaponsRestrictionsSelectable).gameObject.activeSelf)
+		{
+			return null;
+		}
+		return weaponsRestrictionsSelectable;
+	}
+
+	private Selectable GetWeaponsRestrictionsSelectableLeft(Selectable endTurnSelectable)
+	{
+		if (((Component)apocalypseSelectable).gameObject.activeSelf)
+		{
+			return apocalypseSelectable;
+		}
+		if (!((Component)glyphsSelectable).gameObject.activeSelf)
+		{
+			return endTurnSelectable;
+		}
+		return glyphsSelectable;
 	}
 
 	private void Start()
@@ -165,6 +218,10 @@ public class TurnPanel : MonoBehaviour
 			apocalypseNumber.sprite = ResourcePooler<Sprite>.LoadOnce("View/Sprites/UI/WorldMap/ApocalypseLevels/ApocalypseLevel_" + ApocalypseManager.CurrentApocalypseIndex.ToString("00"));
 			apocalypseFlameAnimator.Play("WorldMapFlamesIdle");
 			apocalypseTooltip.SetApocalypsesToDisplay(ApocalypseManager.CurrentApocalypseIndex);
+		}
+		if (!TPSingleton<ItemRestrictionManager>.Instance.WeaponsRestrictionsCategories.AreAllUnlockedFamiliesSelected())
+		{
+			weaponsRestrictionsObject.SetActive(true);
 		}
 	}
 }

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using TPLib;
 using TheLastStand.Controller.Meta;
 using TheLastStand.Definition;
@@ -13,15 +12,15 @@ namespace TheLastStand.Controller;
 
 public class RarityProbabilitiesTreeController
 {
-	public static ItemDefinition.E_Rarity GenerateRarity(ProbabilityTreeEntriesDefinition probabilityTreeEntriesDefinition, HashSet<int> allowedValues = null)
+	public static ItemDefinition.E_Rarity GenerateRarity(ProbabilityTreeEntriesDefinition probabilityTreeEntriesDefinition, int minRarityIndex = -1, int maxRarityIndex = -1)
 	{
-		return GenerateRarity(ComputeRarityProbabilities(probabilityTreeEntriesDefinition), allowedValues);
+		return GenerateRarity(ComputeRarityProbabilities(probabilityTreeEntriesDefinition), minRarityIndex, maxRarityIndex);
 	}
 
-	public static ItemDefinition.E_Rarity GenerateRarity(Dictionary<int, int> probabilities, HashSet<int> allowedValues = null)
+	public static ItemDefinition.E_Rarity GenerateRarity(Dictionary<int, int> probabilities, int minRarityIndex = -1, int maxRarityIndex = -1)
 	{
-		int num = allowedValues?.Max() ?? 4;
-		int num2 = allowedValues?.Min() ?? 1;
+		int num = ((maxRarityIndex != -1) ? maxRarityIndex : 4);
+		int num2 = ((minRarityIndex == -1) ? 1 : minRarityIndex);
 		for (int num3 = num; num3 >= num2; num3--)
 		{
 			if (probabilities.ContainsKey(num3) && RandomManager.GetRandomRange("RarityProbabilitiesTreeController", 0, 100) < probabilities[num3])
@@ -62,5 +61,22 @@ public class RarityProbabilitiesTreeController
 			}
 		}
 		return dictionary.Add(dictionary2);
+	}
+
+	public static int GetMinRarityIndexFromItemDefinition(ItemDefinition itemDefinition)
+	{
+		int num = -1;
+		if (!TPSingleton<GlyphManager>.Exist() || itemDefinition == null)
+		{
+			return num;
+		}
+		foreach (string tag in itemDefinition.Tags)
+		{
+			if (TPSingleton<GlyphManager>.Instance.ItemByTagRarityModifier.TryGetValue(tag, out var value) && num < value.MinRarityIndex)
+			{
+				num = value.MinRarityIndex;
+			}
+		}
+		return num;
 	}
 }

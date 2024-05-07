@@ -182,11 +182,12 @@ public class ItemManager : Manager<ItemManager>
 			itemDefinition = TakeRandomItemInList(createItemDefinition.ItemsListDefinition);
 			higherExistingLevelFromInitValue = itemDefinition.GetHigherExistingLevelFromInitValue(level);
 		}
+		int minRarityIndexFromItemDefinition = RarityProbabilitiesTreeController.GetMinRarityIndexFromItemDefinition(itemDefinition);
 		ItemGenerationInfo generationInfo = default(ItemGenerationInfo);
 		generationInfo.Destination = itemDestination;
 		generationInfo.ItemDefinition = itemDefinition;
 		generationInfo.Level = higherExistingLevelFromInitValue;
-		generationInfo.Rarity = RarityProbabilitiesTreeController.GenerateRarity(createItemDefinition.ItemRaritiesListDefinition);
+		generationInfo.Rarity = RarityProbabilitiesTreeController.GenerateRarity(createItemDefinition.ItemRaritiesListDefinition, minRarityIndexFromItemDefinition);
 		return GenerateItem(generationInfo);
 	}
 
@@ -223,12 +224,17 @@ public class ItemManager : Manager<ItemManager>
 			ItemsListDefinition value2;
 			if (ItemDatabase.ItemDefinitions.TryGetValue(item.Key, out var value))
 			{
-				ItemGenerationInfo generationInfo = default(ItemGenerationInfo);
-				generationInfo.Destination = itemDestination;
-				generationInfo.ItemDefinition = value;
-				generationInfo.Level = level;
-				generationInfo.Rarity = RarityProbabilitiesTreeController.GenerateRarity(rarityProbability);
-				GenerateItem(generationInfo);
+				int minRarityIndexFromItemDefinition = RarityProbabilitiesTreeController.GetMinRarityIndexFromItemDefinition(value);
+				ItemGenerationInfo itemGenerationInfo = default(ItemGenerationInfo);
+				itemGenerationInfo.Destination = itemDestination;
+				itemGenerationInfo.ItemDefinition = value;
+				itemGenerationInfo.Level = value.GetHigherExistingLevelFromInitValue(level);
+				itemGenerationInfo.Rarity = RarityProbabilitiesTreeController.GenerateRarity(rarityProbability, minRarityIndexFromItemDefinition);
+				ItemGenerationInfo generationInfo = itemGenerationInfo;
+				if (generationInfo.Level != -1)
+				{
+					GenerateItem(generationInfo);
+				}
 			}
 			else if (ItemDatabase.ItemsListDefinitions.TryGetValue(item.Key, out value2))
 			{
@@ -300,16 +306,16 @@ public class ItemManager : Manager<ItemManager>
 
 	public static ItemDefinition TakeRandomItemInList(ItemsListDefinition itemsListDefinition, Func<ItemDefinition, bool> predicate = null, List<string> exploredIds = null)
 	{
-		string[] lockedItemsIds = TPSingleton<MetaUpgradesManager>.Instance.GetLockedItemsIds();
+		string[] array = GetAllLockedItemsIds().ToArray();
 		Dictionary<string, float> dictionary = new Dictionary<string, float>();
 		foreach (string item in itemsListDefinition.ItemsWithOdd.Select((KeyValuePair<string, int> o) => o.Key))
 		{
-			bool num = lockedItemsIds.Contains(item);
+			bool num = array.Contains(item);
 			ItemDefinition value;
 			bool flag = ItemDatabase.ItemDefinitions.TryGetValue(item, out value);
 			ItemsListDefinition value2;
 			bool flag2 = ItemDatabase.ItemsListDefinitions.TryGetValue(item, out value2);
-			if (!num && (!flag || predicate == null || predicate(value)) && (!flag2 || (!IsItemsListContentLocked(value2, lockedItemsIds) && (predicate == null || AnyItemMatchingCondition(value2, predicate)))))
+			if (!num && (!flag || predicate == null || predicate(value)) && (!flag2 || (!IsItemsListContentLocked(value2, array) && (predicate == null || AnyItemMatchingCondition(value2, predicate)))))
 			{
 				dictionary.Add(item, GetItemOddFromItemList(itemsListDefinition, item));
 			}
@@ -344,11 +350,18 @@ public class ItemManager : Manager<ItemManager>
 			{
 				hashSet.Add(key);
 			}
-			else
+			else if (ItemDatabase.ItemsListDefinitions.ContainsKey(key))
 			{
 				hashSet.UnionWith(GetAllItemsInList(ItemDatabase.ItemsListDefinitions[key]));
 			}
 		}
+		return hashSet;
+	}
+
+	public static HashSet<string> GetAllLockedItemsIds()
+	{
+		HashSet<string> hashSet = new HashSet<string>(TPSingleton<MetaUpgradesManager>.Instance.GetLockedItemsIds());
+		hashSet.UnionWith(TPSingleton<ItemRestrictionManager>.Instance.GetLockedItemsIds());
 		return hashSet;
 	}
 
@@ -397,13 +410,21 @@ public class ItemManager : Manager<ItemManager>
 			{
 				rarity = (ItemDefinition.E_Rarity)RandomManager.GetRandomRange(TPSingleton<ItemManager>.Instance, 1, 5);
 			}
-			ItemGenerationInfo generationInfo = default(ItemGenerationInfo);
-			generationInfo.Destination = ItemSlotDefinition.E_ItemSlotId.Inventory;
-			generationInfo.ItemDefinition = value;
-			generationInfo.Level = level;
-			generationInfo.Rarity = rarity;
-			generationInfo.SkipMalusAffixes = skipMalusAffixes;
-			GenerateItem(generationInfo);
+			ItemGenerationInfo itemGenerationInfo = default(ItemGenerationInfo);
+			itemGenerationInfo.Destination = ItemSlotDefinition.E_ItemSlotId.Inventory;
+			itemGenerationInfo.ItemDefinition = value;
+			itemGenerationInfo.Level = value.GetHigherExistingLevelFromInitValue(level);
+			itemGenerationInfo.Rarity = rarity;
+			itemGenerationInfo.SkipMalusAffixes = skipMalusAffixes;
+			ItemGenerationInfo generationInfo = itemGenerationInfo;
+			if (generationInfo.Level != -1)
+			{
+				GenerateItem(generationInfo);
+			}
+			else
+			{
+				TPDebug.LogError((object)("Couldn't generate item " + itemId + " due to level not being found !"), (Object)null);
+			}
 		}
 	}
 
@@ -413,15 +434,20 @@ public class ItemManager : Manager<ItemManager>
 		string[] array = new string[7] { "HealthPotion", "ManaPotion", "EnergyPotion", "SpeedPotion", "InvisibilityPotion", "StonePotion", "StrengthPotion" };
 		for (int i = 0; i < array.Length; i++)
 		{
-			if (ItemDatabase.ItemDefinitions.TryGetValue(array[i], out var value))
+			if (!ItemDatabase.ItemDefinitions.TryGetValue(array[i], out var value))
 			{
-				for (int j = 0; j <= 5; j++)
+				continue;
+			}
+			for (int j = 0; j <= 5; j++)
+			{
+				ItemGenerationInfo itemGenerationInfo = default(ItemGenerationInfo);
+				itemGenerationInfo.Destination = ItemSlotDefinition.E_ItemSlotId.Inventory;
+				itemGenerationInfo.ItemDefinition = value;
+				itemGenerationInfo.Level = value.GetHigherExistingLevelFromInitValue(j);
+				itemGenerationInfo.Rarity = ItemDefinition.E_Rarity.Common;
+				ItemGenerationInfo generationInfo = itemGenerationInfo;
+				if (generationInfo.Level != -1)
 				{
-					ItemGenerationInfo generationInfo = default(ItemGenerationInfo);
-					generationInfo.Destination = ItemSlotDefinition.E_ItemSlotId.Inventory;
-					generationInfo.ItemDefinition = value;
-					generationInfo.Level = j;
-					generationInfo.Rarity = ItemDefinition.E_Rarity.Common;
 					GenerateItem(generationInfo);
 				}
 			}
@@ -482,7 +508,7 @@ public class ItemManager : Manager<ItemManager>
 				unlockedItemIds.Add(effects[i].Id);
 			}
 		}
-		string[] lockedItemsIds = TPSingleton<MetaUpgradesManager>.Instance.GetLockedItemsIds();
+		string[] lockedItemsIds = GetAllLockedItemsIds().ToArray();
 		if (AnyItemMatchingCondition(ItemDatabase.ItemsListDefinitions[itemsListDefinitionId], (ItemDefinition item) => item.Hands == ItemDefinition.E_Hands.OneHand && (!lockedItemsIds.Contains(item.Id) || unlockedItemIds.Contains(item.Id))))
 		{
 			Debug.LogError((object)("At least one available OneHand item has been found in list " + itemsListDefinitionId));
@@ -496,16 +522,22 @@ public class ItemManager : Manager<ItemManager>
 	[DevConsoleCommand(Name = "GenerateItemsInList")]
 	public static void DebugGenerateItemsInList([StringConverter(typeof(TheLastStand.Model.Item.Item.StringToItemsListIdConverter))] string itemsListDefinitionId, int level = 0, [StringConverter(typeof(TheLastStand.Model.Item.Item.StringToRarityProbabilityListIdConverter))] string rarityProbabilityList = "AlwaysCommon", int amountToGenerate = 1, bool skipMalusAffixes = false)
 	{
-		if (ItemDatabase.ItemsListDefinitions.TryGetValue(itemsListDefinitionId, out var value))
+		if (!ItemDatabase.ItemsListDefinitions.TryGetValue(itemsListDefinitionId, out var value))
 		{
-			ProbabilityTreeEntriesDefinition probabilityTreeEntriesDefinition = ItemDatabase.ItemRaritiesListDefinitions[rarityProbabilityList];
-			for (int i = 0; i < amountToGenerate; i++)
+			return;
+		}
+		ProbabilityTreeEntriesDefinition probabilityTreeEntriesDefinition = ItemDatabase.ItemRaritiesListDefinitions[rarityProbabilityList];
+		for (int i = 0; i < amountToGenerate; i++)
+		{
+			ItemDefinition itemDefinition = TakeRandomItemInList(value);
+			if (itemDefinition.GetHigherExistingLevelFromInitValue(level) != -1)
 			{
+				int minRarityIndexFromItemDefinition = RarityProbabilitiesTreeController.GetMinRarityIndexFromItemDefinition(itemDefinition);
 				ItemGenerationInfo generationInfo = default(ItemGenerationInfo);
-				generationInfo.ItemDefinition = TakeRandomItemInList(value);
+				generationInfo.ItemDefinition = itemDefinition;
 				generationInfo.Destination = ItemSlotDefinition.E_ItemSlotId.Inventory;
 				generationInfo.Level = level;
-				generationInfo.Rarity = RarityProbabilitiesTreeController.GenerateRarity(probabilityTreeEntriesDefinition);
+				generationInfo.Rarity = RarityProbabilitiesTreeController.GenerateRarity(probabilityTreeEntriesDefinition, minRarityIndexFromItemDefinition);
 				generationInfo.SkipMalusAffixes = skipMalusAffixes;
 				GenerateItem(generationInfo);
 			}

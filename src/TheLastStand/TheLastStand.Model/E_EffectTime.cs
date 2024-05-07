@@ -42,5 +42,9 @@ public enum E_EffectTime
 	OnExtinguish,
 	OnStatsLoadStart,
 	OnStatusImmunityComputation,
-	OnTargetingComputation
+	OnTargetingComputation,
+	OnDealDamageTargetHit,
+	OnDealDamageTargetKill,
+	OnDealDamageExecutionEnd,
+	OnPerkApplyStatusEnd
 }

@@ -30,7 +30,7 @@ public class ModdedPerkCollectionsSetsDefinition : TheLastStand.Framework.Serial
 			UnitPerkCollectionSetDefinition unitPerkCollectionSetDefinition = new UnitPerkCollectionSetDefinition((XContainer)(object)item);
 			if (PerkCollectionSetDefinitions.ContainsKey(unitPerkCollectionSetDefinition.Index))
 			{
-				LinqExtensions.AddRange<Tuple<UnitPerkCollectionDefinition, int>>(PerkCollectionSetDefinitions[unitPerkCollectionSetDefinition.Index].CollectionsPerWeight, (IEnumerable<Tuple<UnitPerkCollectionDefinition, int>>)unitPerkCollectionSetDefinition.CollectionsPerWeight);
+				LinqExtensions.AddRange<Tuple<UnitPerkCollectionDefinition, int, string>>(PerkCollectionSetDefinitions[unitPerkCollectionSetDefinition.Index].CollectionsPerWeight, (IEnumerable<Tuple<UnitPerkCollectionDefinition, int, string>>)unitPerkCollectionSetDefinition.CollectionsPerWeight);
 			}
 			else
 			{

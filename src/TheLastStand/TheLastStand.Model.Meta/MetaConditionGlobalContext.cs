@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using TPLib;
 using TheLastStand.Manager;
+using TheLastStand.Manager.DLC;
 using TheLastStand.Manager.Meta;
 using TheLastStand.Manager.Unit;
 using TheLastStand.Model.Unit;
@@ -47,6 +48,11 @@ public class MetaConditionGlobalContext : MetaConditionContext
 		return (double)TPSingleton<MetaUpgradesManager>.Instance.FulfilledUpgrades.Count((MetaUpgrade o) => o.MetaUpgradeDefinition.Id == upgradeId) + HasActivatedMetaUpgrade(upgradeId);
 	}
 
+	public double OwnedDLC(string dlcId)
+	{
+		return TPSingleton<DLCManager>.Instance.IsDLCOwned(dlcId) ? 1 : 0;
+	}
+
 	private (double max, double min) GetLifetimeStats(string statId)
 	{
 		PropertyInfo propertyInfo = lifetimeStatsProperties.Find((PropertyInfo o) => o.Name == statId);
@@ -60,14 +66,14 @@ public class MetaConditionGlobalContext : MetaConditionContext
 			}
 			if (!TPSingleton<PlayableUnitManager>.Exist() || TPSingleton<PlayableUnitManager>.Instance.PlayableUnits == null)
 			{
-				return (0.0, 0.0);
+				return (max: 0.0, min: 0.0);
 			}
 			foreach (PlayableUnit playableUnit in TPSingleton<PlayableUnitManager>.Instance.PlayableUnits)
 			{
 				num = Math.Max(num, Convert.ToDouble(propertyInfo.GetValue(playableUnit.LifetimeStats)));
 				num2 = Math.Min(num2, Convert.ToDouble(propertyInfo.GetValue(playableUnit.LifetimeStats)));
 			}
-			return (num, num2);
+			return (max: num, min: num2);
 		}
 		throw new Exception("Unkown lifetime stat " + statId + ". Known stats are:" + string.Join(", ", lifetimeStatsProperties.Select((PropertyInfo o) => o.Name)));
 	}

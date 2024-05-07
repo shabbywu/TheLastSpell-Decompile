@@ -39,7 +39,7 @@ public class GoalController
 	{
 		get
 		{
-			if (Goal.Owner is EnemyUnit enemyUnit && enemyUnit.GoalComputingStep == IBehaviorModel.E_GoalComputingStep.BeforeMoving && !Goal.Skill.SkillDefinition.AreaOfEffectDefinition.IsSingleTarget)
+			if (Goal.Owner is EnemyUnit { GoalComputingStep: IBehaviorModel.E_GoalComputingStep.BeforeMoving } && !Goal.Skill.SkillDefinition.AreaOfEffectDefinition.IsSingleTarget)
 			{
 				return !Goal.Skill.SkillDefinition.LockAutoOrientation;
 			}
@@ -65,7 +65,7 @@ public class GoalController
 		{
 			return null;
 		}
-		if (Goal.Owner is TheLastStand.Model.Unit.Unit unit && unit.IsStunned && Goal.Owner.GoalComputingStep != IBehaviorModel.E_GoalComputingStep.OnDeath && Goal.GoalDefinition.SkillId != "SkipTurn")
+		if (Goal.Owner is TheLastStand.Model.Unit.Unit { IsStunned: not false } && Goal.Owner.GoalComputingStep != IBehaviorModel.E_GoalComputingStep.OnDeath && Goal.GoalDefinition.SkillId != "SkipTurn")
 		{
 			return null;
 		}

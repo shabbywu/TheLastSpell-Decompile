@@ -1,17 +1,23 @@
 using System;
+using System.Text;
 using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
 using TMPro;
 using TPLib;
 using TPLib.Localization;
+using TheLastStand.Definition.DLC;
 using TheLastStand.Framework;
 using TheLastStand.Framework.UI;
 using TheLastStand.Manager;
+using TheLastStand.Manager.DLC;
+using TheLastStand.Manager.Item;
 using TheLastStand.Manager.WorldMap;
 using TheLastStand.Model.Animation;
 using TheLastStand.Model.WorldMap;
 using TheLastStand.View.Camera;
+using TheLastStand.View.Tutorial;
+using TheLastStand.View.WorldMap.ItemRestriction;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Events;
@@ -32,6 +38,10 @@ public class WorldMapCityView : MonoBehaviour
 		public const string CompletedIdleAnimation = "CityCompletedIdle";
 
 		public const string CompletedHoveredAnimation = "CityCompletedHovered";
+
+		public const string LockedIdleAnimation = "CityLockedIdle";
+
+		public const string LockedHoveredAnimation = "CityLockedHovered";
 	}
 
 	public WorldMapCity WorldMapCity;
@@ -42,13 +52,19 @@ public class WorldMapCityView : MonoBehaviour
 	private Animator animator;
 
 	[SerializeField]
+	private EventTrigger buyDLCEventTrigger;
+
+	[SerializeField]
 	private EventTrigger startEventTrigger;
 
 	[SerializeField]
 	private Transform targetPos;
 
 	[SerializeField]
-	private GameObject cantStartNewGameText;
+	private BetterButton buyDLCButton;
+
+	[SerializeField]
+	private TextMeshProUGUI cantStartNewGameText;
 
 	[SerializeField]
 	private Canvas cityNameCanvas;
@@ -66,10 +82,16 @@ public class WorldMapCityView : MonoBehaviour
 	private TextMeshProUGUI cityNameText;
 
 	[SerializeField]
+	private TextMeshProUGUI missingDLCText;
+
+	[SerializeField]
 	private GameObject selectionCursor;
 
 	[SerializeField]
 	private BetterButton startButton;
+
+	[SerializeField]
+	private Image[] difficultySkulls;
 
 	[SerializeField]
 	private Animator apocalypseFlameAnimator;
@@ -91,6 +113,15 @@ public class WorldMapCityView : MonoBehaviour
 
 	[SerializeField]
 	private RectTransform cityNameRect;
+
+	[SerializeField]
+	private Vector2TweenAnimation zoomPanelDifficultySkullsScaleAnimation;
+
+	[SerializeField]
+	private Vector2TweenAnimation zoomPanelDifficultySkullsPosAnimation;
+
+	[SerializeField]
+	private RectTransform difficultyPanelRect;
 
 	[SerializeField]
 	private Vector2TweenAnimation zoomWingsAnimation;
@@ -125,6 +156,36 @@ public class WorldMapCityView : MonoBehaviour
 	[SerializeField]
 	private RectTransform apocalypseLevelRect;
 
+	private bool validApocalypseLastState = true;
+
+	private bool validWeaponRestrictionsLastState = true;
+
+	private bool unlockedLastState;
+
+	public bool CanStartGame
+	{
+		get
+		{
+			if (ValidApocalypseStateToStart && ValidWeaponRestrictionsStateToStart)
+			{
+				return WorldMapCity.IsUnlocked;
+			}
+			return false;
+		}
+	}
+
+	public bool IsTutorialOpened
+	{
+		get
+		{
+			if (TPSingleton<TutorialView>.Exist())
+			{
+				return TPSingleton<TutorialView>.Instance.DisplayCoroutineRunning;
+			}
+			return false;
+		}
+	}
+
 	public bool ValidApocalypseStateToStart
 	{
 		get
@@ -132,6 +193,18 @@ public class WorldMapCityView : MonoBehaviour
 			if (!GameConfigurationsView.IsThereAnApocalypseSelected())
 			{
 				return TPSingleton<GameConfigurationsView>.Instance.ApocalypseLines.Count == 0;
+			}
+			return true;
+		}
+	}
+
+	public bool ValidWeaponRestrictionsStateToStart
+	{
+		get
+		{
+			if (TPSingleton<ItemRestrictionManager>.Instance.WeaponsRestrictionsCategories.IsAvailable)
+			{
+				return TPSingleton<ItemRestrictionManager>.Instance.WeaponsRestrictionsCategories.AreAllCategoriesCorrectlyConfigured();
 			}
 			return true;
 		}
@@ -148,8 +221,9 @@ public class WorldMapCityView : MonoBehaviour
 			WorldMapCity.RefreshIsSelectable();
 			selectionCursor.SetActive(false);
 			animator.runtimeAnimatorController = ResourcePooler<RuntimeAnimatorController>.LoadOnce(string.Format("Animators/Cities/Worldmap/{0}Animations/{0}_Animator", WorldMapCity.CityDefinition.Id));
-			animator.Play(GetAnimationName(hovered: false), 0, Random.value);
+			RefreshAnimation();
 			((TMP_Text)cityNameText).text = ((WorldMapCity.NumberOfRuns > 0) ? $"{WorldMapCity.CityDefinition.Name} #{WorldMapCity.NumberOfRuns + 1}" : WorldMapCity.CityDefinition.Name);
+			RefreshDifficultySkulls();
 			if (!WorldMapCity.IsSelectable)
 			{
 				((Behaviour)cityNameCanvas).enabled = false;
@@ -164,12 +238,19 @@ public class WorldMapCityView : MonoBehaviour
 			}
 			((Component)cityNamePanel).gameObject.SetActive(false);
 			((TMP_Text)apocalypseNameText).text = Localizer.Get((WorldMapCity.MaxApocalypsePassed == 0) ? "WorldMap_ApocalypseDifficulty_Normal" : "WorldMap_ApocalypseDifficulty_Apocalypse");
-			((Component)this).gameObject.SetActive(WorldMapCity.IsUnlocked && !WorldMapCity.CityDefinition.Hidden);
+			((Component)this).gameObject.SetActive(WorldMapCity.IsVisible && !WorldMapCity.CityDefinition.Hidden);
 			ACameraView.OnZoomHasChanged = (ACameraView.DelZoom)Delegate.Combine(ACameraView.OnZoomHasChanged, new ACameraView.DelZoom(OnZoom));
 			GameConfigurationsView instance = TPSingleton<GameConfigurationsView>.Instance;
 			instance.OnApocalypseSelectionHasChanged = (GameConfigurationsView.DelApocalypseSelectionChanged)Delegate.Combine(instance.OnApocalypseSelectionHasChanged, new GameConfigurationsView.DelApocalypseSelectionChanged(OnSelectionHasChanged));
+			WeaponRestrictionsPanel.OnPanelClosed += OnWeaponRestrictionsPanelClosed;
+			InitBuyDLCButton();
 			InitStartButton();
 		}
+	}
+
+	public void RefreshAnimation()
+	{
+		animator.Play(GetAnimationName(hovered: false), 0, Random.value);
 	}
 
 	public void OnDeselection()
@@ -180,7 +261,7 @@ public class WorldMapCityView : MonoBehaviour
 		SwitchCursorActiveState(show: false);
 		SwitchMaxApocalypseLevelActiveState(IsHovered && WorldMapCity.MaxApocalypsePassed != -1 && TPSingleton<ApocalypseManager>.Instance.MaxApocalypseIndexAvailable > 0);
 		SwitchNamePanelSprite(IsHovered);
-		SwitchButtonStart(show: false);
+		SwitchButtonStartOrBuy(show: false);
 		Animator obj = animator;
 		string animationName = GetAnimationName(IsHovered);
 		AnimatorStateInfo currentAnimatorStateInfo = animator.GetCurrentAnimatorStateInfo(0);
@@ -195,22 +276,38 @@ public class WorldMapCityView : MonoBehaviour
 		SwitchCursorActiveState(show: true);
 		SwitchMaxApocalypseLevelActiveState(WorldMapCity.MaxApocalypsePassed != -1 && TPSingleton<ApocalypseManager>.Instance.MaxApocalypseIndexAvailable > 0);
 		SwitchNamePanelSprite(show: true);
-		SwitchButtonStart(show: true, ValidApocalypseStateToStart);
+		SwitchButtonStartOrBuy(show: true, CanStartGame);
 		Animator obj = animator;
 		string animationName = GetAnimationName(hovered: false);
 		AnimatorStateInfo currentAnimatorStateInfo = animator.GetCurrentAnimatorStateInfo(0);
 		obj.Play(animationName, 0, ((AnimatorStateInfo)(ref currentAnimatorStateInfo)).normalizedTime);
 	}
 
+	private void OnWeaponRestrictionsPanelClosed()
+	{
+		if (isSelected)
+		{
+			SwitchButtonStartOrBuy(show: true, CanStartGame);
+		}
+	}
+
 	private string GetAnimationName(bool hovered)
 	{
 		if (hovered)
 		{
+			if (!WorldMapCity.IsUnlocked)
+			{
+				return "CityLockedHovered";
+			}
 			if (WorldMapCity.NumberOfWins <= 0)
 			{
 				return "CityHovered";
 			}
 			return "CityCompletedHovered";
+		}
+		if (!WorldMapCity.IsUnlocked)
+		{
+			return "CityLockedIdle";
 		}
 		if (WorldMapCity.NumberOfWins <= 0)
 		{
@@ -236,6 +333,43 @@ public class WorldMapCityView : MonoBehaviour
 				SwitchMaxApocalypseLevelActiveState((hovering || TPSingleton<WorldMapCityManager>.Instance.SelectedCity == WorldMapCity) && WorldMapCity.MaxApocalypsePassed != -1 && TPSingleton<ApocalypseManager>.Instance.MaxApocalypseIndexAvailable > 0);
 			}
 		}
+	}
+
+	private void InitBuyDLCButton()
+	{
+		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
+		//IL_001c: Expected O, but got Unknown
+		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
+		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
+		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0035: Expected O, but got Unknown
+		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
+		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
+		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0042: Expected O, but got Unknown
+		((UnityEvent)((Button)buyDLCButton).onClick).AddListener(new UnityAction(GameConfigurationsView.OpenSelectedCityLinkedDLCStorePage));
+		((Selectable)buyDLCButton).interactable = false;
+		Entry val = new Entry
+		{
+			eventID = (EventTriggerType)0
+		};
+		Entry val2 = new Entry
+		{
+			eventID = (EventTriggerType)1
+		};
+		((UnityEvent<BaseEventData>)(object)val.callback).AddListener((UnityAction<BaseEventData>)delegate
+		{
+			if (buyDLCButton.Interactable)
+			{
+				((Component)missingDLCText).gameObject.SetActive(true);
+			}
+		});
+		buyDLCEventTrigger.triggers.Add(val);
+		((UnityEvent<BaseEventData>)(object)val2.callback).AddListener((UnityAction<BaseEventData>)delegate
+		{
+			((Component)missingDLCText).gameObject.SetActive(false);
+		});
+		buyDLCEventTrigger.triggers.Add(val2);
 	}
 
 	private void InitStartButton()
@@ -264,13 +398,13 @@ public class WorldMapCityView : MonoBehaviour
 		{
 			if (!startButton.Interactable)
 			{
-				cantStartNewGameText.SetActive(true);
+				((Component)cantStartNewGameText).gameObject.SetActive(true);
 			}
 		});
 		startEventTrigger.triggers.Add(val);
 		((UnityEvent<BaseEventData>)(object)val2.callback).AddListener((UnityAction<BaseEventData>)delegate
 		{
-			cantStartNewGameText.SetActive(false);
+			((Component)cantStartNewGameText).gameObject.SetActive(false);
 		});
 		startEventTrigger.triggers.Add(val2);
 	}
@@ -278,16 +412,20 @@ public class WorldMapCityView : MonoBehaviour
 	private void OnDestroy()
 	{
 		ACameraView.OnZoomHasChanged = (ACameraView.DelZoom)Delegate.Remove(ACameraView.OnZoomHasChanged, new ACameraView.DelZoom(OnZoom));
+		WeaponRestrictionsPanel.OnPanelClosed -= OnWeaponRestrictionsPanelClosed;
 	}
 
 	private void OnMouseDown()
 	{
-		TPSingleton<WorldMapCityManager>.Instance.SelectCity(WorldMapCity);
+		if (!IsTutorialOpened)
+		{
+			TPSingleton<WorldMapCityManager>.Instance.SelectCity(WorldMapCity);
+		}
 	}
 
 	private void OnMouseEnter()
 	{
-		if (WorldMapCity.IsSelectable)
+		if (WorldMapCityManager.CanSelectAnyCity && !IsTutorialOpened && WorldMapCity.IsSelectable)
 		{
 			HandleMouseHover(hovering: true);
 		}
@@ -305,7 +443,7 @@ public class WorldMapCityView : MonoBehaviour
 	{
 		if (isSelected)
 		{
-			startButton.Interactable = selected;
+			SwitchButtonStartOrBuy(show: true, CanStartGame);
 		}
 	}
 
@@ -322,6 +460,8 @@ public class WorldMapCityView : MonoBehaviour
 	private void OnZoom(bool zoomed)
 	{
 		SwitchSizeZoomStatus(zoomed, zoomPanelCityNameAnimation, panelCityNameRect);
+		SwitchScaleZoomStatus(zoomed, zoomPanelDifficultySkullsScaleAnimation, difficultyPanelRect);
+		SwitchPosZoomStatus(zoomed, zoomPanelDifficultySkullsPosAnimation, difficultyPanelRect);
 		SwitchSizeZoomStatus(zoomed, zoomCityNameAnimation, cityNameRect);
 		SwitchSizeZoomStatus(zoomed, zoomWingsAnimation, wingsRect);
 		SwitchSizeZoomStatus(zoomed, zoomFlamesSizeAnimation, flamesRect);
@@ -332,10 +472,107 @@ public class WorldMapCityView : MonoBehaviour
 		SwitchPosZoomStatus(zoomed, zoomApocalypseLevelPosAnimation, apocalypseLevelRect);
 	}
 
-	private void SwitchButtonStart(bool show, bool interactable = false)
+	private void RefreshCantStartNewGameText()
 	{
-		((Component)startButton).gameObject.SetActive(show);
-		startButton.Interactable = interactable;
+		bool flag = false;
+		bool isUnlocked = WorldMapCity.IsUnlocked;
+		bool validApocalypseStateToStart = ValidApocalypseStateToStart;
+		if (validApocalypseStateToStart != validApocalypseLastState)
+		{
+			flag = true;
+			validApocalypseLastState = validApocalypseStateToStart;
+		}
+		bool validWeaponRestrictionsStateToStart = ValidWeaponRestrictionsStateToStart;
+		if (validWeaponRestrictionsStateToStart != validWeaponRestrictionsLastState)
+		{
+			flag = true;
+			validWeaponRestrictionsLastState = validWeaponRestrictionsStateToStart;
+		}
+		if (WorldMapCity.IsUnlocked != unlockedLastState)
+		{
+			flag = true;
+			unlockedLastState = WorldMapCity.IsUnlocked;
+		}
+		if (!(!flag && isUnlocked))
+		{
+			StringBuilder stringBuilder = new StringBuilder();
+			if (!validApocalypseStateToStart && isUnlocked)
+			{
+				stringBuilder.Append(Localizer.Get("WorldMap_CantStartNewGame")).AppendLine();
+			}
+			if (!validWeaponRestrictionsStateToStart && isUnlocked)
+			{
+				stringBuilder.Append(Localizer.Get("WorldMap_CantStartNewGame_WeaponRestrictions")).AppendLine();
+			}
+			if (!isUnlocked)
+			{
+				stringBuilder.Append(WorldMapCity.GetLockedCityText());
+			}
+			((TMP_Text)cantStartNewGameText).text = stringBuilder.ToString();
+		}
+	}
+
+	private void RefreshMissingDLCText()
+	{
+		if (!WorldMapCity.IsUnlocked && WorldMapCity.CityDefinition.HasLinkedDLC && !WorldMapCity.IsLinkedDLCOwned)
+		{
+			DLCDefinition dLCFromId = TPSingleton<DLCManager>.Instance.GetDLCFromId(WorldMapCity.CityDefinition.LinkedDLCId);
+			if ((Object)(object)dLCFromId != (Object)null)
+			{
+				((TMP_Text)missingDLCText).text = dLCFromId.LocalizedName;
+			}
+		}
+	}
+
+	private void RefreshDifficultySkulls()
+	{
+		for (int i = 0; i < difficultySkulls.Length; i++)
+		{
+			((Component)difficultySkulls[i]).gameObject.SetActive(false);
+			if (i < WorldMapCity.CityDefinition.DifficultySkullsNb)
+			{
+				((Component)difficultySkulls[i]).gameObject.SetActive(true);
+			}
+		}
+	}
+
+	private void SwitchButtonStartOrBuy(bool show, bool interactable = false)
+	{
+		if (!show)
+		{
+			((Component)startButton).gameObject.SetActive(false);
+			((Component)buyDLCButton).gameObject.SetActive(false);
+			return;
+		}
+		if (WorldMapCity.CityDefinition.IsStoryMap)
+		{
+			((Component)startButton).gameObject.SetActive(true);
+			startButton.Interactable = interactable;
+			((Component)buyDLCButton).gameObject.SetActive(false);
+		}
+		else
+		{
+			((Component)buyDLCButton).gameObject.SetActive(false);
+			((Component)startButton).gameObject.SetActive(false);
+			if (WorldMapCity.CityDefinition.HasLinkedDLC && !WorldMapCity.IsLinkedDLCOwned)
+			{
+				((Component)buyDLCButton).gameObject.SetActive(true);
+				buyDLCButton.Interactable = true;
+			}
+			else
+			{
+				((Component)startButton).gameObject.SetActive(true);
+				startButton.Interactable = interactable;
+			}
+			if (((Component)buyDLCButton).gameObject.activeSelf)
+			{
+				RefreshMissingDLCText();
+			}
+		}
+		if (((Component)startButton).gameObject.activeSelf && !interactable)
+		{
+			RefreshCantStartNewGameText();
+		}
 	}
 
 	private void SwitchCursorActiveState(bool show)
@@ -358,6 +595,27 @@ public class WorldMapCityView : MonoBehaviour
 	{
 		((Component)cityNamePanel).gameObject.SetActive(IsHovered || isSelected);
 		cityNamePanel.sprite = (show ? cityNamePanelHovered : cityNamePanelNormal);
+	}
+
+	private void SwitchScaleZoomStatus(bool zoomed, Vector2TweenAnimation vector2Animation, RectTransform rectTransform)
+	{
+		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0031: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
+		if (zoomed == vector2Animation.InStatusOne)
+		{
+			Tween statusTransitionTween = vector2Animation.StatusTransitionTween;
+			if (statusTransitionTween != null)
+			{
+				TweenExtensions.Kill(statusTransitionTween, false);
+			}
+			Vector2 val = (vector2Animation.InStatusOne ? vector2Animation.StatusTwo : vector2Animation.StatusOne);
+			vector2Animation.StatusTransitionTween = (Tween)(object)TweenSettingsExtensions.SetEase<TweenerCore<Vector3, Vector3, VectorOptions>>(ShortcutExtensions.DOScale((Transform)(object)rectTransform, Vector2.op_Implicit(val), vector2Animation.TransitionDuration), vector2Animation.TransitionEase);
+			vector2Animation.InStatusOne = !vector2Animation.InStatusOne;
+		}
 	}
 
 	private void SwitchSizeZoomStatus(bool zoomed, Vector2TweenAnimation vector2Animation, RectTransform rectTransform)

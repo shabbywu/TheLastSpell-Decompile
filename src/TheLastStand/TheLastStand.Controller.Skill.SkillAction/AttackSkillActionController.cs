@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using TPLib;
 using TPLib.Log;
+using TheLastStand.Controller.Building.Module;
 using TheLastStand.Controller.Skill.SkillAction.SkillActionExecution;
 using TheLastStand.Controller.TileMap;
 using TheLastStand.Controller.Trophy.TrophyConditions;
@@ -360,7 +361,7 @@ public class AttackSkillActionController : SkillActionController
 				num += armorShreddingBonus;
 				num += firstEffect.BonusDamage;
 			}
-			if (base.SkillAction is AttackSkillAction attackSkillAction && attackSkillAction.AttackType == AttackSkillActionDefinition.E_AttackType.Physical)
+			if (base.SkillAction is AttackSkillAction { AttackType: AttackSkillActionDefinition.E_AttackType.Physical })
 			{
 				num += SkillDatabase.DamageTypeModifiersDefinition.MeleeArmorShreddingBonus - 1f;
 			}
@@ -577,6 +578,10 @@ public class AttackSkillActionController : SkillActionController
 			bool flag = attackData.HealthDamage >= target.DamageableController.Damageable.HealthTotal;
 			if (attackData.HealthDamage > 0f)
 			{
+				if (target.DamageableController is DamageableModuleController damageableModuleController)
+				{
+					damageableModuleController.ChangeCanPrepareForDeath(canPrepareForDeath: false);
+				}
 				target.DamageableController.LoseHealth(attackData.HealthDamage, attacker, refreshHud: false);
 				num += attackData.HealthDamage;
 				if (entity is EnemyUnit enemyUnit2 && target is EnemyUnit && enemyUnit2.EnemyUnitTemplateDefinition.Id == "Boomer" && TPSingleton<GameManager>.Instance.Game.NightTurn == Game.E_NightTurn.PlayableUnits)
@@ -787,6 +792,7 @@ public class AttackSkillActionController : SkillActionController
 		float num3 = ((Vector2Int)(ref finalDamageRange)).x;
 		finalDamageRange = tileAttackData.DamageRangeData.FinalDamageRange;
 		obj.TotalDamage = Mathf.Clamp(num2, num3, (float)((Vector2Int)(ref finalDamageRange)).y);
+		ComputeBlockedDamageData(ref tileAttackData);
 		if (caster is PlayableUnit playableUnit)
 		{
 			float perkModifierForComputationStat = playableUnit.GetPerkModifierForComputationStat(TheLastStand.Model.Skill.Skill.E_ComputationStat.Critical, base.SkillAction.PerkDataContainer);
@@ -831,7 +837,7 @@ public class AttackSkillActionController : SkillActionController
 				num *= 1f + effect.Malus;
 			}
 			float num3 = 0f;
-			if (caster is TheLastStand.Model.Unit.Unit unit && (!(tileAttackData.Damageable is TheLastStand.Model.Unit.Unit unit2) || !unit2.IsStunned))
+			if (caster is TheLastStand.Model.Unit.Unit unit && !(tileAttackData.Damageable is TheLastStand.Model.Unit.Unit { IsStunned: not false }))
 			{
 				num3 += unit.GetClampedStatValue(UnitStatDefinition.E_Stat.Accuracy);
 				if (caster is PlayableUnit playableUnit)
@@ -888,6 +894,7 @@ public class AttackSkillActionController : SkillActionController
 		float num3 = ((Vector2Int)(ref finalDamageRange)).x;
 		finalDamageRange = tileAttackData.DamageRangeData.FinalDamageRange;
 		obj.TotalDamage = Mathf.Clamp(num2, num3, (float)((Vector2Int)(ref finalDamageRange)).y);
+		ComputeBlockedDamageData(ref tileAttackData);
 		if (isCrit && caster is TheLastStand.Model.Unit.Unit unit)
 		{
 			float num4 = 0f;
@@ -899,5 +906,18 @@ public class AttackSkillActionController : SkillActionController
 		}
 		tileAttackData.TotalDamage *= Mathf.Pow((caster is TheLastStand.Model.Unit.Unit unit2) ? (unit2.GetClampedStatValue(UnitStatDefinition.E_Stat.PropagationDamage) * 0.01f) : 1f, (float)propagationIndex);
 		tileAttackData.TotalDamage = Mathf.Round(tileAttackData.TotalDamage);
+	}
+
+	private void ComputeBlockedDamageData(ref AttackSkillActionExecutionTileData tileAttackData)
+	{
+		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
+		if (tileAttackData.TotalDamage > 0f)
+		{
+			tileAttackData.BlockedDamage = Mathf.Abs(((Vector2Int)(ref tileAttackData.DamageRangeData.BlockReductionRange)).x);
+			return;
+		}
+		Vector2Int blockableDamageRange = tileAttackData.DamageRangeData.BlockableDamageRange;
+		tileAttackData.BlockedDamage = Mathf.Clamp(Mathf.Round((float)((Vector2Int)(ref blockableDamageRange)).x + (float)(((Vector2Int)(ref blockableDamageRange)).y - ((Vector2Int)(ref blockableDamageRange)).x) * tileAttackData.ComputationRandom), (float)((Vector2Int)(ref blockableDamageRange)).x, (float)((Vector2Int)(ref blockableDamageRange)).y);
 	}
 }

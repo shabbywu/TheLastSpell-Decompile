@@ -24,7 +24,7 @@ public class GlyphIcon : OraculumUnlockIcon
 
 	private void OnDisable()
 	{
-		if (GlyphTooltipDisplayer.Displayed)
+		if (GlyphTooltipDisplayer.IsDisplayingTargetTooltip)
 		{
 			GlyphTooltipDisplayer.HideTooltip();
 		}

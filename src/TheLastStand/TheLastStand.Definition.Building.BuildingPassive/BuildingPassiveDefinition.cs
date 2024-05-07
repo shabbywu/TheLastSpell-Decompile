@@ -115,6 +115,14 @@ public class BuildingPassiveDefinition : TheLastStand.Framework.Serialization.De
 		{
 			TriggerDefinitions.Add(new OnExtinguishTriggerDefinition((XContainer)(object)item20));
 		}
+		foreach (XElement item21 in ((XContainer)val3).Elements(XName.op_Implicit("StartNightEnemyTurn")))
+		{
+			TriggerDefinitions.Add(new StartOfNightEnemyTurnTriggerDefinition((XContainer)(object)item21));
+		}
+		foreach (XElement item22 in ((XContainer)val3).Elements(XName.op_Implicit("StartNightPlayableTurn")))
+		{
+			TriggerDefinitions.Add(new StartOfNightPlayableTurnTriggerDefinition((XContainer)(object)item22));
+		}
 		HasOnDeathEffect = TriggerDefinitions.Any((PassiveTriggerDefinition x) => x.EffectTime == E_EffectTime.OnDeath || x.EffectTime == E_EffectTime.OnExtinguish);
 	}
 }

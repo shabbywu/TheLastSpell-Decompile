@@ -17,6 +17,7 @@ using TheLastStand.Database;
 using TheLastStand.Framework;
 using TheLastStand.Framework.Extensions;
 using TheLastStand.Manager;
+using TheLastStand.Manager.Item;
 using TheLastStand.Manager.Unit;
 using TheLastStand.Manager.WorldMap;
 using TheLastStand.Model;
@@ -156,6 +157,9 @@ public class GameOverPanel : TPSingleton<GameOverPanel>, IOverlayUser
 
 	[SerializeField]
 	private JoystickSelectable glyphsSelectable;
+
+	[SerializeField]
+	private JoystickSelectable weaponRestrictionsSelectable;
 
 	[SerializeField]
 	private RectTransform apocalypseRectTransform;
@@ -593,13 +597,30 @@ public class GameOverPanel : TPSingleton<GameOverPanel>, IOverlayUser
 		if (TPSingleton<WorldMapCityManager>.Instance.SelectedCity.GlyphsConfig.SelectedGlyphs.Count > 0 || ApocalypseManager.CurrentApocalypseIndex > 0)
 		{
 			yield return SharedYields.WaitForSeconds(PlayableUnitManager.DebugForceSkipNightReport ? 0f : waitBeforeShowingEasyModeAndApocalypse);
-			if (TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CurrentGlyphPoints > 0)
+			bool flag = TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CurrentGlyphPoints > 0;
+			bool flag2 = !TPSingleton<ItemRestrictionManager>.Instance.WeaponsRestrictionsCategories.AreAllUnlockedFamiliesSelected();
+			bool flag3 = ApocalypseManager.CurrentApocalypseIndex > 0;
+			if (flag || flag2)
 			{
 				glyphsJoystickTarget.NavigationEnabled = true;
 				TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosY(glyphsRectTransform, glyphsUnfoldedPositionY, unfoldDuration, false), unfoldEasing).SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>("easyModeUnfoldTween", (Component)(object)this);
-				((Selectable)(object)glyphsSelectable).SetMode((Mode)4);
-				((Selectable)(object)glyphsSelectable).SetSelectOnDown(soulsRewardPanel.GetFirstSelectableTrophy());
-				((Selectable)(object)apocalypseSelectable).SetSelectOnLeft((Selectable)(object)glyphsSelectable);
+				((Component)glyphsSelectable).gameObject.SetActive(flag);
+				if (flag)
+				{
+					((Selectable)(object)glyphsSelectable).SetMode((Mode)4);
+					((Selectable)(object)glyphsSelectable).SetSelectOnDown(soulsRewardPanel.GetFirstSelectableTrophy());
+					((Selectable)(object)glyphsSelectable).SetSelectOnRight((Selectable)(object)(flag2 ? weaponRestrictionsSelectable : (flag3 ? apocalypseSelectable : null)));
+					((Selectable)(object)apocalypseSelectable).SetSelectOnLeft((Selectable)(object)glyphsSelectable);
+				}
+				((Component)weaponRestrictionsSelectable).gameObject.SetActive(flag2);
+				if (flag2)
+				{
+					((Selectable)(object)weaponRestrictionsSelectable).SetMode((Mode)4);
+					((Selectable)(object)weaponRestrictionsSelectable).SetSelectOnDown(soulsRewardPanel.GetFirstSelectableTrophy());
+					((Selectable)(object)weaponRestrictionsSelectable).SetSelectOnLeft((Selectable)(object)(flag ? glyphsSelectable : null));
+					((Selectable)(object)weaponRestrictionsSelectable).SetSelectOnRight((Selectable)(object)(flag3 ? apocalypseSelectable : null));
+					((Selectable)(object)apocalypseSelectable).SetSelectOnLeft((Selectable)(object)weaponRestrictionsSelectable);
+				}
 				if (TPSingleton<WorldMapCityManager>.Instance.SelectedCity.GlyphsConfig.CustomModeEnabled)
 				{
 					((Behaviour)glyphsCustomModeText).enabled = true;
@@ -610,13 +631,12 @@ public class GameOverPanel : TPSingleton<GameOverPanel>, IOverlayUser
 			{
 				glyphsJoystickTarget.NavigationEnabled = false;
 			}
-			if (ApocalypseManager.CurrentApocalypseIndex > 0)
+			if (flag3)
 			{
 				TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosY(apocalypseRectTransform, apocalypseUnfoldedPositionY, unfoldDuration, false), unfoldEasing).SetFullId<TweenerCore<Vector2, Vector2, VectorOptions>>("apocalypseUnfoldTween", (Component)(object)this);
 				apocalypseJoystickTarget.NavigationEnabled = true;
 				((Selectable)(object)apocalypseSelectable).SetMode((Mode)4);
 				((Selectable)(object)apocalypseSelectable).SetSelectOnDown(soulsRewardPanel.GetFirstSelectableTrophy());
-				((Selectable)(object)glyphsSelectable).SetSelectOnRight((Selectable)(object)apocalypseSelectable);
 			}
 			else
 			{

@@ -49,6 +49,8 @@ public abstract class UnitView : MonoBehaviour, IDamageableView, ITileObjectView
 
 			public const string AnimatorEnemyUnitFolderPath = "Animators/Units/EnemyUnits";
 
+			public const string AnimatorPlayableUnitFolderPath = "Animators/Units/PlayableUnits/";
+
 			public const string SkillCastAnimBackSuffix = "Back";
 
 			public const string SkillCastAnimFrontSuffix = "Front";
@@ -586,18 +588,16 @@ public abstract class UnitView : MonoBehaviour, IDamageableView, ITileObjectView
 
 	protected virtual bool InitAnimations()
 	{
-		//IL_005a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0064: Expected O, but got Unknown
-		//IL_0107: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0111: Expected O, but got Unknown
-		//IL_0126: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0130: Expected O, but got Unknown
-		//IL_0145: Unknown result type (might be due to invalid IL or missing references)
-		//IL_014f: Expected O, but got Unknown
-		//IL_0164: Unknown result type (might be due to invalid IL or missing references)
-		//IL_016e: Expected O, but got Unknown
-		//IL_0183: Unknown result type (might be due to invalid IL or missing references)
-		//IL_018d: Expected O, but got Unknown
+		//IL_00be: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00c8: Expected O, but got Unknown
+		//IL_00dd: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00e7: Expected O, but got Unknown
+		//IL_00fc: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0106: Expected O, but got Unknown
+		//IL_011b: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0125: Expected O, but got Unknown
+		//IL_013a: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0144: Expected O, but got Unknown
 		AreAnimationsInitialized = false;
 		if ((Object)(object)animator == (Object)null)
 		{
@@ -608,16 +608,7 @@ public abstract class UnitView : MonoBehaviour, IDamageableView, ITileObjectView
 		{
 			return false;
 		}
-		animatorOverrideController = new AnimatorOverrideController(animator.runtimeAnimatorController);
-		RuntimeAnimatorController runtimeAnimatorController = animator.runtimeAnimatorController;
-		AnimatorOverrideController val = (AnimatorOverrideController)(object)((runtimeAnimatorController is AnimatorOverrideController) ? runtimeAnimatorController : null);
-		if (val != null)
-		{
-			List<KeyValuePair<AnimationClip, AnimationClip>> list = new List<KeyValuePair<AnimationClip, AnimationClip>>(val.overridesCount);
-			val.GetOverrides(list);
-			animatorOverrideController.ApplyOverrides((IList<KeyValuePair<AnimationClip, AnimationClip>>)list);
-		}
-		animator.runtimeAnimatorController = (RuntimeAnimatorController)(object)animatorOverrideController;
+		InitAnimatorController(animator.runtimeAnimatorController);
 		backLayerIndex = animator.GetLayerIndex("Back Layer");
 		frontLayerIndex = animator.GetLayerIndex("Front Layer");
 		SetOrientation(front: true, forceRefresh: true);
@@ -677,6 +668,22 @@ public abstract class UnitView : MonoBehaviour, IDamageableView, ITileObjectView
 			});
 		}
 		return true;
+	}
+
+	protected void InitAnimatorController(RuntimeAnimatorController newAnimatorController)
+	{
+		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
+		//IL_000c: Expected O, but got Unknown
+		animatorOverrideController = new AnimatorOverrideController(newAnimatorController);
+		((Object)animatorOverrideController).name = ((Object)newAnimatorController).name;
+		AnimatorOverrideController val = (AnimatorOverrideController)(object)((newAnimatorController is AnimatorOverrideController) ? newAnimatorController : null);
+		if (val != null)
+		{
+			List<KeyValuePair<AnimationClip, AnimationClip>> list = new List<KeyValuePair<AnimationClip, AnimationClip>>(val.overridesCount);
+			val.GetOverrides(list);
+			animatorOverrideController.ApplyOverrides((IList<KeyValuePair<AnimationClip, AnimationClip>>)list);
+		}
+		animator.runtimeAnimatorController = (RuntimeAnimatorController)(object)animatorOverrideController;
 	}
 
 	protected virtual void InitAndStartAnimations(bool playSpawnAnim)
@@ -937,7 +944,7 @@ public abstract class UnitView : MonoBehaviour, IDamageableView, ITileObjectView
 		((Behaviour)animator).enabled = true;
 		animator.SetTrigger("Cast Skill");
 		yield return waitUntilAnimatorStateIsCastSkill;
-		if (Unit is EnemyUnit enemyUnit && enemyUnit.Id == "SpawnerCocoon" && skill.SkillAction is SpawnSkillAction)
+		if (Unit is EnemyUnit { Id: "SpawnerCocoon" } enemyUnit && skill.SkillAction is SpawnSkillAction)
 		{
 			int num2 = enemyUnit.CurrentVariantIndex + 1;
 			if (((enemyUnit.EnemyUnitTemplateDefinition.VisualEvolutions.Count > num2) ? enemyUnit.EnemyUnitTemplateDefinition.VisualEvolutions[num2] : string.Empty) != string.Empty)

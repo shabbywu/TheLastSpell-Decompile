@@ -1,14 +1,19 @@
 using System.Collections.Generic;
 using System.Linq;
+using TheLastStand.Framework.Utils;
+using TheLastStand.Manager;
 using TheLastStand.Model;
 using TheLastStand.Model.Building;
 using TheLastStand.Model.TileMap;
 using TheLastStand.Model.Unit;
+using TheLastStand.Model.Unit.Enemy;
 
 namespace TheLastStand.Controller.Skill.SkillAction.SkillActionExecution;
 
 public class SkillActionResultDatas
 {
+	public List<MutableTuple<EnemyUnit, TileObjectSelectionManager.E_Orientation, int>> UnitsToPush = new List<MutableTuple<EnemyUnit, TileObjectSelectionManager.E_Orientation, int>>();
+
 	public HashSet<TheLastStand.Model.Building.Building> AffectedBuildings { get; } = new HashSet<TheLastStand.Model.Building.Building>();
 
 

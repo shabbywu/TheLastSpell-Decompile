@@ -499,6 +499,7 @@ public class SkillDefinition : TheLastStand.Framework.Serialization.Definition
 			ValidTargets.PlayableUnits = ((XContainer)val22).Element(XName.op_Implicit("PlayableUnits")) != null;
 			ValidTargets.EnemyUnits = ((XContainer)val22).Element(XName.op_Implicit("EnemyUnits")) != null;
 			ValidTargets.EmptyTiles = ((XContainer)val22).Element(XName.op_Implicit("EmptyTiles")) != null;
+			ValidTargets.WalkableCityTiles = ((XContainer)val22).Element(XName.op_Implicit("WalkableCityTiles")) != null;
 			ValidTargets.WalkableTiles = ((XContainer)val22).Element(XName.op_Implicit("WalkableTiles")) != null;
 			ValidTargets.UncrossableGrounds = ((XContainer)val22).Element(XName.op_Implicit("UncrossableGrounds")) != null;
 		}
@@ -556,6 +557,9 @@ public class SkillDefinition : TheLastStand.Framework.Serialization.Definition
 			{
 				switch (((object)item7.Name).ToString())
 				{
+				case "InPlayableUnitRange":
+					ContextualConditions.Add(new InPlayableUnitRangConditionDefinition((XContainer)(object)item7));
+					break;
 				case "InWatchtower":
 					ContextualConditions.Add(new InWatchtowerConditionDefinition((XContainer)(object)item7));
 					break;

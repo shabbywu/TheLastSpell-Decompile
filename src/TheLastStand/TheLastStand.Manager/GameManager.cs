@@ -19,13 +19,12 @@ using TheLastStand.Framework.Encryption;
 using TheLastStand.Framework.Serialization;
 using TheLastStand.Manager.Achievements;
 using TheLastStand.Manager.Building;
+using TheLastStand.Manager.DLC;
 using TheLastStand.Manager.Item;
 using TheLastStand.Manager.LevelEditor;
 using TheLastStand.Manager.Meta;
 using TheLastStand.Manager.Modding;
 using TheLastStand.Manager.Sound;
-using TheLastStand.Manager.Trap;
-using TheLastStand.Manager.Turret;
 using TheLastStand.Manager.Unit;
 using TheLastStand.Manager.WorldMap;
 using TheLastStand.Model;
@@ -574,6 +573,7 @@ public sealed class GameManager : Manager<GameManager>, ISerializable, IDeserial
 			MetaConditionsRunContext = (SerializedMetaConditionsContext)TPSingleton<MetaConditionManager>.Instance.SerializeToGameSave(),
 			SpawnWaveContainer = (SerializedSpawnWaveContainer)TPSingleton<SpawnWaveManager>.Instance.Serialize(),
 			TotalTimeSpent = TotalTimeSpent,
+			DLCsInUse = new List<string>(TPSingleton<DLCManager>.Instance.OwnedDLCIds),
 			ModsInUse = new List<string>(ModManager.ModIdsInUse),
 			SerializedLut = ((Game.Cycle == Game.E_Cycle.Night) ? ((SerializedLUT)CameraView.CameraLutView.Serialize()) : null),
 			Trophies = ((Game.Cycle == Game.E_Cycle.Night) ? ((SerializedTrophies)TPSingleton<TrophyManager>.Instance.Serialize()) : null),
@@ -623,8 +623,7 @@ public sealed class GameManager : Manager<GameManager>, ISerializable, IDeserial
 			PlayableUnitManager.StartTurn();
 			BossManager.StartTurn();
 			EnemyUnitManager.StartTurn();
-			TurretManager.StartTurn();
-			TrapManager.StartTurn();
+			TPSingleton<BuildingManager>.Instance.StartTurn();
 			NightTurnsManager.StartTurn();
 		}
 	}

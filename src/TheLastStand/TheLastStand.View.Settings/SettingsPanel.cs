@@ -438,10 +438,7 @@ public class SettingsPanel : SerializedMonoBehaviour, IOverlayUser
 
 	private void OnDestroy()
 	{
-		if (TPSingleton<InputManager>.Exist())
-		{
-			TPSingleton<InputManager>.Instance.LastActiveControllerChanged -= OnLastActiveControllerChanged;
-		}
+		InputManager.LastActiveControllerChanged -= OnLastActiveControllerChanged;
 	}
 
 	private void OnLastActiveControllerChanged(ControllerType controllerType)
@@ -485,7 +482,7 @@ public class SettingsPanel : SerializedMonoBehaviour, IOverlayUser
 
 	private void Start()
 	{
-		TPSingleton<InputManager>.Instance.LastActiveControllerChanged += OnLastActiveControllerChanged;
+		InputManager.LastActiveControllerChanged += OnLastActiveControllerChanged;
 		((Behaviour)canvas).enabled = false;
 		canvasGroup.alpha = 0f;
 		if (tabPagePairs == null)

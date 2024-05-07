@@ -9,6 +9,7 @@ using TheLastStand.Definition.Unit.Perk;
 using TheLastStand.Framework.Serialization;
 using TheLastStand.Manager;
 using TheLastStand.Manager.Unit;
+using TheLastStand.Model.Item;
 using TheLastStand.Model.Skill;
 using TheLastStand.Model.Unit.Perk.PerkDataCondition;
 using TheLastStand.Model.Unit.Perk.PerkEffect;
@@ -118,7 +119,17 @@ public class Perk : FormulaInterpreterContext, ISkillContainer, ISerializable, I
 
 	public int CurrentNightHour => TPSingleton<GameManager>.Instance.Game.CurrentNightHour;
 
-	public int DayNumber => TPSingleton<GameManager>.Instance.Game.DayNumber;
+	public int DayNumber
+	{
+		get
+		{
+			if (!TPSingleton<GameManager>.Exist())
+			{
+				return 0;
+			}
+			return TPSingleton<GameManager>.Instance.Game.DayNumber;
+		}
+	}
 
 	public float KillerBonusExperienceFactor => PlayableUnitDatabase.KillerBonusExperienceFactor;
 
@@ -140,9 +151,15 @@ public class Perk : FormulaInterpreterContext, ISkillContainer, ISerializable, I
 
 	public ISkillCaster Holder => Owner;
 
+	public bool IsFromRace { get; private set; }
+
 	public bool IsNative { get; private set; }
 
-	public PlayableUnit Owner { get; protected set; }
+	public bool IsUnlockedFromItem => Unlockers.Any((IPerkUnlocker perkContainer) => perkContainer is TheLastStand.Model.Item.Item);
+
+	public bool IsUnlockedFromPlayableUnit => Unlockers.Any((IPerkUnlocker perkContainer) => perkContainer is PlayableUnit);
+
+	public PlayableUnit Owner { get; set; }
 
 	public PerkController PerkController { get; private set; }
 
@@ -150,13 +167,40 @@ public class Perk : FormulaInterpreterContext, ISkillContainer, ISerializable, I
 
 	public List<APerkModule> PerkModules { get; private set; }
 
-	public UnitPerkTier PerkTier { get; private set; }
+	public UnitPerkTier PerkTier { get; set; }
 
-	public UnitPerkDisplay PerkView { get; private set; }
+	public UnitPerkDisplay PerkView { get; set; }
 
 	public bool Unlocked { get; set; }
 
-	public Perk(PerkDefinition perkDefinition, PerkController perkController, UnitPerkDisplay perkView, PlayableUnit owner, UnitPerkTier perkTier, string collectionId, bool isNative)
+	public bool UnlockedInPerkTree
+	{
+		get
+		{
+			if (Unlocked && PerkTier != null)
+			{
+				return IsUnlockedFromPlayableUnit;
+			}
+			return false;
+		}
+	}
+
+	public bool OnlyUnlockedByItem
+	{
+		get
+		{
+			if (Unlockers.Count == 1)
+			{
+				return !IsUnlockedFromPlayableUnit;
+			}
+			return false;
+		}
+	}
+
+	public HashSet<IPerkUnlocker> Unlockers { get; private set; } = new HashSet<IPerkUnlocker>();
+
+
+	public Perk(PerkDefinition perkDefinition, PerkController perkController, UnitPerkDisplay perkView, PlayableUnit owner, UnitPerkTier perkTier, string collectionId, bool isNative, bool isFromRace)
 	{
 		IsNative = isNative;
 		PerkController = perkController;
@@ -165,12 +209,13 @@ public class Perk : FormulaInterpreterContext, ISkillContainer, ISerializable, I
 		PerkView = perkView;
 		PerkTier = perkTier;
 		CollectionId = collectionId;
+		IsFromRace = isFromRace;
 		GeneratePerkModules();
 		GenerateViewConditions();
 	}
 
-	public Perk(SerializedPerk serializedPerk, PerkDefinition perkDefinition, PerkController perkController, UnitPerkDisplay perkView, PlayableUnit owner, UnitPerkTier perkTier, string collectionId, bool isNative)
-		: this(perkDefinition, perkController, perkView, owner, perkTier, collectionId, isNative)
+	public Perk(SerializedPerk serializedPerk, PerkDefinition perkDefinition, PerkController perkController, UnitPerkDisplay perkView, PlayableUnit owner, UnitPerkTier perkTier, string collectionId, bool isNative, bool isFromRace)
+		: this(perkDefinition, perkController, perkView, owner, perkTier, collectionId, isNative, isFromRace)
 	{
 		Deserialize(serializedPerk);
 	}
@@ -252,7 +297,7 @@ public class Perk : FormulaInterpreterContext, ISkillContainer, ISerializable, I
 		return new SerializedPerk
 		{
 			Id = PerkDefinition.Id,
-			Unlocked = Unlocked,
+			Unlocked = (Unlocked && !OnlyUnlockedByItem),
 			Modules = PerkModules.Select((APerkModule o) => o.Serialize() as SerializedModule).ToList(),
 			Bookmarked = Bookmarked
 		};

@@ -62,6 +62,7 @@ public class TutorialDefinition : TheLastStand.Framework.Serialization.Definitio
 					"CurrentNightHour" => new CurrentNightHourTutorialConditionDefinition((XContainer)(object)item2), 
 					"TotalActionPointsSpent" => new TotalActionPointsSpentTutorialConditionDefinition((XContainer)(object)item2), 
 					"TutorialMapSkipped" => new TutorialMapSkippedTutorialConditionDefinition((XContainer)(object)item2), 
+					"IsWeaponRestrictionAvailable" => new IsWeaponRestrictionAvailableTutorialConditionDefinition((XContainer)(object)item2), 
 					_ => null, 
 				};
 				ConditionDefinitions.Add(item);

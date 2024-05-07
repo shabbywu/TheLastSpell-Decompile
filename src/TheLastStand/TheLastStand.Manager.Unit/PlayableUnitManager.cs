@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
 using TPLib;
 using TPLib.Debugging;
 using TPLib.Debugging.Console;
@@ -25,6 +26,7 @@ using TheLastStand.Definition.Meta.Glyphs.GlyphEffects;
 using TheLastStand.Definition.Skill.SkillAction;
 using TheLastStand.Definition.Skill.SkillEffect;
 using TheLastStand.Definition.Unit;
+using TheLastStand.Definition.Unit.Race;
 using TheLastStand.Definition.Unit.Trait;
 using TheLastStand.Framework.Command.Conversation;
 using TheLastStand.Framework.Extensions;
@@ -67,6 +69,7 @@ using TheLastStand.View.ToDoList;
 using TheLastStand.View.Unit;
 using TheLastStand.View.Unit.Pathfinding;
 using TheLastStand.View.Unit.Perk;
+using TheLastStand.View.Unit.Race;
 using TheLastStand.View.Unit.Stat;
 using TheLastStand.View.Unit.Trait;
 using TheLastStand.View.Unit.UI;
@@ -116,99 +119,124 @@ public sealed class PlayableUnitManager : Manager<PlayableUnitManager>, ISeriali
 		}
 	}
 
+	public class StringToUnlockedPerkIdConverter : StringToStringCollectionEntryConverter
+	{
+		protected override List<string> Entries
+		{
+			get
+			{
+				List<string> list = new List<string>();
+				if (TileObjectSelectionManager.SelectedPlayableUnit != null)
+				{
+					foreach (UnitPerkTier unitPerkTier in TileObjectSelectionManager.SelectedPlayableUnit.PerkTree.UnitPerkTiers)
+					{
+						foreach (Perk perk in unitPerkTier.Perks)
+						{
+							if (perk != null && perk.Unlocked)
+							{
+								list.Add(perk.PerkDefinition.Id);
+							}
+						}
+					}
+				}
+				return list;
+			}
+		}
+	}
+
 	[Serializable]
 	[CompilerGenerated]
 	private sealed class _003C_003Ec
 	{
 		public static readonly _003C_003Ec _003C_003E9 = new _003C_003Ec();
 
-		public static Func<PlayableUnit, bool> _003C_003E9__40_0;
+		public static Func<PlayableUnit, bool> _003C_003E9__43_0;
 
-		public static Func<PlayableUnit, bool> _003C_003E9__91_0;
+		public static Func<PlayableUnit, bool> _003C_003E9__94_0;
 
-		public static Func<PlayableUnit, bool> _003C_003E9__91_1;
+		public static Func<PlayableUnit, bool> _003C_003E9__94_1;
 
-		public static Func<PlayableUnit, bool> _003C_003E9__93_0;
+		public static Func<PlayableUnit, bool> _003C_003E9__96_0;
 
-		public static Func<PlayableUnit, bool> _003C_003E9__93_1;
+		public static Func<PlayableUnit, bool> _003C_003E9__96_1;
 
-		public static Func<PlayableUnit, bool> _003C_003E9__97_0;
+		public static Func<PlayableUnit, bool> _003C_003E9__100_0;
 
-		public static Func<PlayableUnit, bool> _003C_003E9__97_2;
+		public static Func<PlayableUnit, bool> _003C_003E9__100_2;
 
-		public static Func<PlayableUnit, int> _003C_003E9__104_0;
+		public static Func<PlayableUnit, int> _003C_003E9__107_0;
 
-		public static Func<PlayableUnit, int> _003C_003E9__104_1;
+		public static Func<PlayableUnit, int> _003C_003E9__107_1;
 
-		public static Func<Tile, bool> _003C_003E9__108_0;
+		public static Func<Tile, bool> _003C_003E9__111_0;
 
-		public static UnityAction _003C_003E9__131_0;
+		public static UnityAction _003C_003E9__136_0;
 
-		public static Func<UnitPerkTier, IEnumerable<Perk>> _003C_003E9__192_0;
+		public static Func<UnitPerkTier, IEnumerable<Perk>> _003C_003E9__201_0;
 
-		public static Func<PlayableUnit, SerializedPlayableUnit> _003C_003E9__200_0;
+		public static Func<PlayableUnit, SerializedPlayableUnit> _003C_003E9__212_0;
 
-		internal bool _003Cget_HasUnitInFog_003Eb__40_0(PlayableUnit x)
+		internal bool _003Cget_HasUnitInFog_003Eb__43_0(PlayableUnit x)
 		{
 			return x.OriginTile.HasFog;
 		}
 
-		internal bool _003Cget_ShouldWaitUntilDeathSequences_003Eb__91_0(PlayableUnit o)
+		internal bool _003Cget_ShouldWaitUntilDeathSequences_003Eb__94_0(PlayableUnit o)
 		{
 			return o.IsDead;
 		}
 
-		internal bool _003Cget_ShouldWaitUntilDeathSequences_003Eb__91_1(PlayableUnit o)
+		internal bool _003Cget_ShouldWaitUntilDeathSequences_003Eb__94_1(PlayableUnit o)
 		{
 			return !o.PlayableUnitView.DeathSequenceOver;
 		}
 
-		internal bool _003Cget_ShouldTriggerPlayableUnitsDeathSequence_003Eb__93_0(PlayableUnit u)
+		internal bool _003Cget_ShouldTriggerPlayableUnitsDeathSequence_003Eb__96_0(PlayableUnit u)
 		{
 			return u.IsDead;
 		}
 
-		internal bool _003Cget_ShouldTriggerPlayableUnitsDeathSequence_003Eb__93_1(PlayableUnit u)
+		internal bool _003Cget_ShouldTriggerPlayableUnitsDeathSequence_003Eb__96_1(PlayableUnit u)
 		{
 			return !u.IsDying;
 		}
 
-		internal bool _003Cget_WaitUntilTakeDamageSequences_003Eb__97_0(PlayableUnit o)
+		internal bool _003Cget_WaitUntilTakeDamageSequences_003Eb__100_0(PlayableUnit o)
 		{
 			return o.UnitView.IsTakingDamage;
 		}
 
-		internal bool _003Cget_WaitUntilTakeDamageSequences_003Eb__97_2(PlayableUnit o)
+		internal bool _003Cget_WaitUntilTakeDamageSequences_003Eb__100_2(PlayableUnit o)
 		{
 			return o.UnitView.IsTakingDamage;
 		}
 
-		internal int _003CEndTurn_003Eb__104_0(PlayableUnit o)
+		internal int _003CEndTurn_003Eb__107_0(PlayableUnit o)
 		{
 			return o.ActionPointsSpentThisTurn;
 		}
 
-		internal int _003CEndTurn_003Eb__104_1(PlayableUnit o)
+		internal int _003CEndTurn_003Eb__107_1(PlayableUnit o)
 		{
 			return o.TilesCrossedThisTurn;
 		}
 
-		internal bool _003CInstantiateUnit_003Eb__108_0(Tile tile)
+		internal bool _003CInstantiateUnit_003Eb__111_0(Tile tile)
 		{
 			return tile.HasLightFogOn;
 		}
 
-		internal void _003CMoveUnit_003Eb__131_0()
+		internal void _003CMoveUnit_003Eb__136_0()
 		{
 			GameController.SetState(Game.E_State.Management);
 		}
 
-		internal IEnumerable<Perk> _003CDebug_UnlockAllPerks_003Eb__192_0(UnitPerkTier perkTier)
+		internal IEnumerable<Perk> _003CDebug_UnlockAllPerks_003Eb__201_0(UnitPerkTier perkTier)
 		{
 			return perkTier.Perks;
 		}
 
-		internal SerializedPlayableUnit _003CSerialize_003Eb__200_0(PlayableUnit o)
+		internal SerializedPlayableUnit _003CSerialize_003Eb__212_0(PlayableUnit o)
 		{
 			return o.Serialize() as SerializedPlayableUnit;
 		}
@@ -245,6 +273,9 @@ public sealed class PlayableUnitManager : Manager<PlayableUnitManager>, ISeriali
 	private PlayableUnitTooltip playableUnitTooltip;
 
 	[SerializeField]
+	private RaceTooltip raceTooltip;
+
+	[SerializeField]
 	private MovePathView movePathView;
 
 	[SerializeField]
@@ -273,6 +304,9 @@ public sealed class PlayableUnitManager : Manager<PlayableUnitManager>, ISeriali
 	[SerializeField]
 	private bool debugForceSkipNightReport;
 
+	[SerializeField]
+	private List<RuntimeAnimatorController> debugPlayableUnitsAnimatorControllers;
+
 	private bool debugDisableHealthDisplay;
 
 	private bool debugToggleDismissHeroValidityChecks = true;
@@ -286,6 +320,8 @@ public sealed class PlayableUnitManager : Manager<PlayableUnitManager>, ISeriali
 	public static PerkTooltip PerkTooltip => TPSingleton<PlayableUnitManager>.Instance.perkTooltip;
 
 	public static PlayableUnitTooltip PlayableUnitTooltip => TPSingleton<PlayableUnitManager>.Instance.playableUnitTooltip;
+
+	public static RaceTooltip RaceTooltip => TPSingleton<PlayableUnitManager>.Instance.raceTooltip;
 
 	public static TheLastStand.Model.Skill.Skill SelectedSkill
 	{
@@ -506,76 +542,94 @@ public sealed class PlayableUnitManager : Manager<PlayableUnitManager>, ISeriali
 
 	public static void CreateStartUnits()
 	{
-		//IL_008a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ee: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00fc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0101: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0113: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0118: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01b1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01fe: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0203: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0211: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0216: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0129: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0188: Unknown result type (might be due to invalid IL or missing references)
+		//IL_018d: Unknown result type (might be due to invalid IL or missing references)
+		//IL_019b: Unknown result type (might be due to invalid IL or missing references)
+		//IL_01a0: Unknown result type (might be due to invalid IL or missing references)
+		//IL_01b2: Unknown result type (might be due to invalid IL or missing references)
+		//IL_01b7: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0262: Unknown result type (might be due to invalid IL or missing references)
+		//IL_02af: Unknown result type (might be due to invalid IL or missing references)
+		//IL_02b4: Unknown result type (might be due to invalid IL or missing references)
+		//IL_02c2: Unknown result type (might be due to invalid IL or missing references)
+		//IL_02c7: Unknown result type (might be due to invalid IL or missing references)
 		Vector2Int origin = default(Vector2Int);
 		((Vector2Int)(ref origin))._002Ector(TPSingleton<TileMapManager>.Instance.TileMap.Width / 2, TPSingleton<TileMapManager>.Instance.TileMap.Height / 2);
 		Tile tile = null;
 		int num = PlayableUnitDatabase.UnitTraitGenerationDefinition.StartTraitTotalPointsWithModifiers;
 		((CLogger<PlayableUnitManager>)TPSingleton<PlayableUnitManager>.Instance).Log((object)("Generating start units using Id " + TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.UnitGenerationDefinitionId), (CLogLevel)0, false, false);
 		List<UnitGenerationDefinition> list = PlayableUnitDatabase.UnitsGenerationStartDefinitions[TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.UnitGenerationDefinitionId];
+		List<string> availableRacesIds = GetAvailableRacesIds();
+		List<string> availableRacesIds2 = GetAvailableRacesIds(removeHumans: true);
+		List<string> list2 = new List<string>();
+		if (!string.IsNullOrEmpty(TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.UnitGenerationGuaranteedRaceId))
+		{
+			string unitGenerationGuaranteedRaceId = TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.UnitGenerationGuaranteedRaceId;
+			if (availableRacesIds.Contains(unitGenerationGuaranteedRaceId))
+			{
+				list2.Add(unitGenerationGuaranteedRaceId);
+			}
+		}
+		int num2 = list.Count - list2.Count;
+		for (int i = 0; i < num2; i++)
+		{
+			list2.Add(GetStartingRosterRandomRaceId(availableRacesIds2));
+		}
+		list2 = RandomManager.Shuffle(TPSingleton<PlayableUnitManager>.Instance, list2).ToList();
 		Vector2Int unitTraitPointBoundariesWithModifiers;
-		for (int i = 0; i < list.Count; i++)
+		for (int j = 0; j < list.Count; j++)
 		{
 			tile = TileMapController.GetRandomUnoccupiedTile(origin, PlayableUnitDatabase.StartingUnitsSpawnAreaSize / 2);
 			if (tile != null)
 			{
-				int randomRange = RandomManager.GetRandomRange(TPSingleton<PlayableUnitManager>.Instance, 0, list[i].PlayableUnitGenerationDefinitionArchetypeIds.Count);
-				string archetypeId = list[i].PlayableUnitGenerationDefinitionArchetypeIds[randomRange];
-				int num4;
-				if (i < list.Count - 1)
+				int randomRange = RandomManager.GetRandomRange(TPSingleton<PlayableUnitManager>.Instance, 0, list[j].PlayableUnitGenerationDefinitionArchetypeIds.Count);
+				string archetypeId = list[j].PlayableUnitGenerationDefinitionArchetypeIds[randomRange];
+				int num5;
+				if (j < list.Count - 1)
 				{
 					PlayableUnitManager instance = TPSingleton<PlayableUnitManager>.Instance;
 					unitTraitPointBoundariesWithModifiers = PlayableUnitDatabase.UnitTraitGenerationDefinition.UnitTraitPointBoundariesWithModifiers;
 					int x = ((Vector2Int)(ref unitTraitPointBoundariesWithModifiers)).x;
 					unitTraitPointBoundariesWithModifiers = PlayableUnitDatabase.UnitTraitGenerationDefinition.UnitTraitPointBoundariesWithModifiers;
-					int num2 = ((Vector2Int)(ref unitTraitPointBoundariesWithModifiers)).y + 1;
-					int num3 = num;
+					int num3 = ((Vector2Int)(ref unitTraitPointBoundariesWithModifiers)).y + 1;
+					int num4 = num;
 					unitTraitPointBoundariesWithModifiers = PlayableUnitDatabase.UnitTraitGenerationDefinition.UnitTraitPointBoundariesWithModifiers;
-					num4 = RandomManager.GetRandomRange(instance, x, Mathf.Min(num2, num3 - ((Vector2Int)(ref unitTraitPointBoundariesWithModifiers)).x));
+					num5 = RandomManager.GetRandomRange(instance, x, Mathf.Min(num3, num4 - ((Vector2Int)(ref unitTraitPointBoundariesWithModifiers)).x));
 				}
 				else
 				{
-					num4 = num;
+					num5 = num;
 				}
-				InstantiateUnit(GenerateUnit(1, archetypeId, num4), tile, -1, onLoad: true);
-				num -= num4;
+				InstantiateUnit(GenerateUnit(1, archetypeId, num5, 0, list2[j]), tile, -1, onLoad: true);
+				num -= num5;
 			}
 		}
-		List<UnitGenerationDefinition> list2 = new List<UnitGenerationDefinition>();
+		List<UnitGenerationDefinition> list3 = new List<UnitGenerationDefinition>();
 		if (!GlyphManager.TryGetGlyphEffects(out List<GlyphBonusUnitsEffectDefinition> glyphEffects))
 		{
 			return;
 		}
-		for (int num5 = glyphEffects.Count - 1; num5 >= 0; num5--)
+		for (int num6 = glyphEffects.Count - 1; num6 >= 0; num6--)
 		{
-			list2.AddRange(glyphEffects[num5].UnitGenerationDefinitions);
+			list3.AddRange(glyphEffects[num6].UnitGenerationDefinitions);
 		}
-		for (int num6 = list2.Count - 1; num6 >= 0; num6--)
+		for (int num7 = list3.Count - 1; num7 >= 0; num7--)
 		{
+			string startingRosterRandomRaceId = GetStartingRosterRandomRaceId(availableRacesIds2);
 			tile = TileMapController.GetRandomUnoccupiedTile(origin, PlayableUnitDatabase.StartingUnitsSpawnAreaSize / 2);
 			if (tile != null)
 			{
-				string archetypeId = list2[num6].PlayableUnitGenerationDefinitionArchetypeIds[RandomManager.GetRandomRange(TPSingleton<PlayableUnitManager>.Instance, 0, list2[num6].PlayableUnitGenerationDefinitionArchetypeIds.Count)];
+				string archetypeId = list3[num7].PlayableUnitGenerationDefinitionArchetypeIds[RandomManager.GetRandomRange(TPSingleton<PlayableUnitManager>.Instance, 0, list3[num7].PlayableUnitGenerationDefinitionArchetypeIds.Count)];
 				PlayableUnitManager instance2 = TPSingleton<PlayableUnitManager>.Instance;
 				unitTraitPointBoundariesWithModifiers = PlayableUnitDatabase.UnitTraitGenerationDefinition.UnitTraitPointBoundariesWithModifiers;
 				int x2 = ((Vector2Int)(ref unitTraitPointBoundariesWithModifiers)).x;
 				unitTraitPointBoundariesWithModifiers = PlayableUnitDatabase.UnitTraitGenerationDefinition.UnitTraitPointBoundariesWithModifiers;
-				int num4 = RandomManager.GetRandomRange(instance2, x2, ((Vector2Int)(ref unitTraitPointBoundariesWithModifiers)).y + 1);
-				InstantiateUnit(GenerateUnit(1, archetypeId, num4), tile, -1, onLoad: true);
+				int num5 = RandomManager.GetRandomRange(instance2, x2, ((Vector2Int)(ref unitTraitPointBoundariesWithModifiers)).y + 1);
+				InstantiateUnit(GenerateUnit(1, archetypeId, num5, 0, startingRosterRandomRaceId), tile, -1, onLoad: true);
 			}
 		}
-		((CLogger<GlyphManager>)TPSingleton<GlyphManager>.Instance).Log((object)$"Added {list2.Count} units.", (CLogLevel)1, false, false);
+		((CLogger<GlyphManager>)TPSingleton<GlyphManager>.Instance).Log((object)$"Added {list3.Count} units.", (CLogLevel)1, false, false);
 	}
 
 	public static void DestroyUnit(PlayableUnit playableUnit)
@@ -703,9 +757,9 @@ public sealed class PlayableUnitManager : Manager<PlayableUnitManager>, ISeriali
 		}
 	}
 
-	public static PlayableUnit GenerateUnit(int unitLevel, string archetypeId, int traitPoints, int ghostUnitIndex = 0)
+	public static PlayableUnit GenerateUnit(int unitLevel, string archetypeId, int traitPoints, int ghostUnitIndex = 0, string raceDefinitionId = null)
 	{
-		PlayableUnitController playableUnitController = new PlayableUnitController(archetypeId, traitPoints, null, null, unitLevel);
+		PlayableUnitController playableUnitController = new PlayableUnitController(archetypeId, traitPoints, null, null, unitLevel, raceDefinitionId);
 		playableUnitController.Unit.UnitStatsController.SnapBaseStatTo(UnitStatDefinition.E_Stat.ActionPoints, UnitStatDefinition.E_Stat.ActionPointsTotal);
 		playableUnitController.Unit.UnitStatsController.SnapBaseStatTo(UnitStatDefinition.E_Stat.MovePoints, UnitStatDefinition.E_Stat.MovePointsTotal);
 		SetPlayableUnitGhost(playableUnitController.PlayableUnit, ghostUnitIndex, snapshotOnly: true);
@@ -994,6 +1048,56 @@ public sealed class PlayableUnitManager : Manager<PlayableUnitManager>, ISeriali
 		}
 	}
 
+	public static List<string> GetAvailableRacesIds(bool removeHumans = false)
+	{
+		HashSet<string> lockedRacesIds = TPSingleton<MetaUpgradesManager>.Instance.GetLockedRacesIds();
+		List<string> list = new List<string>();
+		foreach (RaceDefinition value in PlayableUnitDatabase.RaceDefinitions.Values)
+		{
+			if (!lockedRacesIds.Contains(value.Id))
+			{
+				list.Add(value.Id);
+			}
+		}
+		if (removeHumans && list.Contains("Human"))
+		{
+			list.Remove("Human");
+		}
+		return list;
+	}
+
+	private static string GetStartingRosterRandomRaceId(List<string> nonHumanAvailableRacesIds)
+	{
+		if (nonHumanAvailableRacesIds == null || nonHumanAvailableRacesIds.Count == 0)
+		{
+			return "Human";
+		}
+		int count = nonHumanAvailableRacesIds.Count;
+		if (!PlayableUnitDatabase.UnitStartingRosterRacesDistributionDefinitionsByUnlockedRacesNb.TryGetValue(count, out var value))
+		{
+			if (PlayableUnitDatabase.UnitStartingRosterRacesDistributionDefinitionsByUnlockedRacesNb.Count <= 0)
+			{
+				return "Human";
+			}
+			int num = 0;
+			foreach (int key in PlayableUnitDatabase.UnitStartingRosterRacesDistributionDefinitionsByUnlockedRacesNb.Keys)
+			{
+				if (num < key)
+				{
+					num = key;
+				}
+			}
+			value = PlayableUnitDatabase.UnitStartingRosterRacesDistributionDefinitionsByUnlockedRacesNb[num];
+		}
+		int max = value.HumanWeight + value.NonHumanWeight;
+		if (RandomManager.GetRandomRange(TPSingleton<PlayableUnitManager>.Instance, 0, max) - value.HumanWeight < 0 || value.NonHumanWeight <= 0)
+		{
+			return "Human";
+		}
+		int randomRange = RandomManager.GetRandomRange(TPSingleton<PlayableUnitManager>.Instance, 0, count);
+		return nonHumanAvailableRacesIds[randomRange];
+	}
+
 	public void CastSelectedSkill()
 	{
 		GameController.SetState(Game.E_State.UnitExecutingSkill);
@@ -1125,14 +1229,14 @@ public sealed class PlayableUnitManager : Manager<PlayableUnitManager>, ISeriali
 		GameController.SetState(Game.E_State.Wait);
 		playableUnit.PlayableUnitView.PlayWalkAnim(doWalk: true);
 		PlayableUnitManager instance = TPSingleton<PlayableUnitManager>.Instance;
-		object obj = _003C_003Ec._003C_003E9__131_0;
+		object obj = _003C_003Ec._003C_003E9__136_0;
 		if (obj == null)
 		{
 			UnityAction val = delegate
 			{
 				GameController.SetState(Game.E_State.Management);
 			};
-			_003C_003Ec._003C_003E9__131_0 = val;
+			_003C_003Ec._003C_003E9__136_0 = val;
 			obj = (object)val;
 		}
 		instance.MoveUnitsTaskGroup = new TaskGroup((UnityAction)obj);
@@ -1639,7 +1743,7 @@ public sealed class PlayableUnitManager : Manager<PlayableUnitManager>, ISeriali
 						resupplySkillAction.ResupplySkillActionExecution.ResupplySkillActionExecutionView.HideDisplayedHUD();
 					}
 					SelectedSkill = null;
-					if (tile != null && !tile.HasFog && tile.Unit is EnemyUnit enemyUnit && enemyUnit.State != TheLastStand.Model.Unit.Unit.E_State.Dead)
+					if (tile != null && !tile.HasFog && tile.Unit is EnemyUnit { State: not TheLastStand.Model.Unit.Unit.E_State.Dead } enemyUnit)
 					{
 						TPSingleton<EnemyUnitManager>.Instance.DisplayOneEnemyReachableTiles(enemyUnit);
 					}
@@ -1795,6 +1899,31 @@ public sealed class PlayableUnitManager : Manager<PlayableUnitManager>, ISeriali
 		DebugAddStatus("StunImmunity", 5, 50);
 		DebugAddStatus("DebuffImmunity", 5, 50);
 		DebugAddStatus("AllNegativeImmunity", 5, 50);
+	}
+
+	[DevConsoleCommand("ChangeRace")]
+	public static void DebugChangeRace([StringConverter(typeof(PlayableUnit.StringToRaceIdConverter))] string raceId)
+	{
+		if (!TileObjectSelectionManager.HasPlayableUnitSelected)
+		{
+			((CLogger<PlayableUnitManager>)TPSingleton<PlayableUnitManager>.Instance).LogError((object)"Please select a unit before firing this command", (Object)(object)TPSingleton<PlayableUnitManager>.Instance, (CLogLevel)1, true, true);
+			return;
+		}
+		RaceDefinition raceDefinition = TileObjectSelectionManager.SelectedPlayableUnit.RaceDefinition;
+		RaceDefinition value;
+		if (raceDefinition.Id == raceId)
+		{
+			((CLogger<PlayableUnitManager>)TPSingleton<PlayableUnitManager>.Instance).LogError((object)("Please another race to change to, current race is: " + raceDefinition.Id), (Object)(object)TPSingleton<PlayableUnitManager>.Instance, (CLogLevel)1, true, true);
+		}
+		else if (PlayableUnitDatabase.RaceDefinitions.TryGetValue(raceId, out value))
+		{
+			TileObjectSelectionManager.SelectedPlayableUnit.RaceDefinition = value;
+			TileObjectSelectionManager.SelectedPlayableUnit.PlayableUnitStatsController.OnRaceRemoved(raceDefinition);
+			TileObjectSelectionManager.SelectedPlayableUnit.PlayableUnitStatsController.OnRaceGenerated(value);
+			TileObjectSelectionManager.SelectedPlayableUnit.PlayableUnitView.InitVisuals(playSpawnAnim: false);
+			TPSingleton<CharacterSheetPanel>.Instance.Refresh();
+			UnitManagementView<PlayableUnitManagementView>.Refresh();
+		}
 	}
 
 	[DevConsoleCommand("DisableHealthDisplay")]
@@ -2112,23 +2241,23 @@ public sealed class PlayableUnitManager : Manager<PlayableUnitManager>, ISeriali
 			return;
 		}
 		TheLastStand.Model.Unit.Unit selectedUnit = TileObjectSelectionManager.SelectedUnit;
-		UnitStatDefinition.E_Stat stat = (UnitStatDefinition.E_Stat)Enum.Parse(typeof(UnitStatDefinition.E_Stat), statId);
+		UnitStatDefinition.E_Stat e_Stat = (UnitStatDefinition.E_Stat)Enum.Parse(typeof(UnitStatDefinition.E_Stat), statId);
 		if (selectedUnit is PlayableUnit playableUnit)
 		{
-			PlayableUnitStat stat2 = playableUnit.PlayableUnitStatsController.GetStat(stat);
-			float num = newStatValue - stat2.FinalClamped;
+			PlayableUnitStat stat = playableUnit.PlayableUnitStatsController.GetStat(e_Stat);
+			float num = newStatValue - stat.FinalClamped;
 			if (num < 0f)
 			{
-				playableUnit.PlayableUnitStatsController.DecreaseBaseStat(stat, Mathf.Abs(num), includeChildStat: true);
+				playableUnit.PlayableUnitStatsController.DecreaseBaseStat(e_Stat, Mathf.Abs(num), includeChildStat: true);
 			}
 			else if (num > 0f)
 			{
-				playableUnit.PlayableUnitStatsController.IncreaseBaseStat(stat, num, includeChildStat: true);
+				playableUnit.PlayableUnitStatsController.IncreaseBaseStat(e_Stat, num, includeChildStat: true);
 			}
 		}
 		else
 		{
-			selectedUnit.UnitStatsController.SetBaseStat(stat, newStatValue);
+			selectedUnit.UnitStatsController.SetBaseStat(e_Stat, newStatValue);
 		}
 		selectedUnit.UnitController.UpdateInjuryStage();
 		if (TileObjectSelectionManager.HasPlayableUnitSelected)
@@ -2143,6 +2272,26 @@ public sealed class PlayableUnitManager : Manager<PlayableUnitManager>, ISeriali
 		}
 		selectedUnit.UnitView.RefreshInjuryStage();
 		selectedUnit.UnitController.DisplayEffects();
+	}
+
+	[DevConsoleCommand("PlayableUnitToggleAnimator")]
+	public static void DebugPlayableUnitToggleAnimator()
+	{
+		if (!TileObjectSelectionManager.HasPlayableUnitSelected)
+		{
+			((CLogger<PlayableUnitManager>)TPSingleton<PlayableUnitManager>.Instance).LogError((object)"Please select a playable unit before firing this command", (Object)(object)TPSingleton<PlayableUnitManager>.Instance, (CLogLevel)1, true, true);
+			return;
+		}
+		PlayableUnit selectedPlayableUnit = TileObjectSelectionManager.SelectedPlayableUnit;
+		int count = TPSingleton<PlayableUnitManager>.Instance.debugPlayableUnitsAnimatorControllers.Count;
+		if (selectedPlayableUnit != null && count > 0)
+		{
+			string currentAnimatorControllerName = selectedPlayableUnit.PlayableUnitView.DebugGetCurrentAnimatorControllerName();
+			int num = TPSingleton<PlayableUnitManager>.Instance.debugPlayableUnitsAnimatorControllers.FindIndex((RuntimeAnimatorController animatorController) => ((Object)animatorController).name == currentAnimatorControllerName);
+			int index = ((num + 1 < count) ? (num + 1) : 0);
+			selectedPlayableUnit.PlayableUnitView.DebugChangeAnimatorController(TPSingleton<PlayableUnitManager>.Instance.debugPlayableUnitsAnimatorControllers[index]);
+			TPSingleton<DebugManager>.Instance.LogDevConsole((object)("Changed " + selectedPlayableUnit.Id + " animator controller from " + currentAnimatorControllerName + " to " + ((Object)TPSingleton<PlayableUnitManager>.Instance.debugPlayableUnitsAnimatorControllers[index]).name));
+		}
 	}
 
 	[DevConsoleCommand(Name = "ForceSkipNightReport")]
@@ -2239,6 +2388,13 @@ public sealed class PlayableUnitManager : Manager<PlayableUnitManager>, ISeriali
 		UnitManagementView<PlayableUnitManagementView>.Refresh();
 	}
 
+	[DevConsoleCommand("PerkLock")]
+	private static void Debug_LockPerk([StringConverter(typeof(StringToUnlockedPerkIdConverter))] string perkId)
+	{
+		TileObjectSelectionManager.SelectedPlayableUnit.PerkTree.UnitPerkTreeController.LockPerk(perkId);
+		UnitManagementView<PlayableUnitManagementView>.Refresh();
+	}
+
 	[DevConsoleCommand("PerkUnlockAll")]
 	private static void Debug_UnlockAllPerks()
 	{
@@ -2268,13 +2424,31 @@ public sealed class PlayableUnitManager : Manager<PlayableUnitManager>, ISeriali
 		}
 		foreach (string item in list)
 		{
-			selectedPlayableUnit.Perks[item].PerkController.Lock();
+			selectedPlayableUnit.Perks[item].PerkController.LockAndClearUnlockers(removePerkFromOwner: true);
 		}
-		selectedPlayableUnit.PerkTree.UnitPerkTiers.Clear();
-		selectedPlayableUnit.Perks.Clear();
-		selectedPlayableUnit.PerkTree.UnitPerkTreeController.GeneratePerkTree(selectedPlayableUnit);
+		((MonoBehaviour)TPSingleton<PlayableUnitManager>.Instance).StartCoroutine(Debug_RerollPerksCoroutine(selectedPlayableUnit));
+	}
+
+	private static IEnumerator Debug_RerollPerksCoroutine(PlayableUnit playableUnit)
+	{
+		yield return (object)new WaitForSeconds(0.1f + TPSingleton<PlayableUnitManager>.Instance.perkReplacementRandomDelay.y);
+		playableUnit.PerkTree.UnitPerkTiers.Clear();
+		playableUnit.Perks.Clear();
+		playableUnit.PerkTree.UnitPerkTreeController.GeneratePerkTree(playableUnit);
 		TPSingleton<CharacterSheetPanel>.Instance.Refresh();
 		UnitManagementView<PlayableUnitManagementView>.Refresh();
+	}
+
+	[DevConsoleCommand("PerkShowAll")]
+	private static void Debug_PerkShowAll()
+	{
+		PlayableUnit selectedPlayableUnit = TileObjectSelectionManager.SelectedPlayableUnit;
+		StringBuilder stringBuilder = new StringBuilder();
+		foreach (Perk value in selectedPlayableUnit.Perks.Values)
+		{
+			stringBuilder.Append($"id: {value.PerkDefinition.Id}, unlocked: {value.Unlocked}, unlockers nb: {value.Unlockers.Count}").AppendLine();
+		}
+		Debug.Log((object)stringBuilder.ToString());
 	}
 
 	[DevConsoleCommand("UltimateCheat")]

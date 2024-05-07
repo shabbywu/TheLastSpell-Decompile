@@ -5,6 +5,7 @@ using TPLib;
 using TheLastStand.Controller.Trophy.TrophyConditions;
 using TheLastStand.Definition.Skill.SkillAction;
 using TheLastStand.Definition.Unit.Perk.PerkEffect;
+using TheLastStand.Framework.Extensions;
 using TheLastStand.Manager;
 using TheLastStand.Manager.Meta;
 using TheLastStand.Manager.Unit;
@@ -35,6 +36,26 @@ public class DealDamageEffectController : APerkEffectController
 		return new DealDamageEffect(aPerkEffectDefinition as DealDamageEffectDefinition, this, aPerkModule);
 	}
 
+	public static void UpdateTargetInjuryStageAndAddStatsDataFromAttack(IDamageable damageableTarget, AttackSkillActionExecutionTileData attackData, PlayableUnit playableUnitCaster)
+	{
+		if (!(damageableTarget.DamageableController is UnitController unitController))
+		{
+			return;
+		}
+		if (playableUnitCaster != null)
+		{
+			playableUnitCaster.LifetimeStats.LifetimeStatsController.IncreaseDamagesInflicted(attackData.HealthDamageIncludingOverkill);
+			if (damageableTarget is EnemyUnit enemyUnit)
+			{
+				playableUnitCaster.LifetimeStats.LifetimeStatsController.IncreaseDamagesInflictedToEnemyType(enemyUnit, attackData.HealthDamageIncludingOverkill);
+			}
+			TrophyManager.AppendValueToTrophiesConditions<DamageInflictedTrophyConditionController>(new object[2] { playableUnitCaster.RandomId, attackData.HealthDamageIncludingOverkill });
+			TrophyManager.SetValueToTrophiesConditions<DamageInflictedSingleAttackTrophyConditionController>(new object[2] { playableUnitCaster.RandomId, attackData.HealthDamageIncludingOverkill });
+		}
+		TPSingleton<MetaConditionManager>.Instance.RefreshMaxSingleHitDamageByType(attackData.TotalDamage, AttackSkillActionDefinition.E_AttackType.None);
+		unitController.UpdateInjuryStage();
+	}
+
 	public override void Trigger(PerkDataContainer data)
 	{
 		if (data != null && data.IsTriggeredByPerk && !base.PerkEffect.APerkEffectDefinition.CanBeTriggeredByPerk)
@@ -55,55 +76,65 @@ public class DealDamageEffectController : APerkEffectController
 		{
 			return;
 		}
+		PerkDataContainer perkDataContainer = new PerkDataContainer
+		{
+			Caster = owner,
+			AllAttackData = new HashSet<AttackSkillActionExecutionTileData>(),
+			IsTriggeredByPerk = true
+		};
 		foreach (IDamageable item in hashSet)
 		{
+			int blockedDamage = 0;
 			if (item is TheLastStand.Model.Unit.Unit unit && !DealDamageEffect.DealDamageEffectDefinition.IgnoreDefense)
 			{
-				num = unit.UnitController.ReduceIncomingDamage((int)num, owner, AttackSkillActionDefinition.E_AttackType.None, checkBlock: true);
+				num = unit.UnitController.ReduceIncomingDamage((int)num, owner, AttackSkillActionDefinition.E_AttackType.None, checkBlock: true, out blockedDamage);
 			}
-			if (num <= 0f)
+			if (!(num <= 0f))
 			{
-				continue;
-			}
-			float armor = item.Armor;
-			float num2 = Mathf.Min(armor, num);
-			if (num2 > 0f)
-			{
-				item.DamageableController.LoseArmor(num2, owner, refreshHud: false);
-			}
-			float num3 = Mathf.Max(0f, num - armor);
-			if (num3 > 0f)
-			{
-				item.DamageableController.LoseHealth(num3, owner, refreshHud: false);
-			}
-			AttackSkillActionExecutionTileData attackSkillActionExecutionTileData = new AttackSkillActionExecutionTileData
-			{
-				Damageable = item,
-				TargetTile = base.PerkEffect.APerkModule.Perk.Owner.OriginTile,
-				ArmorDamage = num2,
-				TargetRemainingArmor = item.Armor,
-				TargetArmorTotal = item.ArmorTotal,
-				TargetRemainingHealth = item.Health,
-				TargetHealthTotal = item.HealthTotal,
-				HealthDamage = num3,
-				TotalDamage = num
-			};
-			AttackFeedback attackFeedback = item.DamageableView.AttackFeedback;
-			attackFeedback.AddDamageInstance(attackSkillActionExecutionTileData);
-			item.DamageableController.AddEffectDisplay(attackFeedback);
-			EffectManager.Register(item.DamageableController);
-			if (item.DamageableController is UnitController unitController)
-			{
-				owner.LifetimeStats.LifetimeStatsController.IncreaseDamagesInflicted(attackSkillActionExecutionTileData.HealthDamageIncludingOverkill);
-				if (item is EnemyUnit enemyUnit)
+				float armor = item.Armor;
+				float num2 = Mathf.Min(armor, num);
+				if (num2 > 0f)
 				{
-					owner.LifetimeStats.LifetimeStatsController.IncreaseDamagesInflictedToEnemyType(enemyUnit, attackSkillActionExecutionTileData.HealthDamageIncludingOverkill);
+					item.DamageableController.LoseArmor(num2, owner, refreshHud: false);
 				}
-				TPSingleton<MetaConditionManager>.Instance.RefreshMaxSingleHitDamageByType(attackSkillActionExecutionTileData.TotalDamage, AttackSkillActionDefinition.E_AttackType.None);
-				TrophyManager.AppendValueToTrophiesConditions<DamageInflictedTrophyConditionController>(new object[2] { owner.RandomId, attackSkillActionExecutionTileData.HealthDamageIncludingOverkill });
-				TrophyManager.SetValueToTrophiesConditions<DamageInflictedSingleAttackTrophyConditionController>(new object[2] { owner.RandomId, attackSkillActionExecutionTileData.HealthDamageIncludingOverkill });
-				unitController.UpdateInjuryStage();
+				float num3 = Mathf.Max(0f, num - armor);
+				if (num3 > 0f)
+				{
+					item.DamageableController.LoseHealth(num3, owner, refreshHud: false);
+				}
+				AttackSkillActionExecutionTileData attackSkillActionExecutionTileData = new AttackSkillActionExecutionTileData
+				{
+					Damageable = item,
+					TargetTile = base.PerkEffect.APerkModule.Perk.Owner.OriginTile,
+					ArmorDamage = num2,
+					TargetRemainingArmor = item.Armor,
+					TargetArmorTotal = item.ArmorTotal,
+					TargetRemainingHealth = item.Health,
+					TargetHealthTotal = item.HealthTotal,
+					HealthDamage = num3,
+					TotalDamage = num,
+					BlockedDamage = blockedDamage
+				};
+				AttackFeedback attackFeedback = item.DamageableView.AttackFeedback;
+				attackFeedback.AddDamageInstance(attackSkillActionExecutionTileData);
+				item.DamageableController.AddEffectDisplay(attackFeedback);
+				EffectManager.Register(item.DamageableController);
+				UpdateTargetInjuryStageAndAddStatsDataFromAttack(item, attackSkillActionExecutionTileData, owner);
+				perkDataContainer.AllAttackData.Add(attackSkillActionExecutionTileData);
+				PerkDataContainer obj = new PerkDataContainer
+				{
+					Caster = owner,
+					TargetDamageable = item,
+					AttackData = attackSkillActionExecutionTileData,
+					IsTriggeredByPerk = true
+				};
+				owner?.Events.GetValueOrDefault(E_EffectTime.OnDealDamageTargetHit)?.Invoke(obj);
+				if (item.IsDead)
+				{
+					owner?.Events.GetValueOrDefault(E_EffectTime.OnDealDamageTargetKill)?.Invoke(obj);
+				}
 			}
 		}
+		owner?.Events.GetValueOrDefault(E_EffectTime.OnDealDamageExecutionEnd)?.Invoke(perkDataContainer);
 	}
 }

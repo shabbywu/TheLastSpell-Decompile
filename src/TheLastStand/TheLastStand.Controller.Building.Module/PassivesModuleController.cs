@@ -84,9 +84,25 @@ public class PassivesModuleController : BuildingModuleController
 
 	public void StartTurn()
 	{
-		if (TPSingleton<GameManager>.Instance.Game.Cycle == Game.E_Cycle.Day && TPSingleton<GameManager>.Instance.Game.DayTurn == Game.E_DayTurn.Production)
+		switch (TPSingleton<GameManager>.Instance.Game.Cycle)
 		{
-			ApplyPassiveEffect(E_EffectTime.OnStartProductionTurn);
+		case Game.E_Cycle.Day:
+			if (TPSingleton<GameManager>.Instance.Game.DayTurn == Game.E_DayTurn.Production)
+			{
+				ApplyPassiveEffect(E_EffectTime.OnStartProductionTurn);
+			}
+			break;
+		case Game.E_Cycle.Night:
+			switch (TPSingleton<GameManager>.Instance.Game.NightTurn)
+			{
+			case Game.E_NightTurn.EnemyUnits:
+				ApplyPassiveEffect(E_EffectTime.OnStartNightTurnEnemy);
+				break;
+			case Game.E_NightTurn.PlayableUnits:
+				ApplyPassiveEffect(E_EffectTime.OnStartNightTurnPlayable);
+				break;
+			}
+			break;
 		}
 	}
 

@@ -97,7 +97,7 @@ public abstract class UnitTemplateDefinition : TheLastStand.Framework.Serializat
 		{
 			return false;
 		}
-		if (!ignoreUnits && tile.Unit != null && (!isPhaseActor || (tile.Unit is EnemyUnit enemyUnit && enemyUnit.IsBossPhaseActor)))
+		if (!ignoreUnits && tile.Unit != null && (!isPhaseActor || tile.Unit is EnemyUnit { IsBossPhaseActor: not false }))
 		{
 			return false;
 		}

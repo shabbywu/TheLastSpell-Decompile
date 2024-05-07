@@ -86,7 +86,7 @@ public class ComputedGoal
 			TargetType = SkillCasterAttackGroup.E_Target.GENERIC;
 			TargetTileType = SkillCasterAttackGroup.E_Target.GENERIC;
 		}
-		if (!goal.Skill.HasManeuver || !(goal.Owner is EnemyUnit enemyUnit) || enemyUnit.GoalComputingStep != IBehaviorModel.E_GoalComputingStep.AfterMoving)
+		if (!goal.Skill.HasManeuver || !(goal.Owner is EnemyUnit { GoalComputingStep: IBehaviorModel.E_GoalComputingStep.AfterMoving } enemyUnit))
 		{
 			return;
 		}

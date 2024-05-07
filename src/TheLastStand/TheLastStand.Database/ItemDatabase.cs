@@ -5,7 +5,9 @@ using System.Xml.Linq;
 using TPLib;
 using TPLib.Log;
 using TheLastStand.Definition;
+using TheLastStand.Definition.DLC;
 using TheLastStand.Definition.Item;
+using TheLastStand.Definition.Item.ItemRestriction;
 using TheLastStand.Definition.Unit;
 using TheLastStand.Framework.Database;
 using TheLastStand.Framework.ExpressionInterpreter;
@@ -38,13 +40,22 @@ public class ItemDatabase : Database<ItemDatabase>
 	private TextAsset[] groupItemDefinitions;
 
 	[SerializeField]
+	private DLCTextAssetDefinition[] dlcGroupItemDefinitions;
+
+	[SerializeField]
 	private TextAsset[] individualItemDefinitions;
 
 	[SerializeField]
 	private TextAsset[] groupItemsArtDefinitions;
 
 	[SerializeField]
+	private DLCTextAssetDefinition[] dlcGroupItemsArtDefinitions;
+
+	[SerializeField]
 	private TextAsset[] individualArtItemDefinitions;
+
+	[SerializeField]
+	private TextAsset itemRestrictionCategoriesCollectionDefinitions;
 
 	[SerializeField]
 	private TextAsset itemSlotDefinitions;
@@ -63,6 +74,8 @@ public class ItemDatabase : Database<ItemDatabase>
 
 	public static AffixLevelsDefinition AffixLevelsDefinition { get; private set; }
 
+	public static Dictionary<string, ItemDefinition> AllItemsDefinitions { get; private set; }
+
 	public static Dictionary<string, ItemDefinition> ItemDefinitions { get; private set; }
 
 	public static Dictionary<string, ProbabilityTreeEntriesDefinition> ItemGenerationModifierListDefinitions { get; private set; }
@@ -70,6 +83,10 @@ public class ItemDatabase : Database<ItemDatabase>
 	public static Dictionary<string, ItemsListDefinition> ItemsListDefinitions { get; private set; }
 
 	public static Dictionary<string, ProbabilityTreeEntriesDefinition> ItemRaritiesListDefinitions { get; private set; }
+
+	public static Dictionary<string, ItemRestrictionCategoriesCollectionDefinition> ItemRestrictionCategoriesCollectionDefinitions { get; private set; }
+
+	public static Dictionary<string, ItemRestrictionFamilyDefinition> ItemRestrictionFamiliesDefinitions { get; private set; }
 
 	public static Dictionary<ItemSlotDefinition.E_ItemSlotId, ItemSlotDefinition> ItemSlotDefinitions { get; private set; }
 
@@ -96,6 +113,8 @@ public class ItemDatabase : Database<ItemDatabase>
 		DeserializeItemRaritiesList();
 		DeserializeModifierLists();
 		DeserializeStartStockItemDefinitions();
+		CleanEmptyListsAndMissingItems();
+		DeserializeItemRestrictions();
 	}
 
 	private void DeserializeAffixes()
@@ -181,25 +200,70 @@ public class ItemDatabase : Database<ItemDatabase>
 		}
 	}
 
+	private void DeserializeItemRestrictions()
+	{
+		if (ItemRestrictionCategoriesCollectionDefinitions != null)
+		{
+			return;
+		}
+		ItemRestrictionCategoriesCollectionDefinitions = new Dictionary<string, ItemRestrictionCategoriesCollectionDefinition>();
+		ItemRestrictionFamiliesDefinitions = new Dictionary<string, ItemRestrictionFamilyDefinition>();
+		XElement val = ((XContainer)XDocument.Parse(itemRestrictionCategoriesCollectionDefinitions.text, (LoadOptions)2)).Element(XName.op_Implicit("ItemRestrictionCategoriesCollectionDefinitions"));
+		if (val == null)
+		{
+			CLoggerManager.Log((object)"The document must have ItemRestrictionCategoriesCollectionDefinitions", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+			return;
+		}
+		foreach (XElement item in ((XContainer)val).Elements(XName.op_Implicit("ItemRestrictionCategoriesCollectionDefinition")))
+		{
+			ItemRestrictionCategoriesCollectionDefinition itemRestrictionCategoriesCollectionDefinition = new ItemRestrictionCategoriesCollectionDefinition((XContainer)(object)item);
+			ItemRestrictionCategoriesCollectionDefinitions.Add(itemRestrictionCategoriesCollectionDefinition.Id, itemRestrictionCategoriesCollectionDefinition);
+		}
+	}
+
 	private void DeserializeItems()
 	{
 		if (ItemDefinitions != null)
 		{
 			return;
 		}
+		AllItemsDefinitions = new Dictionary<string, ItemDefinition>();
 		ItemDefinitions = new Dictionary<string, ItemDefinition>();
-		Queue<XElement> queue = GatherElements(groupItemDefinitions, individualItemDefinitions, "ItemDefinition");
-		Queue<XElement> queue2 = GatherElements(groupItemsArtDefinitions, individualArtItemDefinitions, "ItemArtDefinition");
+		List<TextAsset> list = new List<TextAsset>();
+		list.AddRange(groupItemDefinitions);
+		int count = list.Count;
+		list.AddRange(GenericDatabase.GetDLCTextAssets(dlcGroupItemDefinitions));
+		int num = list.Count - count;
+		List<TextAsset> list2 = new List<TextAsset>();
+		list2.AddRange(groupItemsArtDefinitions);
+		list2.AddRange(GenericDatabase.GetDLCTextAssets(dlcGroupItemsArtDefinitions));
+		Queue<XElement> queue = GatherElements(list, individualItemDefinitions, "ItemDefinition");
+		Queue<XElement> queue2 = GatherElements(list2, individualArtItemDefinitions, "ItemArtDefinition");
 		while (queue.Count > 0)
 		{
 			ItemDefinition itemDefinition = new ItemDefinition((XContainer)(object)queue.Dequeue());
 			try
 			{
 				ItemDefinitions.Add(itemDefinition.Id, itemDefinition);
+				AllItemsDefinitions.Add(itemDefinition.Id, itemDefinition);
 			}
 			catch (ArgumentException)
 			{
 				CLoggerManager.Log((object)("Duplicate ItemDefinition found for ID " + itemDefinition.Id + ": the individual files will have PRIORITY over the all-in-one template file."), (LogType)2, (CLogLevel)1, true, "StaticLog", false);
+			}
+		}
+		list.Clear();
+		list.AddRange(GenericDatabase.GetDLCTextAssets(dlcGroupItemDefinitions, forceGetAllTextAssetDefinitions: true));
+		Queue<XElement> queue3 = GatherElements(list, individualItemDefinitions, "ItemDefinition");
+		if (num != list.Count)
+		{
+			while (queue3.Count > 0)
+			{
+				ItemDefinition itemDefinition2 = new ItemDefinition((XContainer)(object)queue3.Dequeue());
+				if (!AllItemsDefinitions.ContainsKey(itemDefinition2.Id))
+				{
+					AllItemsDefinitions.Add(itemDefinition2.Id, itemDefinition2);
+				}
 			}
 		}
 		while (queue2.Count > 0)
@@ -310,6 +374,54 @@ public class ItemDatabase : Database<ItemDatabase>
 		{
 			CreateItemDefinition item = new CreateItemDefinition((XContainer)(object)item2);
 			StartStockItemDefinitions.Add(item);
+		}
+	}
+
+	protected void CleanEmptyListsAndMissingItems()
+	{
+		RemoveEmptyLists();
+		RemovedMissingDefinitionsFromLists();
+	}
+
+	private void RemoveEmptyLists()
+	{
+		List<string> list = new List<string>();
+		foreach (ItemsListDefinition value in ItemsListDefinitions.Values)
+		{
+			if (value.IsEmpty)
+			{
+				list.Add(value.Id);
+			}
+		}
+		foreach (string item in list)
+		{
+			if (ItemsListDefinitions.ContainsKey(item))
+			{
+				ItemsListDefinitions.Remove(item);
+			}
+		}
+	}
+
+	private void RemovedMissingDefinitionsFromLists()
+	{
+		foreach (ItemsListDefinition value3 in ItemsListDefinitions.Values)
+		{
+			if (value3.IsEmpty)
+			{
+				continue;
+			}
+			List<string> list = new List<string>();
+			foreach (string key in value3.ItemsWithOdd.Keys)
+			{
+				if (!ItemDefinitions.TryGetValue(key, out var _) && !ItemsListDefinitions.TryGetValue(key, out var _))
+				{
+					list.Add(key);
+				}
+			}
+			foreach (string item in list)
+			{
+				value3.ItemsWithOdd.Remove(item);
+			}
 		}
 	}
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using TPLib;
 using TPLib.Log;
 using TheLastStand.Definition.Unit.Perk;
@@ -22,16 +23,25 @@ public class PerkController
 {
 	public TheLastStand.Model.Unit.Perk.Perk Perk { get; }
 
-	public PerkController(PerkDefinition perkDefinition, UnitPerkDisplay perkView, PlayableUnit owner, UnitPerkTier perkTier, string collectionId, bool isNative)
+	public PerkController(PerkDefinition perkDefinition, UnitPerkDisplay perkView, PlayableUnit owner, UnitPerkTier perkTier, string collectionId, bool isNative, bool isFromRace)
 	{
-		Perk = new TheLastStand.Model.Unit.Perk.Perk(perkDefinition, this, perkView, owner, perkTier, collectionId, isNative);
+		Perk = new TheLastStand.Model.Unit.Perk.Perk(perkDefinition, this, perkView, owner, perkTier, collectionId, isNative, isFromRace);
 	}
 
-	public PerkController(SerializedPerk serializedPerk, PerkDefinition perkDefinition, UnitPerkDisplay perkView, PlayableUnit owner, UnitPerkTier perkTier, string collectionId, bool isOwnerDead, bool isNative)
+	public PerkController(SerializedPerk serializedPerk, PerkDefinition perkDefinition, UnitPerkDisplay perkView, PlayableUnit owner, UnitPerkTier perkTier, string collectionId, bool isOwnerDead, bool isNative, bool isFromRace)
 	{
-		Perk = new TheLastStand.Model.Unit.Perk.Perk(serializedPerk, perkDefinition, this, perkView, owner, perkTier, collectionId, isNative);
-		if (Perk.Unlocked && !isOwnerDead)
+		Perk = new TheLastStand.Model.Unit.Perk.Perk(serializedPerk, perkDefinition, this, perkView, owner, perkTier, collectionId, isNative, isFromRace);
+		if (isOwnerDead || Perk.Owner == null)
 		{
+			return;
+		}
+		Perk.Owner.PlayableUnitPerksController.TryAddPerk(Perk);
+		if (Perk.Unlocked)
+		{
+			if (!Perk.Unlockers.Contains(owner))
+			{
+				Perk.Unlockers.Add(owner);
+			}
 			Hook(onLoad: true);
 		}
 	}
@@ -53,6 +63,17 @@ public class PerkController
 		}
 	}
 
+	public void ChangeOwner(PlayableUnit newOwner)
+	{
+		Perk.Owner = newOwner;
+	}
+
+	public void ChangePerkTierAndView(UnitPerkTier newPerkTier, UnitPerkDisplay newPerkDisplay)
+	{
+		Perk.PerkTier = newPerkTier;
+		Perk.PerkView = newPerkDisplay;
+	}
+
 	public void DisplayRange(bool show)
 	{
 		if (Perk.PerkDefinition.HoverRanges.Count != 0)
@@ -68,6 +89,70 @@ public class PerkController
 		}
 	}
 
+	public void LockAndClearUnlockers(bool removePerkFromOwner = false)
+	{
+		if (Perk.Unlocked)
+		{
+			Perk.Unlockers.Clear();
+			Lock();
+			if (removePerkFromOwner && Perk.Owner.Perks.ContainsKey(Perk.PerkDefinition.Id))
+			{
+				Perk.Owner.Perks.Remove(Perk.PerkDefinition.Id);
+			}
+		}
+	}
+
+	public void Lock(IPerkUnlocker perkUnlocker)
+	{
+		if (Perk.Unlockers.Contains(perkUnlocker))
+		{
+			Perk.Unlockers.Remove(perkUnlocker);
+		}
+		if (Perk.Unlockers.Count == 0)
+		{
+			Lock();
+		}
+	}
+
+	public void Unlock(IPerkUnlocker perkUnlocker)
+	{
+		if (Perk.Owner == null)
+		{
+			((CLogger<PlayableUnitManager>)TPSingleton<PlayableUnitManager>.Instance).LogError((object)("Trying to unlock a perk " + Perk.PerkDefinition.Id + " with no owner !"), (CLogLevel)1, true, true);
+			return;
+		}
+		Perk.Owner.PlayableUnitPerksController.TryAddPerk(Perk);
+		int count = Perk.Unlockers.Count;
+		if (!Perk.Unlockers.Contains(perkUnlocker))
+		{
+			Perk.Unlockers.Add(perkUnlocker);
+		}
+		if (count > 0 && Perk.Unlocked)
+		{
+			if (perkUnlocker is PlayableUnit && (Object)(object)Perk.PerkView != (Object)null)
+			{
+				Perk.PerkController.ActiveBookmark(value: false);
+				Perk.PerkView.Unlock();
+			}
+		}
+		else
+		{
+			Unlock();
+		}
+	}
+
+	public void Unlock(List<IPerkUnlocker> perkUnlockers)
+	{
+		if (perkUnlockers == null || perkUnlockers.Count <= 0)
+		{
+			return;
+		}
+		foreach (IPerkUnlocker perkUnlocker in perkUnlockers)
+		{
+			Unlock(perkUnlocker);
+		}
+	}
+
 	public void UnHook(bool onLoad)
 	{
 		HandleHook((Action<PerkDataContainer> eventContainer, Action<PerkDataContainer> eventToHook) => (Action<PerkDataContainer>)Delegate.Remove(eventContainer, eventToHook), isHooking: false, onLoad);
@@ -78,7 +163,15 @@ public class PerkController
 		HandleHook((Action<PerkDataContainer> eventContainer, Action<PerkDataContainer> eventToHook) => (Action<PerkDataContainer>)Delegate.Combine(eventContainer, eventToHook), isHooking: true, onLoad);
 	}
 
-	public void Lock()
+	public void ResetModulesDynamicData()
+	{
+		foreach (APerkModule perkModule in Perk.PerkModules)
+		{
+			perkModule.ResetDynamicData();
+		}
+	}
+
+	private void Lock()
 	{
 		Perk.PerkController.ActiveBookmark(value: false);
 		if (Perk.Unlocked)
@@ -90,13 +183,13 @@ public class PerkController
 		}
 	}
 
-	public void Unlock()
+	private void Unlock()
 	{
 		if (!Perk.Unlocked)
 		{
 			Perk.Unlocked = true;
 			Perk.PerkController.ActiveBookmark(value: false);
-			if ((Object)(object)Perk.PerkView != (Object)null)
+			if ((Object)(object)Perk.PerkView != (Object)null && Perk.UnlockedInPerkTree)
 			{
 				Perk.PerkView.Unlock();
 			}
@@ -109,17 +202,6 @@ public class PerkController
 
 	private void HandleHook(Func<Action<PerkDataContainer>, Action<PerkDataContainer>, Action<PerkDataContainer>> hookOperator, bool isHooking, bool onLoad)
 	{
-		if (isHooking)
-		{
-			if (!Perk.Owner.Perks.ContainsKey(Perk.PerkDefinition.Id))
-			{
-				Perk.Owner.Perks.Add(Perk.PerkDefinition.Id, Perk);
-			}
-		}
-		else if (Perk.Owner.Perks.ContainsKey(Perk.PerkDefinition.Id))
-		{
-			Perk.Owner.Perks.Remove(Perk.PerkDefinition.Id);
-		}
 		foreach (APerkModule perkModule in Perk.PerkModules)
 		{
 			if (isHooking)
@@ -164,6 +246,10 @@ public class PerkController
 				case E_EffectTime.OnStatusApplied:
 				case E_EffectTime.OnEnemyMovementEnd:
 				case E_EffectTime.OnSkillUndo:
+				case E_EffectTime.OnDealDamageTargetHit:
+				case E_EffectTime.OnDealDamageTargetKill:
+				case E_EffectTime.OnDealDamageExecutionEnd:
+				case E_EffectTime.OnPerkApplyStatusEnd:
 					if (!Perk.Owner.Events.ContainsKey(perkEvent.PerkEventDefinition.EffectTime))
 					{
 						CLoggerManager.Log((object)$"Tried to link a perkEvent to an owner event, but it was not present in the event dictionary: {perkEvent.PerkEventDefinition.EffectTime}", (LogType)0, (CLogLevel)2, true, "StaticLog", false);

@@ -47,9 +47,9 @@ public class HUDJoystickNavigationManager : Manager<HUDJoystickNavigationManager
 
 	public JoystickHighlight JoystickHighlight => joystickHighlight;
 
-	public event Action<bool> HUDNavigationToggled;
+	public static event Action<bool> HUDNavigationToggled;
 
-	public event Action<bool> TooltipsToggled;
+	public static event Action<bool> TooltipsToggled;
 
 	public bool CanOpenHUDNavigationMode()
 	{
@@ -92,7 +92,7 @@ public class HUDJoystickNavigationManager : Manager<HUDJoystickNavigationManager
 				SelectHUDDefaultPanel();
 			}
 			HUDNavigationOn = true;
-			this.HUDNavigationToggled?.Invoke(HUDNavigationOn);
+			HUDJoystickNavigationManager.HUDNavigationToggled?.Invoke(HUDNavigationOn);
 		}
 	}
 
@@ -109,7 +109,7 @@ public class HUDJoystickNavigationManager : Manager<HUDJoystickNavigationManager
 		EventSystem.current.SetSelectedGameObject((GameObject)null);
 		JoystickHighlight.Display(state: false);
 		HUDNavigationOn = false;
-		this.HUDNavigationToggled?.Invoke(HUDNavigationOn);
+		HUDJoystickNavigationManager.HUDNavigationToggled?.Invoke(HUDNavigationOn);
 		return true;
 	}
 
@@ -228,17 +228,10 @@ public class HUDJoystickNavigationManager : Manager<HUDJoystickNavigationManager
 		}
 	}
 
-	protected override void OnDestroy()
-	{
-		((CLogger<HUDJoystickNavigationManager>)this).OnDestroy();
-		this.TooltipsToggled = null;
-		this.HUDNavigationToggled = null;
-	}
-
 	private void ToggleTooltips()
 	{
 		ShowTooltips = !ShowTooltips;
-		this.TooltipsToggled?.Invoke(ShowTooltips);
+		HUDJoystickNavigationManager.TooltipsToggled?.Invoke(ShowTooltips);
 	}
 
 	public IEnumerator ToggleSlotSelectionCoroutine()

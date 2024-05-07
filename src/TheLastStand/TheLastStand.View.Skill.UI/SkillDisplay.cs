@@ -792,6 +792,10 @@ public class SkillDisplay : SerializedMonoBehaviour
 			goto IL_02b7;
 		}
 		goto IL_030a;
+		IL_02b7:
+		bool flag = skill.SkillController.ComputeMaxRange() > 1;
+		rangeDisplay.Refresh("SkillTooltip_Range", empty, flag && Skill.SkillDefinition.CardinalDirectionOnly, Skill.SkillDefinition.RangeModifiable);
+		goto IL_030a;
 		IL_030a:
 		if ((Object)(object)targetingDisplay != (Object)null)
 		{
@@ -834,11 +838,6 @@ public class SkillDisplay : SerializedMonoBehaviour
 				this.SkillAreaOfEffectGridPlacedEvent?.Invoke();
 			}
 		}
-		return;
-		IL_02b7:
-		bool flag = skill.SkillController.ComputeMaxRange() > 1;
-		rangeDisplay.Refresh("SkillTooltip_Range", empty, flag && Skill.SkillDefinition.CardinalDirectionOnly, Skill.SkillDefinition.RangeModifiable);
-		goto IL_030a;
 	}
 
 	private void Start()

@@ -18,5 +18,7 @@ public enum E_TutorialTrigger
 	OnWorldMapCitySelected,
 	OnGlyphsPanelOpen,
 	OnBonePileSelected,
-	OnSkillExecutionOver
+	OnSkillExecutionOver,
+	OnWeaponRestrictionsPanelOpen,
+	OnWorldMapOpen
 }

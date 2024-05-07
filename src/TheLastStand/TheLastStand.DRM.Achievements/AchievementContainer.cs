@@ -14,9 +14,13 @@ public static class AchievementContainer
 
 	public static readonly Achievement ACH_WIN_GLINTFEIN = new Achievement("ACH_WIN_GLINTFEIN", 0);
 
+	public static readonly Achievement ACH_WIN_RUNENBERG = new Achievement("ACH_WIN_RUNENBERG", 0);
+
 	public static readonly Achievement ACH_UNLOCK_ALL_WEAPONS = new Achievement("ACH_UNLOCK_ALL_WEAPONS", 0);
 
 	public static readonly Achievement ACH_FIRST_UNLOCK = new Achievement("ACH_FIRST_UNLOCK", 0);
+
+	public static readonly Achievement ACH_UNLOCK_ALL_DLC1_WEAPONS_TRINKETS = new Achievement("ACH_UNLOCK_ALL_DLC1_WEAPONS_TRINKETS", 0);
 
 	public static readonly Achievement ACH_SCHADEN_REVEAL = new Achievement("ACH_SCHADEN_REVEAL", 0);
 
@@ -72,6 +76,10 @@ public static class AchievementContainer
 
 	public static readonly Achievement ACH_USE_POTION_ON_ALLY = new Achievement("ACH_USE_POTION_ON_ALLY", 0);
 
+	public static readonly Achievement ACH_DESTROY_10_CRYSTALS_RUN = new Achievement("ACH_DESTROY_10_CRYSTALS_RUN", 0);
+
+	public static readonly Achievement ACH_USE_50_BEERS_RUN = new Achievement("ACH_USE_50_BEERS_RUN", 0);
+
 	public static readonly Achievement ACH_KILL_6666_ENEMIES = new Achievement("ACH_KILL_6666_ENEMIES", 0);
 
 	public static readonly Achievement ACH_USE_100_POTION = new Achievement("ACH_USE_100_POTION", 0);
@@ -81,6 +89,12 @@ public static class AchievementContainer
 	public static readonly Achievement ACH_START_20_RUNS = new Achievement("ACH_START_20_RUNS", 0);
 
 	public static readonly Achievement ACH_SCAVENGE_50_CORPSES_AND_RUINS = new Achievement("ACH_SCAVENGE_50_CORPSES_AND_RUINS", 0);
+
+	public static readonly Achievement ACH_RECRUIT_7_DWARVES = new Achievement("ACH_RECRUIT_7_DWARVES", 0);
+
+	public static readonly Achievement ACH_5_ENEMIES_CORRUPTED_BY_CRYSTALS = new Achievement("ACH_5_ENEMIES_CORRUPTED_BY_CRYSTALS", 0);
+
+	public static readonly Achievement ACH_DWARF_14_TILES_EMERGENCY_TUNNEL = new Achievement("ACH_DWARF_14_TILES_EMERGENCY_TUNNEL", 0);
 
 	public static readonly Achievement ACH_NIGHT3_APO1 = new Achievement("ACH_NIGHT3_APO1", 0);
 
@@ -97,6 +111,8 @@ public static class AchievementContainer
 	public static readonly Achievement ACH_WIN_ELDERLICHT_APO3 = new Achievement("ACH_WIN_ELDERLICHT_APO3", 0);
 
 	public static readonly Achievement ACH_WIN_GLINTFEIN_APO3 = new Achievement("ACH_WIN_GLINTFEIN_APO3", 0);
+
+	public static readonly Achievement ACH_WIN_RUNENBERG_APO3 = new Achievement("ACH_WIN_RUNENBERG_APO3", 0);
 
 	public static readonly Achievement ACH_ALL_ACHIEVEMENTS = new Achievement("ACH_ALL_ACHIEVEMENTS", 0);
 
@@ -131,4 +147,6 @@ public static class AchievementContainer
 		"UnlockSword", "UnlockAxe", "UnlockDagger", "Unlock2HSword", "Unlock2HAxe", "Unlock2HHammer", "UnlockSpear", "UnlockHandCrossbow", "UnlockCrossbow", "UnlockPistol",
 		"UnlockRifle", "UnlockLongbow", "UnlockMagicOrb", "UnlockMagicScepter", "UnlockMagicStaff", "UnlockTomeOfMagic", "UnlockDruidicStaff"
 	};
+
+	public static readonly HashSet<string> UnlockAllDLC1WeaponsAndTrinkets = new HashSet<string> { "UnlockWarShield", "UnlockGauntlet", "UnlockCannon", "UnlockTrinketPerkDLC1_1", "UnlockTrinketPerkDLC1_2" };
 }

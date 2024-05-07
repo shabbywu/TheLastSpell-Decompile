@@ -78,6 +78,11 @@ public class DamageableModule : BuildingModule, IDamageable, IEntity
 		return true;
 	}
 
+	public virtual bool IsTargetableByAI()
+	{
+		return base.BuildingParent.IsTargetableByAI();
+	}
+
 	public void Deserialize(SerializedBuilding buildingElement)
 	{
 		Health = Mathf.Min(buildingElement.Health, HealthTotal);

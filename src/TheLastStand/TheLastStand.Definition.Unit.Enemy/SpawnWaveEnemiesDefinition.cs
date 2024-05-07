@@ -29,6 +29,9 @@ public class SpawnWaveEnemiesDefinition : TheLastStand.Framework.Serialization.D
 	public List<int> AllTiers { get; private set; } = new List<int>();
 
 
+	public List<SeerAdditionalPortraitSettings> SeerAdditionalPortraitsSettings { get; private set; } = new List<SeerAdditionalPortraitSettings>();
+
+
 	public SpawnWaveEnemiesDefinition(XContainer container)
 		: base(container)
 	{
@@ -105,34 +108,43 @@ public class SpawnWaveEnemiesDefinition : TheLastStand.Framework.Serialization.D
 			}
 		}
 		XElement val8 = ((XContainer)val2).Element(XName.op_Implicit("EliteEnemies"));
-		if (val8 == null)
+		if (val8 != null)
+		{
+			XAttribute val9 = val8.Attribute(XName.op_Implicit("OverrideSpawnDefinition"));
+			if (!bool.TryParse(val9.Value, out var result4))
+			{
+				CLoggerManager.Log((object)("Could not parse attribute OverrideSpawnDefinition into a bool : '" + val9.Value + "'."), (Object)(object)TPSingleton<SpawnWaveDatabase>.Instance, (LogType)0, (CLogLevel)2, true, "SpawnWaveDatabase", false);
+			}
+			EliteOverrideSpawnDefinition = result4;
+			EliteEnemyUnitTemplateDefinitions.Clear();
+			foreach (XElement item4 in ((XContainer)val8).Elements(XName.op_Implicit("EliteEnemy")))
+			{
+				XAttribute val10 = item4.Attribute(XName.op_Implicit("Id"));
+				XAttribute val11 = item4.Attribute(XName.op_Implicit("Nb"));
+				if (!int.TryParse(val11.Value, out var result5))
+				{
+					CLoggerManager.Log((object)("Could not parse attribute Nb into an int : '" + val11.Value + "'."), (Object)(object)TPSingleton<SpawnWaveDatabase>.Instance, (LogType)0, (CLogLevel)2, true, "SpawnWaveDatabase", false);
+				}
+				if (EliteEnemyUnitTemplateDefinitions.ContainsKey(val10.Value))
+				{
+					CLoggerManager.Log((object)("Duplicate of : '" + val10.Value + "' in EliteEnemies definition. Adding them."), (Object)(object)TPSingleton<SpawnWaveDatabase>.Instance, (LogType)2, (CLogLevel)2, true, "SpawnWaveDatabase", false);
+					EliteEnemyUnitTemplateDefinitions[val10.Value] += result5;
+				}
+				else
+				{
+					EliteEnemyUnitTemplateDefinitions.Add(val10.Value, result5);
+				}
+			}
+		}
+		SeerAdditionalPortraitsSettings.Clear();
+		XElement val12 = ((XContainer)val).Element(XName.op_Implicit("SeerAdditionalPortraitsSettings"));
+		if (val12 == null)
 		{
 			return;
 		}
-		XAttribute val9 = val8.Attribute(XName.op_Implicit("OverrideSpawnDefinition"));
-		if (!bool.TryParse(val9.Value, out var result4))
+		foreach (XElement item5 in ((XContainer)val12).Elements(XName.op_Implicit("SeerAdditionalPortraitSettings")))
 		{
-			CLoggerManager.Log((object)("Could not parse attribute OverrideSpawnDefinition into a bool : '" + val9.Value + "'."), (Object)(object)TPSingleton<SpawnWaveDatabase>.Instance, (LogType)0, (CLogLevel)2, true, "SpawnWaveDatabase", false);
-		}
-		EliteOverrideSpawnDefinition = result4;
-		EliteEnemyUnitTemplateDefinitions.Clear();
-		foreach (XElement item4 in ((XContainer)val8).Elements(XName.op_Implicit("EliteEnemy")))
-		{
-			XAttribute val10 = item4.Attribute(XName.op_Implicit("Id"));
-			XAttribute val11 = item4.Attribute(XName.op_Implicit("Nb"));
-			if (!int.TryParse(val11.Value, out var result5))
-			{
-				CLoggerManager.Log((object)("Could not parse attribute Nb into an int : '" + val11.Value + "'."), (Object)(object)TPSingleton<SpawnWaveDatabase>.Instance, (LogType)0, (CLogLevel)2, true, "SpawnWaveDatabase", false);
-			}
-			if (EliteEnemyUnitTemplateDefinitions.ContainsKey(val10.Value))
-			{
-				CLoggerManager.Log((object)("Duplicate of : '" + val10.Value + "' in EliteEnemies definition. Adding them."), (Object)(object)TPSingleton<SpawnWaveDatabase>.Instance, (LogType)2, (CLogLevel)2, true, "SpawnWaveDatabase", false);
-				EliteEnemyUnitTemplateDefinitions[val10.Value] += result5;
-			}
-			else
-			{
-				EliteEnemyUnitTemplateDefinitions.Add(val10.Value, result5);
-			}
+			SeerAdditionalPortraitsSettings.Add(new SeerAdditionalPortraitSettings(item5));
 		}
 	}
 

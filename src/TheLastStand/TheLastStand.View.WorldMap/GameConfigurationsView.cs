@@ -5,15 +5,18 @@ using System.Runtime.CompilerServices;
 using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
+using Steamworks;
 using TMPro;
 using TPLib;
 using TPLib.Localization;
 using TheLastStand.Database;
 using TheLastStand.Definition.Apocalypse;
+using TheLastStand.Definition.DLC;
 using TheLastStand.Framework;
 using TheLastStand.Framework.Extensions;
 using TheLastStand.Framework.UI;
 using TheLastStand.Manager;
+using TheLastStand.Manager.DLC;
 using TheLastStand.Manager.WorldMap;
 using TheLastStand.Model.Animation;
 using TheLastStand.Model.WorldMap;
@@ -40,16 +43,16 @@ public class GameConfigurationsView : TPSingleton<GameConfigurationsView>
 	{
 		public static readonly _003C_003Ec _003C_003E9 = new _003C_003Ec();
 
-		public static Predicate<ApocalypseView> _003C_003E9__39_0;
+		public static Predicate<ApocalypseView> _003C_003E9__44_0;
 
-		public static TweenCallback _003C_003E9__53_0;
+		public static TweenCallback _003C_003E9__59_0;
 
-		internal bool _003CIsThereAnApocalypseSelected_003Eb__39_0(ApocalypseView x)
+		internal bool _003CIsThereAnApocalypseSelected_003Eb__44_0(ApocalypseView x)
 		{
 			return x.State == BetterToggleGauge.E_BetterToggleGaugeState.Selected;
 		}
 
-		internal void _003CUnfold_003Eb__53_0()
+		internal void _003CUnfold_003Eb__59_0()
 		{
 			Object.FindObjectOfType<JoystickHighlight>().ToggleAlwaysFollow(state: false);
 		}
@@ -128,6 +131,18 @@ public class GameConfigurationsView : TPSingleton<GameConfigurationsView>
 	private float scrollButtonsSensitivity = 0.1f;
 
 	[SerializeField]
+	private BetterToggle storyCityToggle;
+
+	[SerializeField]
+	private BetterToggle dlcCityToggle;
+
+	[SerializeField]
+	private RectTransform tabPosOn;
+
+	[SerializeField]
+	private RectTransform tabPosOff;
+
+	[SerializeField]
 	private float yOffset = 10f;
 
 	[SerializeField]
@@ -150,6 +165,8 @@ public class GameConfigurationsView : TPSingleton<GameConfigurationsView>
 
 	private bool isFolded = true;
 
+	private bool previousCityUnlocked;
+
 	private WorldMapCity currentCity;
 
 	public List<ApocalypseView> ApocalypseLines { get; } = new List<ApocalypseView>();
@@ -160,6 +177,19 @@ public class GameConfigurationsView : TPSingleton<GameConfigurationsView>
 	public static bool IsThereAnApocalypseSelected()
 	{
 		return (Object)(object)TPSingleton<GameConfigurationsView>.Instance.ApocalypseLines.Find((ApocalypseView x) => x.State == BetterToggleGauge.E_BetterToggleGaugeState.Selected) != (Object)null;
+	}
+
+	public static void OpenSelectedCityLinkedDLCStorePage()
+	{
+		WorldMapCity selectedCity = TPSingleton<WorldMapCityManager>.Instance.SelectedCity;
+		if (selectedCity != null && selectedCity.CityDefinition.HasLinkedDLC)
+		{
+			DLCDefinition dLCFromId = TPSingleton<DLCManager>.Instance.GetDLCFromId(selectedCity.CityDefinition.LinkedDLCId);
+			if ((Object)(object)dLCFromId != (Object)null)
+			{
+				SteamFriends.ActivateGameOverlayToWebPage(dLCFromId.GetStoreURL(), (EActivateGameOverlayToWebPageMode)0);
+			}
+		}
 	}
 
 	public static void StartNewGameIfEnoughGlyph()
@@ -191,7 +221,13 @@ public class GameConfigurationsView : TPSingleton<GameConfigurationsView>
 
 	public void JoystickSelectPanel()
 	{
-		EventSystem.current.SetSelectedGameObject(((Component)GlyphSelectionPreview.EditButton).gameObject);
+		if (((Component)GlyphSelectionPreview.EditButton).gameObject.activeSelf)
+		{
+			EventSystem.current.SetSelectedGameObject(((Component)GlyphSelectionPreview.EditButton).gameObject);
+			return;
+		}
+		EventSystem.current.SetSelectedGameObject((GameObject)null);
+		TPSingleton<HUDJoystickNavigationManager>.Instance.JoystickHighlight.Display(state: false);
 	}
 
 	public void OnBackButtonClicked()
@@ -260,6 +296,14 @@ public class GameConfigurationsView : TPSingleton<GameConfigurationsView>
 			((TMP_Text)cityDescription).text = currentCity.CityDefinition.Description;
 			((TMP_Text)startingSetupText).text = Localizer.Get("WorldMap_StartingSetup_" + currentCity.CityDefinition.StartingSetup);
 			cityImage.sprite = ResourcePooler.LoadOnce<Sprite>("View/Sprites/UI/WorldMap/WorldMap_CityPortrait_" + currentCity.CityDefinition.Id, failSilently: false);
+			RefreshCityToggles();
+			((Component)apocalypseLinesContainer).gameObject.SetActive(ApocalypseManager.IsApocalypseUnlocked && currentCity.IsUnlocked);
+			glyphSelectionPreview.RefreshLockedUI(currentCity);
+			if (previousCityUnlocked != currentCity.IsUnlocked)
+			{
+				RefreshBoxSize();
+			}
+			previousCityUnlocked = currentCity.IsUnlocked;
 		}
 		RefreshJoystickNavigation();
 	}
@@ -358,14 +402,14 @@ public class GameConfigurationsView : TPSingleton<GameConfigurationsView>
 		{
 			Object.FindObjectOfType<JoystickHighlight>().ToggleAlwaysFollow(state: true);
 			Tween statusTransitionTween4 = configurationPanelAnimation.StatusTransitionTween;
-			object obj = _003C_003Ec._003C_003E9__53_0;
+			object obj = _003C_003Ec._003C_003E9__59_0;
 			if (obj == null)
 			{
 				TweenCallback val = delegate
 				{
 					Object.FindObjectOfType<JoystickHighlight>().ToggleAlwaysFollow(state: false);
 				};
-				_003C_003Ec._003C_003E9__53_0 = val;
+				_003C_003Ec._003C_003E9__59_0 = val;
 				obj = (object)val;
 			}
 			TweenSettingsExtensions.OnComplete<Tween>(statusTransitionTween4, (TweenCallback)obj);
@@ -448,6 +492,63 @@ public class GameConfigurationsView : TPSingleton<GameConfigurationsView>
 		}
 		((Selectable)(object)GlyphSelectionPreview.EditButton).SetMode((Mode)4);
 		((Selectable)(object)GlyphSelectionPreview.EditButton).SetSelectOnDown((Selectable)(object)(((Object)(object)val != (Object)null) ? ((JoystickSelectable)(object)val) : ((ApocalypseLines.Count > 0) ? ApocalypseLines[0].JoystickSelectable : null)));
+		if (InputManager.IsLastControllerJoystick)
+		{
+			JoystickSelectPanel();
+		}
+	}
+
+	private void RefreshCityToggles()
+	{
+		if (currentCity.CityDefinition.IsStoryMap)
+		{
+			((Component)storyCityToggle).gameObject.SetActive(true);
+			((Component)dlcCityToggle).gameObject.SetActive(currentCity.CityDefinition.HasLinkedCity);
+			if (!((Toggle)storyCityToggle).isOn)
+			{
+				((Toggle)storyCityToggle).SetIsOnWithoutNotify(true);
+			}
+		}
+		else
+		{
+			((Component)storyCityToggle).gameObject.SetActive(currentCity.CityDefinition.HasLinkedCity);
+			((Component)dlcCityToggle).gameObject.SetActive(true);
+			if (!((Toggle)dlcCityToggle).isOn)
+			{
+				((Toggle)dlcCityToggle).SetIsOnWithoutNotify(true);
+			}
+		}
+		RefreshCityTogglePosition((Toggle)(object)storyCityToggle);
+		RefreshCityTogglePosition((Toggle)(object)dlcCityToggle);
+	}
+
+	private void RefreshCityTogglePosition(Toggle cityToggle)
+	{
+		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
+		//IL_004a: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0033: Unknown result type (might be due to invalid IL or missing references)
+		//IL_005a: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0064: Unknown result type (might be due to invalid IL or missing references)
+		if (!((Object)(object)cityToggle == (Object)null))
+		{
+			((Component)cityToggle).transform.localPosition = new Vector3(((Component)cityToggle).transform.localPosition.x, cityToggle.isOn ? ((Component)tabPosOn).transform.localPosition.y : ((Component)tabPosOff).transform.localPosition.y, ((Component)cityToggle).transform.localPosition.z);
+		}
+	}
+
+	private void CityTypeToggle_ValueChanged(bool value, bool isStoryMap, Toggle sender)
+	{
+		RefreshCityTogglePosition(sender);
+		if (value)
+		{
+			if (isStoryMap)
+			{
+				TPSingleton<WorldMapCityManager>.Instance.SelectStoryMapCity();
+			}
+			else
+			{
+				TPSingleton<WorldMapCityManager>.Instance.SelectDLCMapCity();
+			}
+		}
 	}
 
 	private void Start()
@@ -456,12 +557,20 @@ public class GameConfigurationsView : TPSingleton<GameConfigurationsView>
 		//IL_0020: Expected O, but got Unknown
 		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0040: Expected O, but got Unknown
-		//IL_0052: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005c: Expected O, but got Unknown
-		//IL_006e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0078: Expected O, but got Unknown
+		//IL_008a: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0094: Expected O, but got Unknown
+		//IL_00a6: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00b0: Expected O, but got Unknown
 		((UnityEvent)((Button)previousCityButton).onClick).AddListener(new UnityAction(TPSingleton<WorldMapCityManager>.Instance.SelectPreviousCity));
 		((UnityEvent)((Button)nextCityButton).onClick).AddListener(new UnityAction(TPSingleton<WorldMapCityManager>.Instance.SelectNextCity));
+		((UnityEvent<bool>)(object)((Toggle)storyCityToggle).onValueChanged).AddListener((UnityAction<bool>)delegate(bool value)
+		{
+			CityTypeToggle_ValueChanged(value, isStoryMap: true, (Toggle)(object)storyCityToggle);
+		});
+		((UnityEvent<bool>)(object)((Toggle)dlcCityToggle).onValueChanged).AddListener((UnityAction<bool>)delegate(bool value)
+		{
+			CityTypeToggle_ValueChanged(value, isStoryMap: false, (Toggle)(object)dlcCityToggle);
+		});
 		((UnityEvent)((Button)closeButton).onClick).AddListener(new UnityAction(OnCloseButtonClicked));
 		((UnityEvent)((Button)backButton).onClick).AddListener(new UnityAction(OnBackButtonClicked));
 		FillWithApocalypseLines();

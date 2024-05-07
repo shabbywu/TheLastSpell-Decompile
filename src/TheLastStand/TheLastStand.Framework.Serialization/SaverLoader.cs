@@ -8,10 +8,13 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using TPLib;
 using TPLib.Log;
+using TheLastStand.Definition.DLC;
 using TheLastStand.Framework.Encryption;
 using TheLastStand.Framework.Sequencing;
 using TheLastStand.Manager;
+using TheLastStand.Manager.DLC;
 using TheLastStand.Manager.Modding;
 using TheLastStand.Model.Modding;
 using TheLastStand.Serialization;
@@ -102,6 +105,32 @@ public static class SaverLoader
 		{
 			MissingModIds = missingModIds;
 			SaveManager.BrokenSaveReason = SaveManager.E_BrokenSaveReason.MISSING_MOD;
+		}
+	}
+
+	public class MissingDLCException : SaveLoadingFailedException
+	{
+		public readonly HashSet<string> MissingDlcIds;
+
+		public MissingDLCException(string filePath, bool shouldMarkAsCorrupted, HashSet<string> missingDlcIds)
+			: base(filePath, shouldMarkAsCorrupted)
+		{
+			MissingDlcIds = missingDlcIds;
+			SaveManager.BrokenSaveReason = SaveManager.E_BrokenSaveReason.MISSING_DLC;
+		}
+
+		public List<string> GetLocalizedMissingDLCs()
+		{
+			List<string> list = new List<string>();
+			foreach (string missingDlcId in MissingDlcIds)
+			{
+				DLCDefinition dLCFromId = TPSingleton<DLCManager>.Instance.GetDLCFromId(missingDlcId);
+				if ((Object)(object)dLCFromId != (Object)null)
+				{
+					list.Add(dLCFromId.LocalizedName);
+				}
+			}
+			return list;
 		}
 	}
 
@@ -364,6 +393,21 @@ public static class SaverLoader
 				if (hashSet.Count > 0)
 				{
 					throw new MissingModException(filePath, shouldMarkAsCorrupted: false, hashSet);
+				}
+				if (serializedGameState.DLCsInUse != null)
+				{
+					HashSet<string> hashSet2 = new HashSet<string>();
+					foreach (string dlcId in serializedGameState.DLCsInUse)
+					{
+						if (!TPSingleton<DLCManager>.Instance.OwnedDLCIds.Any((string ownedDLCId) => ownedDLCId == dlcId))
+						{
+							hashSet2.Add(dlcId);
+						}
+					}
+					if (hashSet2.Count > 0)
+					{
+						throw new MissingDLCException(filePath, shouldMarkAsCorrupted: false, hashSet2);
+					}
 				}
 			}
 			if (val.SaveVersion < minVersion)

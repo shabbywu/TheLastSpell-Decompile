@@ -13,6 +13,9 @@ public class UnitStatBreakdownPanel : MonoBehaviour
 	private UnitStatBreakdownDisplay unitStatBaseValue;
 
 	[SerializeField]
+	private UnitStatBreakdownDisplay unitStatRaceValue;
+
+	[SerializeField]
 	private UnitStatBreakdownDisplay unitStatTraitsValue;
 
 	[SerializeField]
@@ -36,6 +39,8 @@ public class UnitStatBreakdownPanel : MonoBehaviour
 
 	protected float baseValue;
 
+	private float raceValue;
+
 	private float traitsValue;
 
 	private float equipmentValue;
@@ -56,18 +61,19 @@ public class UnitStatBreakdownPanel : MonoBehaviour
 
 	public void Refresh(UnitStatDefinition unitStatDefinition, TheLastStand.Model.Unit.Unit unit)
 	{
-		//IL_02a7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02ac: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02f7: Unknown result type (might be due to invalid IL or missing references)
+		//IL_02ed: Unknown result type (might be due to invalid IL or missing references)
+		//IL_02f2: Unknown result type (might be due to invalid IL or missing references)
+		//IL_033d: Unknown result type (might be due to invalid IL or missing references)
 		UnitStatDefinition = unitStatDefinition;
 		TargetUnit = unit;
 		SetValues();
 		bool statIsPercentage = UnitStatDefinition.Id.ShownAsPercentage();
-		bool showValue = (Object)(object)unitStatBreakdownFinalValue == (Object)null || traitsValue != 0f || equipmentValue != 0f || perksValue != 0f || statusValue != 0f || injuriesValue != 0f;
+		bool showValue = (Object)(object)unitStatBreakdownFinalValue == (Object)null || raceValue != 0f || traitsValue != 0f || equipmentValue != 0f || perksValue != 0f || statusValue != 0f || injuriesValue != 0f;
 		if ((Object)(object)unitStatBaseValue != (Object)null)
 		{
 			unitStatBaseValue.Refresh(unitStatBaseValue.FormatStatValue(baseValue, statIsPercentage), "UnitStatTooltip_BaseValue", showValue);
 		}
+		unitStatRaceValue?.Refresh(unitStatBaseValue.FormatStatValue(raceValue, statIsPercentage), "UnitStatTooltip_RaceValue", raceValue != 0f);
 		unitStatTraitsValue?.Refresh(unitStatBaseValue.FormatStatValue(traitsValue, statIsPercentage), "UnitStatTooltip_TraitsValue", traitsValue != 0f);
 		unitStatEquipmentValue?.Refresh(unitStatBaseValue.FormatStatValue(equipmentValue, statIsPercentage), "UnitStatTooltip_EquipmentValue", equipmentValue != 0f);
 		unitStatPerksValue?.Refresh(unitStatBaseValue.FormatStatValue(perksValue, statIsPercentage), "UnitStatTooltip_PerksValue", perksValue != 0f);
@@ -107,12 +113,14 @@ public class UnitStatBreakdownPanel : MonoBehaviour
 		injuriesMultiplierLoss = Mathf.Floor(stat.InjuryMultiplierLoss);
 		if (stat is PlayableUnitStat playableUnitStat)
 		{
+			raceValue = Mathf.Floor(playableUnitStat.Race);
 			traitsValue = Mathf.Floor(playableUnitStat.Traits);
 			equipmentValue = Mathf.Floor(playableUnitStat.Equipment);
 			perksValue = Mathf.Floor(playableUnitStat.Perks);
 		}
 		else
 		{
+			raceValue = 0f;
 			traitsValue = 0f;
 			equipmentValue = 0f;
 			perksValue = 0f;

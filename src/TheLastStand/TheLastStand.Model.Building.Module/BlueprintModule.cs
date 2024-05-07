@@ -3,6 +3,7 @@ using TPLib;
 using TPLib.Log;
 using TheLastStand.Controller.Building.Module;
 using TheLastStand.Definition.Building.Module;
+using TheLastStand.Definition.Unit.Race;
 using TheLastStand.Manager.Building;
 using TheLastStand.Model.Extensions;
 using TheLastStand.Model.TileMap;
@@ -12,6 +13,8 @@ namespace TheLastStand.Model.Building.Module;
 
 public class BlueprintModule : BuildingModule, IBarker
 {
+	public RaceDefinition BarkerRaceDefinition => null;
+
 	public BlueprintModuleController BlueprintModuleController => base.BuildingModuleController as BlueprintModuleController;
 
 	public BlueprintModuleDefinition BlueprintModuleDefinition => base.BuildingModuleDefinition as BlueprintModuleDefinition;

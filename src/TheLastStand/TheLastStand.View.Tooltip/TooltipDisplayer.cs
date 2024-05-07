@@ -9,6 +9,8 @@ public class TooltipDisplayer : MonoBehaviour, IPointerEnterHandler, IEventSyste
 	[SerializeField]
 	protected TooltipBase targetTooltip;
 
+	protected bool CurrentlyDisplayingTooltip { get; set; }
+
 	public bool Displayed
 	{
 		get
@@ -16,6 +18,18 @@ public class TooltipDisplayer : MonoBehaviour, IPointerEnterHandler, IEventSyste
 			if ((Object)(object)targetTooltip != (Object)null)
 			{
 				return targetTooltip.Displayed;
+			}
+			return false;
+		}
+	}
+
+	public bool IsDisplayingTargetTooltip
+	{
+		get
+		{
+			if (Displayed)
+			{
+				return CurrentlyDisplayingTooltip;
 			}
 			return false;
 		}
@@ -41,6 +55,7 @@ public class TooltipDisplayer : MonoBehaviour, IPointerEnterHandler, IEventSyste
 		if (CanDisplay() && (Object)(object)targetTooltip != (Object)null)
 		{
 			targetTooltip.Display();
+			CurrentlyDisplayingTooltip = true;
 		}
 	}
 
@@ -49,6 +64,12 @@ public class TooltipDisplayer : MonoBehaviour, IPointerEnterHandler, IEventSyste
 		if ((Object)(object)targetTooltip != (Object)null)
 		{
 			targetTooltip.Hide();
+			CurrentlyDisplayingTooltip = false;
 		}
+	}
+
+	public TooltipBase GetTooltip()
+	{
+		return targetTooltip;
 	}
 }

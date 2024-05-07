@@ -31,16 +31,7 @@ public class OraculumUnlockIcon : MonoBehaviour, ISelectHandler, IEventSystemHan
 
 	public void OnSelect(BaseEventData eventData)
 	{
-		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
-		Selectable obj = Selectable;
-		Navigation navigation = ((Selectable)metaUpgradeLineView.JoystickSelectable).navigation;
-		obj.SetSelectOnUp(((Navigation)(ref navigation)).selectOnUp);
-		Selectable obj2 = Selectable;
-		navigation = ((Selectable)metaUpgradeLineView.JoystickSelectable).navigation;
-		obj2.SetSelectOnDown(((Navigation)(ref navigation)).selectOnDown);
+		RefreshTopAndBottomNavigation();
 	}
 
 	public virtual void OnDeselect(BaseEventData eventData)
@@ -50,17 +41,35 @@ public class OraculumUnlockIcon : MonoBehaviour, ISelectHandler, IEventSystemHan
 
 	protected void SetMetaUpgrade(MetaUpgradeLineView metaUpgradeLineView)
 	{
-		//IL_0024: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0029: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004c: Unknown result type (might be due to invalid IL or missing references)
 		this.metaUpgradeLineView = metaUpgradeLineView;
 		Selectable.SetMode((Mode)4);
-		Selectable obj = Selectable;
-		Navigation navigation = ((Selectable)this.metaUpgradeLineView.JoystickSelectable).navigation;
-		obj.SetSelectOnUp(((Navigation)(ref navigation)).selectOnUp);
-		Selectable obj2 = Selectable;
-		navigation = ((Selectable)this.metaUpgradeLineView.JoystickSelectable).navigation;
-		obj2.SetSelectOnDown(((Navigation)(ref navigation)).selectOnDown);
+		RefreshTopAndBottomNavigation();
+	}
+
+	private void RefreshTopAndBottomNavigation()
+	{
+		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
+		//IL_004a: Unknown result type (might be due to invalid IL or missing references)
+		//IL_006e: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0073: Unknown result type (might be due to invalid IL or missing references)
+		Transform transform = ((Component)this).transform;
+		int num = 5;
+		int siblingIndex = transform.GetSiblingIndex();
+		int childCount = ((Component)transform.parent).transform.childCount;
+		int num2 = childCount % num;
+		int num3 = ((num2 == 0) ? (childCount - num) : (childCount - num2));
+		Navigation navigation;
+		if (siblingIndex < num)
+		{
+			Selectable obj = Selectable;
+			navigation = ((Selectable)metaUpgradeLineView.JoystickSelectable).navigation;
+			obj.SetSelectOnUp(((Navigation)(ref navigation)).selectOnUp);
+		}
+		if (siblingIndex >= num3)
+		{
+			Selectable obj2 = Selectable;
+			navigation = ((Selectable)metaUpgradeLineView.JoystickSelectable).navigation;
+			obj2.SetSelectOnDown(((Navigation)(ref navigation)).selectOnDown);
+		}
 	}
 }

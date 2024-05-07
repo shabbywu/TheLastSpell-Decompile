@@ -52,15 +52,15 @@ public class PerkTooltip : TooltipBase
 		unitPerkDisplay.SetContent(perk, perkDefinition);
 	}
 
-	public void UpdateAnchors(bool displayTowardsRight)
+	public void UpdateAnchors(bool displayTowardsRight, bool displayTop = false)
 	{
 		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0037: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004f: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0052: Unknown result type (might be due to invalid IL or missing references)
+		//IL_005e: Unknown result type (might be due to invalid IL or missing references)
 		Vector2 val;
 		if (displayTowardsRight)
 		{
@@ -71,6 +71,10 @@ public class PerkTooltip : TooltipBase
 		{
 			((Component)CompendiumPanel).transform.SetAsFirstSibling();
 			val = Vector2.one;
+		}
+		if (displayTop)
+		{
+			val.y = 0f;
 		}
 		TooltipRectTransform.anchorMin = val;
 		TooltipRectTransform.anchorMax = val;

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TPLib;
 using TheLastStand.Controller.Skill;
+using TheLastStand.Controller.Unit.Perk;
 using TheLastStand.Database.Unit;
 using TheLastStand.Definition.Item;
 using TheLastStand.Definition.Unit;
@@ -56,17 +57,7 @@ public class ItemController
 		}
 		obj.Resistance = resistance2;
 		Item = obj;
-		if (Item.SkillsOverallUses == null)
-		{
-			return;
-		}
-		foreach (KeyValuePair<string, int> skillsOverallUse in Item.SkillsOverallUses)
-		{
-			if (SkillDatabase.SkillDefinitions.ContainsKey(skillsOverallUse.Key))
-			{
-				Item.Skills.Add(new SkillController(SkillDatabase.SkillDefinitions[skillsOverallUse.Key], Item, skillsOverallUse.Value, SkillDatabase.SkillDefinitions[skillsOverallUse.Key].UsesPerTurnCount).Skill);
-			}
-		}
+		InitItemAdditionalData();
 	}
 
 	public ItemController(TheLastStand.Model.Item.Item itemToCopy)
@@ -79,17 +70,7 @@ public class ItemController
 			AdditionalAffixesMalus = itemToCopy.AdditionalAffixesMalus,
 			Resistance = itemToCopy.Resistance
 		};
-		if (Item.SkillsOverallUses == null)
-		{
-			return;
-		}
-		foreach (KeyValuePair<string, int> skillsOverallUse in Item.SkillsOverallUses)
-		{
-			if (SkillDatabase.SkillDefinitions.ContainsKey(skillsOverallUse.Key))
-			{
-				Item.Skills.Add(new SkillController(SkillDatabase.SkillDefinitions[skillsOverallUse.Key], Item, skillsOverallUse.Value, SkillDatabase.SkillDefinitions[skillsOverallUse.Key].UsesPerTurnCount).Skill);
-			}
-		}
+		InitItemAdditionalData();
 	}
 
 	public Dictionary<UnitStatDefinition.E_Stat, float> MergeAffixes(IEnumerable<IAffix> affixes)
@@ -152,6 +133,32 @@ public class ItemController
 			{
 				Item.Skills[num].UsesPerTurnRemaining = Item.Skills[num].UsesPerTurn;
 			}
+		}
+	}
+
+	private void InitItemAdditionalData()
+	{
+		if (Item.SkillsOverallUses != null)
+		{
+			foreach (KeyValuePair<string, int> skillsOverallUse in Item.SkillsOverallUses)
+			{
+				if (SkillDatabase.SkillDefinitions.ContainsKey(skillsOverallUse.Key))
+				{
+					Item.Skills.Add(new SkillController(SkillDatabase.SkillDefinitions[skillsOverallUse.Key], Item, skillsOverallUse.Value, SkillDatabase.SkillDefinitions[skillsOverallUse.Key].UsesPerTurnCount).Skill);
+				}
+			}
+		}
+		if (Item.ItemDefinition.PerksByLevel[Item.Level] == null)
+		{
+			return;
+		}
+		foreach (string item in Item.ItemDefinition.PerksByLevel[Item.Level])
+		{
+			if (PlayableUnitDatabase.PerkDefinitions.ContainsKey(item) && !Item.Perks.ContainsKey(item))
+			{
+				Item.Perks.Add(item, new PerkController(PlayableUnitDatabase.PerkDefinitions[item], null, null, null, string.Empty, isNative: false, isFromRace: false).Perk);
+			}
+			Item.PerksId.Add(item);
 		}
 	}
 }

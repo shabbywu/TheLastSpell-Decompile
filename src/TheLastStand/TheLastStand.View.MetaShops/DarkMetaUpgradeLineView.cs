@@ -15,7 +15,7 @@ namespace TheLastStand.View.MetaShops;
 
 public class DarkMetaUpgradeLineView : MetaUpgradeLineView, IPointerUpHandler, IEventSystemHandler, IPointerDownHandler
 {
-	private static class Constants
+	private new static class Constants
 	{
 		public static class Animation
 		{

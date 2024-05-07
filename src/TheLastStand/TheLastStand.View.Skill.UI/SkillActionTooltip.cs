@@ -65,7 +65,7 @@ public abstract class SkillActionTooltip : TooltipBase
 		int num2 = 0;
 		foreach (KeyValuePair<string, Perk> perk in playableUnit.Perks)
 		{
-			if (perk.Value.DisplayInAttackTooltip(skillDisplay.Skill.SkillAction.PerkDataContainer))
+			if (perk.Value.Unlocked && perk.Value.DisplayInAttackTooltip(skillDisplay.Skill.SkillAction.PerkDataContainer))
 			{
 				AdjustPerksPoolLength(num2);
 				perkIconDisplays[num2].Display(perk.Value, greyOut: false, displayDynamicValue: false, displayCounter: false);

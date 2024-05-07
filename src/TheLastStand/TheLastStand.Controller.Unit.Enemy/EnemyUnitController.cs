@@ -152,16 +152,17 @@ public class EnemyUnitController : UnitController, IBehaviorController
 		}
 	}
 
-	public void ExecuteGoal(ComputedGoal goalToExecute)
+	public bool ExecuteGoal(ComputedGoal goalToExecute)
 	{
-		//IL_01c0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01d6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0206: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0225: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0235: Unknown result type (might be due to invalid IL or missing references)
-		//IL_024b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0266: Unknown result type (might be due to invalid IL or missing references)
+		//IL_01c4: Unknown result type (might be due to invalid IL or missing references)
+		//IL_01da: Unknown result type (might be due to invalid IL or missing references)
+		//IL_01f9: Unknown result type (might be due to invalid IL or missing references)
+		//IL_020a: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0229: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0239: Unknown result type (might be due to invalid IL or missing references)
+		//IL_024f: Unknown result type (might be due to invalid IL or missing references)
+		//IL_026a: Unknown result type (might be due to invalid IL or missing references)
+		bool result = false;
 		EnemyUnit.Log($"Executing Goal -> target tile is {goalToExecute.TargetTileInfo.Tile}, orientation is {goalToExecute.TargetTileInfo.Orientation}", (CLogLevel)0);
 		bool flag = goalToExecute.Goal.Skill.SkillAction.SkillActionExecution.InRangeTiles.IsInRange(goalToExecute.TargetTileInfo.Tile);
 		bool flag2 = goalToExecute.Goal.Skill.SkillAction.HasEffect("IgnoreLineOfSight") || EnemyUnit.OccupiedTiles.Contains(goalToExecute.TargetTileInfo.Tile) || goalToExecute.Goal.Skill.SkillAction.SkillActionExecution.InRangeTiles.IsInLineOfSight(goalToExecute.TargetTileInfo.Tile);
@@ -173,6 +174,7 @@ public class EnemyUnitController : UnitController, IBehaviorController
 			}
 			goalToExecute.Goal.Skill.SkillAction.SkillActionExecution.TargetTiles.Add(goalToExecute.TargetTileInfo);
 			goalToExecute.Goal.Skill.SkillAction.SkillActionExecution.SkillExecutionController.ExecuteSkill();
+			result = true;
 			if (GetModifiedMaxRange(goalToExecute.Goal.Skill) > 1 && EnemyUnitManager.DebugEnemyAttackFeedback)
 			{
 				EnemyAttackFeedback enemyAttackFeedback = Object.Instantiate<EnemyAttackFeedback>(EnemyUnit.EnemyUnitView.EnemyAttackFeedbackPrefab);
@@ -192,6 +194,7 @@ public class EnemyUnitController : UnitController, IBehaviorController
 			}
 		}
 		EnemyUnit.TargetTile = null;
+		return result;
 	}
 
 	public void ExecuteDeathRattle()
@@ -709,7 +712,7 @@ public class EnemyUnitController : UnitController, IBehaviorController
 		{
 			foreach (BuildingPassiveEffect passiveEffect in buildingPassife.PassiveEffects)
 			{
-				if (passiveEffect is GenerateGuardian generateGuardian && generateGuardian.Guardian == null)
+				if (passiveEffect is GenerateGuardian { Guardian: null } generateGuardian)
 				{
 					generateGuardian.Guardian = EnemyUnit;
 				}

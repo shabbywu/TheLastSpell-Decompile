@@ -906,7 +906,7 @@ public class ShopView : TPSingleton<ShopView>, IOverlayUser
 		int value = sortTypeDropdown.value;
 		TheLastStand.Model.Building.Shop.E_SortType item = (TheLastStand.Model.Building.Shop.E_SortType)Mathf.CeilToInt((float)value / 2f);
 		int item2 = ((value % 2 != 0) ? 1 : (-1));
-		return (item, item2);
+		return (sortType: item, sortDirection: item2);
 	}
 
 	private void PlaySoldItemSound()

@@ -1,11 +1,16 @@
 using System.Collections;
-using System.Linq;
+using System.Collections.Generic;
+using TPLib;
 using TheLastStand.Database.Unit;
 using TheLastStand.Definition.Unit.Perk.PerkEffect;
 using TheLastStand.Manager.Unit;
+using TheLastStand.Model;
+using TheLastStand.Model.Item;
+using TheLastStand.Model.Unit;
 using TheLastStand.Model.Unit.Perk;
 using TheLastStand.Model.Unit.Perk.PerkEffect;
 using TheLastStand.Model.Unit.Perk.PerkModule;
+using TheLastStand.View.Unit.Perk;
 using UnityEngine;
 
 namespace TheLastStand.Controller.Unit.Perk.PerkEffect;
@@ -19,68 +24,125 @@ public class ReplacePerkEffectController : APerkEffectController
 	{
 	}
 
-	protected override APerkEffect CreateModel(APerkEffectDefinition aPerkEffectDefinition, APerkModule aPerkModule)
-	{
-		return new ReplacePerkEffect(aPerkEffectDefinition as ReplacePerkEffectDefinition, this, aPerkModule);
-	}
-
 	public override void OnUnlock(bool onLoad)
 	{
+		base.PerkEffect.APerkModule.Perk.Owner.PlayableUnitPerksController.AddActiveReplaceEffect(ReplacePerkEffect.ReplacePerkEffectDefinition.PerkToReplaceId, ReplacePerkEffect.ReplacePerkEffectDefinition.PerkReplacementId);
 		if (!onLoad)
 		{
-			ReplacePerk(ReplacePerkEffect.ReplacePerkEffectDefinition.PerkToReplaceId, ReplacePerkEffect.ReplacePerkEffectDefinition.PerkReplacementId);
+			ReplacePerk(ReplacePerkEffect.ReplacePerkEffectDefinition.PerkToReplaceId, ReplacePerkEffect.ReplacePerkEffectDefinition.PerkReplacementId, isRevertingEffect: false);
 		}
 	}
 
 	public override void Lock(bool onLoad)
 	{
+		base.PerkEffect.APerkModule.Perk.Owner.PlayableUnitPerksController.RemoveActiveReplaceEffect(ReplacePerkEffect.ReplacePerkEffectDefinition.PerkToReplaceId, ReplacePerkEffect.ReplacePerkEffectDefinition.PerkReplacementId);
 		if (!onLoad)
 		{
-			ReplacePerk(ReplacePerkEffect.ReplacePerkEffectDefinition.PerkReplacementId, ReplacePerkEffect.ReplacePerkEffectDefinition.PerkToReplaceId);
+			ReplacePerk(ReplacePerkEffect.ReplacePerkEffectDefinition.PerkReplacementId, ReplacePerkEffect.ReplacePerkEffectDefinition.PerkToReplaceId, isRevertingEffect: true);
 		}
 	}
 
-	private bool ReplacePerk(string perkToReplaceId, string perkReplacementId)
+	protected override APerkEffect CreateModel(APerkEffectDefinition aPerkEffectDefinition, APerkModule aPerkModule)
 	{
-		if (!base.PerkEffect.APerkModule.Perk.Owner.Perks.ContainsKey(perkReplacementId))
+		return new ReplacePerkEffect(aPerkEffectDefinition as ReplacePerkEffectDefinition, this, aPerkModule);
+	}
+
+	private bool ReplacePerk(string perkToReplaceId, string perkReplacementId, bool isRevertingEffect)
+	{
+		PlayableUnit owner = base.PerkEffect.APerkModule.Perk.Owner;
+		if (!owner.Perks.ContainsKey(perkToReplaceId) || (owner.Perks.ContainsKey(perkReplacementId) && owner.Perks[perkReplacementId].PerkTier != null))
 		{
-			TheLastStand.Model.Unit.Perk.Perk perk = null;
-			UnitPerkTier unitPerkTier = null;
-			foreach (UnitPerkTier unitPerkTier2 in base.PerkEffect.APerkModule.Perk.Owner.PerkTree.UnitPerkTiers)
-			{
-				perk = (unitPerkTier = unitPerkTier2).Perks.FirstOrDefault((TheLastStand.Model.Unit.Perk.Perk p) => p.PerkDefinition.Id == perkToReplaceId);
-				if (perk != null)
-				{
-					break;
-				}
-			}
-			if (perk == null)
-			{
-				return false;
-			}
-			((MonoBehaviour)base.PerkEffect.APerkModule.Perk.Owner.UnitView).StartCoroutine(ReplacePerkCoroutine(perk, unitPerkTier, perkReplacementId));
-			return true;
+			return false;
 		}
-		return false;
+		TheLastStand.Model.Unit.Perk.Perk perkToReplace = owner.Perks[perkToReplaceId];
+		MonoBehaviour val = (MonoBehaviour)(object)owner.UnitView;
+		if ((Object)(object)val == (Object)null)
+		{
+			val = (MonoBehaviour)(object)TPSingleton<PlayableUnitManager>.Instance;
+		}
+		val.StartCoroutine(ReplacePerkCoroutine(perkToReplace, perkReplacementId, isRevertingEffect));
+		return true;
 	}
 
-	private IEnumerator ReplacePerkCoroutine(TheLastStand.Model.Unit.Perk.Perk perkToReplace, UnitPerkTier unitPerkTier, string perkReplacementId)
+	private IEnumerator ReplacePerkCoroutine(TheLastStand.Model.Unit.Perk.Perk perkToReplace, string perkReplacementId, bool isRevertingEffect)
 	{
+		UnitPerkTier unitPerkTier = perkToReplace.PerkTier;
 		yield return (object)new WaitForSeconds(Random.Range(PlayableUnitManager.PerkReplacementRandomDelay.x, PlayableUnitManager.PerkReplacementRandomDelay.y));
 		bool unlocked = perkToReplace.Unlocked;
 		bool bookmarked = perkToReplace.Bookmarked;
-		perkToReplace.PerkController.Lock();
-		PerkController perkController = new PerkController(PlayableUnitDatabase.PerkDefinitions[perkReplacementId], perkToReplace.PerkView, base.PerkEffect.APerkModule.Perk.Owner, perkToReplace.PerkTier, perkToReplace.CollectionId, isNative: false);
-		unitPerkTier.Perks[unitPerkTier.Perks.IndexOf(perkToReplace)] = perkController.Perk;
-		perkController.Perk.PerkView.SetContent(perkController.Perk);
-		perkController.Perk.PerkView.Init();
-		if (unlocked)
+		bool isUnlockedFromPlayableUnit = perkToReplace.IsUnlockedFromPlayableUnit;
+		bool isUnlockedFromItem = perkToReplace.IsUnlockedFromItem;
+		PlayableUnit owner = perkToReplace.Owner;
+		UnitPerkDisplay perkView = perkToReplace.PerkView;
+		List<IPerkUnlocker> list = new List<IPerkUnlocker>();
+		foreach (IPerkUnlocker unlocker in perkToReplace.Unlockers)
 		{
-			base.PerkEffect.APerkModule.Perk.Owner.PerkTree.UnitPerkTreeController.UnlockPerk(perkReplacementId);
+			list.Add(unlocker);
 		}
-		if (bookmarked)
+		bool flag = true;
+		if (isUnlockedFromItem && isRevertingEffect)
 		{
-			perkController.Perk.PerkController.ActiveBookmark(value: true);
+			List<IPerkUnlocker> list2 = new List<IPerkUnlocker>();
+			foreach (IPerkUnlocker item2 in list)
+			{
+				if (item2 is TheLastStand.Model.Item.Item item && item.PerksId.Contains(perkToReplace.PerkDefinition.Id))
+				{
+					flag = false;
+					list2.Add(item2);
+				}
+			}
+			foreach (IPerkUnlocker item3 in list2)
+			{
+				list.Remove(item3);
+			}
+		}
+		perkToReplace.PerkController.ChangePerkTierAndView(null, null);
+		if (flag)
+		{
+			perkToReplace.PerkController.LockAndClearUnlockers();
+		}
+		else
+		{
+			foreach (IPerkUnlocker item4 in list)
+			{
+				perkToReplace.Unlockers.Remove(item4);
+			}
+		}
+		TheLastStand.Model.Unit.Perk.Perk perk;
+		if (perkToReplace.Owner.Perks.ContainsKey(perkReplacementId))
+		{
+			perk = perkToReplace.Owner.Perks[perkReplacementId];
+			perk.PerkController.ChangePerkTierAndView(unitPerkTier, perkView);
+		}
+		else
+		{
+			perk = new PerkController(PlayableUnitDatabase.PerkDefinitions[perkReplacementId], perkView, owner, unitPerkTier, perkToReplace.CollectionId, perkToReplace.IsNative, perkToReplace.IsFromRace).Perk;
+		}
+		if ((Object)(object)perkView != (Object)null)
+		{
+			perk.PerkView.SetContent(perk);
+			perk.PerkView.Init();
+		}
+		if (unitPerkTier != null)
+		{
+			unitPerkTier.Perks[unitPerkTier.Perks.IndexOf(perkToReplace)] = perk;
+			if (unlocked)
+			{
+				if (isUnlockedFromPlayableUnit)
+				{
+					base.PerkEffect.APerkModule.Perk.Owner.PerkTree.UnitPerkTreeController.UnlockPerk(perkReplacementId);
+					list.Remove(perkToReplace.Owner);
+				}
+				perk.PerkController.Unlock(list);
+			}
+			if (bookmarked)
+			{
+				perk.PerkController.ActiveBookmark(value: true);
+			}
+		}
+		else
+		{
+			perk.PerkController.Unlock(list);
 		}
 	}
 }

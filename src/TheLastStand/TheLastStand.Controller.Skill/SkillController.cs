@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using TPLib;
 using TPLib.Log;
 using TheLastStand.Controller.Skill.SkillAction;
@@ -9,6 +10,7 @@ using TheLastStand.Manager.Building;
 using TheLastStand.Manager.Skill;
 using TheLastStand.Model;
 using TheLastStand.Model.Building;
+using TheLastStand.Model.Extensions;
 using TheLastStand.Model.Skill;
 using TheLastStand.Model.Skill.SkillAction;
 using TheLastStand.Model.TileMap;
@@ -55,14 +57,14 @@ public class SkillController
 
 	public bool CheckContextualConditions(PlayableUnit playableUnit)
 	{
-		//IL_020b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0210: Unknown result type (might be due to invalid IL or missing references)
-		//IL_021f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0224: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0153: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0158: Unknown result type (might be due to invalid IL or missing references)
-		//IL_016a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_016f: Unknown result type (might be due to invalid IL or missing references)
+		//IL_02f3: Unknown result type (might be due to invalid IL or missing references)
+		//IL_02f8: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0307: Unknown result type (might be due to invalid IL or missing references)
+		//IL_030c: Unknown result type (might be due to invalid IL or missing references)
+		//IL_01f5: Unknown result type (might be due to invalid IL or missing references)
+		//IL_01fa: Unknown result type (might be due to invalid IL or missing references)
+		//IL_020c: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0211: Unknown result type (might be due to invalid IL or missing references)
 		bool flag = true;
 		foreach (SkillConditionDefinition contextualCondition in Skill.SkillDefinition.ContextualConditions)
 		{
@@ -99,8 +101,8 @@ public class SkillController
 							position = playableUnit.OriginTile.Position;
 							int x2 = ((Vector2Int)(ref position)).x + i;
 							position = playableUnit.OriginTile.Position;
-							Tile tile2 = tileMap2.GetTile(x2, ((Vector2Int)(ref position)).y + j);
-							if (tile2 != null && !tile2.HasFog && tile2.Building != null && tile2.Building.BuildingDefinition.Id == nextToBuildingConditionDefinition.BuildingDefinitionId)
+							Tile tile3 = tileMap2.GetTile(x2, ((Vector2Int)(ref position)).y + j);
+							if (tile3 != null && !tile3.HasFog && tile3.Building != null && tile3.Building.BuildingDefinition.Id == nextToBuildingConditionDefinition.BuildingDefinitionId)
 							{
 								flag = true;
 							}
@@ -111,6 +113,12 @@ public class SkillController
 						break;
 					}
 				}
+				break;
+			}
+			case "InPlayableUnitRange":
+			{
+				InPlayableUnitRangConditionDefinition inPlayableUnitRangConditionDefinition = contextualCondition as InPlayableUnitRangConditionDefinition;
+				flag = playableUnit.OccupiedTiles.GetTilesInRange(inPlayableUnitRangConditionDefinition.MaxRange, 1).Any((Tile tile) => tile.Unit is PlayableUnit);
 				break;
 			}
 			case "NotInBuilding":
@@ -124,8 +132,8 @@ public class SkillController
 				position = playableUnit.OriginTile.Position;
 				int x = ((Vector2Int)(ref position)).x;
 				position = playableUnit.OriginTile.Position;
-				Tile tile = tileMap.GetTile(x, ((Vector2Int)(ref position)).y);
-				if (!tile.HasFog && tile.Building != null && tile.Building.BuildingDefinition.Id == ontoBuildingConditionDefinition.BuildingDefinitionId)
+				Tile tile2 = tileMap.GetTile(x, ((Vector2Int)(ref position)).y);
+				if (!tile2.HasFog && tile2.Building != null && tile2.Building.BuildingDefinition.Id == ontoBuildingConditionDefinition.BuildingDefinitionId)
 				{
 					flag = true;
 				}
@@ -242,7 +250,7 @@ public class SkillController
 		{
 			return true;
 		}
-		if (Skill.SkillDefinition.ValidTargets.WalkableTiles && targetTile.GroundDefinition.IsCrossable && targetTile.Unit == null && Skill.SkillAction.SkillActionExecution.Caster is TheLastStand.Model.Unit.Unit unit && unit.CanStopOn(targetTile))
+		if ((Skill.SkillDefinition.ValidTargets.WalkableTiles || (Skill.SkillDefinition.ValidTargets.WalkableCityTiles && targetTile.IsCityTile)) && targetTile.GroundDefinition.IsCrossable && targetTile.Unit == null && Skill.SkillAction.SkillActionExecution.Caster is TheLastStand.Model.Unit.Unit unit && unit.CanStopOn(targetTile))
 		{
 			return true;
 		}
@@ -371,7 +379,7 @@ public class SkillController
 		}
 		if (tile.IsEmpty())
 		{
-			if (Skill.SkillDefinition.ValidTargets.EmptyTiles || (Skill.SkillDefinition.ValidTargets.WalkableTiles && (!(Skill.Owner is TheLastStand.Model.Unit.Unit unit) || unit.CanStopOn(tile))))
+			if (Skill.SkillDefinition.ValidTargets.EmptyTiles || ((Skill.SkillDefinition.ValidTargets.WalkableTiles || (Skill.SkillDefinition.ValidTargets.WalkableCityTiles && tile.IsCityTile)) && (!(Skill.Owner is TheLastStand.Model.Unit.Unit unit) || unit.CanStopOn(tile))))
 			{
 				Skill.Targets.Add(tile);
 				return true;
@@ -404,7 +412,7 @@ public class SkillController
 					targets.Add(item);
 					return true;
 				}
-				if (Skill.SkillDefinition.ValidTargets.WalkableTiles && (!(Skill.Owner is TheLastStand.Model.Unit.Unit unit2) || unit2.CanStopOn(tile)))
+				if ((Skill.SkillDefinition.ValidTargets.WalkableTiles || (Skill.SkillDefinition.ValidTargets.WalkableCityTiles && tile.IsCityTile)) && (!(Skill.Owner is TheLastStand.Model.Unit.Unit unit2) || unit2.CanStopOn(tile)))
 				{
 					Skill.Targets.Add(tile);
 					return true;

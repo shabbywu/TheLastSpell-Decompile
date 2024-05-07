@@ -14,6 +14,7 @@ using TheLastStand.Definition.Item;
 using TheLastStand.Definition.Unit;
 using TheLastStand.Framework;
 using TheLastStand.Manager;
+using TheLastStand.Manager.DLC;
 using TheLastStand.Manager.SDK;
 using TheLastStand.Manager.Unit;
 using TheLastStand.Model.Unit;
@@ -168,28 +169,28 @@ public class PlayableUnitView : UnitView, ISnapshotable
 
 	public static void GeneratePortrait(PlayableUnit playableUnit, SerializedPlayableUnit playableUnitElement)
 	{
-		//IL_0044: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0049: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ea: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00c7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03b1: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03bd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03c9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_03d5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02f4: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0059: Unknown result type (might be due to invalid IL or missing references)
+		//IL_005e: Unknown result type (might be due to invalid IL or missing references)
+		//IL_010f: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0114: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00f1: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00f6: Unknown result type (might be due to invalid IL or missing references)
+		//IL_03db: Unknown result type (might be due to invalid IL or missing references)
+		//IL_03e7: Unknown result type (might be due to invalid IL or missing references)
+		//IL_03f3: Unknown result type (might be due to invalid IL or missing references)
+		//IL_03ff: Unknown result type (might be due to invalid IL or missing references)
+		//IL_031e: Unknown result type (might be due to invalid IL or missing references)
 		PortraitGenerationResult val;
 		CodeData val2 = default(CodeData);
 		if (string.IsNullOrEmpty(playableUnitElement.Portrait.Code))
 		{
-			val = PortraitAPIManager.GeneratePortrait(playableUnit.Gender, playableUnit.FaceId, RandomManager.GetRandomForCaller(((object)TPSingleton<PlayableUnitManager>.Instance).GetType().Name));
+			val = PortraitAPIManager.GeneratePortrait(playableUnit.Gender, playableUnit.FaceId, RandomManager.GetRandomForCaller(((object)TPSingleton<PlayableUnitManager>.Instance).GetType().Name), playableUnit.RaceDefinition.Id, TPSingleton<DLCManager>.Instance.OwnedDLCIds);
 			playableUnit.PlayableUnitController.RandomizeColors(ref val.Code);
 		}
 		else if (!CodeGenerator.TryDecode(playableUnitElement.Portrait.Code, ref val2))
 		{
 			CLoggerManager.Log((object)("We are trying to decode an invalid portrait code ! (Code : " + playableUnitElement.Portrait.Code + ")"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
-			val = PortraitAPIManager.GeneratePortrait(playableUnit.Gender, playableUnit.FaceId, RandomManager.GetRandomForCaller(((object)TPSingleton<PlayableUnitManager>.Instance).GetType().Name));
+			val = PortraitAPIManager.GeneratePortrait(playableUnit.Gender, playableUnit.FaceId, RandomManager.GetRandomForCaller(((object)TPSingleton<PlayableUnitManager>.Instance).GetType().Name), playableUnit.RaceDefinition.Id, TPSingleton<DLCManager>.Instance.OwnedDLCIds);
 			playableUnit.PlayableUnitController.RandomizeColors(ref val.Code);
 		}
 		else
@@ -272,19 +273,19 @@ public class PlayableUnitView : UnitView, ISnapshotable
 
 	public static void GenerateRandomPortrait(PlayableUnit playableUnit)
 	{
-		//IL_0046: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0076: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0082: Unknown result type (might be due to invalid IL or missing references)
+		//IL_005b: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0060: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0073: Unknown result type (might be due to invalid IL or missing references)
+		//IL_007f: Unknown result type (might be due to invalid IL or missing references)
+		//IL_008b: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0097: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00ac: Unknown result type (might be due to invalid IL or missing references)
 		if (string.IsNullOrEmpty(playableUnit.Gender) || string.IsNullOrEmpty(playableUnit.FaceId))
 		{
 			TPDebug.LogError((object)"Trying to GetPortraitForUnit but Gender or FaceId is not setup --> aborting", (Object)null);
 			return;
 		}
-		PortraitGenerationResult val = PortraitAPIManager.GeneratePortrait(playableUnit.Gender, playableUnit.FaceId, RandomManager.GetRandomForCaller(((object)TPSingleton<PlayableUnitManager>.Instance).GetType().Name));
+		PortraitGenerationResult val = PortraitAPIManager.GeneratePortrait(playableUnit.Gender, playableUnit.FaceId, RandomManager.GetRandomForCaller(((object)TPSingleton<PlayableUnitManager>.Instance).GetType().Name), playableUnit.RaceDefinition.Id, TPSingleton<DLCManager>.Instance.OwnedDLCIds);
 		playableUnit.PlayableUnitController.RandomizeColors(ref val.Code);
 		AddUsedPortrait(val.Front);
 		playableUnit.PortraitSprite = val.Front;
@@ -530,11 +531,28 @@ public class PlayableUnitView : UnitView, ISnapshotable
 
 	protected override bool InitAnimations()
 	{
-		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0029: Expected O, but got Unknown
+		//IL_009a: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00a4: Expected O, but got Unknown
+		bool flag = false;
+		if (PlayableUnit != null && PlayableUnit.RaceDefinition != null)
+		{
+			if (PlayableUnit.RaceDefinition.OverrideUnitAnimator)
+			{
+				animator.runtimeAnimatorController = ResourcePooler.LoadOnce<RuntimeAnimatorController>("Animators/Units/PlayableUnits/" + PlayableUnit.RaceDefinition.AnimatorName, failSilently: false);
+			}
+			else
+			{
+				animator.runtimeAnimatorController = PlayableUnitDatabase.RaceDefaultAnimatorController;
+			}
+			flag = true;
+		}
 		if (!base.InitAnimations())
 		{
 			return false;
+		}
+		if (flag)
+		{
+			animator.Update(0f);
 		}
 		if (waitUntilAnimatorStateIsPrepareDie == null)
 		{
@@ -658,6 +676,16 @@ public class PlayableUnitView : UnitView, ISnapshotable
 				SwapColor(paletteDefinition.ColorSwapDefinitions[i].Index, paletteDefinition.ColorSwapDefinitions[i].OutputColor);
 			}
 		}
+	}
+
+	public void DebugChangeAnimatorController(RuntimeAnimatorController newAnimatorController)
+	{
+		InitAnimatorController(newAnimatorController);
+	}
+
+	public string DebugGetCurrentAnimatorControllerName()
+	{
+		return ((Object)animator.runtimeAnimatorController).name;
 	}
 
 	[ContextMenu("Refresh ColorSwap")]

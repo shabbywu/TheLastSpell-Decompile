@@ -4,6 +4,7 @@ using TheLastStand.Definition.Unit.Enemy.Boss.PhaseCondition;
 using TheLastStand.Manager.Unit;
 using TheLastStand.Model;
 using TheLastStand.Model.Building;
+using TheLastStand.Model.Building.Module;
 
 namespace TheLastStand.Controller.Unit.Enemy.Boss.PhaseCondition;
 
@@ -26,7 +27,12 @@ public class RemainingActorsBossPhaseConditionController : ABossPhaseConditionCo
 				{
 					return !damageable.IsDead;
 				}
-				return !(x is TheLastStand.Model.Building.Building building) || (building.DamageableModule?.IsDead ?? true);
+				if (x is TheLastStand.Model.Building.Building building)
+				{
+					DamageableModule damageableModule = building.DamageableModule;
+					return damageableModule == null || !damageableModule.IsDead;
+				}
+				return true;
 			}) == RemainingActorsBossPhaseConditionDefinition.Amount;
 		}
 		return false;

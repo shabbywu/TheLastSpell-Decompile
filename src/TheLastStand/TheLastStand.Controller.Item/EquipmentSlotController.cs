@@ -63,10 +63,15 @@ public class EquipmentSlotController : ItemSlotController
 		if (item != null)
 		{
 			EquipmentSlot.PlayableUnit.PlayableUnitStatsController.OnItemEquiped(item, onLoad);
+			EquipmentSlot.PlayableUnit.PlayableUnitPerksController.OnItemEquipped(EquipmentSlot, item);
 		}
 		if (base.ItemSlot.Item != null)
 		{
 			EquipmentSlot.PlayableUnit.PlayableUnitStatsController.OnItemUnequiped(base.ItemSlot.Item, onLoad);
+			if (item == null || base.ItemSlot.Item != item || item.ItemSlot == null || base.ItemSlot.ItemSlotDefinition.Id != item.ItemSlot.ItemSlotDefinition.Id)
+			{
+				EquipmentSlot.PlayableUnit.PlayableUnitPerksController.OnItemUnequipped(EquipmentSlot);
+			}
 		}
 		base.SetItem(item);
 		if (item != null && item.IsTwoHandedWeapon && TileObjectSelectionManager.HasPlayableUnitSelected)

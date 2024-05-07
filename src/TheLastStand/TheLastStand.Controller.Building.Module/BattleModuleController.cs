@@ -33,6 +33,15 @@ public class BattleModuleController : BuildingModuleController, IBehaviorControl
 		BattleModule = base.BuildingModule as BattleModule;
 	}
 
+	public static void FinalizeDeathRattling(BattleModule battleModule)
+	{
+		if (battleModule.IsDeathRattling)
+		{
+			battleModule.IsDeathRattling = false;
+			TPSingleton<BuildingManager>.Instance.BuildingsDeathRattling.Remove(battleModule);
+		}
+	}
+
 	public void ClearCurrentGoal()
 	{
 		BattleModule.Log("Cleared current goal", (CLogLevel)0);
@@ -90,23 +99,33 @@ public class BattleModuleController : BuildingModuleController, IBehaviorControl
 
 	public void ExecuteAllGoals()
 	{
+		bool flag = false;
 		if (BattleModule.CurrentGoals == null || BattleModule.CurrentGoals.Length == 0)
 		{
 			return;
 		}
 		List<ComputedGoal> list = BattleModule.CurrentGoals.ToList();
-		if (list.Count != 0)
+		if (list.Count == 0)
 		{
-			for (int i = 0; i < list.Count; i++)
+			return;
+		}
+		for (int i = 0; i < list.Count; i++)
+		{
+			ComputedGoal goalToExecute = list[i];
+			if (ExecuteGoal(goalToExecute))
 			{
-				ComputedGoal goalToExecute = list[i];
-				ExecuteGoal(goalToExecute);
+				flag = true;
 			}
+		}
+		if (BattleModule.IsDeathRattling && !flag)
+		{
+			FinalizeDeathRattling(BattleModule);
 		}
 	}
 
-	public void ExecuteGoal(ComputedGoal goalToExecute)
+	public bool ExecuteGoal(ComputedGoal goalToExecute)
 	{
+		bool result = false;
 		BattleModule.Log($"Executing Goal -> target tile is {goalToExecute.TargetTileInfo}, orientation is {goalToExecute.TargetTileInfo.Orientation}", (CLogLevel)0);
 		SkillAction skillAction = goalToExecute.Goal.Skill.SkillAction;
 		skillAction.SkillActionExecution.SkillExecutionController.PrepareSkill(BattleModule);
@@ -116,8 +135,10 @@ public class BattleModuleController : BuildingModuleController, IBehaviorControl
 		{
 			skillAction.SkillActionExecution.TargetTiles.Add(goalToExecute.TargetTileInfo);
 			skillAction.SkillActionExecution.SkillExecutionController.ExecuteSkill();
+			result = true;
 		}
 		BattleModule.TargetTile = null;
+		return result;
 	}
 
 	public void ExecuteDeathRattle()
@@ -135,7 +156,7 @@ public class BattleModuleController : BuildingModuleController, IBehaviorControl
 
 	public void HookToModifyingDamagePerks()
 	{
-		if (ApplicationManager.Application.State.GetName() == "LevelEditor")
+		if (ApplicationManager.Application.State.GetName() == "LevelEditor" || TPSingleton<PlayableUnitManager>.Instance.PlayableUnits == null)
 		{
 			return;
 		}
