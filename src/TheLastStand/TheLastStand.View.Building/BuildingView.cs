@@ -144,6 +144,10 @@ public class BuildingView : MonoBehaviour, IDamageableView, ITileObjectView
 
 	public Action OnFinalInitFrame;
 
+	public int ActiveConstructionAnimationViewNb { get; set; }
+
+	public int ActiveDestructionAnimationViewNb { get; set; }
+
 	public AttackFeedback AttackFeedback { get; private set; }
 
 	public ExtinguishBrazierFeedback ExtinguishBrazierFeedback { get; private set; }
@@ -201,6 +205,14 @@ public class BuildingView : MonoBehaviour, IDamageableView, ITileObjectView
 		set
 		{
 			bool flag = value || (TileObjectSelectionManager.HasEnemyUnitSelected && TileObjectSelectionManager.SelectedEnemyUnit.LinkedBuilding == Building);
+			if (flag)
+			{
+				TheLastStand.Model.Skill.Skill skillToDisplayOnHover = GetSkillToDisplayOnHover();
+				if (skillToDisplayOnHover != null && skillToDisplayOnHover.SkillAction.SkillActionExecution.Caster != null && skillToDisplayOnHover.SkillAction.SkillActionExecution.Caster.IsExecutingSkill)
+				{
+					return;
+				}
+			}
 			if (hovered == flag)
 			{
 				return;
@@ -275,7 +287,11 @@ public class BuildingView : MonoBehaviour, IDamageableView, ITileObjectView
 	public List<IDisplayableEffect> SkillEffectDisplays { get; private set; } = new List<IDisplayableEffect>();
 
 
+	public WaitUntil WaitUntilConstructionAnimationIsFinished { get; private set; }
+
 	public WaitUntil WaitUntilDeathCanBeFinalized { get; private set; }
+
+	public WaitUntil WaitUntilDestructionAnimationIsFinished { get; private set; }
 
 	private TheLastStand.Model.Building.Building Building => buildingController.Building;
 
@@ -484,6 +500,10 @@ public class BuildingView : MonoBehaviour, IDamageableView, ITileObjectView
 	{
 		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0035: Expected O, but got Unknown
+		//IL_004a: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0054: Expected O, but got Unknown
+		//IL_0069: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0073: Expected O, but got Unknown
 		if (initialized)
 		{
 			return;
@@ -493,6 +513,14 @@ public class BuildingView : MonoBehaviour, IDamageableView, ITileObjectView
 		if (WaitUntilDeathCanBeFinalized == null)
 		{
 			WaitUntilDeathCanBeFinalized = new WaitUntil((Func<bool>)(() => canFinalizedDeath));
+		}
+		if (WaitUntilConstructionAnimationIsFinished == null)
+		{
+			WaitUntilConstructionAnimationIsFinished = new WaitUntil((Func<bool>)(() => ActiveConstructionAnimationViewNb == 0));
+		}
+		if (WaitUntilDestructionAnimationIsFinished == null)
+		{
+			WaitUntilDestructionAnimationIsFinished = new WaitUntil((Func<bool>)(() => ActiveDestructionAnimationViewNb == 0));
 		}
 		((MonoBehaviour)this).StartCoroutine(FinishInitAfterAFrame());
 		initialized = true;

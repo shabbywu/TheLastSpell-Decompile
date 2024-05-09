@@ -7,4 +7,10 @@ public class SerializedAchievements
 	public SerializedAchievementUnlocker Crit20EnemiesTurnAchievementUnlocker;
 
 	public SerializedAchievementUnlocker PerfectWinAchievementUnlocker;
+
+	public SerializedAchievementUnlocker Destroy10CrystalsRunAchievementUnlocker;
+
+	public SerializedAchievementUnlocker Use50BeersRunAchievementUnlocker;
+
+	public SerializedAchievementUnlocker CrystalCorrupt5EnemiesNightAchievementUnlocker;
 }

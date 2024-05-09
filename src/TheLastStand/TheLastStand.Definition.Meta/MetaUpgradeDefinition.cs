@@ -49,6 +49,8 @@ public class MetaUpgradeDefinition : TheLastStand.Framework.Serialization.Defini
 
 	public int DeserializationIndex { get; private set; }
 
+	public string DLCId { get; private set; }
+
 	public bool MandatoryUnlock { get; private set; }
 
 	public bool Hidden { get; private set; }
@@ -57,6 +59,8 @@ public class MetaUpgradeDefinition : TheLastStand.Framework.Serialization.Defini
 
 
 	public string Id { get; private set; }
+
+	public bool IsLinkedToDLC => !string.IsNullOrEmpty(DLCId);
 
 	public uint Price { get; private set; }
 
@@ -100,20 +104,25 @@ public class MetaUpgradeDefinition : TheLastStand.Framework.Serialization.Defini
 		XAttribute obj2 = val.Attribute(XName.op_Implicit("Price"));
 		Price = uint.Parse(((obj2 != null) ? obj2.Value : null) ?? Price.ToString());
 		MandatoryUnlock = ((XContainer)val).Element(XName.op_Implicit("MandatoryUnlock")) != null;
-		XElement val2 = ((XContainer)val).Element(XName.op_Implicit("UnlockConditions"));
+		XAttribute val2 = val.Attribute(XName.op_Implicit("DLCId"));
 		if (val2 != null)
 		{
-			DeserializeConditions(val2, UnlockConditionsDefinitions);
+			DLCId = val2.Value;
 		}
-		XElement val3 = ((XContainer)val).Element(XName.op_Implicit("ActivationConditions"));
+		XElement val3 = ((XContainer)val).Element(XName.op_Implicit("UnlockConditions"));
 		if (val3 != null)
 		{
-			DeserializeConditions(val3, ActivationConditionsDefinitions);
+			DeserializeConditions(val3, UnlockConditionsDefinitions);
 		}
-		XElement val4 = ((XContainer)val).Element(XName.op_Implicit("UpgradeEffects"));
+		XElement val4 = ((XContainer)val).Element(XName.op_Implicit("ActivationConditions"));
 		if (val4 != null)
 		{
-			foreach (XElement item in ((XContainer)val4).Elements())
+			DeserializeConditions(val4, ActivationConditionsDefinitions);
+		}
+		XElement val5 = ((XContainer)val).Element(XName.op_Implicit("UpgradeEffects"));
+		if (val5 != null)
+		{
+			foreach (XElement item in ((XContainer)val5).Elements())
 			{
 				switch (item.Name.LocalName)
 				{
@@ -223,6 +232,10 @@ public class MetaUpgradeDefinition : TheLastStand.Framework.Serialization.Defini
 					Category |= E_MetaUpgradeCategory.Hero;
 					UpgradeEffectDefinitions.Add(new UnlockPerkCollectionSlotsMetaEffectDefinition((XContainer)(object)item));
 					break;
+				case "UnlockRaces":
+					Category |= E_MetaUpgradeCategory.Hero;
+					UpgradeEffectDefinitions.Add(new UnlockRacesMetaEffectDefinition((XContainer)(object)item));
+					break;
 				case "UnlockRerollReward":
 					UpgradeEffectDefinitions.Add(new UnlockRerollRewardMetaEffectDefinition((XContainer)(object)item));
 					break;
@@ -247,77 +260,77 @@ public class MetaUpgradeDefinition : TheLastStand.Framework.Serialization.Defini
 					break;
 				}
 			}
-			XElement val5 = ((XContainer)val).Element(XName.op_Implicit("ForceDisplayTooltips"));
-			if (val5 != null)
+			XElement val6 = ((XContainer)val).Element(XName.op_Implicit("ForceDisplayTooltips"));
+			if (val6 != null)
 			{
-				foreach (XElement item3 in ((XContainer)val5).Elements())
+				foreach (XElement item3 in ((XContainer)val6).Elements())
 				{
-					XAttribute val6 = item3.Attribute(XName.op_Implicit("Id"));
+					XAttribute val7 = item3.Attribute(XName.op_Implicit("Id"));
 					switch (item3.Name.LocalName)
 					{
 					case "ItemTooltip":
-						ItemsToShow.Add(val6.Value);
+						ItemsToShow.Add(val7.Value);
 						break;
 					case "GlyphTooltip":
-						GlyphsToShow.Add(val6.Value);
+						GlyphsToShow.Add(val7.Value);
 						break;
 					case "BuildingTooltip":
-						BuildingsToShow.Add(val6.Value);
+						BuildingsToShow.Add(val7.Value);
 						break;
 					case "BuildingActionTooltip":
-						BuildingActionsToShow.Add(val6.Value);
+						BuildingActionsToShow.Add(val7.Value);
 						break;
 					case "BuildingUpgradeTooltip":
-						BuildingUpgradesToShow.Add(val6.Value);
+						BuildingUpgradesToShow.Add(val7.Value);
 						break;
 					}
 				}
 			}
-			XElement val7 = ((XContainer)val).Element(XName.op_Implicit("ForceHideTooltips"));
-			if (val7 != null)
+			XElement val8 = ((XContainer)val).Element(XName.op_Implicit("ForceHideTooltips"));
+			if (val8 != null)
 			{
-				foreach (XElement item4 in ((XContainer)val7).Elements())
+				foreach (XElement item4 in ((XContainer)val8).Elements())
 				{
-					XAttribute val8 = item4.Attribute(XName.op_Implicit("Id"));
+					XAttribute val9 = item4.Attribute(XName.op_Implicit("Id"));
 					switch (item4.Name.LocalName)
 					{
 					case "ItemTooltip":
-						ItemsToShow.Remove(val8.Value);
+						ItemsToShow.Remove(val9.Value);
 						break;
 					case "GlyphTooltip":
-						GlyphsToShow.Remove(val8.Value);
+						GlyphsToShow.Remove(val9.Value);
 						break;
 					case "BuildingTooltip":
-						BuildingsToShow.Remove(val8.Value);
+						BuildingsToShow.Remove(val9.Value);
 						break;
 					case "BuildingActionTooltip":
-						BuildingActionsToShow.Remove(val8.Value);
+						BuildingActionsToShow.Remove(val9.Value);
 						break;
 					case "BuildingUpgradeTooltip":
-						BuildingUpgradesToShow.Remove(val8.Value);
+						BuildingUpgradesToShow.Remove(val9.Value);
 						break;
 					}
 				}
 			}
-			XElement val9 = ((XContainer)val).Element(XName.op_Implicit("Categories"));
-			if (val9 != null)
+			XElement val10 = ((XContainer)val).Element(XName.op_Implicit("Categories"));
+			if (val10 != null)
 			{
-				XAttribute val10 = val9.Attribute(XName.op_Implicit("OverrideAutomaticCategories"));
+				XAttribute val11 = val10.Attribute(XName.op_Implicit("OverrideAutomaticCategories"));
 				bool result = default(bool);
-				if (val10 != null && bool.TryParse(val10.Value, out result) && result)
+				if (val11 != null && bool.TryParse(val11.Value, out result) && result)
 				{
 					Category = E_MetaUpgradeCategory.None;
 				}
-				foreach (XElement item5 in ((XContainer)val9).Elements(XName.op_Implicit("Category")))
+				foreach (XElement item5 in ((XContainer)val10).Elements(XName.op_Implicit("Category")))
 				{
-					XAttribute val11 = item5.Attribute(XName.op_Implicit("Value"));
-					if (Enum.TryParse<E_MetaUpgradeCategory>(val11.Value, out var result2))
+					XAttribute val12 = item5.Attribute(XName.op_Implicit("Value"));
+					if (Enum.TryParse<E_MetaUpgradeCategory>(val12.Value, out var result2))
 					{
 						Category |= result2;
 					}
 					else
 					{
-						CLoggerManager.Log((object)("Could not parse Category attribute into a meta upgrade category in meta upgrade " + Id + " : " + val11.Value), (LogType)3, (CLogLevel)1, true, "StaticLog", false);
+						CLoggerManager.Log((object)("Could not parse Category attribute into a meta upgrade category in meta upgrade " + Id + " : " + val12.Value), (LogType)3, (CLogLevel)1, true, "StaticLog", false);
 					}
 				}
 			}

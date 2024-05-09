@@ -1,8 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Sirenix.Utilities;
+using TPLib;
 using TheLastStand.Controller.TileMap;
 using TheLastStand.Definition.Unit.Perk;
+using TheLastStand.Manager;
+using TheLastStand.Manager.Unit;
 using TheLastStand.Model.Skill.SkillAction.SkillActionExecution.SkillActionExecutionTileData;
 using TheLastStand.Model.TileMap;
 
@@ -52,11 +55,11 @@ public class PerkTargeting
 				{
 					if (!t.HasFog)
 					{
-						IDamageable damageable4 = t.Damageable;
-						if (damageable4 != null && damageable4.CanBeDamaged())
+						IDamageable damageable6 = t.Damageable;
+						if (damageable6 != null && damageable6.CanBeDamaged())
 						{
-							ITileObject tileObject3 = t.TileObject;
-							if ((tileObject3 == null || tileObject3.IsTargetableByAI()) && t.Damageable != perk.Owner)
+							IDamageable damageable7 = t.Damageable;
+							if ((damageable7 == null || damageable7.IsTargetableByAI()) && t.Damageable != perk.Owner)
 							{
 								return PerkTargetingDefinition.ValidDamageableTypes?.Contains(t.Damageable.DamageableType) ?? true;
 							}
@@ -75,8 +78,8 @@ public class PerkTargeting
 					IDamageable damageable2 = item.Damageable;
 					if (damageable2 != null && damageable2.CanBeDamaged())
 					{
-						ITileObject tileObject = item.TileObject;
-						if (tileObject == null || tileObject.IsTargetableByAI())
+						IDamageable damageable3 = item.Damageable;
+						if (damageable3 == null || damageable3.IsTargetableByAI())
 						{
 							hashSet.Add(item);
 						}
@@ -84,30 +87,37 @@ public class PerkTargeting
 				}
 				break;
 			case PerkTargetingDefinition.E_TargetingMethod.DamageablesInRange:
-				foreach (Tile item2 in TargetingReferenceTileObject.TileObjectController.GetTilesInRange(maxRange).Where(delegate(Tile t)
+			{
+				List<Tile> list = TargetingReferenceTileObject.TileObjectController.GetTilesInRange(maxRange).Where(delegate(Tile t)
 				{
 					if (!t.HasFog)
 					{
-						IDamageable damageable3 = t.Damageable;
-						if (damageable3 != null && damageable3.CanBeDamaged() && t.Damageable != perk.Owner)
+						IDamageable damageable5 = t.Damageable;
+						if (damageable5 != null && damageable5.CanBeDamaged() && t.Damageable != perk.Owner)
 						{
 							return PerkTargetingDefinition.ValidDamageableTypes?.Contains(t.Damageable.DamageableType) ?? true;
 						}
 					}
 					return false;
-				}).ToList())
+				}).ToList();
+				if (num != int.MaxValue)
+				{
+					list = RandomManager.Shuffle(TPSingleton<PlayableUnitManager>.Instance, list).ToList();
+				}
+				foreach (Tile item2 in list)
 				{
 					if (hashSet.Count >= num)
 					{
 						break;
 					}
-					ITileObject tileObject2 = item2.TileObject;
-					if (tileObject2 == null || tileObject2.IsTargetableByAI())
+					IDamageable damageable4 = item2.Damageable;
+					if (damageable4 == null || damageable4.IsTargetableByAI())
 					{
 						hashSet.Add(item2);
 					}
 				}
 				break;
+			}
 			case PerkTargetingDefinition.E_TargetingMethod.Self:
 			{
 				IDamageable damageable = TargetingReferenceTileObject.OriginTile.Damageable;

@@ -330,7 +330,7 @@ public class EquipmentSlotView : ItemSlotView
 		base.Awake();
 		slotNormalSprite = slotImage.sprite;
 		GenerateRaritiesParticlesDictionary();
-		TPSingleton<HUDJoystickNavigationManager>.Instance.TooltipsToggled += OnTooltipsToggled;
+		HUDJoystickNavigationManager.TooltipsToggled += OnTooltipsToggled;
 	}
 
 	protected override void ToggleRarityParticlesHook(bool enable)
@@ -395,10 +395,7 @@ public class EquipmentSlotView : ItemSlotView
 
 	private void OnDestroy()
 	{
-		if (TPSingleton<HUDJoystickNavigationManager>.Exist())
-		{
-			TPSingleton<HUDJoystickNavigationManager>.Instance.TooltipsToggled -= OnTooltipsToggled;
-		}
+		HUDJoystickNavigationManager.TooltipsToggled -= OnTooltipsToggled;
 	}
 
 	private void OnTooltipsToggled(bool showTooltips)

@@ -41,6 +41,8 @@ public class MainMenuView : TPSingleton<MainMenuView>
 
 		public const string ContinueGameInfoMissingModKey = "MainMenu_ContinueGameInfo_MissingMod";
 
+		public const string ContinueGameInfoMissingDLCKey = "MainMenu_ContinueGameInfo_MissingDLC";
+
 		public const string ContinueGameInfoCorruptedKey = "MainMenu_ContinueGameInfo_Corrupted";
 
 		public const string ContinueCampaignButtonKey = "MainMenu_ContinueCampaignButton";
@@ -51,6 +53,10 @@ public class MainMenuView : TPSingleton<MainMenuView>
 
 		public const string PopupOutdatedGameSaveTextKey = "MainMenu_Popup_OutdatedGameSave_Text";
 
+		public const string PopupMissingDLCGameSaveTitleKey = "MainMenu_Popup_MissingDLCGameSave_Title";
+
+		public const string PopupMissingDLCGameSaveTextKey = "MainMenu_Popup_MissingDLCGameSave_Text";
+
 		public const string PopupMissingModGameSaveTitleKey = "MainMenu_Popup_MissingModGameSave_Title";
 
 		public const string PopupMissingModGameSaveTextKey = "MainMenu_Popup_MissingModGameSave_Text";
@@ -58,6 +64,10 @@ public class MainMenuView : TPSingleton<MainMenuView>
 		public const string PopupWillCorruptGameSaveTitleKey = "MainMenu_Popup_WillCorruptGameSave_Title";
 
 		public const string PopupWillCorruptGameSaveTextKey = "MainMenu_Popup_WillCorruptGameSave_Text";
+
+		public const string PopupWillCorruptMissingDLCGameSaveTitleKey = "MainMenu_Popup_WillCorruptMissingDLCGameSave_Title";
+
+		public const string PopupWillCorruptMissingDLCGameSaveTextKey = "MainMenu_Popup_WillCorruptMissingDLCGameSave_Text";
 
 		public const string KeyRemappingChangesDisclaimerTitle = "KeyRemappingChanges_Disclaimer_Title";
 
@@ -76,6 +86,8 @@ public class MainMenuView : TPSingleton<MainMenuView>
 
 		public static Func<SettingsManager.SettingsChangesNoteLocalizationKeys, string[]> _003C_003E9__9_2;
 
+		public static Action _003C_003E9__10_1;
+
 		public static UnityAction _003C_003E9__10_0;
 
 		public static TweenCallback _003C_003E9__14_0;
@@ -93,6 +105,12 @@ public class MainMenuView : TPSingleton<MainMenuView>
 		internal string[] _003COpenSettingsChangesWarning_003Eb__9_2(SettingsManager.SettingsChangesNoteLocalizationKeys o)
 		{
 			return o.FormatArgs;
+		}
+
+		internal void _003COnContinueClick_003Eb__10_1()
+		{
+			SaveManager.CorruptGameSave();
+			ApplicationManager.Application.ApplicationController.SetState("LoadWorldMap");
 		}
 
 		internal void _003COnContinueClick_003Eb__10_0()
@@ -145,9 +163,13 @@ public class MainMenuView : TPSingleton<MainMenuView>
 
 	public void OnContinueClick()
 	{
-		//IL_00e3: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00e8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ee: Expected O, but got Unknown
+		//IL_014a: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0155: Unknown result type (might be due to invalid IL or missing references)
+		//IL_01c8: Unknown result type (might be due to invalid IL or missing references)
+		//IL_01cd: Unknown result type (might be due to invalid IL or missing references)
+		//IL_01d3: Expected O, but got Unknown
+		//IL_0184: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0198: Unknown result type (might be due to invalid IL or missing references)
 		if ((Object)(object)EventSystem.current.currentSelectedGameObject != (Object)null)
 		{
 			TPSingleton<HUDJoystickNavigationManager>.Instance.JoystickHighlight.Display(state: false);
@@ -169,6 +191,17 @@ public class MainMenuView : TPSingleton<MainMenuView>
 					ApplicationManager.Application.ApplicationController.SetState("LoadGame");
 					return;
 				}
+			}
+			SaverLoader.SerializedContainerLoadingInfo<SerializedGameState> preloadedGameSave3 = TPSingleton<SaveManager>.Instance.PreloadedGameSave;
+			if (preloadedGameSave3 != null && preloadedGameSave3.FailedLoadsInfo[0].Reason == SaveManager.E_BrokenSaveReason.MISSING_DLC)
+			{
+				string[] array = new string[1] { string.Join(Localizer.Get("Generic_EnumerableSeparator"), (TPSingleton<SaveManager>.Instance.PreloadedGameSave.FailedLoadsInfo[0].Exception as SaverLoader.MissingDLCException).GetLocalizedMissingDLCs()) };
+				GenericConsent.Open(new ParameterizedLocalizationLine("MainMenu_Popup_WillCorruptMissingDLCGameSave_Title", Array.Empty<string>()), new ParameterizedLocalizationLine("MainMenu_Popup_WillCorruptMissingDLCGameSave_Text", array), (Action)delegate
+				{
+					SaveManager.CorruptGameSave();
+					ApplicationManager.Application.ApplicationController.SetState("LoadWorldMap");
+				}, (Action)null, (ParameterizedLocalizationLine?)new ParameterizedLocalizationLine("GenericConsent_Delete", Array.Empty<string>()), (ParameterizedLocalizationLine?)new ParameterizedLocalizationLine("GenericConsent_Close", Array.Empty<string>()), smallVersion: false);
+				return;
 			}
 			object obj = _003C_003Ec._003C_003E9__10_0;
 			if (obj == null)
@@ -296,10 +329,7 @@ public class MainMenuView : TPSingleton<MainMenuView>
 		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0020: Expected O, but got Unknown
 		Localizer.onLocalize = (OnLocalizeNotification)Delegate.Remove((Delegate?)(object)Localizer.onLocalize, (Delegate?)new OnLocalizeNotification(OnLocalize));
-		if (TPSingleton<InputManager>.Exist())
-		{
-			TPSingleton<InputManager>.Instance.LastActiveControllerChanged -= OnLastActiveControllerChanged;
-		}
+		InputManager.LastActiveControllerChanged -= OnLastActiveControllerChanged;
 	}
 
 	private void OnLastActiveControllerChanged(ControllerType controllerType)
@@ -346,6 +376,7 @@ public class MainMenuView : TPSingleton<MainMenuView>
 				{
 					SaveManager.E_BrokenSaveReason.WRONG_VERSION => string.Format(Localizer.Get("MainMenu_ContinueGameInfo_Outdated")), 
 					SaveManager.E_BrokenSaveReason.MISSING_MOD => string.Format(Localizer.Get("MainMenu_ContinueGameInfo_MissingMod")), 
+					SaveManager.E_BrokenSaveReason.MISSING_DLC => string.Format(Localizer.Get("MainMenu_ContinueGameInfo_MissingDLC")), 
 					_ => string.Format(Localizer.Get("MainMenu_ContinueGameInfo_Corrupted")), 
 				};
 			}
@@ -368,12 +399,12 @@ public class MainMenuView : TPSingleton<MainMenuView>
 
 	private void Start()
 	{
-		//IL_0067: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0071: Expected O, but got Unknown
-		//IL_0071: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007b: Expected O, but got Unknown
+		//IL_0062: Unknown result type (might be due to invalid IL or missing references)
+		//IL_006c: Expected O, but got Unknown
+		//IL_006c: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0076: Expected O, but got Unknown
 		TPSingleton<SoundManager>.Instance.FadeMusic(TPSingleton<SoundManager>.Instance.MenuMusic);
-		TPSingleton<InputManager>.Instance.LastActiveControllerChanged += OnLastActiveControllerChanged;
+		InputManager.LastActiveControllerChanged += OnLastActiveControllerChanged;
 		((TMP_Text)buildVersionText).text = ApplicationManager.VersionString;
 		OpenSettingsChangesWarning();
 		openingSequenceButton.SetActive(ApplicationManager.Application.HasSeenIntroduction);
@@ -388,8 +419,10 @@ public class MainMenuView : TPSingleton<MainMenuView>
 
 	private void Update()
 	{
-		//IL_00fd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010f: Unknown result type (might be due to invalid IL or missing references)
+		//IL_011f: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0131: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0183: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0195: Unknown result type (might be due to invalid IL or missing references)
 		if (SaveManager.BrokenSavePath != null && UIManager.DisplayGameSaveErrorPopUp(SaveManager.BrokenSavePath, SaveManager.BrokenSaveReason, SaveManager.BackupLoaded))
 		{
 			if (!SaveManager.BackupLoaded)
@@ -409,10 +442,19 @@ public class MainMenuView : TPSingleton<MainMenuView>
 				break;
 			case SaveManager.E_BrokenSaveReason.MISSING_MOD:
 			{
-				string[] array = new string[1] { string.Join(", ", (TPSingleton<SaveManager>.Instance.PreloadedGameSave.FailedLoadsInfo[0].Exception as SaverLoader.MissingModException).MissingModIds) };
-				ParameterizedLocalizationLine titleLocKey = new ParameterizedLocalizationLine("MainMenu_Popup_MissingModGameSave_Title", Array.Empty<string>());
+				string[] array2 = new string[1] { string.Join(Localizer.Get("Generic_EnumerableSeparator"), (TPSingleton<SaveManager>.Instance.PreloadedGameSave.FailedLoadsInfo[0].Exception as SaverLoader.MissingModException).MissingModIds) };
+				ParameterizedLocalizationLine titleLocKey2 = new ParameterizedLocalizationLine("MainMenu_Popup_MissingModGameSave_Title", Array.Empty<string>());
+				ParameterizedLocalizationLine textLocKey2 = default(ParameterizedLocalizationLine);
+				((ParameterizedLocalizationLine)(ref textLocKey2))._002Ector("MainMenu_Popup_MissingModGameSave_Text", array2);
+				GenericPopUp.Open(titleLocKey2, textLocKey2);
+				break;
+			}
+			case SaveManager.E_BrokenSaveReason.MISSING_DLC:
+			{
+				string[] array = new string[1] { string.Join(Localizer.Get("Generic_EnumerableSeparator"), (TPSingleton<SaveManager>.Instance.PreloadedGameSave.FailedLoadsInfo[0].Exception as SaverLoader.MissingDLCException).GetLocalizedMissingDLCs()) };
+				ParameterizedLocalizationLine titleLocKey = new ParameterizedLocalizationLine("MainMenu_Popup_MissingDLCGameSave_Title", Array.Empty<string>());
 				ParameterizedLocalizationLine textLocKey = default(ParameterizedLocalizationLine);
-				((ParameterizedLocalizationLine)(ref textLocKey))._002Ector("MainMenu_Popup_MissingModGameSave_Text", array);
+				((ParameterizedLocalizationLine)(ref textLocKey))._002Ector("MainMenu_Popup_MissingDLCGameSave_Text", array);
 				GenericPopUp.Open(titleLocKey, textLocKey);
 				break;
 			}

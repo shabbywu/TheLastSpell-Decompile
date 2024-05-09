@@ -22,10 +22,10 @@ public class MetaConditionController
 		typeof(StringIntDictionary)
 	};
 
-	private readonly string[] keywordPotentialLocalizationPrefixes = new string[11]
+	private readonly string[] keywordPotentialLocalizationPrefixes = new string[12]
 	{
-		"BuildingName_", "BuildingActionName_", "BuildingUpgradeTooltipName_", "EnemyName_", "ItemName_", "PerkName_", "SkillName_", "SkillEffectName_", "UnitStat_Name_", "WorldMap_CityName_",
-		"LifetimeStats_"
+		"BuildingName_", "BuildingActionName_", "BuildingUpgradeTooltipName_", "DLC_Name_", "EnemyName_", "ItemName_", "PerkName_", "SkillName_", "SkillEffectName_", "UnitStat_Name_",
+		"WorldMap_CityName_", "LifetimeStats_"
 	};
 
 	private Dictionary<string, MetaConditionContext> contexts = new Dictionary<string, MetaConditionContext>();

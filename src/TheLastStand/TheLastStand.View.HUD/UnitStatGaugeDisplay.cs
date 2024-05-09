@@ -507,13 +507,13 @@ public class UnitStatGaugeDisplay : MonoBehaviour
 			}
 			return damageable.ArmorTotal;
 		case UnitStatDefinition.E_Stat.Health:
-			if (damageable is DamageableModule damageableModule && damageableModule.BuildingParent is MagicCircle magicCircle)
+			if (damageable is DamageableModule { BuildingParent: MagicCircle buildingParent })
 			{
 				if (!useTotal)
 				{
 					return damageable.Health;
 				}
-				return magicCircle.CurrentHealthTotal;
+				return buildingParent.CurrentHealthTotal;
 			}
 			if (!useTotal)
 			{

@@ -103,6 +103,8 @@ public class ItemDefinition : TheLastStand.Framework.Serialization.Definition
 
 	private List<int> definedLevels;
 
+	public HashSet<string> Tags = new HashSet<string>();
+
 	public string ArtId
 	{
 		get
@@ -157,6 +159,9 @@ public class ItemDefinition : TheLastStand.Framework.Serialization.Definition
 
 	public Vector2Int Resistance { get; private set; }
 
+	public Dictionary<int, HashSet<string>> PerksByLevel { get; } = new Dictionary<int, HashSet<string>>();
+
+
 	public Dictionary<int, Dictionary<string, int>> SkillsByLevel { get; } = new Dictionary<int, Dictionary<string, int>>();
 
 
@@ -167,13 +172,13 @@ public class ItemDefinition : TheLastStand.Framework.Serialization.Definition
 
 	public override void Deserialize(XContainer container)
 	{
-		//IL_0210: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0215: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01f6: Unknown result type (might be due to invalid IL or missing references)
+		//IL_022d: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0232: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0213: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0442: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0425: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0408: Unknown result type (might be due to invalid IL or missing references)
-		//IL_040a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0414: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0427: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0431: Unknown result type (might be due to invalid IL or missing references)
 		XElement val = (XElement)(object)((container is XElement) ? container : null);
 		XAttribute val2 = val.Attribute(XName.op_Implicit("Id"));
 		if (val2.IsNullOrEmpty())
@@ -198,9 +203,15 @@ public class ItemDefinition : TheLastStand.Framework.Serialization.Definition
 						if (ItemDatabase.ItemsByTag.ContainsKey(value))
 						{
 							ItemDatabase.ItemsByTag[value].Add(Id);
-							continue;
 						}
-						ItemDatabase.ItemsByTag.Add(value, new List<string> { Id });
+						else
+						{
+							ItemDatabase.ItemsByTag.Add(value, new List<string> { Id });
+						}
+						if (!Tags.Contains(value))
+						{
+							Tags.Add(value);
+						}
 					}
 				}
 				XElement val5 = ((XContainer)val).Element(XName.op_Implicit("Hands"));
@@ -222,8 +233,8 @@ public class ItemDefinition : TheLastStand.Framework.Serialization.Definition
 				Vector2 value2 = Vector2.zero;
 				float value3 = -1f;
 				Dictionary<UnitStatDefinition.E_Stat, float> value4 = null;
-				Tuple<UnitStatDefinition.E_Stat, float> value5 = null;
-				Dictionary<string, int> value6 = null;
+				Dictionary<string, int> value5 = null;
+				HashSet<string> value6 = null;
 				definedLevels = new List<int>();
 				{
 					Vector2 val11 = default(Vector2);
@@ -334,11 +345,10 @@ public class ItemDefinition : TheLastStand.Framework.Serialization.Definition
 								break;
 							}
 							MainStatBonusByLevel.Add(result3, new Tuple<UnitStatDefinition.E_Stat, float>(result9, result10));
-							value5 = MainStatBonusByLevel[result3];
 						}
 						else
 						{
-							MainStatBonusByLevel.Add(result3, value5);
+							MainStatBonusByLevel.Add(result3, null);
 						}
 						SkillsByLevel.Add(result3, null);
 						XElement val17 = ((XContainer)item2).Element(XName.op_Implicit("Skills"));
@@ -363,11 +373,33 @@ public class ItemDefinition : TheLastStand.Framework.Serialization.Definition
 									SkillsByLevel[result3].Add(item4.Value, result11);
 								}
 							}
-							value6 = SkillsByLevel[result3];
+							value5 = SkillsByLevel[result3];
 						}
 						else
 						{
-							SkillsByLevel[result3] = value6;
+							SkillsByLevel[result3] = value5;
+						}
+						PerksByLevel.Add(result3, null);
+						XElement val19 = ((XContainer)item2).Element(XName.op_Implicit("Perks"));
+						if (val19 != null)
+						{
+							PerksByLevel[result3] = new HashSet<string>();
+							foreach (XElement item5 in ((XContainer)val19).Elements())
+							{
+								if (item5.IsNullOrEmpty())
+								{
+									CLoggerManager.Log((object)("A Perk " + OfTheItem(Id, result3) + " is Empty !"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+								}
+								else if (!PerksByLevel[result3].Contains(item5.Value))
+								{
+									PerksByLevel[result3].Add(item5.Value);
+								}
+							}
+							value6 = PerksByLevel[result3];
+						}
+						else
+						{
+							PerksByLevel[result3] = value6;
 						}
 					}
 					return;

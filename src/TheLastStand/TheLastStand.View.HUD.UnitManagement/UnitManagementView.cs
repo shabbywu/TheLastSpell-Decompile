@@ -40,9 +40,26 @@ public abstract class UnitManagementView<T> : TPSingleton<T> where T : UnitManag
 	[SerializeField]
 	protected SimpleFontLocalizedParent simpleFontLocalizedParent;
 
+	[SerializeField]
+	private HUDJoystickSimpleTarget joystickTarget;
+
 	protected Canvas canvas;
 
 	protected bool initialized;
+
+	public HUDJoystickSimpleTarget JoystickTarget => joystickTarget;
+
+	public bool Displayed
+	{
+		get
+		{
+			if ((Object)(object)canvas != (Object)null)
+			{
+				return ((Behaviour)canvas).enabled;
+			}
+			return false;
+		}
+	}
 
 	public SkillBar SkillBar => skillBar;
 

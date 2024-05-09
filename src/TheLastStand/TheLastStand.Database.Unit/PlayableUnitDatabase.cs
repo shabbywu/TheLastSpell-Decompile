@@ -4,10 +4,12 @@ using System.Xml.Linq;
 using TPLib;
 using TPLib.Log;
 using TheLastStand.Definition;
+using TheLastStand.Definition.DLC;
 using TheLastStand.Definition.Item;
 using TheLastStand.Definition.Unit;
 using TheLastStand.Definition.Unit.Perk;
 using TheLastStand.Definition.Unit.PlayableUnitGeneration;
+using TheLastStand.Definition.Unit.Race;
 using TheLastStand.Definition.Unit.Trait;
 using TheLastStand.Framework.Database;
 using TheLastStand.Framework.ExpressionInterpreter;
@@ -59,6 +61,9 @@ public class PlayableUnitDatabase : Database<PlayableUnitDatabase>
 	private TextAsset recruitmentDefinition;
 
 	[SerializeField]
+	private TextAsset unitStartingRosterRacesDistributionDefinitions;
+
+	[SerializeField]
 	private TextAsset unitPerkTemplateDefinition;
 
 	[SerializeField]
@@ -66,6 +71,15 @@ public class PlayableUnitDatabase : Database<PlayableUnitDatabase>
 
 	[SerializeField]
 	private TextAsset perkDefinitions;
+
+	[SerializeField]
+	private TextAsset[] racesDefinitions;
+
+	[SerializeField]
+	private DLCTextAssetDefinition[] dlcRacesDefinitions;
+
+	[SerializeField]
+	private RuntimeAnimatorController raceDefaultAnimator;
 
 	[SerializeField]
 	private TextAsset unitMaleHeads;
@@ -141,6 +155,8 @@ public class PlayableUnitDatabase : Database<PlayableUnitDatabase>
 
 	public static Dictionary<string, List<UnitGenerationDefinition>> UnitsGenerationStartDefinitions { get; set; }
 
+	public static Dictionary<int, UnitStartingRosterRacesDistributionDefinition> UnitStartingRosterRacesDistributionDefinitionsByUnlockedRacesNb { get; set; }
+
 	public static Dictionary<UnitStatDefinition.E_Stat, UnitLevelUpStatDefinition> UnitLevelUpMainStatDefinitions { get; private set; }
 
 	public static Dictionary<UnitStatDefinition.E_Stat, UnitLevelUpStatDefinition> UnitLevelUpSecondaryStatDefinitions { get; private set; }
@@ -154,6 +170,10 @@ public class PlayableUnitDatabase : Database<PlayableUnitDatabase>
 	public static Dictionary<string, UnitPerkCollectionDefinition> UnitPerkCollectionDefinitions { get; private set; }
 
 	public static Dictionary<string, PerkDefinition> PerkDefinitions { get; private set; }
+
+	public static Dictionary<string, RaceDefinition> RaceDefinitions { get; private set; }
+
+	public static RuntimeAnimatorController RaceDefaultAnimatorController { get; private set; }
 
 	public static UnitPerkTemplateDefinition UnitPerkTemplateDefinition { get; private set; }
 
@@ -204,6 +224,7 @@ public class PlayableUnitDatabase : Database<PlayableUnitDatabase>
 		DeserializeUnitEyesColors();
 		DeserializeUnitLinkHairSkinColors();
 		DeserializePerks();
+		DeserializeRaces();
 		DeserializeUnitPerksCollections();
 		DeserializeUnitPerksTemplate();
 		DeserializeUnitEquipmentSlots();
@@ -322,36 +343,48 @@ public class PlayableUnitDatabase : Database<PlayableUnitDatabase>
 			UnitGenerationLevelDefinition unitGenerationLevelDefinition = new UnitGenerationLevelDefinition((XContainer)(object)item2);
 			UnitGenerationLevelDefinitions.Add(unitGenerationLevelDefinition.Id, unitGenerationLevelDefinition);
 		}
+		UnitStartingRosterRacesDistributionDefinitionsByUnlockedRacesNb = new Dictionary<int, UnitStartingRosterRacesDistributionDefinition>();
+		XElement val2 = ((XContainer)XDocument.Parse(unitStartingRosterRacesDistributionDefinitions.text, (LoadOptions)2)).Element(XName.op_Implicit("UnitStartingRosterRacesDistributionDefinitions"));
+		if (val2 == null)
+		{
+			CLoggerManager.Log((object)"The document must have UnitStartingRosterRacesDistributionDefinitions", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+			return;
+		}
+		foreach (XElement item3 in ((XContainer)val2).Elements(XName.op_Implicit("UnitStartingRosterRacesDistributionDefinition")))
+		{
+			UnitStartingRosterRacesDistributionDefinition unitStartingRosterRacesDistributionDefinition = new UnitStartingRosterRacesDistributionDefinition((XContainer)(object)item3);
+			UnitStartingRosterRacesDistributionDefinitionsByUnlockedRacesNb.Add(unitStartingRosterRacesDistributionDefinition.UnlockedNonHumanRacesNb, unitStartingRosterRacesDistributionDefinition);
+		}
 		UnitsGenerationStartDefinitions = new Dictionary<string, List<UnitGenerationDefinition>>();
 		Queue<XElement> queue = GatherElements(unitsGenerationsStartDefinitionsTextAssets, null, "UnitsGenerationStartDefinitions", "UnitsGenerationsStartDefinitions");
 		while (queue.Count > 0)
 		{
 			XElement obj = queue.Dequeue();
-			XAttribute val2 = obj.Attribute(XName.op_Implicit("Id"));
-			UnitsGenerationStartDefinitions.Add(val2.Value, new List<UnitGenerationDefinition>());
-			foreach (XElement item3 in ((XContainer)obj).Elements(XName.op_Implicit("UnitGenerationStartDefinition")))
+			XAttribute val3 = obj.Attribute(XName.op_Implicit("Id"));
+			UnitsGenerationStartDefinitions.Add(val3.Value, new List<UnitGenerationDefinition>());
+			foreach (XElement item4 in ((XContainer)obj).Elements(XName.op_Implicit("UnitGenerationStartDefinition")))
 			{
-				UnitGenerationDefinition item = new UnitGenerationDefinition((XContainer)(object)item3);
-				UnitsGenerationStartDefinitions[val2.Value].Add(item);
+				UnitGenerationDefinition item = new UnitGenerationDefinition((XContainer)(object)item4);
+				UnitsGenerationStartDefinitions[val3.Value].Add(item);
 			}
 		}
-		XElement val3 = ((XContainer)XDocument.Parse(recruitmentDefinition.text, (LoadOptions)2)).Element(XName.op_Implicit("RecruitmentDefinition"));
-		if (val3 == null)
+		XElement val4 = ((XContainer)XDocument.Parse(recruitmentDefinition.text, (LoadOptions)2)).Element(XName.op_Implicit("RecruitmentDefinition"));
+		if (val4 == null)
 		{
 			CLoggerManager.Log((object)"The document must have RecruitmentDefinition", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 			return;
 		}
-		RecruitmentDefinition = new RecruitmentDefinition((XContainer)(object)val3);
-		XElement val4 = ((XContainer)XDocument.Parse(playableUnitGenerationDefinitionTextAsset.text, (LoadOptions)2)).Element(XName.op_Implicit("PlayableUnitGenerationDefinitions"));
-		if (val4 == null)
+		RecruitmentDefinition = new RecruitmentDefinition((XContainer)(object)val4);
+		XElement val5 = ((XContainer)XDocument.Parse(playableUnitGenerationDefinitionTextAsset.text, (LoadOptions)2)).Element(XName.op_Implicit("PlayableUnitGenerationDefinitions"));
+		if (val5 == null)
 		{
 			CLoggerManager.Log((object)"The playableUnitGenerationDefinitionsDocument must have an element PlayableUnitGenerationDefinitions", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 			return;
 		}
 		PlayableUnitGenerationDefinitions = new Dictionary<string, PlayableUnitGenerationDefinition>();
-		foreach (XElement item4 in ((XContainer)val4).Elements(XName.op_Implicit("PlayableUnitGenerationDefinition")))
+		foreach (XElement item5 in ((XContainer)val5).Elements(XName.op_Implicit("PlayableUnitGenerationDefinition")))
 		{
-			PlayableUnitGenerationDefinition playableUnitGenerationDefinition = new PlayableUnitGenerationDefinition((XContainer)(object)item4);
+			PlayableUnitGenerationDefinition playableUnitGenerationDefinition = new PlayableUnitGenerationDefinition((XContainer)(object)item5);
 			PlayableUnitGenerationDefinitions.Add(playableUnitGenerationDefinition.ArchetypeId, playableUnitGenerationDefinition);
 		}
 	}
@@ -445,6 +478,25 @@ public class PlayableUnitDatabase : Database<PlayableUnitDatabase>
 		foreach (XElement item in ((XContainer)((XContainer)XDocument.Parse(perkDefinitions.text, (LoadOptions)2)).Element(XName.op_Implicit("PerkDefinitions"))).Elements(XName.op_Implicit("PerkDefinition")))
 		{
 			PerkDefinitions[item.Attribute(XName.op_Implicit("Id")).Value] = new PerkDefinition((XContainer)(object)item);
+		}
+	}
+
+	private void DeserializeRaces()
+	{
+		if (RaceDefinitions == null)
+		{
+			RaceDefinitions = new Dictionary<string, RaceDefinition>();
+			List<TextAsset> list = new List<TextAsset>();
+			list.AddRange(racesDefinitions);
+			list.AddRange(GenericDatabase.GetDLCTextAssets(dlcRacesDefinitions));
+			Queue<XElement> queue = GatherElements(list, null, "RaceDefinition", "RaceDefinitions");
+			while (queue.Count > 0)
+			{
+				XElement val = queue.Dequeue();
+				XAttribute val2 = val.Attribute(XName.op_Implicit("Id"));
+				RaceDefinitions[val2.Value] = new RaceDefinition((XContainer)(object)val);
+			}
+			RaceDefaultAnimatorController = raceDefaultAnimator;
 		}
 	}
 

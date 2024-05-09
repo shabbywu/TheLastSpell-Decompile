@@ -78,11 +78,15 @@ public class UnitTraitDefinition : TheLastStand.Framework.Serialization.Definiti
 			this.descriptionOverrideKey = descriptionOverrideKey;
 		}
 
-		public string GetDescription()
+		public string GetDescription(bool getStylizedStatNames = false)
 		{
 			if (string.IsNullOrEmpty(descriptionOverrideKey))
 			{
-				return Stat.GetValueStylized(Value) + " " + UnitStatDisplay.GetStatIconToString(Stat) + " " + Localizer.Get("UnitStat_Name_" + Stat);
+				if (!getStylizedStatNames)
+				{
+					return Stat.GetValueStylized(Value) + " " + UnitStatDisplay.GetStatIconToString(Stat) + " " + Localizer.Get("UnitStat_Name_" + Stat);
+				}
+				return Stat.GetValueStylized(Value) + " " + Stat.GetStylizedName();
 			}
 			if (Localizer.Exists(descriptionOverrideKey))
 			{
@@ -102,6 +106,9 @@ public class UnitTraitDefinition : TheLastStand.Framework.Serialization.Definiti
 	public bool IsBackgroundTrait { get; private set; }
 
 	public List<string> Incompatibilities { get; private set; } = new List<string>();
+
+
+	public List<string> RaceIncompatibilities { get; private set; } = new List<string>();
 
 
 	public List<StatModifier> StatModifiers { get; private set; } = new List<StatModifier>();
@@ -231,6 +238,18 @@ public class UnitTraitDefinition : TheLastStand.Framework.Serialization.Definiti
 			else
 			{
 				Incompatibilities.Add(val16.Value);
+			}
+		}
+		foreach (XElement item5 in ((XContainer)val15).Elements(XName.op_Implicit("Race")))
+		{
+			XAttribute val17 = item5.Attribute(XName.op_Implicit("Id"));
+			if (val17 == null)
+			{
+				Debug.LogError((object)"The unit race incompatibility has no Id!");
+			}
+			else
+			{
+				RaceIncompatibilities.Add(val17.Value);
 			}
 		}
 	}

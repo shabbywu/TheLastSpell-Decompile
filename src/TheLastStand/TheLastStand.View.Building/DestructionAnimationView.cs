@@ -1,5 +1,6 @@
 using System.Collections;
 using TPLib.Yield;
+using TheLastStand.Model.Building;
 using UnityEngine;
 
 namespace TheLastStand.View.Building;
@@ -15,6 +16,21 @@ public class DestructionAnimationView : MonoBehaviour
 	private Sprite[] destructionAnimationSprites;
 
 	private float delay;
+
+	private TheLastStand.Model.Building.Building building;
+
+	public void ChangeBuilding(TheLastStand.Model.Building.Building newBuilding)
+	{
+		if (building != null && (Object)(object)building.BuildingView != (Object)null)
+		{
+			building.BuildingView.ActiveDestructionAnimationViewNb--;
+		}
+		building = newBuilding;
+		if (newBuilding != null && (Object)(object)newBuilding.BuildingView != (Object)null)
+		{
+			newBuilding.BuildingView.ActiveDestructionAnimationViewNb++;
+		}
+	}
 
 	public void Init(Vector3 worldPosition, Sprite[] sprites, float delay)
 	{
@@ -45,5 +61,6 @@ public class DestructionAnimationView : MonoBehaviour
 			i = num2;
 		}
 		((Component)this).gameObject.SetActive(false);
+		ChangeBuilding(null);
 	}
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TPLib.Log;
 using TheLastStand.Controller.Building.BuildingUpgrade;
 using TheLastStand.Definition.Building.Module;
+using TheLastStand.Manager;
 using TheLastStand.Model.Building;
 using TheLastStand.Model.Building.BuildingUpgrade;
 using TheLastStand.Model.Building.Module;
@@ -44,7 +45,7 @@ public class UpgradeModuleController : BuildingModuleController
 		int i = 0;
 		for (int count = UpgradeModule.UpgradeModuleDefinition.BuildingUpgradeDefinitions.Count; i < count; i++)
 		{
-			if (UpgradeModule.UpgradeModuleDefinition.BuildingUpgradeDefinitions[i].IsGlobal)
+			if (UpgradeModule.UpgradeModuleDefinition.BuildingUpgradeDefinitions[i].IsGlobal && ApplicationManager.CurrentStateName != "LevelEditor")
 			{
 				UpgradeModule.BuildingGlobalUpgrades.Add(new BuildingGlobalUpgradeController(UpgradeModule.UpgradeModuleDefinition.BuildingUpgradeDefinitions[i], UpgradeModule.BuildingParent).BuildingGlobalUpgrade);
 			}

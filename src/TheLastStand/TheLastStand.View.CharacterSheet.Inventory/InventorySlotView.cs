@@ -188,7 +188,7 @@ public class InventorySlotView : ItemSlotView
 	protected override void Awake()
 	{
 		base.Awake();
-		TPSingleton<HUDJoystickNavigationManager>.Instance.TooltipsToggled += OnTooltipsToggled;
+		HUDJoystickNavigationManager.TooltipsToggled += OnTooltipsToggled;
 	}
 
 	public override void DisplayTooltip(bool display)
@@ -242,10 +242,7 @@ public class InventorySlotView : ItemSlotView
 
 	private void OnDestroy()
 	{
-		if (TPSingleton<HUDJoystickNavigationManager>.Exist())
-		{
-			TPSingleton<HUDJoystickNavigationManager>.Instance.TooltipsToggled -= OnTooltipsToggled;
-		}
+		HUDJoystickNavigationManager.TooltipsToggled -= OnTooltipsToggled;
 	}
 
 	private void OnTooltipsToggled(bool showTooltips)

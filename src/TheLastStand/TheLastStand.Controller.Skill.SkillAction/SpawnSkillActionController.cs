@@ -11,11 +11,13 @@ using TheLastStand.Definition.TileMap;
 using TheLastStand.Definition.Unit;
 using TheLastStand.Framework.Extensions;
 using TheLastStand.Manager;
+using TheLastStand.Manager.Achievements;
 using TheLastStand.Manager.Building;
 using TheLastStand.Manager.Skill;
 using TheLastStand.Manager.Unit;
 using TheLastStand.Model;
 using TheLastStand.Model.Building;
+using TheLastStand.Model.Building.Module;
 using TheLastStand.Model.Skill;
 using TheLastStand.Model.Skill.SkillAction;
 using TheLastStand.Model.TileMap;
@@ -99,9 +101,9 @@ public class SpawnSkillActionController : SkillActionController
 	protected override SkillActionResultDatas ApplyActionOnTile(Tile targetTile, ISkillCaster caster)
 	{
 		SkillActionResultDatas resultData = new SkillActionResultDatas();
-		bool num = IsUnitAffected(targetTile);
+		bool flag = IsUnitAffected(targetTile);
 		IsBuildingAffected(targetTile);
-		if (num && SpawnSkillAction.TryGetFirstEffect<KillSkillEffectDefinition>("Kill", out var effect))
+		if (flag && SpawnSkillAction.TryGetFirstEffect<KillSkillEffectDefinition>("Kill", out var effect))
 		{
 			ApplySkillEffectKill(caster, targetTile.Unit, effect, resultData);
 		}
@@ -113,6 +115,10 @@ public class SpawnSkillActionController : SkillActionController
 		else
 		{
 			SpawnAnEnemyByWeight(targetTile, ref resultData);
+		}
+		if (caster is BattleModule battleModule && battleModule.BuildingParent.IsCrystal && flag)
+		{
+			TPSingleton<AchievementManager>.Instance.HandleCrystalCorruptedEnemy();
 		}
 		return resultData;
 	}
@@ -249,7 +255,7 @@ public class SpawnSkillActionController : SkillActionController
 		{
 			BuildingManager.DestroyBuilding(tile);
 		}
-		if (caster is BossUnit bossUnit && !bossUnit.IsDeathRattling)
+		if (caster is BossUnit { IsDeathRattling: false })
 		{
 			int sectorIndexForTile = TPSingleton<SectorManager>.Instance.GetSectorIndexForTile(tile);
 			if (TPSingleton<BossManager>.Instance.RecentlySpawnedUnitsBySector[sectorIndexForTile].ContainsKey(base.SkillAction.Skill))

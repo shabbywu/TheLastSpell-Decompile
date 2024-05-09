@@ -68,18 +68,15 @@ public class GamepadInputDisplay : MonoBehaviour
 
 	private void OnEnable()
 	{
-		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
-		TPSingleton<InputManager>.Instance.LastActiveControllerChanged += OnLastActiveControllerChanged;
+		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
+		InputManager.LastActiveControllerChanged += OnLastActiveControllerChanged;
 		TPSingleton<SettingsManager>.Instance.OnInputDeviceTypeChangeEvent += OnInputDeviceTypeChanged;
 		OnLastActiveControllerChanged(InputManager.GetLastControllerType());
 	}
 
 	private void OnDisable()
 	{
-		if (TPSingleton<InputManager>.Exist())
-		{
-			TPSingleton<InputManager>.Instance.LastActiveControllerChanged -= OnLastActiveControllerChanged;
-		}
+		InputManager.LastActiveControllerChanged -= OnLastActiveControllerChanged;
 		if (TPSingleton<SettingsManager>.Exist())
 		{
 			TPSingleton<SettingsManager>.Instance.OnInputDeviceTypeChangeEvent -= OnInputDeviceTypeChanged;

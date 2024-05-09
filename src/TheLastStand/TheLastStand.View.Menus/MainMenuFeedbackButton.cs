@@ -1,5 +1,4 @@
 using Rewired;
-using TPLib;
 using TheLastStand.Manager;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,14 +19,11 @@ public class MainMenuFeedbackButton : MonoBehaviour
 
 	private void Awake()
 	{
-		TPSingleton<InputManager>.Instance.LastActiveControllerChanged += OnLastActiveControllerChanged;
+		InputManager.LastActiveControllerChanged += OnLastActiveControllerChanged;
 	}
 
 	private void OnDestroy()
 	{
-		if (TPSingleton<InputManager>.Exist())
-		{
-			TPSingleton<InputManager>.Instance.LastActiveControllerChanged -= OnLastActiveControllerChanged;
-		}
+		InputManager.LastActiveControllerChanged -= OnLastActiveControllerChanged;
 	}
 }

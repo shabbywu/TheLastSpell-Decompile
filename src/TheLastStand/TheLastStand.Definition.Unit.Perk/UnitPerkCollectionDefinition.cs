@@ -10,6 +10,11 @@ namespace TheLastStand.Definition.Unit.Perk;
 
 public class UnitPerkCollectionDefinition : TheLastStand.Framework.Serialization.Definition
 {
+	public static class Constants
+	{
+		public const string MiscPerkCollectionId = "Misc";
+	}
+
 	public string Id { get; private set; }
 
 	public bool MultipleAllowed { get; private set; }

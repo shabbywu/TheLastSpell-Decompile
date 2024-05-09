@@ -89,7 +89,7 @@ public class GlyphDefinition : LocalizableDefinition
 		GlyphEffectDefinition glyphEffectDefinitionFromName = GetGlyphEffectDefinitionFromName(xGlyphEffect.Name.LocalName, xGlyphEffect);
 		if (glyphEffectDefinitionFromName != null)
 		{
-			if (glyphEffectDefinitionFromName is GlyphNativePerkEffectDefinition glyphNativePerkEffectDefinition && !glyphNativePerkEffectDefinition.ForceHideTooltip)
+			if (glyphEffectDefinitionFromName is GlyphNativePerkEffectDefinition { ForceHideTooltip: false } glyphNativePerkEffectDefinition)
 			{
 				PerkToShow = glyphNativePerkEffectDefinition.PerkDefinition;
 			}
@@ -123,6 +123,7 @@ public class GlyphDefinition : LocalizableDefinition
 			"ModifyBuildingActionsCost" => new GlyphModifyBuildingActionsCostEffectDefinition((XContainer)(object)xGlyphEffect, base.TokenVariables), 
 			"ModifyBuildLimit" => new GlyphModifyBuildLimitEffectDefinition((XContainer)(object)xGlyphEffect, base.TokenVariables), 
 			"ModifyCosts" => new GlyphModifyCostsEffectDefinition((XContainer)(object)xGlyphEffect, base.TokenVariables), 
+			"ModifyItemRarity" => new GlyphModifyItemRarityEffectDefinition((XContainer)(object)xGlyphEffect, base.TokenVariables), 
 			"ModifyLevelProbabilityTree" => new GlyphModifyLevelProbabilityTreeEffectDefinition((XContainer)(object)xGlyphEffect, base.TokenVariables), 
 			"ModifyPlayableUnitsStats" => new GlyphModifyPlayableUnitsStatsEffectDefinition((XContainer)(object)xGlyphEffect, base.TokenVariables), 
 			"ModifyRarityProbabilityTree" => new GlyphModifyRarityProbabilityTreeEffectDefinition((XContainer)(object)xGlyphEffect, base.TokenVariables), 

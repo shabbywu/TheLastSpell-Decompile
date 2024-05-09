@@ -212,6 +212,10 @@ public static class RecruitmentController
 		unitTile.TileController.SetUnit(selectedUnit);
 		TPSingleton<PlayableUnitManager>.Instance.Recruitment.SelectedUnit = null;
 		TPSingleton<MetaConditionManager>.Instance.IncreaseRecruitedHeroes((int)selectedUnit.Level, num);
+		if (selectedUnit.RaceDefinition.Id == "Dwarf")
+		{
+			TPSingleton<AchievementManager>.Instance.IncreaseAchievementProgression(StatContainer.STAT_DWARVES_RECRUIT_AMOUNT, 1);
+		}
 	}
 
 	public static void ResetMageGenerationProbability()

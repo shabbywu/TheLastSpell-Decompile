@@ -7,9 +7,11 @@ using TheLastStand.Definition.Unit.Enemy.Boss.PhaseAction;
 using TheLastStand.Framework.Extensions;
 using TheLastStand.Manager.Building;
 using TheLastStand.Manager.Unit;
+using TheLastStand.Model.Building;
 using TheLastStand.Model.Unit.Boss;
 using TheLastStand.Model.Unit.Enemy;
 using TheLastStand.View.Camera;
+using UnityEngine;
 
 namespace TheLastStand.Controller.Unit.Enemy.Boss.PhaseAction;
 
@@ -36,13 +38,18 @@ public class DestroyActorPhaseActionController : ABossPhaseActionController
 			ACameraView.AllowUserZoom = false;
 			ACameraView.Zoom(zoomIn: true);
 		}
-		if ((TPSingleton<BossManager>.Instance.CurrentBossPhase?.BossPhaseDefinition.ActorDefinitions.GetValueOrDefault(actorId))?.GetCorrespondingDefinition() is BuildingDefinition buildingDefinition && (buildingDefinition.BlueprintModuleDefinition.Category & BuildingDefinition.E_BuildingCategory.LitBrazier) != 0)
+		if ((TPSingleton<BossManager>.Instance.CurrentBossPhase?.BossPhaseDefinition.ActorDefinitions.GetValueOrDefault(actorId))?.GetCorrespondingDefinition() is BuildingDefinition buildingDefinition && (buildingDefinition.BlueprintModuleDefinition.Category & BuildingDefinition.E_BuildingCategory.LitBrazier) == BuildingDefinition.E_BuildingCategory.LitBrazier)
 		{
 			TPSingleton<BuildingManager>.Instance.ExtinguishBraziers();
 		}
 		else
 		{
-			for (int i = actors.Count - 1; i >= 0; i--)
+			int actorsNbAfterDestroy = 0;
+			if (DestroyActorPhaseActionDefinition.Amount > 0)
+			{
+				actorsNbAfterDestroy = Mathf.Max(actors.Count - DestroyActorPhaseActionDefinition.Amount, 0);
+			}
+			for (int i = actors.Count - 1; i >= actorsNbAfterDestroy; i--)
 			{
 				if (actors[i] is EnemyUnit enemyUnit)
 				{
@@ -55,6 +62,18 @@ public class DestroyActorPhaseActionController : ABossPhaseActionController
 					if (DestroyActorPhaseActionDefinition.WaitDeathAnim)
 					{
 						yield return enemyUnit.UnitView.WaitUntilDeathCanBeFinalized;
+					}
+				}
+				else if (actors[i] is TheLastStand.Model.Building.Building building)
+				{
+					if (DestroyActorPhaseActionDefinition.CameraFocus)
+					{
+						ACameraView.MoveTo(((Component)building.BuildingView).transform.position, 0f, (Ease)0);
+					}
+					BuildingManager.DestroyBuilding(building.OriginTile, updateView: true, addDeadBuilding: false, triggerEvent: true, triggerOnDeathEvent: false);
+					if (DestroyActorPhaseActionDefinition.WaitDeathAnim)
+					{
+						yield return building.BuildingView.WaitUntilDestructionAnimationIsFinished;
 					}
 				}
 			}

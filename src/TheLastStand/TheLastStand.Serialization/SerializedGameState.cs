@@ -17,6 +17,8 @@ public class SerializedGameState : SerializedContainer
 
 	public SerializedBuildings Buildings;
 
+	public List<string> DLCsInUse;
+
 	public SerializedFog Fog;
 
 	public SerializedPanic Panic;

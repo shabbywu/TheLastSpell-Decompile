@@ -94,7 +94,7 @@ public class InputManager : Manager<InputManager>
 
 	public ControllerType? DebugDisplayedControllerType { get; private set; }
 
-	public event LastActiveControllerChangedHandler LastActiveControllerChanged;
+	public static event LastActiveControllerChangedHandler LastActiveControllerChanged;
 
 	public static float GetAxis(int axisId)
 	{
@@ -483,7 +483,6 @@ public class InputManager : Manager<InputManager>
 		{
 			ApplicationManager.Application.ApplicationController.ApplicationStateChangeEvent -= OnApplicationStateChange;
 		}
-		this.LastActiveControllerChanged = null;
 		if (TPSingleton<DebugManager>.Exist())
 		{
 			DebugManager.DevConsoleDisplayed -= OnDevConsoleDisplayedChange;
@@ -566,7 +565,7 @@ public class InputManager : Manager<InputManager>
 		//IL_000d: Invalid comparison between Unknown and I4
 		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0012: Invalid comparison between Unknown and I4
-		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
+		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
 		ControllerType type = controller.type;
 		if ((int)type > 1)
 		{
@@ -582,7 +581,7 @@ public class InputManager : Manager<InputManager>
 		Cursor.visible = true;
 		goto IL_0024;
 		IL_0024:
-		this.LastActiveControllerChanged?.Invoke(controller.type);
+		InputManager.LastActiveControllerChanged?.Invoke(controller.type);
 	}
 
 	[DevConsoleCommand("ToggleJoystickControllers")]

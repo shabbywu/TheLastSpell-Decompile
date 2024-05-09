@@ -140,5 +140,6 @@ public class EnemyUnitStatsController : UnitStatsController
 		InitStat(UnitStatDefinition.E_Stat.BonusUsableItemsUses, 0f);
 		InitStat(UnitStatDefinition.E_Stat.StunDurationModifier, 0f);
 		InitStat(UnitStatDefinition.E_Stat.ContagionDurationModifier, 0f);
+		InitStat(UnitStatDefinition.E_Stat.GauntletRangeModifier, 0f);
 	}
 }

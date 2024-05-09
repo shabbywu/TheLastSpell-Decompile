@@ -49,6 +49,10 @@ public abstract class APerkModule : ISerializable, IDeserializable
 	{
 	}
 
+	public virtual void ResetDynamicData()
+	{
+	}
+
 	public void TriggerEffects(PerkDataContainer data)
 	{
 		Perk.Owner.Log("Perk " + Perk.PerkDefinition.Id + " Triggered.", (CLogLevel)0);

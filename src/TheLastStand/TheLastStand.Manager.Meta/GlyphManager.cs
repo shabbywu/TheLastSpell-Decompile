@@ -84,6 +84,8 @@ public class GlyphManager : Manager<GlyphManager>
 
 	public int GoldScavengingPercentageModifier { get; private set; }
 
+	public Dictionary<string, GlyphModifyItemRarityEffectDefinition.ItemRarityModifier> ItemByTagRarityModifier { get; private set; }
+
 	public Dictionary<string, Dictionary<string, float>> ItemWeightMultipliers { get; private set; }
 
 	public Dictionary<string, Dictionary<int, int>> LevelProbabilityTreeModifiers { get; private set; }
@@ -215,7 +217,7 @@ public class GlyphManager : Manager<GlyphManager>
 	public void HandleGameOver(Game.E_GameOverCause cause)
 	{
 		WorldMapCity selectedCity = TPSingleton<WorldMapCityManager>.Instance.SelectedCity;
-		if (cause != Game.E_GameOverCause.MagicSealsCompleted || selectedCity.GlyphsConfig.CustomModeEnabled || selectedCity.GlyphsConfig.SelectedGlyphs.Count == 0)
+		if (cause != Game.E_GameOverCause.MagicSealsCompleted || AchievementManager.IsAnyBoundlessModeActive || selectedCity.GlyphsConfig.SelectedGlyphs.Count == 0)
 		{
 			return;
 		}
@@ -353,129 +355,147 @@ public class GlyphManager : Manager<GlyphManager>
 				GoldScavengingPercentageModifier = Mathf.Clamp(GoldScavengingPercentageModifier + item12.Value, 0, int.MaxValue);
 			}
 		}
-		ItemWeightMultipliers = new Dictionary<string, Dictionary<string, float>>();
-		Dictionary<string, Dictionary<string, float>> dictionary = new Dictionary<string, Dictionary<string, float>>();
-		if (TryGetGlyphEffects(out List<GlyphMultiplyItemWeightEffectDefinition> glyphEffects14))
+		ItemByTagRarityModifier = new Dictionary<string, GlyphModifyItemRarityEffectDefinition.ItemRarityModifier>();
+		if (TryGetGlyphEffects(out List<GlyphModifyItemRarityEffectDefinition> glyphEffects14))
 		{
-			foreach (GlyphMultiplyItemWeightEffectDefinition item13 in glyphEffects14)
+			foreach (GlyphModifyItemRarityEffectDefinition item13 in glyphEffects14)
 			{
-				if (item13.IsCumulative)
+				if (!ItemByTagRarityModifier.ContainsKey(item13.ItemTag))
 				{
-					AddItemWeightMultiplier(item13.ItemListId, item13.ItemId, item13.WeightMultiplier);
-					continue;
+					ItemByTagRarityModifier.Add(item13.ItemTag, new GlyphModifyItemRarityEffectDefinition.ItemRarityModifier
+					{
+						MinRarityIndex = item13.MinRarityIndex
+					});
 				}
-				if (!dictionary.ContainsKey(item13.ItemListId))
+				else if (ItemByTagRarityModifier[item13.ItemTag].MinRarityIndex < item13.MinRarityIndex)
 				{
-					dictionary[item13.ItemListId] = new Dictionary<string, float>();
-				}
-				if (!dictionary[item13.ItemListId].ContainsKey(item13.ItemId) || dictionary[item13.ItemListId][item13.ItemId] < item13.WeightMultiplier)
-				{
-					dictionary[item13.ItemListId][item13.ItemId] = item13.WeightMultiplier;
+					ItemByTagRarityModifier[item13.ItemTag].MinRarityIndex = item13.MinRarityIndex;
 				}
 			}
-			foreach (KeyValuePair<string, Dictionary<string, float>> item14 in dictionary)
+		}
+		ItemWeightMultipliers = new Dictionary<string, Dictionary<string, float>>();
+		Dictionary<string, Dictionary<string, float>> dictionary = new Dictionary<string, Dictionary<string, float>>();
+		if (TryGetGlyphEffects(out List<GlyphMultiplyItemWeightEffectDefinition> glyphEffects15))
+		{
+			foreach (GlyphMultiplyItemWeightEffectDefinition item14 in glyphEffects15)
 			{
-				foreach (KeyValuePair<string, float> item15 in item14.Value)
+				if (item14.IsCumulative)
 				{
-					AddItemWeightMultiplier(item14.Key, item15.Key, item15.Value);
+					AddItemWeightMultiplier(item14.ItemListId, item14.ItemId, item14.WeightMultiplier);
+					continue;
+				}
+				if (!dictionary.ContainsKey(item14.ItemListId))
+				{
+					dictionary[item14.ItemListId] = new Dictionary<string, float>();
+				}
+				if (!dictionary[item14.ItemListId].ContainsKey(item14.ItemId) || dictionary[item14.ItemListId][item14.ItemId] < item14.WeightMultiplier)
+				{
+					dictionary[item14.ItemListId][item14.ItemId] = item14.WeightMultiplier;
+				}
+			}
+			foreach (KeyValuePair<string, Dictionary<string, float>> item15 in dictionary)
+			{
+				foreach (KeyValuePair<string, float> item16 in item15.Value)
+				{
+					AddItemWeightMultiplier(item15.Key, item16.Key, item16.Value);
 				}
 			}
 		}
 		LevelProbabilityTreeModifiers = new Dictionary<string, Dictionary<int, int>>();
-		if (TryGetGlyphEffects(out List<GlyphModifyLevelProbabilityTreeEffectDefinition> glyphEffects15))
+		if (TryGetGlyphEffects(out List<GlyphModifyLevelProbabilityTreeEffectDefinition> glyphEffects16))
 		{
-			foreach (GlyphModifyLevelProbabilityTreeEffectDefinition item16 in glyphEffects15)
+			foreach (GlyphModifyLevelProbabilityTreeEffectDefinition item17 in glyphEffects16)
 			{
-				if (!LevelProbabilityTreeModifiers.ContainsKey(item16.TreeId))
+				if (!LevelProbabilityTreeModifiers.ContainsKey(item17.TreeId))
 				{
-					LevelProbabilityTreeModifiers[item16.TreeId] = new Dictionary<int, int>();
+					LevelProbabilityTreeModifiers[item17.TreeId] = new Dictionary<int, int>();
 				}
-				LevelProbabilityTreeModifiers[item16.TreeId] = LevelProbabilityTreeModifiers[item16.TreeId].Add(item16.ProbabilityModifiers);
+				LevelProbabilityTreeModifiers[item17.TreeId] = LevelProbabilityTreeModifiers[item17.TreeId].Add(item17.ProbabilityModifiers);
 			}
 		}
 		MaterialScavengingPercentageModifier = 0;
-		if (TryGetGlyphEffects(out List<GlyphMaterialScavengingPercentageModifierEffectDefinition> glyphEffects16))
+		if (TryGetGlyphEffects(out List<GlyphMaterialScavengingPercentageModifierEffectDefinition> glyphEffects17))
 		{
-			foreach (GlyphMaterialScavengingPercentageModifierEffectDefinition item17 in glyphEffects16)
+			foreach (GlyphMaterialScavengingPercentageModifierEffectDefinition item18 in glyphEffects17)
 			{
-				MaterialScavengingPercentageModifier = Mathf.Clamp(MaterialScavengingPercentageModifier + item17.Value, 0, int.MaxValue);
+				MaterialScavengingPercentageModifier = Mathf.Clamp(MaterialScavengingPercentageModifier + item18.Value, 0, int.MaxValue);
 			}
 		}
 		NativePerkPointsBonus = 0;
-		if (TryGetGlyphEffects(out List<GlyphNativePerkPointsBonusEffectDefinition> glyphEffects17))
+		if (TryGetGlyphEffects(out List<GlyphNativePerkPointsBonusEffectDefinition> glyphEffects18))
 		{
-			foreach (GlyphNativePerkPointsBonusEffectDefinition item18 in glyphEffects17)
+			foreach (GlyphNativePerkPointsBonusEffectDefinition item19 in glyphEffects18)
 			{
-				NativePerkPointsBonus += item18.Value;
+				NativePerkPointsBonus += item19.Value;
 			}
 		}
 		NativePerksToUnlock = new Dictionary<string, PerkDefinition>();
-		if (TryGetGlyphEffects(out List<GlyphNativePerkEffectDefinition> glyphEffects18))
+		if (TryGetGlyphEffects(out List<GlyphNativePerkEffectDefinition> glyphEffects19))
 		{
-			foreach (GlyphNativePerkEffectDefinition item19 in glyphEffects18)
+			foreach (GlyphNativePerkEffectDefinition item20 in glyphEffects19)
 			{
-				NativePerksToUnlock.Add(item19.PerkDefinition.Id, item19.PerkDefinition);
+				NativePerksToUnlock.Add(item20.PerkDefinition.Id, item20.PerkDefinition);
 			}
 		}
 		NightRewardsCountModifier = 0;
 		ProdRewardsCountModifier = 0;
-		if (TryGetGlyphEffects(out List<GlyphModifyRewardsCountEffectDefinition> glyphEffects19))
+		if (TryGetGlyphEffects(out List<GlyphModifyRewardsCountEffectDefinition> glyphEffects20))
 		{
-			foreach (GlyphModifyRewardsCountEffectDefinition item20 in glyphEffects19)
+			foreach (GlyphModifyRewardsCountEffectDefinition item21 in glyphEffects20)
 			{
-				NightRewardsCountModifier += item20.NightRewardsModifier;
-				ProdRewardsCountModifier += item20.ProdRewardsModifier;
+				NightRewardsCountModifier += item21.NightRewardsModifier;
+				ProdRewardsCountModifier += item21.ProdRewardsModifier;
 			}
 		}
 		PlayableUnitsStatsToModify = new Dictionary<UnitStatDefinition.E_Stat, float>();
-		if (TryGetGlyphEffects(out List<GlyphModifyPlayableUnitsStatsEffectDefinition> glyphEffects20))
+		if (TryGetGlyphEffects(out List<GlyphModifyPlayableUnitsStatsEffectDefinition> glyphEffects21))
 		{
-			foreach (GlyphModifyPlayableUnitsStatsEffectDefinition item21 in glyphEffects20)
+			foreach (GlyphModifyPlayableUnitsStatsEffectDefinition item22 in glyphEffects21)
 			{
-				foreach (KeyValuePair<UnitStatDefinition.E_Stat, Node> item22 in item21.StatsToModify)
+				foreach (KeyValuePair<UnitStatDefinition.E_Stat, Node> item23 in item22.StatsToModify)
 				{
-					PlayableUnitsStatsToModify[item22.Key] = PlayableUnitsStatsToModify.GetValueOrDefault(item22.Key) + item22.Value.EvalToFloat();
+					PlayableUnitsStatsToModify[item23.Key] = PlayableUnitsStatsToModify.GetValueOrDefault(item23.Key) + item23.Value.EvalToFloat();
 				}
 			}
 		}
 		RarityProbabilityTreeModifiers = new Dictionary<string, Dictionary<int, int>>();
-		if (TryGetGlyphEffects(out List<GlyphModifyRarityProbabilityTreeEffectDefinition> glyphEffects21))
+		if (TryGetGlyphEffects(out List<GlyphModifyRarityProbabilityTreeEffectDefinition> glyphEffects22))
 		{
-			foreach (GlyphModifyRarityProbabilityTreeEffectDefinition item23 in glyphEffects21)
+			foreach (GlyphModifyRarityProbabilityTreeEffectDefinition item24 in glyphEffects22)
 			{
-				if (!RarityProbabilityTreeModifiers.ContainsKey(item23.TreeId))
+				if (!RarityProbabilityTreeModifiers.ContainsKey(item24.TreeId))
 				{
-					RarityProbabilityTreeModifiers[item23.TreeId] = new Dictionary<int, int>();
+					RarityProbabilityTreeModifiers[item24.TreeId] = new Dictionary<int, int>();
 				}
-				RarityProbabilityTreeModifiers[item23.TreeId] = RarityProbabilityTreeModifiers[item23.TreeId].Add(item23.ProbabilityModifiers);
+				RarityProbabilityTreeModifiers[item24.TreeId] = RarityProbabilityTreeModifiers[item24.TreeId].Add(item24.ProbabilityModifiers);
 			}
 		}
 		SkillProgressionFlag = E_SkillProgressionFlag.None;
-		if (TryGetGlyphEffects(out List<GlyphToggleSkillProgressionFlagEffectDefinition> glyphEffects22))
+		if (TryGetGlyphEffects(out List<GlyphToggleSkillProgressionFlagEffectDefinition> glyphEffects23))
 		{
-			foreach (GlyphToggleSkillProgressionFlagEffectDefinition item24 in glyphEffects22)
+			foreach (GlyphToggleSkillProgressionFlagEffectDefinition item25 in glyphEffects23)
 			{
-				SkillProgressionFlag |= item24.SkillProgressionFlag;
+				SkillProgressionFlag |= item25.SkillProgressionFlag;
 			}
 		}
 		StartingGearLevelModifiers = new Dictionary<string, Dictionary<int, int>>();
-		if (!TryGetGlyphEffects(out List<GlyphIncreaseStartingGearLevelEffectDefinition> glyphEffects23))
+		if (!TryGetGlyphEffects(out List<GlyphIncreaseStartingGearLevelEffectDefinition> glyphEffects24))
 		{
 			return;
 		}
-		foreach (GlyphIncreaseStartingGearLevelEffectDefinition item25 in glyphEffects23)
+		foreach (GlyphIncreaseStartingGearLevelEffectDefinition item26 in glyphEffects24)
 		{
-			Dictionary<int, int> valueOrDefault = StartingGearLevelModifiers.GetValueOrDefault(item25.LevelTreeId);
+			Dictionary<int, int> valueOrDefault = StartingGearLevelModifiers.GetValueOrDefault(item26.LevelTreeId);
 			if (valueOrDefault != null)
 			{
-				foreach (KeyValuePair<int, int> item26 in item25.WeightBonusByLevelProbability)
+				foreach (KeyValuePair<int, int> item27 in item26.WeightBonusByLevelProbability)
 				{
-					valueOrDefault.AddValueOrCreateKey(item26.Key, item26.Value, (int a, int b) => a + b);
+					valueOrDefault.AddValueOrCreateKey(item27.Key, item27.Value, (int a, int b) => a + b);
 				}
 			}
 			else
 			{
-				StartingGearLevelModifiers[item25.LevelTreeId] = item25.WeightBonusByLevelProbability;
+				StartingGearLevelModifiers[item26.LevelTreeId] = item26.WeightBonusByLevelProbability;
 			}
 		}
 	}

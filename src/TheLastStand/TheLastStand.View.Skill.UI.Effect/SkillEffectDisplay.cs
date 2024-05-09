@@ -298,9 +298,8 @@ public class SkillEffectDisplay : MonoBehaviour
 				((Component)turnCount).gameObject.SetActive(true);
 				((TMP_Text)turnCount).text = SkillOwner?.ComputeStatusDuration(statusEffectDefinition.StatusType, statusEffectDefinition.TurnsCount, skillAction.PerkDataContainer).ToString() ?? statusEffectDefinition.TurnsCount.ToString();
 			}
-			if (SkillEffectDefinition is PoisonEffectDefinition poisonEffectDefinition)
+			if (SkillEffectDefinition is PoisonEffectDefinition { DamagePerTurn: var num10 })
 			{
-				float num10 = poisonEffectDefinition.DamagePerTurn;
 				if (SkillOwnerUnit != null)
 				{
 					num10 = SkillOwnerUnit.UnitController.GetModifiedPoisonDamage(num10, statModifiers?.GetValueOrDefault(UnitStatDefinition.E_Stat.PoisonDamageModifier));

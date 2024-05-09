@@ -36,7 +36,7 @@ public class ItemIcon : OraculumUnlockIcon
 
 	private void OnDisable()
 	{
-		if (itemTooltipDisplayer.Displayed)
+		if (itemTooltipDisplayer.IsDisplayingTargetTooltip)
 		{
 			itemTooltipDisplayer.HideTooltip();
 		}

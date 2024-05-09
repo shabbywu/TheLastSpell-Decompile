@@ -20,7 +20,7 @@ public class TransformBuildingController : BuildingPassiveEffectController
 	public override void Apply()
 	{
 		TheLastStand.Model.Building.Building buildingParent = base.BuildingPassiveEffect.BuildingPassivesModule.BuildingParent;
-		TheLastStand.Model.Building.Building building = BuildingManager.ReplaceBuilding(buildingParent.OriginTile, buildingParent, BuildingDatabase.BuildingDefinitions[TransformBuilding.TransformBuildingDefinition.BuildingId], ignoreBuilding: true, TransformBuilding.TransformBuildingDefinition.Instantaneous);
+		TheLastStand.Model.Building.Building building = BuildingManager.ReplaceBuilding(buildingParent.OriginTile, buildingParent, BuildingDatabase.BuildingDefinitions[TransformBuilding.TransformBuildingDefinition.GetRandomBuildingId()], ignoreBuilding: true, TransformBuilding.TransformBuildingDefinition.Instantaneous);
 		if (TransformBuilding.TransformBuildingDefinition.PlayDestructionSmoke)
 		{
 			((MonoBehaviour)building.BuildingView).StartCoroutine(building.BuildingView.PlayDestructionSmokeCoroutine());

@@ -150,6 +150,9 @@ public abstract class UnitController : ITileObjectController, IDamageableControl
 			});
 		}
 		goto IL_01c1;
+		IL_01b0:
+		PanicManager.Panic.PanicController.ComputeExpectedValue(updateView: true);
+		goto IL_01c1;
 		IL_01c1:
 		if (TheLastStand.Model.Status.Status.E_StatusType.AllNegative.HasFlag(status.StatusType) && status.Unit is EnemyUnit && playableUnit != null)
 		{
@@ -182,9 +185,6 @@ public abstract class UnitController : ITileObjectController, IDamageableControl
 			valueOrDefault(obj);
 		}
 		return result;
-		IL_01b0:
-		PanicManager.Panic.PanicController.ComputeExpectedValue(updateView: true);
-		goto IL_01c1;
 	}
 
 	public void ApplyContagionToAdjacentUnits()
@@ -275,11 +275,11 @@ public abstract class UnitController : ITileObjectController, IDamageableControl
 			((MonoBehaviour)TPSingleton<GameManager>.Instance).StopCoroutine(Unit.FinalizeDeathWhenNeededCoroutine);
 			Unit.FinalizeDeathWhenNeededCoroutine = null;
 		}
-		FinalizeDeath();
 		if (Unit.ExileForcePlayDieAnim)
 		{
 			Unit.UnitView.PlayDieAnim();
 		}
+		FinalizeDeath();
 	}
 
 	public void FillArmor()
@@ -358,26 +358,35 @@ public abstract class UnitController : ITileObjectController, IDamageableControl
 
 	public int GetModifiedMaxRange(TheLastStand.Model.Skill.Skill skill, Dictionary<UnitStatDefinition.E_Stat, float> statModifiers = null)
 	{
-		//IL_0098: Unknown result type (might be due to invalid IL or missing references)
-		//IL_009d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b0: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b5: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00df: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00e4: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00f9: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00fe: Unknown result type (might be due to invalid IL or missing references)
 		int num = 0;
 		int num2 = 0;
+		int num3 = 0;
 		if (skill.SkillDefinition.RangeModifiable)
 		{
 			num2 = (int)Unit.GetClampedStatValue(UnitStatDefinition.E_Stat.SkillRangeModifier);
 			num2 += (int)(statModifiers?.GetValueOrDefault(UnitStatDefinition.E_Stat.SkillRangeModifier) ?? 0f);
 		}
-		if (Unit is PlayableUnit playableUnit && skill.SkillContainer is TheLastStand.Model.Item.Item item && item.ItemDefinition.Category == ItemDefinition.E_Category.Potion)
+		if (Unit is PlayableUnit playableUnit && skill.SkillContainer is TheLastStand.Model.Item.Item item)
 		{
-			num += (int)playableUnit.UnitStatsController.GetStat(UnitStatDefinition.E_Stat.PotionRangeModifier).FinalClamped;
-			num += (int)(statModifiers?.GetValueOrDefault(UnitStatDefinition.E_Stat.PotionRangeModifier) ?? 0f);
+			if (item.ItemDefinition.HasTag("Gauntlet"))
+			{
+				num3 += (int)playableUnit.UnitStatsController.GetStat(UnitStatDefinition.E_Stat.GauntletRangeModifier).FinalClamped;
+				num3 += (int)(statModifiers?.GetValueOrDefault(UnitStatDefinition.E_Stat.GauntletRangeModifier) ?? 0f);
+			}
+			if (item.ItemDefinition.Category == ItemDefinition.E_Category.Potion)
+			{
+				num += (int)playableUnit.UnitStatsController.GetStat(UnitStatDefinition.E_Stat.PotionRangeModifier).FinalClamped;
+				num += (int)(statModifiers?.GetValueOrDefault(UnitStatDefinition.E_Stat.PotionRangeModifier) ?? 0f);
+			}
 		}
 		Vector2Int range = skill.SkillDefinition.Range;
-		int num3 = ((Vector2Int)(ref range)).y + num + num2;
+		int num4 = ((Vector2Int)(ref range)).y + num + num3 + num2;
 		range = skill.SkillDefinition.Range;
-		return Mathf.Max(num3, ((Vector2Int)(ref range)).x);
+		return Mathf.Max(num4, ((Vector2Int)(ref range)).x);
 	}
 
 	public int GetModifiedMultiHitsCount(int multiHitsCount, float? statModifier = null)
@@ -505,16 +514,16 @@ public abstract class UnitController : ITileObjectController, IDamageableControl
 		Unit.UnitController.PrepareForDeath();
 	}
 
-	public int ReduceIncomingDamage(int incomingDamage, TheLastStand.Model.Unit.Unit source, AttackSkillActionDefinition.E_AttackType attackType, bool checkBlock, bool updateLifetimeStats = false)
+	public int ReduceIncomingDamage(int incomingDamage, TheLastStand.Model.Unit.Unit source, AttackSkillActionDefinition.E_AttackType attackType, bool checkBlock, out int blockedDamage, bool updateLifetimeStats = false)
 	{
 		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
-		Vector2Int val = ReduceIncomingDamage(new Vector2Int(incomingDamage, incomingDamage), source, attackType, checkBlock, updateLifetimeStats);
+		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
+		Vector2Int val = ReduceIncomingDamage(new Vector2Int(incomingDamage, incomingDamage), source, attackType, checkBlock, out blockedDamage, updateLifetimeStats);
 		return ((Vector2Int)(ref val)).x;
 	}
 
-	public Vector2Int ReduceIncomingDamage(Vector2Int incomingDamage, TheLastStand.Model.Unit.Unit source, AttackSkillActionDefinition.E_AttackType attackType, bool checkBlock, bool updateLifetimeStats = false)
+	public Vector2Int ReduceIncomingDamage(Vector2Int incomingDamage, TheLastStand.Model.Unit.Unit source, AttackSkillActionDefinition.E_AttackType attackType, bool checkBlock, out int blockedDamage, bool updateLifetimeStats = false)
 	{
 		//IL_0061: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0063: Unknown result type (might be due to invalid IL or missing references)
@@ -523,18 +532,20 @@ public abstract class UnitController : ITileObjectController, IDamageableControl
 		//IL_006a: Unknown result type (might be due to invalid IL or missing references)
 		//IL_006b: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0070: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0083: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0077: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0081: Unknown result type (might be due to invalid IL or missing references)
+		//IL_008e: Unknown result type (might be due to invalid IL or missing references)
+		//IL_007b: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0082: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0087: Unknown result type (might be due to invalid IL or missing references)
 		float resistanceReduction = source?.GetClampedStatValue(UnitStatDefinition.E_Stat.ResistanceReduction) ?? 0f;
 		float reductionPercentage = source?.UnitStatsController.GetStat(UnitStatDefinition.E_Stat.PercentageResistanceReduction).ClampStatValue(source.UnitStatsController.GetStat(UnitStatDefinition.E_Stat.PercentageResistanceReduction).FinalClamped + ((attackType == AttackSkillActionDefinition.E_AttackType.Magical) ? UnitDatabase.MagicDamagePercentageResistanceReduction : 0f)) ?? 0f;
 		float reducedResistance = Unit.GetReducedResistance(resistanceReduction, reductionPercentage);
 		Vector2Int val = ComputeResistanceDamageOffsetRange(incomingDamage, reducedResistance);
 		incomingDamage -= val;
+		blockedDamage = 0;
 		if (checkBlock)
 		{
-			incomingDamage = ReduceIncomingDamageWithBlock(incomingDamage, updateLifetimeStats, out var _);
+			incomingDamage = ReduceIncomingDamageWithBlock(incomingDamage, updateLifetimeStats, out var _, out var blockedDamageValue);
+			blockedDamage = blockedDamageValue;
 		}
 		return incomingDamage;
 	}
@@ -566,27 +577,28 @@ public abstract class UnitController : ITileObjectController, IDamageableControl
 	{
 		//IL_0000: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0005: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
 		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
+		//IL_001a: Unknown result type (might be due to invalid IL or missing references)
+		//IL_001f: Unknown result type (might be due to invalid IL or missing references)
 		Vector2Int val = Vector2Int.zero;
 		if (checkBlock)
 		{
-			val += ReduceIncomingDamageWithBlock(Vector2Int.zero, updateLifetimeStats, out var _);
+			val += ReduceIncomingDamageWithBlock(Vector2Int.zero, updateLifetimeStats, out var _, out var _);
 		}
 		return val;
 	}
 
-	protected virtual Vector2Int ReduceIncomingDamageWithBlock(Vector2Int incomingDamage, bool updateLifetimeStats, out int blockValue)
+	protected virtual Vector2Int ReduceIncomingDamageWithBlock(Vector2Int incomingDamage, bool updateLifetimeStats, out int blockValue, out int blockedDamageValue)
 	{
-		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
+		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
 		blockValue = (int)Unit.GetClampedStatValue(UnitStatDefinition.E_Stat.Block);
+		blockedDamageValue = Mathf.Min(((Vector2Int)(ref incomingDamage)).x, blockValue);
 		return incomingDamage - Vector2Int.one * blockValue;
 	}
 

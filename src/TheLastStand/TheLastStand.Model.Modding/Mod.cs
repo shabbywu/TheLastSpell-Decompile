@@ -169,7 +169,7 @@ public class Mod
 				if (FontSettings.IsActivated)
 				{
 					moddingModule = new FontModuleController(modulesDirectories[i]).FontModule;
-					if (moddingModule is FontModule fontModule && fontModule.FontConfigDefinition == null)
+					if (moddingModule is FontModule { FontConfigDefinition: null })
 					{
 						moddingModule = null;
 					}

@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using TPLib;
 using TPLib.Debugging.Console;
-using TPLib.Localization;
 using TPLib.Log;
 using TPLib.Yield;
 using TheLastStand.Controller;
@@ -132,15 +131,15 @@ public sealed class BarkManager : Manager<BarkManager>
 		string text = null;
 		if (sentenceIndex != -1)
 		{
-			if (BarkDatabase.BarkDefinitions[barkId].SentencesCount <= sentenceIndex)
+			text = BarkDefinition.GetSentence(BarkDatabase.BarkDefinitions[barkId], barker, sentenceIndex);
+			if (text == null)
 			{
 				((CLogger<BarkManager>)this).LogError((object)$"Can not find sentence {sentenceIndex} in {barkId} sentences", (CLogLevel)2, true, true);
 				return;
 			}
-			text = Localizer.Get($"Bark_{barkId}_{sentenceIndex}");
 		}
 		BarkView pooledComponent = ObjectPooler.GetPooledComponent<BarkView>("BarkViews", barkViewPrefab, barksParent, dontSetParent: false);
-		Bark bark = new BarkController(BarkDatabase.BarkDefinitions[barkId], pooledComponent).Bark;
+		Bark bark = new BarkController(BarkDatabase.BarkDefinitions[barkId], pooledComponent, barker).Bark;
 		if (text != null)
 		{
 			bark.Sentence = text;
@@ -345,9 +344,22 @@ public sealed class BarkManager : Manager<BarkManager>
 	}
 
 	[DevConsoleCommand("PlayBark")]
-	public static void DebugAddBark([StringConverter(typeof(StringToBarkIdConverter))] string barkId, int sentenceIndex = -1)
+	public static void DebugAddBark([StringConverter(typeof(StringToBarkIdConverter))] string barkId, int sentenceIndex = -1, [StringConverter(typeof(PlayableUnit.StringToRaceIdConverter))] string raceId = "")
 	{
-		TPSingleton<BarkManager>.Instance.AddPotentialBark(barkId, RandomManager.GetRandomElement("DEBUG", TPSingleton<PlayableUnitManager>.Instance.PlayableUnits), 0f, sentenceIndex, forceSucceed: true);
+		if (string.IsNullOrEmpty(raceId))
+		{
+			TPSingleton<BarkManager>.Instance.AddPotentialBark(barkId, RandomManager.GetRandomElement("DEBUG", TPSingleton<PlayableUnitManager>.Instance.PlayableUnits), 0f, sentenceIndex, forceSucceed: true);
+		}
+		else
+		{
+			List<PlayableUnit> list = TPSingleton<PlayableUnitManager>.Instance.PlayableUnits.FindAll((PlayableUnit playableUnit) => playableUnit.RaceDefinition.Id == raceId);
+			if (list.Count == 0)
+			{
+				((CLogger<BarkManager>)TPSingleton<BarkManager>.Instance).LogError((object)("Couldn't find a playable unit with race " + raceId + " to Play a bark !"), (CLogLevel)1, true, true);
+				return;
+			}
+			TPSingleton<BarkManager>.Instance.AddPotentialBark(barkId, RandomManager.GetRandomElement("DEBUG", list), 0f, sentenceIndex, forceSucceed: true);
+		}
 		TPSingleton<BarkManager>.Instance.Display();
 	}
 }

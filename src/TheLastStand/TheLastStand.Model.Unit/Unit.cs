@@ -9,6 +9,7 @@ using TheLastStand.Controller.Unit.Stat;
 using TheLastStand.Definition;
 using TheLastStand.Definition.Skill.SkillAction;
 using TheLastStand.Definition.Unit;
+using TheLastStand.Definition.Unit.Race;
 using TheLastStand.Framework.Serialization;
 using TheLastStand.Manager;
 using TheLastStand.Model.Extensions;
@@ -95,6 +96,22 @@ public abstract class Unit : FormulaInterpreterContext, ITileObject, ISkillCaste
 		},
 		{
 			E_EffectTime.OnSkillUndo,
+			null
+		},
+		{
+			E_EffectTime.OnDealDamageTargetHit,
+			null
+		},
+		{
+			E_EffectTime.OnDealDamageTargetKill,
+			null
+		},
+		{
+			E_EffectTime.OnDealDamageExecutionEnd,
+			null
+		},
+		{
+			E_EffectTime.OnPerkApplyStatusEnd,
 			null
 		}
 	};
@@ -200,6 +217,8 @@ public abstract class Unit : FormulaInterpreterContext, ITileObject, ISkillCaste
 	public int InjuryStage => UnitStatsController.UnitStats.InjuryStage;
 
 	public AttackSkillActionDefinition.E_AttackType LastSkillType { get; set; }
+
+	public virtual RaceDefinition BarkerRaceDefinition => null;
 
 	public virtual Transform BarkViewFollowTarget => ((Component)UnitView).transform;
 

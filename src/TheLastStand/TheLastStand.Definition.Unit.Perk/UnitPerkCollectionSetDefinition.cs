@@ -14,7 +14,7 @@ public class UnitPerkCollectionSetDefinition : TheLastStand.Framework.Serializat
 {
 	public int Index { get; private set; }
 
-	public HashSet<Tuple<UnitPerkCollectionDefinition, int>> CollectionsPerWeight { get; private set; }
+	public HashSet<Tuple<UnitPerkCollectionDefinition, int, string>> CollectionsPerWeight { get; private set; }
 
 	public UnitPerkCollectionSetDefinition(XContainer container)
 		: base(container)
@@ -32,24 +32,28 @@ public class UnitPerkCollectionSetDefinition : TheLastStand.Framework.Serializat
 		{
 			CLoggerManager.Log((object)"Index attribute could not be parsed as an int UnitPerkCollectionSetDefinition", (Object)(object)TPSingleton<PlayableUnitManager>.Instance, (LogType)0, (CLogLevel)2, true, "PlayableUnitManager", false);
 		}
-		CollectionsPerWeight = new HashSet<Tuple<UnitPerkCollectionDefinition, int>>();
-		foreach (XElement item in obj.Elements(XName.op_Implicit("UnitPerkCollectionDefinition")))
+		CollectionsPerWeight = new HashSet<Tuple<UnitPerkCollectionDefinition, int, string>>();
+		foreach (XElement item2 in obj.Elements(XName.op_Implicit("UnitPerkCollectionDefinition")))
 		{
-			XAttribute val = item.Attribute(XName.op_Implicit("Id"));
+			XAttribute val = item2.Attribute(XName.op_Implicit("Id"));
 			if (!PlayableUnitDatabase.UnitPerkCollectionDefinitions.TryGetValue(val.Value, out var value))
 			{
 				CLoggerManager.Log((object)("Could not find the perk collection \"" + val.Value + "\" in the database. Skip."), (Object)(object)TPSingleton<PlayableUnitManager>.Instance, (LogType)0, (CLogLevel)2, true, "PlayableUnitManager", false);
 				continue;
 			}
-			XAttribute val2 = item.Attribute(XName.op_Implicit("Weight"));
+			XAttribute val2 = item2.Attribute(XName.op_Implicit("Weight"));
 			if (!int.TryParse(val2.Value, out var result2))
 			{
 				CLoggerManager.Log((object)("Could not parse the Weight element into an int : \"" + val2.Value + "\". Skip."), (Object)(object)TPSingleton<PlayableUnitManager>.Instance, (LogType)0, (CLogLevel)2, true, "PlayableUnitManager", false);
+				continue;
 			}
-			else
+			XAttribute val3 = item2.Attribute(XName.op_Implicit("RestrictedToRaceId"));
+			string item = null;
+			if (val3 != null)
 			{
-				CollectionsPerWeight.Add(new Tuple<UnitPerkCollectionDefinition, int>(value, result2));
+				item = val3.Value;
 			}
+			CollectionsPerWeight.Add(new Tuple<UnitPerkCollectionDefinition, int, string>(value, result2, item));
 		}
 	}
 }

@@ -5,6 +5,7 @@ using System.Linq;
 using TPLib;
 using TPLib.Log;
 using TPLib.Yield;
+using TheLastStand.Controller.Building.Module;
 using TheLastStand.Controller.TileMap;
 using TheLastStand.Controller.Trophy.TrophyConditions;
 using TheLastStand.DRM.Achievements;
@@ -170,11 +171,32 @@ public abstract class SkillActionExecutionController
 
 	public void AddTarget(Tile tile, TileObjectSelectionManager.E_Orientation orientation)
 	{
-		SkillActionExecution.TargetTiles.Add(new SkillTargetedTileInfo(tile, orientation));
-		if (SkillActionExecution.Skill.SkillAction.HasEffect("MultiHit"))
+		AddTarget(new SkillTargetedTileInfo(tile, orientation), refreshSkillEffectFeedback: true);
+	}
+
+	public void AddTarget(SkillTargetedTileInfo targetedTileInfo, bool refreshSkillEffectFeedback)
+	{
+		SkillActionExecution.TargetTiles.Add(targetedTileInfo);
+		if (!SkillActionExecution.Skill.SkillAction.HasEffect("MultiHit"))
+		{
+			return;
+		}
+		Tile tile = targetedTileInfo.Tile;
+		if (refreshSkillEffectFeedback)
 		{
 			SkillManager.SkillEffectFeedback.Refresh();
-			SkillManager.AddMultiHitTargetHUD(tile);
+		}
+		if (!SkillActionExecution.MultiHitTargetedTiles.ContainsKey(tile))
+		{
+			SkillActionExecution.MultiHitTargetedTiles.Add(tile, new List<Tile>());
+		}
+		foreach (Tile affectedTile in GetAffectedTiles(tile, alwaysReturnFullPattern: false, targetedTileInfo.Orientation))
+		{
+			SkillManager.AddMultiHitTargetHUD(affectedTile);
+			if (!SkillActionExecution.MultiHitTargetedTiles[tile].Contains(affectedTile))
+			{
+				SkillActionExecution.MultiHitTargetedTiles[tile].Add(affectedTile);
+			}
 		}
 	}
 
@@ -567,11 +589,22 @@ public abstract class SkillActionExecutionController
 	public void RemoveLastTarget()
 	{
 		int index = SkillActionExecution.TargetTiles.Count - 1;
-		Tile tile = SkillActionExecution.TargetTiles[index].Tile;
+		SkillTargetedTileInfo skillTargetedTileInfo = SkillActionExecution.TargetTiles[index];
+		Tile tileToRemove = skillTargetedTileInfo.Tile;
 		SkillActionExecution.TargetTiles.RemoveAt(index);
 		if (SkillActionExecution.Skill.SkillAction.HasEffect("MultiHit"))
 		{
-			SkillManager.RemoveMultiHitTargetHUD(tile);
+			if (SkillActionExecution.MultiHitTargetedTiles.TryGetValue(tileToRemove, out var value))
+			{
+				foreach (Tile item in value)
+				{
+					SkillManager.RemoveMultiHitTargetHUD(item);
+				}
+			}
+			if (!SkillActionExecution.TargetTiles.Exists((SkillTargetedTileInfo tileInfo) => tileInfo.Tile == tileToRemove))
+			{
+				SkillActionExecution.MultiHitTargetedTiles.Remove(skillTargetedTileInfo.Tile);
+			}
 		}
 		SkillManager.SkillEffectFeedback.Refresh();
 	}
@@ -585,18 +618,26 @@ public abstract class SkillActionExecutionController
 		SkillActionExecution.Skill.SkillAction.SkillActionController.ResetPerkData();
 		TPSingleton<PlayableUnitManagementView>.Instance.RefreshModifiersLayoutView();
 		SkillActionExecution.SkillExecutionView.Clear();
+		if (SkillActionExecution.Skill.SkillAction.HasEffect("MultiHit"))
+		{
+			foreach (SkillTargetedTileInfo targetTile in SkillActionExecution.TargetTiles)
+			{
+				Tile tile = targetTile.Tile;
+				if (!SkillActionExecution.MultiHitTargetedTiles.ContainsKey(tile))
+				{
+					continue;
+				}
+				foreach (Tile item in SkillActionExecution.MultiHitTargetedTiles[tile])
+				{
+					SkillManager.RemoveMultiHitTargetHUD(item);
+				}
+			}
+		}
 		SkillActionExecution.Caster = null;
 		SkillActionExecution.SkillSourceTileObject = null;
 		if (SkillActionExecution.CastFx != null)
 		{
 			SkillActionExecution.CastFx.SourceTile = null;
-		}
-		if (SkillActionExecution.Skill.SkillAction.HasEffect("MultiHit"))
-		{
-			foreach (SkillTargetedTileInfo targetTile in SkillActionExecution.TargetTiles)
-			{
-				SkillManager.RemoveMultiHitTargetHUD(targetTile.Tile);
-			}
 		}
 		if (SkillActionExecution.Skill.SkillAction is ResupplySkillAction resupplySkillAction && (resupplySkillAction.HasEffect("ResupplyCharges") || resupplySkillAction.HasEffect("ResupplyOverallUses")))
 		{
@@ -604,6 +645,7 @@ public abstract class SkillActionExecutionController
 		}
 		SkillManager.SkillEffectFeedback.Hide();
 		SkillActionExecution.TargetTiles.Clear();
+		SkillActionExecution.MultiHitTargetedTiles.Clear();
 		TPSingleton<TileMapManager>.Instance.TileMap.TileMapView.ClearRangedSkillsModifiers();
 		SkillActionExecution.AllResultData.Clear();
 		if (SkillActionExecution.PropagationAffectedUnits != null)
@@ -625,11 +667,7 @@ public abstract class SkillActionExecutionController
 		}
 		foreach (SkillTargetedTileInfo savedTarget in savedTargets)
 		{
-			SkillActionExecution.TargetTiles.Add(savedTarget);
-			if (SkillActionExecution.Skill.SkillAction.HasEffect("MultiHit"))
-			{
-				SkillManager.AddMultiHitTargetHUD(savedTarget.Tile);
-			}
+			AddTarget(savedTarget, refreshSkillEffectFeedback: false);
 		}
 		SkillManager.SkillEffectFeedback.Refresh();
 	}
@@ -704,7 +742,7 @@ public abstract class SkillActionExecutionController
 
 	protected void PlaySkillCastAnim(TheLastStand.Model.Unit.Unit caster)
 	{
-		if (!(caster is EnemyUnit enemyUnit) || enemyUnit.GoalComputingStep != IBehaviorModel.E_GoalComputingStep.OnSpawn)
+		if (!(caster is EnemyUnit { GoalComputingStep: IBehaviorModel.E_GoalComputingStep.OnSpawn }))
 		{
 			caster?.UnitController.PlaySkillCastAnim(SkillActionExecution);
 		}
@@ -884,7 +922,7 @@ public abstract class SkillActionExecutionController
 			}
 			foreach (TheLastStand.Model.Unit.Unit affectedUnit in resultDatum.AffectedUnits)
 			{
-				if (affectedUnit is EnemyUnit enemyUnit && enemyUnit.IsBossPhaseActor && enemyUnit.IsDead)
+				if (affectedUnit is EnemyUnit { IsBossPhaseActor: not false, IsDead: not false } enemyUnit)
 				{
 					eUnit = enemyUnit;
 					return true;
@@ -919,6 +957,10 @@ public abstract class SkillActionExecutionController
 			{
 				TrophyManager.AppendValueToTrophiesConditions<TilesMovedUsingSkillsTrophyConditionController>(new object[2] { playableUnit.RandomId, num });
 			}
+			if (num >= 14 && playableUnit.RaceDefinition.Id == "Dwarf" && skill.SkillDefinition.Id == "EmergencyTunnelSkill")
+			{
+				TPSingleton<AchievementManager>.Instance.UnlockAchievement(AchievementContainer.ACH_DWARF_14_TILES_EMERGENCY_TUNNEL);
+			}
 		}
 		caster.UnitController.PrepareForMovement(playWalkAnim: false, followPathOrientation: false, skill.SkillDefinition.SkillCastFxDefinition.ManeuverFxDefinition.Speed.EvalToFloat(SkillActionExecution.CastFx.CastFXInterpreterContext), skill.SkillDefinition.SkillCastFxDefinition.ManeuverFxDefinition.Delay.EvalToFloat(SkillActionExecution.CastFx.CastFXInterpreterContext)).StartTask();
 	}
@@ -928,7 +970,7 @@ public abstract class SkillActionExecutionController
 		TheLastStand.Model.Unit.Unit casterUnit = caster as TheLastStand.Model.Unit.Unit;
 		int multiHitIndex = 0;
 		int multiHitCount = SkillActionExecution.TargetTiles.Count;
-		while (multiHitIndex < multiHitCount && (casterUnit == null || !casterUnit.IsDead || (casterUnit is EnemyUnit enemyUnit && enemyUnit.IsDeathRattling)) && SkillActionExecution.Caster != null)
+		while (multiHitIndex < multiHitCount && (casterUnit == null || !casterUnit.IsDead || casterUnit is EnemyUnit { IsDeathRattling: not false }) && SkillActionExecution.Caster != null)
 		{
 			SkillActionExecution.HitIndex = multiHitIndex;
 			SkillTargetedTileInfo targetTileInfo = SkillActionExecution.TargetTiles[multiHitIndex];
@@ -954,6 +996,7 @@ public abstract class SkillActionExecutionController
 				}
 			}
 			ApplySkillEffects(caster, skill, currentTargetTile, resultData, targetTileInfo.Orientation);
+			SetBuildingCanPrepareForDeath(resultData, canPrepareForDeath: true);
 			if (IsBossPhaseActorDying(resultData, out var eUnit) && TPSingleton<BossManager>.Instance.ShouldTriggerBossWaveVictory)
 			{
 				TPSingleton<GameManager>.Instance.Game.NightTurn = Game.E_NightTurn.FinalBossDeath;
@@ -971,6 +1014,7 @@ public abstract class SkillActionExecutionController
 				yield return WaitForDeathRattleAndHeroesDeathSequence(resultData);
 			}
 			ApplyEffectsAfterFXs(caster, skill, resultData, affectedTiles, surroundingTiles);
+			SetBuildingCanPrepareForDeath(resultData, canPrepareForDeath: true);
 			PlaySkillSFXs(currentTargetTile);
 			TPSingleton<EnemyUnitManager>.Instance.ApplyContagionToDyingEnemies();
 			if (!(skill.SkillContainer is Perk) && caster is PlayableUnit playableUnit)
@@ -983,7 +1027,13 @@ public abstract class SkillActionExecutionController
 			{
 				yield return SharedYields.WaitForSeconds(skill.SkillDefinition.SkillCastFxDefinition.MultiHitDelay);
 			}
-			SkillManager.RemoveMultiHitTargetHUD(currentTargetTile);
+			if (SkillActionExecution.MultiHitTargetedTiles.ContainsKey(currentTargetTile))
+			{
+				foreach (Tile item in SkillActionExecution.MultiHitTargetedTiles[currentTargetTile])
+				{
+					SkillManager.RemoveMultiHitTargetHUD(item);
+				}
+			}
 			if (casterUnit?.UnitController.MoveTask != null)
 			{
 				yield return (object)new WaitUntil((Func<bool>)(() => casterUnit.UnitController.MoveTask == null));
@@ -1039,6 +1089,21 @@ public abstract class SkillActionExecutionController
 		return false;
 	}
 
+	private void SetBuildingCanPrepareForDeath(List<SkillActionResultDatas> resultData, bool canPrepareForDeath)
+	{
+		foreach (SkillActionResultDatas resultDatum in resultData)
+		{
+			if (resultDatum == null || resultDatum.AffectedBuildings.Count == 0)
+			{
+				continue;
+			}
+			foreach (TheLastStand.Model.Building.Building affectedBuilding in resultDatum.AffectedBuildings)
+			{
+				affectedBuilding.DamageableModule?.DamageableModuleController.ChangeCanPrepareForDeath(canPrepareForDeath: true);
+			}
+		}
+	}
+
 	private bool ShouldWaitForDeathRattleOrHeroesDeathSequence(List<SkillActionResultDatas> resultData)
 	{
 		if (TPSingleton<PlayableUnitManager>.Instance.ShouldWaitUntilDeathSequences)
@@ -1053,7 +1118,7 @@ public abstract class SkillActionExecutionController
 			}
 			foreach (TheLastStand.Model.Unit.Unit affectedUnit in resultDatum.AffectedUnits)
 			{
-				if (affectedUnit is EnemyUnit enemyUnit && enemyUnit.IsDeathRattling)
+				if (affectedUnit is EnemyUnit { IsDeathRattling: not false })
 				{
 					return true;
 				}
@@ -1119,11 +1184,10 @@ public abstract class SkillActionExecutionController
 				TPSingleton<EnemyUnitManager>.Instance.EnemiesExecutingSkillsOnSpawn.Remove(enemyUnit);
 			}
 		}
-		else if (caster is BattleModule battleModule && battleModule.IsDeathRattling)
+		else if (caster is BattleModule { IsDeathRattling: not false } battleModule)
 		{
 			yield return TPSingleton<PlayableUnitManager>.Instance.WaitUntilTakeDamageSequences;
-			battleModule.IsDeathRattling = false;
-			TPSingleton<BuildingManager>.Instance.BuildingsDeathRattling.Remove(battleModule);
+			BattleModuleController.FinalizeDeathRattling(battleModule);
 		}
 		if (TPSingleton<EnemyUnitManager>.Instance.EnemiesDeathRattling.Count > 0)
 		{

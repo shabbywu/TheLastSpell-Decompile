@@ -18,7 +18,7 @@ namespace TheLastStand.View.MetaShops;
 
 public class LightMetaUpgradeLineView : MetaUpgradeLineView
 {
-	private static class Constants
+	private new static class Constants
 	{
 		public static class Animation
 		{

@@ -20,6 +20,7 @@ public class PlayableUnitStats : UnitStats
 
 	public override void Deserialize(ISerializedData container = null, int saveVersion = -1)
 	{
+		PlayableUnitStatsController.OnRaceGenerated(PlayableUnit.RaceDefinition);
 		foreach (UnitTraitDefinition unitTraitDefinition in PlayableUnit.UnitTraitDefinitions)
 		{
 			PlayableUnitStatsController.OnTraitGenerated(unitTraitDefinition);

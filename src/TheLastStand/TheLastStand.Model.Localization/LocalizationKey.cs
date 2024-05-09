@@ -32,6 +32,18 @@ public static class LocalizationKey
 		public const string BuildingIndestructible = "Building_Indestructible";
 	}
 
+	public static class DLC
+	{
+		public const string DLCNamePrefix = "DLC_Name_";
+	}
+
+	public static class GenericPopup
+	{
+		public const string Close = "GenericConsent_Close";
+
+		public const string Delete = "GenericConsent_Delete";
+	}
+
 	public static class ProductionReportPanel
 	{
 		public const string ProductionReportJournalSentence = "ProductionReport_JournalSentence";
@@ -71,6 +83,8 @@ public static class LocalizationKey
 		public const string UnitStatDescPrefix = "UnitStat_Desc_";
 
 		public const string UnitStatTooltipBaseValue = "UnitStatTooltip_BaseValue";
+
+		public const string UnitStatTooltipRaceValue = "UnitStatTooltip_RaceValue";
 
 		public const string UnitStatTooltipTraitsValue = "UnitStatTooltip_TraitsValue";
 
@@ -126,6 +140,23 @@ public static class LocalizationKey
 		public const string HandsNamePrefix = "HandsName_";
 
 		public const string CategoryNamePrefix = "CategoryName_";
+
+		public const string CategoryNamePluralPrefix = "CategoryNamePlural_";
+	}
+
+	public static class ItemRestriction
+	{
+		public const string ItemFamilyPrefix = "ItemFamily_";
+
+		public const string ItemRestrictionCategoryTooltipNamePrefix = "ItemRestrictionCategoryTooltipName_";
+
+		public const string WeaponCategoryWarningPrefix = "WeaponRestrictionsPanel_CategoryWarning_";
+
+		public const string WeaponFamilyTooltipSelectedFamily = "WeaponFamilyDisplay_Tooltip_SelectedWeapon";
+
+		public const string WeaponFamilyTooltipNotSelectedFamily = "WeaponFamilyDisplay_Tooltip_UnselectedWeapon";
+
+		public const string WeaponFamilyTooltipLockedFamily = "WeaponFamilyDisplay_Tooltip_LockedWeapon";
 	}
 
 	public static class Skill
@@ -341,6 +372,13 @@ public static class LocalizationKey
 		public const string PerkEffectsInformationsPrefix = "PerkEffectInformations_";
 	}
 
+	public static class Race
+	{
+		public const string RaceNamePrefix = "RaceTooltip_";
+
+		public const string RaceDescriptionPrefix = "RaceTooltipDescription_";
+	}
+
 	public static class GameOverPanel
 	{
 		public const string GameOverPanelTitle = "GameOverPanel_Title";
@@ -465,6 +503,16 @@ public static class LocalizationKey
 		public const string CityDescriptionPrefix = "WorldMap_CityDescription_";
 
 		public const string StartingSetupPrefix = "WorldMap_StartingSetup_";
+
+		public const string CantStartNewGameApocalypseNotSelected = "WorldMap_CantStartNewGame";
+
+		public const string CantStartNewGameWeaponRestrictions = "WorldMap_CantStartNewGame_WeaponRestrictions";
+
+		public const string CantStartNewGameDLCNotOwned = "MapPanel_ReduxMap_Tooltip_DLCNotOwned";
+
+		public const string CantStartNewGameLinkedCityNotCompleted = "MapPanel_ReduxMap_Tooltip_Locked";
+
+		public const string CantStartNewGameMetaNotActivated = "WorldMap_CantStartNewGame_MetaNotActivated";
 	}
 
 	public static class TurnEnd

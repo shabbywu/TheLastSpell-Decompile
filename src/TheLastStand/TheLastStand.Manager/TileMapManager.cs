@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Xml.Linq;
 using TPLib;
+using TPLib.Debugging;
+using TPLib.Debugging.Console;
 using TPLib.Log;
 using TheLastStand.Controller.TileMap;
 using TheLastStand.Definition.TileMap;
@@ -30,6 +33,10 @@ public class TileMapManager : Manager<TileMapManager>
 		public const string TileMapTextAssetPathFormat = "TextAssets/Cities/{0}/{0}_TileMap";
 
 		public const string TileMapLevelEditorTextAssetPathFormat = "TextAssets/Cities/Level Editor/{0}/{0}_TileMap";
+
+		public const string TileFlagTilesNbDetailsText = "Details (flag : total tiles)";
+
+		public const string TileFlagTilesNbText = "{0} : {1}";
 	}
 
 	[SerializeField]
@@ -406,5 +413,39 @@ public class TileMapManager : Manager<TileMapManager>
 		{
 			TPSingleton<TileMapManager>.Instance.TileMap.TilesWithFlag.Add(flag, new List<Tile> { tile });
 		}
+	}
+
+	[DevConsoleCommand(Name = "TilesFlagsDetails")]
+	public static void DebugPrintTilesFlagsDetails()
+	{
+		if (!TPSingleton<TileMapManager>.Exist())
+		{
+			return;
+		}
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.Append("Details (flag : total tiles)").AppendLine();
+		TileFlagDefinition[] array = TileFlagDefinitions;
+		foreach (TileFlagDefinition tileFlagDefinition in array)
+		{
+			if (TPSingleton<TileMapManager>.Instance.TileMap.TilesWithFlag.ContainsKey(tileFlagDefinition.TileFlagTag))
+			{
+				stringBuilder.Append(DebugGetFormattedTileFlagTilesNb(tileFlagDefinition.TileFlagTag)).AppendLine();
+			}
+		}
+		TPSingleton<DebugManager>.Instance.LogDevConsole((object)stringBuilder);
+	}
+
+	public static string DebugGetFormattedTileFlagTilesNb(TileFlagDefinition.E_TileFlagTag tileFlagTag)
+	{
+		if (!TPSingleton<TileMapManager>.Exist())
+		{
+			return string.Empty;
+		}
+		int num = 0;
+		if (TPSingleton<TileMapManager>.Instance.TileMap.TilesWithFlag.ContainsKey(tileFlagTag))
+		{
+			num = TPSingleton<TileMapManager>.Instance.TileMap.TilesWithFlag[tileFlagTag].Count;
+		}
+		return $"{tileFlagTag} : {num}";
 	}
 }

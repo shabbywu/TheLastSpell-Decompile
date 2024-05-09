@@ -6,6 +6,7 @@ using TPLib.Debugging.Console;
 using TPLib.Localization;
 using TheLastStand.Controller.Item;
 using TheLastStand.Controller.Skill;
+using TheLastStand.Controller.Unit.Perk;
 using TheLastStand.Database;
 using TheLastStand.Database.Unit;
 using TheLastStand.Definition.Item;
@@ -16,16 +17,22 @@ using TheLastStand.Framework.Serialization;
 using TheLastStand.Manager;
 using TheLastStand.Manager.Building;
 using TheLastStand.Model.Skill;
+using TheLastStand.Model.Unit.Perk;
 using TheLastStand.Serialization;
 using TheLastStand.Serialization.Item;
 using UnityEngine;
 
 namespace TheLastStand.Model.Item;
 
-public class Item : ISkillContainer, ISerializable, IDeserializable
+public class Item : ISkillContainer, IPerkUnlocker, ISerializable, IDeserializable
 {
 	public static class Constants
 	{
+		public static class Ids
+		{
+			public const string Beer = "Beer";
+		}
+
 		public const string ItemCategoryPathPrefix = "View/Sprites/UI/Items/Categories/Icon_ItemCategory_";
 
 		public const string ItemHandsPathPrefix = "View/Sprites/UI/Items/Hands/Icon_ItemCategory_";
@@ -89,6 +96,8 @@ public class Item : ISkillContainer, ISerializable, IDeserializable
 
 	public bool IsTwoHandedWeapon => ItemDefinition.Hands == ItemDefinition.E_Hands.TwoHands;
 
+	public bool IsBeer => ItemDefinition.Id.Contains("Beer");
+
 	public ItemController ItemController { get; }
 
 	public ItemDefinition ItemDefinition { get; private set; }
@@ -108,6 +117,12 @@ public class Item : ISkillContainer, ISerializable, IDeserializable
 	public string RarityName => Localizer.Get(string.Format("{0}{1}", "RarityName_", Rarity));
 
 	public int DefaultSellingPrice => Mathf.RoundToInt(ItemDatabase.ItemPriceEquation.EvalToFloat(itemInterpreterContext));
+
+	public Dictionary<string, Perk> Perks { get; } = new Dictionary<string, Perk>();
+
+
+	public HashSet<string> PerksId { get; private set; } = new HashSet<string>();
+
 
 	public int SellingPrice => Mathf.FloorToInt((float)DefaultSellingPrice * TPSingleton<BuildingManager>.Instance.Shop.SellingMultiplier / 100f);
 
@@ -155,12 +170,12 @@ public class Item : ISkillContainer, ISerializable, IDeserializable
 
 	public override string ToString()
 	{
-		//IL_0195: Unknown result type (might be due to invalid IL or missing references)
-		//IL_019a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01b2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01b7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01cb: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01d0: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0196: Unknown result type (might be due to invalid IL or missing references)
+		//IL_019b: Unknown result type (might be due to invalid IL or missing references)
+		//IL_01b3: Unknown result type (might be due to invalid IL or missing references)
+		//IL_01b8: Unknown result type (might be due to invalid IL or missing references)
+		//IL_01cc: Unknown result type (might be due to invalid IL or missing references)
+		//IL_01d1: Unknown result type (might be due to invalid IL or missing references)
 		string text = ItemDefinition.Id + "\n" + $"Category: {ItemDefinition.Category}\n" + $"Rarity: {Rarity}\n" + $"Level: {Level}";
 		if (BaseStatBonuses != null)
 		{
@@ -199,6 +214,13 @@ public class Item : ISkillContainer, ISerializable, IDeserializable
 				}
 			}
 		}
+		if (ItemDefinition.PerksByLevel.TryGetValue(Level, out var value2) && value2 != null)
+		{
+			foreach (string item2 in value2)
+			{
+				text = text + "\n*Perk " + item2;
+			}
+		}
 		return text + "\n";
 	}
 
@@ -220,6 +242,17 @@ public class Item : ISkillContainer, ISerializable, IDeserializable
 		Resistance = serializedItem.Resistance;
 		Rarity = serializedItem.Rarity;
 		HasBeenSoldBefore = serializedItem.HasBeenSoldBefore;
+		if (ItemDefinition.PerksByLevel.ContainsKey(Level) && ItemDefinition.PerksByLevel[Level] != null)
+		{
+			foreach (string item in ItemDefinition.PerksByLevel[Level])
+			{
+				if (PlayableUnitDatabase.PerkDefinitions.ContainsKey(item) && !Perks.ContainsKey(item))
+				{
+					Perks.Add(item, new PerkController(PlayableUnitDatabase.PerkDefinitions[item], null, null, null, string.Empty, isNative: false, isFromRace: false).Perk);
+				}
+				PerksId.Add(item);
+			}
+		}
 		DeserializeSkills(serializedItem.Skills);
 		foreach (SerializedAffix affix in serializedItem.Affixes)
 		{

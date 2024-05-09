@@ -22,6 +22,7 @@ using TheLastStand.Definition.Skill;
 using TheLastStand.Definition.Unit;
 using TheLastStand.Definition.Unit.Perk;
 using TheLastStand.Definition.Unit.PlayableUnitGeneration;
+using TheLastStand.Definition.Unit.Race;
 using TheLastStand.Definition.Unit.Trait;
 using TheLastStand.Framework;
 using TheLastStand.Framework.Sequencing;
@@ -74,6 +75,8 @@ public class PlayableUnitController : UnitController
 
 		public static Func<ItemDefinition, bool> _003C_003E9__57_0;
 
+		public static Predicate<UnitFaceIdDefinition> _003C_003E9__65_1;
+
 		internal bool _003CGetBestItemSlotToCompare_003Eb__25_0(EquipmentSlot slot)
 		{
 			return slot.Item != null;
@@ -93,6 +96,11 @@ public class PlayableUnitController : UnitController
 		{
 			return itemDefinition.Hands == ItemDefinition.E_Hands.OneHand;
 		}
+
+		internal bool _003CGetRandomFaceId_003Eb__65_1(UnitFaceIdDefinition unitFaceDefinition)
+		{
+			return unitFaceDefinition.RestrictedToRaceId == "Human";
+		}
 	}
 
 	private readonly List<TheLastStand.Model.Skill.Skill> contextualSkills = new List<TheLastStand.Model.Skill.Skill>();
@@ -111,6 +119,10 @@ public class PlayableUnitController : UnitController
 		base.Unit = new PlayableUnit(PlayableUnitDatabase.PlayableUnitTemplateDefinition, serializedPlayableUnit, this, saveVersion, isDead);
 		base.Unit.DeserializeAfterInit(serializedPlayableUnit, saveVersion);
 		ComputeExperienceNeededToNextLevel();
+		GenerateNativeSkills(onLoad: true);
+		GenerateNativePerks(serializedPlayableUnit.NativePerks, isDead);
+		GenerateRacePerks(serializedPlayableUnit.RacePerks, isDead);
+		GenerateDynamicPerks(serializedPlayableUnit.DynamicPerks, isDead);
 		foreach (KeyValuePair<ItemSlotDefinition.E_ItemSlotId, List<EquipmentSlot>> equipmentSlot in PlayableUnit.EquipmentSlots)
 		{
 			for (int i = 0; i < equipmentSlot.Value.Count; i++)
@@ -123,11 +135,9 @@ public class PlayableUnitController : UnitController
 		}
 		PlayableUnitView.GeneratePortrait(PlayableUnit, serializedPlayableUnit);
 		UpdateInjuryStage();
-		GenerateNativeSkills(onLoad: true);
-		GenerateNativePerks(serializedPlayableUnit.NativePerks, isDead);
 	}
 
-	public PlayableUnitController(string archetypeId, int traitPoints, UnitView view = null, Tile tile = null, int level = 1)
+	public PlayableUnitController(string archetypeId, int traitPoints, UnitView view = null, Tile tile = null, int level = 1, string raceDefinitionId = null)
 	{
 		base.Unit = new PlayableUnit(PlayableUnitDatabase.PlayableUnitTemplateDefinition, this, view, archetypeId)
 		{
@@ -135,12 +145,13 @@ public class PlayableUnitController : UnitController
 		};
 		SetTile(tile);
 		PlayableUnit.Gender = (RandomManager.GetRandomBool(this) ? "Male" : "Female");
-		PlayableUnit.PlayableUnitName = RandomManager.GetRandomElement(this, PlayableUnitDatabase.GetNamesForGender(PlayableUnit.Gender));
+		GenerateRace(raceDefinitionId);
+		PlayableUnit.PlayableUnitName = RandomManager.GetRandomElement(this, PlayableUnit.RaceDefinition.GetNamesForGender(PlayableUnit.Gender));
 		if ((Object)(object)base.Unit.UnitView != (Object)null)
 		{
 			((Object)base.Unit.UnitView).name = base.Unit.Id;
 		}
-		PlayableUnit.FaceId = GetRandomFaceId(PlayableUnit.Gender);
+		PlayableUnit.FaceId = GetRandomFaceId(PlayableUnit.Gender, PlayableUnit.RaceDefinition.Id);
 		PlayableUnitView.GenerateRandomPortrait(PlayableUnit);
 		PlayableUnit.LevelUp = new UnitLevelUpController(PlayableUnitDatabase.UnitLevelUpDefinition, TPSingleton<UnitLevelUpView>.Instance).UnitLevelUp;
 		PlayableUnit.LevelUp.PlayableUnit = PlayableUnit;
@@ -151,6 +162,7 @@ public class PlayableUnitController : UnitController
 		GenerateContextualSkills();
 		GenerateNativeSkills(onLoad: false);
 		GenerateNativePerks();
+		GenerateRacePerks();
 	}
 
 	public static ColorSwapPaletteDefinition GetRandomHairColorSwapPalette(string skinName, Dictionary<string, ColorSwapPaletteDefinition> colorSwapPalettes)
@@ -968,16 +980,16 @@ public class PlayableUnitController : UnitController
 		}
 	}
 
-	protected override Vector2Int ReduceIncomingDamageWithBlock(Vector2Int incomingDamage, bool updateLifetimeStats, out int blockValue)
+	protected override Vector2Int ReduceIncomingDamageWithBlock(Vector2Int incomingDamage, bool updateLifetimeStats, out int blockValue, out int blockedDamageValue)
 	{
 		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0004: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0009: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		incomingDamage = base.ReduceIncomingDamageWithBlock(incomingDamage, updateLifetimeStats, out blockValue);
+		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
+		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
+		incomingDamage = base.ReduceIncomingDamageWithBlock(incomingDamage, updateLifetimeStats, out blockValue, out blockedDamageValue);
 		if (updateLifetimeStats)
 		{
-			PlayableUnit.LifetimeStats.LifetimeStatsController.IncreaseDamagesBlocked(blockValue);
+			PlayableUnit.LifetimeStats.LifetimeStatsController.IncreaseDamagesBlocked(blockedDamageValue);
 		}
 		return incomingDamage;
 	}
@@ -992,7 +1004,7 @@ public class PlayableUnitController : UnitController
 		}
 		foreach (string item in list)
 		{
-			PlayableUnit.Perks[item].PerkController.UnHook(onLoad: false);
+			PlayableUnit.Perks[item].PerkController.LockAndClearUnlockers(removePerkFromOwner: true);
 		}
 		TrophyManager.AppendValueToTrophiesConditions<HeroDeadTrophyConditionController>(new object[1] { 1 });
 		if (!TPSingleton<PlayableUnitManager>.Instance.DeadPlayableUnits.ContainsKey(TPSingleton<GameManager>.Instance.DayNumber))
@@ -1058,19 +1070,19 @@ public class PlayableUnitController : UnitController
 				unlockedItemIds.Add(effects[i].Id);
 			}
 		}
-		TPSingleton<MetaUpgradesManager>.Instance.GetLockedItemsIds();
+		string[] lockedItemsIds = ItemManager.GetAllLockedItemsIds().ToArray();
 		List<Tuple<int, EquipmentGenerationDefinition.ItemGenerationData>> itemsPerWeight = unitGenerationDefinition.EquipmentGenerationDefinitions[ItemSlotDefinition.E_ItemSlotId.RightHand].ItemsPerWeight;
 		for (int num = itemsPerWeight.Count - 1; num >= 0; num--)
 		{
 			string itemId = itemsPerWeight[num].Item2.ItemId;
 			string itemsList = itemsPerWeight[num].Item2.ItemsList;
-			if (string.IsNullOrEmpty(itemId) || unlockedItemIds.Contains(itemId))
+			if (string.IsNullOrEmpty(itemId) || (unlockedItemIds.Contains(itemId) && !lockedItemsIds.Contains(itemId)))
 			{
 				if (!ItemDatabase.ItemsListDefinitions.ContainsKey(itemsList))
 				{
 					((CLogger<PlayableUnitManager>)TPSingleton<PlayableUnitManager>.Instance).LogError((object)("During hero generation, we failed to access the itemsList with Id " + itemsList + ". This id comes from the equipment generation definition, archetype : " + unitGenerationDefinition.ArchetypeId), (CLogLevel)2, true, true);
 				}
-				else if (ItemManager.AnyItemMatchingCondition(ItemDatabase.ItemsListDefinitions[itemsList], (ItemDefinition item) => item.Hands == ItemDefinition.E_Hands.OneHand && unlockedItemIds.Contains(itemId)))
+				else if (ItemManager.AnyItemMatchingCondition(ItemDatabase.ItemsListDefinitions[itemsList], (ItemDefinition item) => item.Hands == ItemDefinition.E_Hands.OneHand && unlockedItemIds.Contains(itemId) && !lockedItemsIds.Contains(item.Id)))
 				{
 					return false;
 				}
@@ -1091,6 +1103,9 @@ public class PlayableUnitController : UnitController
 		text += "\n---- Unit stats generation ----";
 		base.Unit.UnitStatsController = new PlayableUnitStatsController(PlayableUnit);
 		text += "\n---- End of unit stats generation ----";
+		text += "\n---- Unit race stats modifiers ----";
+		PlayableUnit.PlayableUnitStatsController.OnRaceGenerated(PlayableUnit.RaceDefinition);
+		text += "\n---- End of unit race stats modifiers ----";
 		foreach (KeyValuePair<ItemSlotDefinition.E_ItemSlotId, UnitEquipmentSlotDefinition> unitEquipmentSlotDefinition in PlayableUnitDatabase.UnitEquipmentSlotDefinitions)
 		{
 			int i = 0;
@@ -1120,6 +1135,7 @@ public class PlayableUnitController : UnitController
 				list.Remove(item);
 			}
 		}
+		RemoveIncompatibleTraitsWithRace(list);
 		for (int num = list.Count - 1; num >= 0; num--)
 		{
 			string backgroundTraitId = RandomManager.GetRandomElement(this, list);
@@ -1137,6 +1153,7 @@ public class PlayableUnitController : UnitController
 			{
 				list2.Remove("One-Armed");
 			}
+			RemoveIncompatibleTraitsWithRace(list2);
 			for (int num2 = list2.Count - 1; num2 >= 0; num2--)
 			{
 				string secondTraitId = RandomManager.GetRandomElement(this, list2);
@@ -1217,7 +1234,7 @@ public class PlayableUnitController : UnitController
 	private void GenerateEquipment(PlayableUnitGenerationDefinition unitGenerationDefinition)
 	{
 		List<string> list = new List<string>();
-		string[] lockedItemsIds = TPSingleton<MetaUpgradesManager>.Instance.GetLockedItemsIds();
+		string[] lockedItemIds = ItemManager.GetAllLockedItemsIds().ToArray();
 		if (MetaUpgradeEffectsController.TryGetEffectsOfType<UnlockEquipmentGenerationMetaEffectDefinition>(out var effects, MetaUpgradesManager.E_MetaState.Activated))
 		{
 			for (int i = 0; i < effects.Length; i++)
@@ -1237,7 +1254,7 @@ public class PlayableUnitController : UnitController
 			List<Tuple<int, EquipmentGenerationDefinition.ItemGenerationData>> list2 = new List<Tuple<int, EquipmentGenerationDefinition.ItemGenerationData>>(value.ItemsPerWeight);
 			for (int j = 0; j < list2.Count; j++)
 			{
-				if (list2[j].Item2.ItemId != string.Empty && (!list.Contains(list2[j].Item2.ItemId) || IsItemGenerationDataLocked(list2[j].Item2, lockedItemsIds)))
+				if (list2[j].Item2.ItemId != string.Empty && (!list.Contains(list2[j].Item2.ItemId) || IsItemGenerationDataLocked(list2[j].Item2, lockedItemIds)))
 				{
 					num -= list2[j].Item1;
 					list2.RemoveAt(j--);
@@ -1270,23 +1287,31 @@ public class PlayableUnitController : UnitController
 				{
 					flag2 = true;
 					ItemDefinition itemDefinition2 = ItemManager.TakeRandomItemInList(itemsListDefinition, (key == ItemSlotDefinition.E_ItemSlotId.RightHand && !flag) ? func : null);
-					if (itemDefinition2 != null)
+					if (itemDefinition2 == null)
 					{
-						if (itemDefinition2.Hands == ItemDefinition.E_Hands.TwoHands && !flag)
+						continue;
+					}
+					if (itemDefinition2.Hands == ItemDefinition.E_Hands.TwoHands && !flag)
+					{
+						flag2 = false;
+					}
+					if (flag2)
+					{
+						int minRarityIndexFromItemDefinition = RarityProbabilitiesTreeController.GetMinRarityIndexFromItemDefinition(itemDefinition2);
+						ItemManager.ItemGenerationInfo itemGenerationInfo = default(ItemManager.ItemGenerationInfo);
+						itemGenerationInfo.Destination = key;
+						itemGenerationInfo.ItemDefinition = itemDefinition2;
+						itemGenerationInfo.Level = itemDefinition2.GetHigherExistingLevelFromInitValue(level);
+						itemGenerationInfo.Rarity = RarityProbabilitiesTreeController.GenerateRarity(ItemDatabase.ItemRaritiesListDefinitions[item2.Item2.ItemRaritiesList], minRarityIndexFromItemDefinition);
+						itemGenerationInfo.SkipMalusAffixes = true;
+						ItemManager.ItemGenerationInfo generationInfo = itemGenerationInfo;
+						if (generationInfo.Level == -1)
 						{
 							flag2 = false;
+							continue;
 						}
-						if (flag2)
-						{
-							ItemManager.ItemGenerationInfo generationInfo = default(ItemManager.ItemGenerationInfo);
-							generationInfo.Destination = key;
-							generationInfo.ItemDefinition = itemDefinition2;
-							generationInfo.Level = level;
-							generationInfo.Rarity = RarityProbabilitiesTreeController.GenerateRarity(ItemDatabase.ItemRaritiesListDefinitions[item2.Item2.ItemRaritiesList]);
-							generationInfo.SkipMalusAffixes = true;
-							TheLastStand.Model.Item.Item item = ItemManager.GenerateItem(generationInfo);
-							EquipItem(item, null, shouldRefreshMetaCondition: false, onLoad: true);
-						}
+						TheLastStand.Model.Item.Item item = ItemManager.GenerateItem(generationInfo);
+						EquipItem(item, null, shouldRefreshMetaCondition: false, onLoad: true);
 					}
 				}
 				while (!flag2 && ++num3 < 1000);
@@ -1316,16 +1341,54 @@ public class PlayableUnitController : UnitController
 			{
 				if (PlayableUnitDatabase.PerkDefinitions.TryGetValue(serializedNativePerk.Id, out var value))
 				{
-					new PerkController(serializedNativePerk, value, null, PlayableUnit, null, string.Empty, isDead, isNative: true).Perk.PerkController.Unlock();
+					_ = new PerkController(serializedNativePerk, value, null, PlayableUnit, null, string.Empty, isDead, isNative: true, isFromRace: false).Perk;
 				}
 			}
 			return;
 		}
 		foreach (PerkDefinition value2 in TPSingleton<GlyphManager>.Instance.NativePerksToUnlock.Values)
 		{
-			new PerkController(value2, null, PlayableUnit, null, string.Empty, isNative: true).Perk.PerkController.Unlock();
+			new PerkController(value2, null, PlayableUnit, null, string.Empty, isNative: true, isFromRace: false).Perk.PerkController.Unlock(PlayableUnit);
 		}
 		PlayableUnit.PerksPoints += TPSingleton<GlyphManager>.Instance.NativePerkPointsBonus;
+	}
+
+	private void GenerateRacePerks(List<SerializedPerk> serializedRacePerks = null, bool isDead = false)
+	{
+		if (serializedRacePerks != null)
+		{
+			foreach (SerializedPerk serializedRacePerk in serializedRacePerks)
+			{
+				if (PlayableUnit.RaceDefinition.PerksIds.Contains(serializedRacePerk.Id) && PlayableUnitDatabase.PerkDefinitions.TryGetValue(serializedRacePerk.Id, out var value))
+				{
+					_ = new PerkController(serializedRacePerk, value, null, PlayableUnit, null, string.Empty, isDead, isNative: false, isFromRace: true).Perk;
+				}
+			}
+			GenerateRacePerks(null, isDead);
+			return;
+		}
+		foreach (string perksId in PlayableUnit.RaceDefinition.PerksIds)
+		{
+			if (!PlayableUnit.Perks.Keys.Contains(perksId) && PlayableUnitDatabase.PerkDefinitions.TryGetValue(perksId, out var value2))
+			{
+				new PerkController(value2, null, PlayableUnit, null, string.Empty, isNative: false, isFromRace: true).Perk.PerkController.Unlock(PlayableUnit);
+			}
+		}
+	}
+
+	private void GenerateDynamicPerks(List<SerializedPerk> serializedDynamicPerks = null, bool isDead = false)
+	{
+		if (serializedDynamicPerks == null)
+		{
+			return;
+		}
+		foreach (SerializedPerk serializedDynamicPerk in serializedDynamicPerks)
+		{
+			if (PlayableUnitDatabase.PerkDefinitions.TryGetValue(serializedDynamicPerk.Id, out var value))
+			{
+				_ = new PerkController(serializedDynamicPerk, value, null, PlayableUnit, null, string.Empty, isDead, isNative: false, isFromRace: false).Perk;
+			}
+		}
 	}
 
 	private void GenerateNativeSkills(bool onLoad)
@@ -1334,6 +1397,22 @@ public class PlayableUnitController : UnitController
 		{
 			PlayableUnit.NativeSkills.Add(new SkillController(value, PlayableUnit).Skill);
 		}
+	}
+
+	private void GenerateRace(string raceDefinitionId = null)
+	{
+		RaceDefinition raceDefinition = null;
+		if (!string.IsNullOrEmpty(raceDefinitionId) && PlayableUnitDatabase.RaceDefinitions.TryGetValue(raceDefinitionId, out var value))
+		{
+			raceDefinition = value;
+		}
+		if (raceDefinition == null)
+		{
+			List<string> availableRacesIds = PlayableUnitManager.GetAvailableRacesIds();
+			int randomRange = RandomManager.GetRandomRange(this, 0, availableRacesIds.Count);
+			raceDefinition = PlayableUnitDatabase.RaceDefinitions[availableRacesIds[randomRange]];
+		}
+		PlayableUnit.RaceDefinition = raceDefinition;
 	}
 
 	private EquipmentSlot GetBestItemSlot(TheLastStand.Model.Item.Item item)
@@ -1367,25 +1446,30 @@ public class PlayableUnitController : UnitController
 		return null;
 	}
 
-	private string GetRandomFaceId(string gender)
+	private string GetRandomFaceId(string gender, string raceId)
 	{
 		UnitFaceIdDefinitions unitFaceIdDefinitions = ((gender == "Female") ? PlayableUnitDatabase.PlayableFemaleUnitFaceIds : PlayableUnitDatabase.PlayableMaleUnitFaceIds);
 		string result = string.Empty;
 		int num = 0;
-		for (int i = 0; i < unitFaceIdDefinitions.Count; i++)
+		List<UnitFaceIdDefinition> list = unitFaceIdDefinitions.FindAll((UnitFaceIdDefinition unitFaceDefinition) => unitFaceDefinition.RestrictedToRaceId == raceId).ToList();
+		if (list.Count == 0)
 		{
-			num += unitFaceIdDefinitions[i].Weight;
+			list = unitFaceIdDefinitions.FindAll((UnitFaceIdDefinition unitFaceDefinition) => unitFaceDefinition.RestrictedToRaceId == "Human").ToList();
+		}
+		for (int i = 0; i < list.Count; i++)
+		{
+			num += list[i].Weight;
 		}
 		int randomRange = RandomManager.GetRandomRange(TPSingleton<PlayableUnitManager>.Instance, 0, num);
 		int num2 = 0;
-		for (int j = 0; j < unitFaceIdDefinitions.Count; j++)
+		for (int j = 0; j < list.Count; j++)
 		{
-			if (randomRange >= num2 && randomRange < unitFaceIdDefinitions[j].Weight + num2)
+			if (randomRange >= num2 && randomRange < list[j].Weight + num2)
 			{
-				result = unitFaceIdDefinitions[j].FaceId;
+				result = list[j].FaceId;
 				break;
 			}
-			num2 += unitFaceIdDefinitions[j].Weight;
+			num2 += list[j].Weight;
 		}
 		return result;
 	}
@@ -1453,6 +1537,22 @@ public class PlayableUnitController : UnitController
 						}
 					}
 				}
+			}
+		}
+	}
+
+	private void RemoveIncompatibleTraitsWithRace(List<string> traitsIds)
+	{
+		if (PlayableUnit.RaceDefinition == null)
+		{
+			return;
+		}
+		for (int num = traitsIds.Count - 1; num >= 0; num--)
+		{
+			string key = traitsIds[num];
+			if (PlayableUnitDatabase.UnitTraitDefinitions.TryGetValue(key, out var value) && value.RaceIncompatibilities.Contains(PlayableUnit.RaceDefinition.Id))
+			{
+				traitsIds.Remove(traitsIds[num]);
 			}
 		}
 	}

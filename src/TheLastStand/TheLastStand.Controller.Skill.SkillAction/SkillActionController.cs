@@ -2,10 +2,12 @@ using System.Collections.Generic;
 using System.Linq;
 using TPLib;
 using TPLib.Log;
+using TheLastStand.Controller.Building.Module;
 using TheLastStand.Controller.Skill.SkillAction.SkillActionExecution;
 using TheLastStand.Controller.Status;
 using TheLastStand.Controller.Status.Immunity;
 using TheLastStand.Controller.Trophy.TrophyConditions;
+using TheLastStand.Controller.Unit.Perk.PerkEffect;
 using TheLastStand.DRM.Achievements;
 using TheLastStand.Database.Unit;
 using TheLastStand.Definition.Item;
@@ -72,7 +74,7 @@ public abstract class SkillActionController
 					list.Add(ApplyActionOnSurroundingTile(surroundingTile, caster));
 				}
 			}
-			if (SkillAction.HasEffect("CasterEffect") && (!(caster is TheLastStand.Model.Unit.Unit unit) || !unit.IsDead))
+			if (SkillAction.HasEffect("CasterEffect") && !(caster is TheLastStand.Model.Unit.Unit { IsDead: not false }))
 			{
 				if (caster is BattleModule battleModule)
 				{
@@ -175,7 +177,7 @@ public abstract class SkillActionController
 			((CLogger<SkillManager>)TPSingleton<SkillManager>.Instance).LogError((object)("No caster effect found on skill " + SkillAction.Skill.SkillDefinition.Id + "!"), (CLogLevel)0, true, true);
 			return skillActionResultDatas;
 		}
-		if (!(caster is TheLastStand.Model.Unit.Unit unit) || !unit.IsDead)
+		if (!(caster is TheLastStand.Model.Unit.Unit { IsDead: not false }))
 		{
 			if (caster is BattleModule battleModule)
 			{
@@ -260,11 +262,13 @@ public abstract class SkillActionController
 									{
 										if (!(skillEffectDefinition is ImmuneToNegativeStatusEffectDefinition immunityEffectDefinition))
 										{
-											if (!(skillEffectDefinition is RegenStatSkillEffectDefinition regenStatSkillEffectDefinition))
+											if (!(skillEffectDefinition is RegenStatSkillEffectDefinition { Stat: var stat } regenStatSkillEffectDefinition))
 											{
-												if (skillEffectDefinition is DecreaseStatSkillEffectDefinition decreaseStatSkillEffectDefinition)
+												if (skillEffectDefinition is DecreaseStatSkillEffectDefinition { Stat: var stat2 } decreaseStatSkillEffectDefinition)
 												{
-													if (decreaseStatSkillEffectDefinition.Stat == UnitStatDefinition.E_Stat.Mana)
+													switch (stat2)
+													{
+													case UnitStatDefinition.E_Stat.Mana:
 													{
 														targetUnit.UnitStatsController.DecreaseBaseStat(decreaseStatSkillEffectDefinition.Stat, decreaseStatSkillEffectDefinition.LossValue, includeChildStat: false);
 														LoseManaDisplay loseManaDisplay = targetUnit.UnitView.SkillEffectDisplays.FirstOrDefault((IDisplayableEffect x) => x is LoseManaDisplay loseManaDisplay2 && !loseManaDisplay2.IsBeingDisplayed) as LoseManaDisplay;
@@ -278,16 +282,44 @@ public abstract class SkillActionController
 														{
 															loseManaDisplay.AddManaLoss((int)decreaseStatSkillEffectDefinition.LossValue);
 														}
+														break;
 													}
-													else
+													case UnitStatDefinition.E_Stat.Health:
 													{
+														targetUnit.DamageableController.LoseHealth(decreaseStatSkillEffectDefinition.LossValue, caster);
+														AttackSkillActionExecutionTileData attackData = new AttackSkillActionExecutionTileData
+														{
+															Damageable = targetUnit,
+															TargetTile = targetUnit.OriginTile,
+															TargetRemainingArmor = ((IDamageable)targetUnit).Armor,
+															TargetArmorTotal = ((IDamageable)targetUnit).ArmorTotal,
+															TargetRemainingHealth = ((IDamageable)targetUnit).Health,
+															TargetHealthTotal = ((IDamageable)targetUnit).HealthTotal,
+															HealthDamage = decreaseStatSkillEffectDefinition.LossValue,
+															TotalDamage = decreaseStatSkillEffectDefinition.LossValue
+														};
+														AttackFeedback attackFeedback = ((IDamageable)targetUnit).DamageableView.AttackFeedback;
+														attackFeedback.AddDamageInstance(attackData);
+														((IDamageable)targetUnit).DamageableController.AddEffectDisplay(attackFeedback);
+														if (caster is PlayableUnit playableUnitCaster)
+														{
+															DealDamageEffectController.UpdateTargetInjuryStageAndAddStatsDataFromAttack(targetUnit, attackData, playableUnitCaster);
+														}
+														else
+														{
+															DealDamageEffectController.UpdateTargetInjuryStageAndAddStatsDataFromAttack(targetUnit, attackData, null);
+														}
+														break;
+													}
+													default:
 														((CLogger<SkillManager>)TPSingleton<SkillManager>.Instance).LogError((object)$"Trying to apply a DecreaseStat skill effect but the stat {decreaseStatSkillEffectDefinition.Stat} is not handled.", (CLogLevel)1, true, true);
+														break;
 													}
 												}
 											}
 											else
 											{
-												switch (regenStatSkillEffectDefinition.Stat)
+												switch (stat)
 												{
 												case UnitStatDefinition.E_Stat.Mana:
 												case UnitStatDefinition.E_Stat.ActionPoints:
@@ -480,6 +512,10 @@ public abstract class SkillActionController
 					TPSingleton<AchievementManager>.Instance.UnlockAchievement(AchievementContainer.ACH_FATALITY_ON_ELITE);
 				}
 			}
+		}
+		if (targetUnit.DamageableController is DamageableModuleController damageableModuleController)
+		{
+			damageableModuleController.ChangeCanPrepareForDeath(canPrepareForDeath: false);
 		}
 		targetUnit.DamageableController.LoseHealth(attackSkillActionExecutionTileData.HealthDamage, caster, refreshHud: false);
 		AttackFeedback attackFeedback = targetUnit.DamageableView.AttackFeedback;

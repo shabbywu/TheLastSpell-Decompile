@@ -44,7 +44,7 @@ public class EnemyMirrorAffixController : EnemyAffixController
 		if ((float)randomRange >= finalClamped)
 		{
 			float num = EnemyMirrorAffix.ComputeDamage();
-			num = playableUnit.PlayableUnitController.ReduceIncomingDamage((int)num, base.EnemyAffix.EnemyUnit, AttackSkillActionDefinition.E_AttackType.None, checkBlock: true, updateLifetimeStats: true);
+			num = playableUnit.PlayableUnitController.ReduceIncomingDamage((int)num, base.EnemyAffix.EnemyUnit, AttackSkillActionDefinition.E_AttackType.None, checkBlock: true, out var blockedDamage, updateLifetimeStats: true);
 			num = Mathf.Max(num, 0f);
 			float armor = playableUnit.Armor;
 			float num2 = Mathf.Min(armor, num);
@@ -72,7 +72,8 @@ public class EnemyMirrorAffixController : EnemyAffixController
 				TargetRemainingHealth = playableUnit.UnitStatsController.GetStat(UnitStatDefinition.E_Stat.Health).FinalClamped,
 				TargetHealthTotal = playableUnit.UnitStatsController.GetStat(UnitStatDefinition.E_Stat.HealthTotal).FinalClamped,
 				HealthDamage = num,
-				TotalDamage = num + num2
+				TotalDamage = num + num2,
+				BlockedDamage = blockedDamage
 			};
 		}
 		else

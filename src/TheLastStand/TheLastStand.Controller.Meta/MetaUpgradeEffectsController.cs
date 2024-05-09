@@ -36,6 +36,7 @@ public class MetaUpgradeEffectsController
 			{
 				break;
 			}
+			result = true;
 			if (effects == null)
 			{
 				effects = effects2;
@@ -87,6 +88,7 @@ public class MetaUpgradeEffectsController
 				UpgradesEffects.UpgradeEffectsByType.Add(type, new List<MetaEffectDefinition>());
 			}
 			UpgradesEffects.UpgradeEffectsByType[type].Add(metaEffectDefinition);
+			metaEffectDefinition.OnMetaEffectActivated(hasBeenActivated: true);
 		}
 	}
 
@@ -104,6 +106,7 @@ public class MetaUpgradeEffectsController
 			if (UpgradesEffects.UpgradeEffectsByType.ContainsKey(type))
 			{
 				UpgradesEffects.UpgradeEffectsByType[type].Remove(metaEffectDefinition);
+				metaEffectDefinition.OnMetaEffectActivated(hasBeenActivated: false);
 			}
 		}
 	}

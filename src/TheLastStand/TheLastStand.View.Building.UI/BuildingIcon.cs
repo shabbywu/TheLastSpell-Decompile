@@ -24,7 +24,7 @@ public class BuildingIcon : OraculumUnlockIcon
 
 	private void OnDisable()
 	{
-		if (BuildingTooltipDisplayer.Displayed)
+		if (BuildingTooltipDisplayer.IsDisplayingTargetTooltip)
 		{
 			BuildingTooltipDisplayer.HideTooltip();
 		}

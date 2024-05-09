@@ -1,5 +1,4 @@
 using Rewired;
-using TPLib;
 using TheLastStand.Manager;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,45 +20,26 @@ public class DynamicNavigationMode : MonoBehaviour
 		RefreshNavigationMode((int)controllerType == 2);
 	}
 
-	public unsafe void RefreshNavigationMode(bool usingJoystick)
+	public void RefreshNavigationMode(bool usingJoystick)
 	{
 		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
 		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		//IL_001a->IL001a: Incompatible stack types: Ref vs I4
-		//IL_0014->IL001a: Incompatible stack types: I4 vs Ref
-		//IL_0014->IL001a: Incompatible stack types: Ref vs I4
 		Navigation navigation = selectable.navigation;
-		ref Navigation reference = ref navigation;
-		int num;
-		if (usingJoystick)
-		{
-			reference = ref *(Navigation*)joystickNavigationMode;
-			num = (int)(ref reference);
-		}
-		else
-		{
-			num = 0;
-			reference = ref *(Navigation*)num;
-			num = (int)(ref reference);
-		}
-		((Navigation)num).mode = (Mode)(ref reference);
+		((Navigation)(ref navigation)).mode = (Mode)(usingJoystick ? ((int)joystickNavigationMode) : 0);
 		selectable.navigation = navigation;
 	}
 
 	private void OnEnable()
 	{
-		TPSingleton<InputManager>.Instance.LastActiveControllerChanged += RefreshNavigationMode;
+		InputManager.LastActiveControllerChanged += RefreshNavigationMode;
 		RefreshNavigationMode(InputManager.IsLastControllerJoystick);
 	}
 
 	private void OnDisable()
 	{
-		if (TPSingleton<InputManager>.Exist())
-		{
-			TPSingleton<InputManager>.Instance.LastActiveControllerChanged -= RefreshNavigationMode;
-		}
+		InputManager.LastActiveControllerChanged -= RefreshNavigationMode;
 	}
 
 	private void Reset()

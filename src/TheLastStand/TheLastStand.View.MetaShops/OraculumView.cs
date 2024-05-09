@@ -264,7 +264,7 @@ public class OraculumView : OraculumHub<OraculumView>
 	{
 		((TPSingleton<OraculumView>)this).Awake();
 		metaUpgradeLineTooltipPackage = new MetaUpgradeLineTooltipPackage(itemTooltip, glyphTooltip, buildingTooltip, buildingActionTooltip, buildingUpgradeTooltip);
-		TPSingleton<InputManager>.Instance.LastActiveControllerChanged += OnLastActiveControllerChanged;
+		InputManager.LastActiveControllerChanged += OnLastActiveControllerChanged;
 	}
 
 	protected override void EnableRaycasters(bool state)
@@ -293,10 +293,7 @@ public class OraculumView : OraculumHub<OraculumView>
 			TPSingleton<DarkShopManager>.Instance.MetaShopView.RemoveBackButtonListener(new UnityAction(OnBackToHubButtonClicked));
 			TPSingleton<LightShopManager>.Instance.MetaShopView.RemoveBackButtonListener(new UnityAction(OnBackToHubButtonClicked));
 		}
-		if (TPSingleton<InputManager>.Exist())
-		{
-			TPSingleton<InputManager>.Instance.LastActiveControllerChanged -= OnLastActiveControllerChanged;
-		}
+		InputManager.LastActiveControllerChanged -= OnLastActiveControllerChanged;
 	}
 
 	protected override void OnFadeToBlackComplete()
@@ -618,10 +615,9 @@ public class OraculumView : OraculumHub<OraculumView>
 
 	private void RefreshLeaveButton()
 	{
-		bool num = ApplicationManager.Application.State.GetName() == "WorldMap";
 		bool anyValidMandatoryNarration = MetaNarrationsManager.AnyValidMandatoryNarration;
 		bool anyAvailableMandatoryUpgrade = MetaUpgradesManager.AnyAvailableMandatoryUpgrade;
-		bool flag = !num && (anyValidMandatoryNarration || anyAvailableMandatoryUpgrade);
+		bool flag = anyValidMandatoryNarration || anyAvailableMandatoryUpgrade;
 		leaveButton.Interactable = !flag;
 		if (flag)
 		{

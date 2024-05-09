@@ -6,13 +6,13 @@ using TPLib.Localization.Fonts;
 using TheLastStand.Definition.Unit.Enemy.Affix;
 using TheLastStand.Framework.Extensions;
 using TheLastStand.Manager;
-using TheLastStand.Manager.Skill;
 using TheLastStand.Model.Status;
 using TheLastStand.Model.Unit;
 using TheLastStand.Model.Unit.Enemy;
 using TheLastStand.Model.Unit.Perk;
 using TheLastStand.View.HUD.BottomScreenPanel.UnitManagement;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace TheLastStand.View.HUD.UnitManagement;
@@ -90,22 +90,10 @@ public class ModifiersLayoutView : MonoBehaviour
 	private GameObject perksSpacing;
 
 	[SerializeField]
-	private LayoutGroup perksLayoutGroup;
+	private LayoutGroup[] perksLayoutGroups;
 
 	[SerializeField]
-	private PerkIconDisplay perkIconDisplayPrefab;
-
-	[SerializeField]
-	private RectTransform perksBackground;
-
-	[SerializeField]
-	private RectTransform perksHover;
-
-	[SerializeField]
-	private int perkBackgroundWidthBase = 50;
-
-	[SerializeField]
-	private int perkBackgroundWidthIncrement = 43;
+	private ModifiersLayoutViewAllPerksView allPerksView;
 
 	[SerializeField]
 	private HUDJoystickSimpleTarget joystickTarget;
@@ -116,11 +104,15 @@ public class ModifiersLayoutView : MonoBehaviour
 	[SerializeField]
 	private float joystickTargetFeedbackMinWidth = 116f;
 
+	[SerializeField]
+	private float joystickTargetFeedbackMinHeight = 110f;
+
+	[SerializeField]
+	private float joystickTargetFeedbackTwoLinesLayoutHeight = 190f;
+
 	private List<EliteAffixIconDisplay> enemyAffixIconDisplays = new List<EliteAffixIconDisplay>();
 
 	private List<EnemyAffixSeparator> enemyAffixSeparators = new List<EnemyAffixSeparator>();
-
-	private readonly List<PerkIconDisplay> perkIconDisplays = new List<PerkIconDisplay>();
 
 	private int displayedStatusesCount;
 
@@ -136,7 +128,7 @@ public class ModifiersLayoutView : MonoBehaviour
 	{
 		if ((!((Object)(object)guardianIconDisplay != (Object)null) || !((Component)guardianIconDisplay).gameObject.activeSelf) && (enemyAffixIconDisplays == null || !enemyAffixIconDisplays.Any((EliteAffixIconDisplay icon) => ((Component)icon).gameObject.activeSelf)) && (!((Object)(object)injuryIconDisplay != (Object)null) || !((Component)injuryIconDisplay).gameObject.activeSelf) && !statusIconDisplayPool.Any((StatusIconDisplay o) => ((Component)o).gameObject.activeSelf))
 		{
-			return perkIconDisplays.Any((PerkIconDisplay o) => ((Component)o).gameObject.activeSelf);
+			return allPerksView.IsDisplayed();
 		}
 		return true;
 	}
@@ -164,112 +156,61 @@ public class ModifiersLayoutView : MonoBehaviour
 
 	public void RefreshPerks()
 	{
-		//IL_00e8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00f2: Unknown result type (might be due to invalid IL or missing references)
 		if (unit is PlayableUnit playableUnit)
 		{
-			for (int i = 0; i < perkIconDisplays.Count; i++)
+			List<Perk> list = new List<Perk>();
+			List<Perk> list2 = new List<Perk>();
+			List<Perk> list3 = new List<Perk>();
+			foreach (Perk value in playableUnit.Perks.Values)
 			{
-				perkIconDisplays[i].Hide();
-			}
-			int num = 0;
-			foreach (KeyValuePair<string, Perk> perk in playableUnit.Perks)
-			{
-				if (perk.Value.DisplayInHUD(out var greyedOut))
+				if (value.Unlocked && value.DisplayInHUD(out var _))
 				{
-					AdjustPerksPoolLength(num);
-					perkIconDisplays[num].Display(perk.Value, greyedOut);
-					perkIconDisplays[num].DisplayHighlightSign(show: false, triggerEvent: false);
-					num++;
+					if (value.IsFromRace)
+					{
+						list.Add(value);
+					}
+					else if (value.IsNative)
+					{
+						list3.Add(value);
+					}
+					else if (value.OnlyUnlockedByItem)
+					{
+						list2.Add(value);
+					}
+					else
+					{
+						list.Add(value);
+					}
 				}
 			}
-			if (num > 0)
-			{
-				((Component)perksParent).gameObject.SetActive(true);
-				perksBackground.sizeDelta = new Vector2((float)(perkBackgroundWidthBase + perkBackgroundWidthIncrement * (num - 1)), perksBackground.sizeDelta.y);
-			}
-			else
-			{
-				((Component)perksParent).gameObject.SetActive(false);
-			}
+			allPerksView.PerksTreeView.Refresh(list);
+			allPerksView.PerksItemView.Refresh(list2);
+			allPerksView.PerksOmenView.Refresh(list3);
+			((Component)perksParent).gameObject.SetActive(allPerksView.IsDisplayed());
 		}
 		else
 		{
 			((Component)perksParent).gameObject.SetActive(false);
-			for (int num2 = perkIconDisplays.Count - 1; num2 >= 0; num2--)
-			{
-				perkIconDisplays[num2].Hide();
-			}
+			allPerksView.HideAllPerkDisplays();
 		}
 		perksSpacing.SetActive((enemyAffixIconDisplays != null && enemyAffixIconDisplays.Any((EliteAffixIconDisplay icon) => ((Component)icon).gameObject.activeSelf)) || displayedStatusesCount > 0);
 	}
 
-	private void AdjustPerksPoolLength(int perkIndex)
-	{
-		if (perkIndex > perkIconDisplays.Count - 1)
-		{
-			PerkIconDisplay perkIconDisplay = Object.Instantiate<PerkIconDisplay>(perkIconDisplayPrefab, ((Component)perksLayoutGroup).transform);
-			simpleFontLocalizedParent.AddChilds(perkIconDisplay.LocalizedFonts);
-			perkIconDisplays.Add(perkIconDisplay);
-			perkIconDisplay.Hovered += OnPerkIconHovered;
-			perkIconDisplay.Unhovered += OnPerkIconUnhovered;
-		}
-		((Transform)perksHover).SetAsLastSibling();
-	}
-
 	private void Awake()
 	{
-		PerkIconDisplay.HighlightSignDisplayed += OnPerkIconHighlightSignDisplayed;
-		SkillManager.AttackInfoPanel.PerkIconHidden += OnSkillActionTooltipPerkIconHidden;
-		SkillManager.GenericActionInfoPanel.PerkIconHidden += OnSkillActionTooltipPerkIconHidden;
 		momentumIconDisplay.Hovered += OnStatusIconDisplayHovered;
 		momentumIconDisplay.Unhovered += OnStatusIconDisplayUnhovered;
-	}
-
-	private void OnSkillActionTooltipPerkIconHidden(PerkIconDisplay perkIconDisplay)
-	{
-		for (int num = perkIconDisplays.Count - 1; num >= 0; num--)
-		{
-			if (!(perkIconDisplays[num].Perk.PerkDefinition.Id != perkIconDisplay.Perk.PerkDefinition.Id))
-			{
-				perkIconDisplays[num].DisplayHighlightSign(show: false, triggerEvent: false);
-			}
-		}
+		TileObjectSelectionManager.OnUnitSelectionChange += OnNewUnitSelected;
 	}
 
 	private void OnDestroy()
 	{
-		PerkIconDisplay.HighlightSignDisplayed -= OnPerkIconHighlightSignDisplayed;
-		if (TPSingleton<SkillManager>.Exist())
+		if ((Object)(object)momentumIconDisplay != (Object)null)
 		{
-			SkillManager.AttackInfoPanel.PerkIconHidden -= OnSkillActionTooltipPerkIconHidden;
-			SkillManager.GenericActionInfoPanel.PerkIconHidden -= OnSkillActionTooltipPerkIconHidden;
+			momentumIconDisplay.Hovered -= OnStatusIconDisplayHovered;
+			momentumIconDisplay.Unhovered -= OnStatusIconDisplayUnhovered;
 		}
-	}
-
-	private void OnPerkIconHighlightSignDisplayed(PerkIconDisplay perkIconDisplay)
-	{
-		for (int num = perkIconDisplays.Count - 1; num >= 0; num--)
-		{
-			if (!(perkIconDisplays[num].Perk.PerkDefinition.Id != perkIconDisplay.Perk.PerkDefinition.Id))
-			{
-				perkIconDisplays[num].DisplayHighlightSign(show: true, triggerEvent: false);
-			}
-		}
-	}
-
-	private void OnPerkIconHovered(PerkIconDisplay perkIconDisplay)
-	{
-		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		((Component)perksHover).gameObject.SetActive(true);
-		_003F val = perksHover;
-		Transform transform = ((Component)perkIconDisplay).transform;
-		((Transform)val).position = ((transform is RectTransform) ? transform : null).position;
-	}
-
-	private void OnPerkIconUnhovered(PerkIconDisplay perkIconDisplay)
-	{
-		((Component)perksHover).gameObject.SetActive(false);
+		TileObjectSelectionManager.OnUnitSelectionChange -= OnNewUnitSelected;
 	}
 
 	private void OnStatusIconDisplayHovered(UnitModifiersIconDisplay statusIconDisplay)
@@ -325,7 +266,7 @@ public class ModifiersLayoutView : MonoBehaviour
 
 	private void RefreshGuardian()
 	{
-		if (unit is EnemyUnit enemyUnit && enemyUnit.IsGuardian)
+		if (unit is EnemyUnit { IsGuardian: not false } enemyUnit)
 		{
 			guardianIconDisplay.Display(enemyUnit.LinkedBuilding == null);
 		}
@@ -337,7 +278,7 @@ public class ModifiersLayoutView : MonoBehaviour
 
 	private void RefreshMomentum()
 	{
-		if (!(unit is PlayableUnit playableUnit) || playableUnit.MomentumTilesActive == 0 || playableUnit.MomentumSkills.Count == 0)
+		if (!(unit is PlayableUnit { MomentumTilesActive: not 0 } playableUnit) || playableUnit.MomentumSkills.Count == 0)
 		{
 			momentumIconDisplay.Hide();
 			return;
@@ -446,10 +387,12 @@ public class ModifiersLayoutView : MonoBehaviour
 
 	private void RefreshJoystickNavigation()
 	{
-		//IL_0212: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0229: Unknown result type (might be due to invalid IL or missing references)
-		//IL_023a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0244: Unknown result type (might be due to invalid IL or missing references)
+		//IL_02ba: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0279: Unknown result type (might be due to invalid IL or missing references)
+		//IL_029c: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0319: Unknown result type (might be due to invalid IL or missing references)
+		//IL_02e4: Unknown result type (might be due to invalid IL or missing references)
+		//IL_02f9: Unknown result type (might be due to invalid IL or missing references)
 		List<Selectable> list = new List<Selectable>();
 		if ((Object)(object)guardianIconDisplay != (Object)null && ((Component)guardianIconDisplay).gameObject.activeSelf)
 		{
@@ -474,33 +417,61 @@ public class ModifiersLayoutView : MonoBehaviour
 		{
 			list.Add((Selectable)(object)momentumIconDisplay.JoystickSelectable);
 		}
-		for (int j = 0; j < perkIconDisplays.Count; j++)
+		bool flag = list.Count > 0;
+		for (int j = 0; j < list.Count; j++)
 		{
-			if (((Component)perkIconDisplays[j]).gameObject.activeSelf)
-			{
-				list.Add((Selectable)(object)perkIconDisplays[j].JoystickSelectable);
-			}
-		}
-		for (int k = 0; k < list.Count; k++)
-		{
-			Selectable selectable = list[k];
+			Selectable selectable = list[j];
 			selectable.SetMode((Mode)4);
 			selectable.ClearNavigation();
-			if (k > 0)
+			if (j > 0)
 			{
-				selectable.SetSelectOnLeft(list[k - 1]);
+				selectable.SetSelectOnLeft(list[j - 1]);
 			}
-			if (k < list.Count - 1)
+			if (j < list.Count - 1)
 			{
-				selectable.SetSelectOnRight(list[k + 1]);
+				selectable.SetSelectOnRight(list[j + 1]);
+			}
+		}
+		bool flag2 = allPerksView.IsDisplayed();
+		allPerksView.RefreshJoystickNavigation();
+		if (flag && flag2)
+		{
+			Selectable val = (Selectable)(object)allPerksView.GetBottomLeftPerkIconDisplay()?.JoystickSelectable;
+			if ((Object)(object)val != (Object)null)
+			{
+				list[^1].SetSelectOnRight(val);
+				val.SetSelectOnLeft(list[^1]);
 			}
 		}
 		JoystickTarget.NavigationEnabled = IsDisplayed();
 		JoystickTarget.ClearSelectables();
-		JoystickTarget.AddSelectables(list);
-		if (list.Count > 0)
+		List<Selectable> list2 = list;
+		list2.AddRange(allPerksView.GetAllSelectables());
+		JoystickTarget.AddSelectables(list2);
+		if (flag || list2.Count > 0)
 		{
-			joystickTargetFeedback.sizeDelta = new Vector2(joystickTargetFeedbackMinWidth + ((Component)list[^1]).transform.position.x - ((Component)list[0]).transform.position.x, joystickTargetFeedback.sizeDelta.y);
+			float num = joystickTargetFeedbackMinHeight;
+			if (allPerksView.HasTwoPerksLines())
+			{
+				num = joystickTargetFeedbackTwoLinesLayoutHeight;
+			}
+			float num2 = 0f;
+			float x;
+			if (flag)
+			{
+				x = ((Component)list[0]).transform.position.x;
+				num2 = ((Component)list[^1]).transform.position.x;
+			}
+			else
+			{
+				x = ((Component)allPerksView.GetBottomLeftPerkIconDisplay()).transform.position.x;
+			}
+			PerkIconDisplay farRightPerkIconDisplay = allPerksView.GetFarRightPerkIconDisplay();
+			if ((Object)(object)farRightPerkIconDisplay != (Object)null && ((Component)farRightPerkIconDisplay).transform.position.x > num2)
+			{
+				num2 = ((Component)farRightPerkIconDisplay).transform.position.x;
+			}
+			joystickTargetFeedback.sizeDelta = new Vector2(joystickTargetFeedbackMinWidth + num2 - x, num);
 		}
 	}
 
@@ -509,6 +480,35 @@ public class ModifiersLayoutView : MonoBehaviour
 		((Behaviour)containerLayout).enabled = state;
 		((Behaviour)enemiesAffixesLayoutGroup).enabled = state;
 		((Behaviour)statusesLayoutGroup).enabled = state;
-		((Behaviour)perksLayoutGroup).enabled = state;
+		LayoutGroup[] array = perksLayoutGroups;
+		for (int i = 0; i < array.Length; i++)
+		{
+			((Behaviour)array[i]).enabled = state;
+		}
+	}
+
+	private void OnNewUnitSelected()
+	{
+		if (!InputManager.IsLastControllerJoystick || !((Component)joystickTargetFeedback).gameObject.activeSelf)
+		{
+			return;
+		}
+		if (joystickTarget.IsSelectable())
+		{
+			Selectable selectable = joystickTarget.GetSelectionInfo().Selectable;
+			if ((Object)(object)selectable != (Object)null)
+			{
+				EventSystem.current.SetSelectedGameObject(((Component)selectable).gameObject);
+			}
+			return;
+		}
+		if (TileObjectSelectionManager.HasPlayableUnitSelected && TPSingleton<PlayableUnitManagementView>.Instance.Displayed && TPSingleton<PlayableUnitManagementView>.Instance.JoystickTarget.IsSelectable())
+		{
+			TPSingleton<HUDJoystickNavigationManager>.Instance.SelectPanel(TPSingleton<PlayableUnitManagementView>.Instance.JoystickTarget.GetSelectionInfo());
+		}
+		if (TileObjectSelectionManager.HasEnemyUnitSelected && TPSingleton<EnemyUnitManagementView>.Instance.Displayed && TPSingleton<EnemyUnitManagementView>.Instance.JoystickTarget.IsSelectable())
+		{
+			TPSingleton<HUDJoystickNavigationManager>.Instance.SelectPanel(TPSingleton<EnemyUnitManagementView>.Instance.JoystickTarget.GetSelectionInfo());
+		}
 	}
 }

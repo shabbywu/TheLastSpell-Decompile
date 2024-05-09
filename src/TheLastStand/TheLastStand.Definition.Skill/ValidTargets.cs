@@ -49,6 +49,8 @@ public class ValidTargets
 
 	public bool PlayableUnits { get; set; }
 
+	public bool WalkableCityTiles { get; set; }
+
 	public bool WalkableTiles { get; set; }
 
 	public bool UncrossableGrounds { get; set; }

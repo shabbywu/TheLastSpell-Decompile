@@ -101,16 +101,13 @@ public class UnitInjuryDisplay : MonoBehaviour, IPointerEnterHandler, IEventSyst
 
 	private void Awake()
 	{
-		TPSingleton<HUDJoystickNavigationManager>.Instance.TooltipsToggled += OnTooltipsToggled;
+		HUDJoystickNavigationManager.TooltipsToggled += OnTooltipsToggled;
 	}
 
 	private void OnDestroy()
 	{
 		JoystickSelectable.ClearEvents();
-		if (TPSingleton<HUDJoystickNavigationManager>.Exist())
-		{
-			TPSingleton<HUDJoystickNavigationManager>.Instance.TooltipsToggled -= OnTooltipsToggled;
-		}
+		HUDJoystickNavigationManager.TooltipsToggled -= OnTooltipsToggled;
 	}
 
 	private void OnTooltipsToggled(bool state)

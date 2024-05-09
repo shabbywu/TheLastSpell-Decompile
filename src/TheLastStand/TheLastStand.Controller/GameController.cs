@@ -210,6 +210,10 @@ public class GameController
 					TPSingleton<SoundManager>.Instance.TransitionToNormalSnapshot(SoundManager.NightTransitionDuration);
 					break;
 				case Game.E_DayTurn.Deployment:
+					foreach (PlayableUnit playableUnit in TPSingleton<PlayableUnitManager>.Instance.PlayableUnits)
+					{
+						playableUnit.PlayableUnitPerksController.ResetLockedPerksModulesData();
+					}
 					TPSingleton<EffectTimeEventManager>.Instance.InvokeEvent(E_EffectTime.OnEndDeploymentTurn);
 					GameManager.TryToSaveAuto();
 					TPSingleton<TrophyManager>.Instance.RenewTrophies();
@@ -219,9 +223,9 @@ public class GameController
 					TPSingleton<GameManager>.Instance.Game.DayTurn = Game.E_DayTurn.Undefined;
 					TPSingleton<GameManager>.Instance.Game.NightTurn = Game.E_NightTurn.EnemyUnits;
 					UIManager.HideInfoPanels();
-					foreach (PlayableUnit playableUnit in TPSingleton<PlayableUnitManager>.Instance.PlayableUnits)
+					foreach (PlayableUnit playableUnit2 in TPSingleton<PlayableUnitManager>.Instance.PlayableUnits)
 					{
-						playableUnit.PlayableUnitController.FillArmor();
+						playableUnit2.PlayableUnitController.FillArmor();
 					}
 					if (TPSingleton<GameManager>.Instance.Game.DayNumber == 2 && TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.IsTutorialMap)
 					{
@@ -397,10 +401,10 @@ public class GameController
 					}
 					TPSingleton<ToDoListView>.Instance.Hide();
 					int num = (TPSingleton<PlayableUnitManager>.Instance.DeadPlayableUnits.ContainsKey(TPSingleton<GameManager>.Instance.DayNumber) ? TPSingleton<PlayableUnitManager>.Instance.DeadPlayableUnits[TPSingleton<GameManager>.Instance.DayNumber].Count : 0);
-					for (int j = 0; j < num; j++)
+					for (int i = 0; i < num; i++)
 					{
-						PlayableUnitView.RemoveUsedPortraitColor(TPSingleton<PlayableUnitManager>.Instance.DeadPlayableUnits[TPSingleton<GameManager>.Instance.DayNumber][j].PortraitColor);
-						PlayableUnitView.RemoveUsedPortrait(TPSingleton<PlayableUnitManager>.Instance.DeadPlayableUnits[TPSingleton<GameManager>.Instance.DayNumber][j].PortraitSprite);
+						PlayableUnitView.RemoveUsedPortraitColor(TPSingleton<PlayableUnitManager>.Instance.DeadPlayableUnits[TPSingleton<GameManager>.Instance.DayNumber][i].PortraitColor);
+						PlayableUnitView.RemoveUsedPortrait(TPSingleton<PlayableUnitManager>.Instance.DeadPlayableUnits[TPSingleton<GameManager>.Instance.DayNumber][i].PortraitSprite);
 					}
 					TPSingleton<PlayableUnitManager>.Instance.NightReport.TonightHpLost = 0f;
 					PanicManager.Panic.PanicController.Reset();
@@ -413,31 +417,23 @@ public class GameController
 					PlayableUnitManager.StartTurn();
 					BossManager.StartTurn();
 					EnemyUnitManager.StartTurn();
-					TurretManager.StartTurn();
-					TrapManager.StartTurn();
+					TPSingleton<BuildingManager>.Instance.StartTurn();
 					NightTurnsManager.StartTurn();
 				}
 				TPSingleton<EffectTimeEventManager>.Instance.InvokeEvent(E_EffectTime.OnStartNightTurnEnemy);
 				SoundManager.PlayAudioClip(GameManager.AudioSource, GameManager.NightEnemyPhaseAudioClip);
 				break;
 			case Game.E_NightTurn.PlayableUnits:
-			{
 				((CLogger<GameManager>)TPSingleton<GameManager>.Instance).Log((object)"[Night] Start Player turn", (CLogLevel)2, false, false);
 				GameView.TopScreenPanel.UnitPortraitsPanel.Display(show: true);
 				PlayableUnitManager.StartTurn();
 				EnemyUnitManager.StartTurn();
-				TurretManager.StartTurn();
-				TrapManager.StartTurn();
 				TPSingleton<EffectTimeEventManager>.Instance.InvokeEvent(E_EffectTime.OnStartNightTurnPlayable);
 				TPSingleton<TrophyManager>.Instance.EnemiesKilledThisTurn = 0;
-				for (int i = 0; i < TPSingleton<BuildingManager>.Instance.Buildings.Count; i++)
-				{
-					TPSingleton<BuildingManager>.Instance.Buildings[i].BuildingController.StartTurn();
-				}
+				TPSingleton<BuildingManager>.Instance.StartTurn();
 				SoundManager.PlayAudioClip(GameManager.AudioSource, GameManager.NightPlayerPhaseAudioClip);
 				SetState(Game.E_State.Management);
 				break;
-			}
 			}
 			break;
 		}

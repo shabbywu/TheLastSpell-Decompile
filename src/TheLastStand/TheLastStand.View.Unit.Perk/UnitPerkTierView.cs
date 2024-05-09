@@ -66,7 +66,7 @@ public class UnitPerkTierView : MonoBehaviour
 		((Graphic)perksTierIndex).material = (UnitPerkTier.Available ? availablePerkTierIndexMaterial : unavailablePerkTierIndexMaterial);
 		foreach (UnitPerkDisplay perkDisplay in PerkDisplays)
 		{
-			perkDisplay.SetAvailabilityMaterial((perkDisplay.Perk != null && perkDisplay.Perk.Unlocked) ? unlockedPerkMaterial : (UnitPerkTier.Available ? availablePerkMaterial : unavailablePerkMaterial), UnitPerkTier.Available ? availableBackgroundMaterial : unavailableBackgroundMaterial);
+			perkDisplay.SetAvailabilityMaterial((perkDisplay.Perk != null && perkDisplay.IsPerkUnlockedForCurrentDisplay()) ? unlockedPerkMaterial : (UnitPerkTier.Available ? availablePerkMaterial : unavailablePerkMaterial), UnitPerkTier.Available ? availableBackgroundMaterial : unavailableBackgroundMaterial);
 		}
 		for (int i = 0; i < PerkDisplays.Count; i++)
 		{

@@ -128,6 +128,9 @@ public static class Action
 
 		[ActionIdFieldInfo(categoryName = "Management", friendlyName = "NextConstructionState")]
 		public const int NextConstructionState = 96;
+
+		[ActionIdFieldInfo(categoryName = "Management", friendlyName = "ChangePerkSkillTooltip")]
+		public const int ChangePerkSkillTooltip = 140;
 	}
 
 	public static class Combat
@@ -333,7 +336,7 @@ public static class Action
 		[ActionIdFieldInfo(categoryName = "UI", friendlyName = "Sort Meta Shop")]
 		public const int SortMetaShop = 115;
 
-		[ActionIdFieldInfo(categoryName = "UI", friendlyName = "Perk Bookmark")]
+		[ActionIdFieldInfo(categoryName = "UI", friendlyName = "PerkBookmark")]
 		public const int PerkBookmark = 138;
 	}
 
@@ -356,6 +359,15 @@ public static class Action
 
 		[ActionIdFieldInfo(categoryName = "WorldMap", friendlyName = "Select Previous City")]
 		public const int SelectPreviousCity = 108;
+
+		[ActionIdFieldInfo(categoryName = "WorldMap", friendlyName = "Open Weapon Restrictions")]
+		public const int OpenWeaponRestrictions = 139;
+
+		[ActionIdFieldInfo(categoryName = "WorldMap", friendlyName = "SelectStoryMap")]
+		public const int SelectStoryMap = 141;
+
+		[ActionIdFieldInfo(categoryName = "WorldMap", friendlyName = "SelectDLCMap")]
+		public const int SelectDLCMap = 142;
 	}
 
 	public static class TutorialPopup

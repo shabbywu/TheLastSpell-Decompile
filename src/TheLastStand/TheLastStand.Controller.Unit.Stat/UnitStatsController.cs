@@ -76,28 +76,31 @@ public abstract class UnitStatsController
 		return @base - GetStat(stat).Base;
 	}
 
-	public void SetBaseStat(UnitStatDefinition.E_Stat stat, float value, bool updateChildStat = false, bool refreshHud = true)
+	public void SetBaseStat(UnitStatDefinition.E_Stat statType, float value, bool updateChildStat = false, bool refreshHud = true)
 	{
-		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0067: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0094: Unknown result type (might be due to invalid IL or missing references)
-		Vector2 baseBoundaries = GetStat(stat).BaseBoundaries;
+		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
+		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
+		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
+		//IL_005c: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0061: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0077: Unknown result type (might be due to invalid IL or missing references)
+		UnitStat stat = GetStat(statType);
+		Vector2 baseBoundaries = stat.BaseBoundaries;
 		value = TPHelpers.Clamp(value, baseBoundaries);
-		float num = value - GetStat(stat).Base;
-		GetStat(stat).Base += num;
-		if (updateChildStat && UnitDatabase.UnitStatDefinitions[stat].ChildStatId != UnitStatDefinition.E_Stat.Undefined)
+		float finalClamped = stat.FinalClamped;
+		stat.Base = value;
+		float num = stat.FinalClamped - finalClamped;
+		if (updateChildStat && UnitDatabase.UnitStatDefinitions[statType].ChildStatId != UnitStatDefinition.E_Stat.Undefined)
 		{
-			UnitStatDefinition.E_Stat childStatId = UnitDatabase.UnitStatDefinitions[stat].ChildStatId;
-			Vector2 baseBoundaries2 = GetStat(childStatId).BaseBoundaries;
-			GetStat(childStatId).Base += num;
-			GetStat(childStatId).Base = TPHelpers.Clamp(GetStat(childStatId).Base, baseBoundaries2);
+			UnitStatDefinition.E_Stat childStatId = UnitDatabase.UnitStatDefinitions[statType].ChildStatId;
+			UnitStat stat2 = GetStat(childStatId);
+			Vector2 baseBoundaries2 = stat2.BaseBoundaries;
+			stat2.Base += num;
+			stat2.Base = TPHelpers.Clamp(stat2.Base, baseBoundaries2);
 		}
 		if (refreshHud && (Object)(object)UnitStats.Unit.UnitView != (Object)null)
 		{
-			UnitStats.Unit.UnitView.RefreshHud(stat);
+			UnitStats.Unit.UnitView.RefreshHud(statType);
 		}
 	}
 

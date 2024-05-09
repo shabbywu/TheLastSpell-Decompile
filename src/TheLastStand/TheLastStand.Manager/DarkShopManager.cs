@@ -81,6 +81,10 @@ public class DarkShopManager : AMetaShopManager<DarkShopManager>
 
 	protected override bool IsValidUpgradeForShop(MetaUpgrade metaUpgrade)
 	{
+		if (metaUpgrade.MetaUpgradeDefinition.IsLinkedToDLC && !metaUpgrade.IsLinkedDLCOwned)
+		{
+			return false;
+		}
 		return metaUpgrade.MetaUpgradeDefinition.DamnedSoulsShop;
 	}
 

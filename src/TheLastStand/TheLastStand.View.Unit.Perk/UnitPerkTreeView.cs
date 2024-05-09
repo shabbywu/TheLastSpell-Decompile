@@ -12,6 +12,8 @@ using TheLastStand.Manager.Unit;
 using TheLastStand.Model;
 using TheLastStand.Model.Tutorial;
 using TheLastStand.Model.Unit.Perk;
+using TheLastStand.View.CharacterSheet;
+using TheLastStand.View.HUD;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -92,11 +94,16 @@ public class UnitPerkTreeView : TabbedPageView
 	[SerializeField]
 	private AudioClip[] perkUnlockedClips;
 
+	[SerializeField]
+	private HUDJoystickSimpleTarget joystickTarget;
+
 	public static PerkTooltipDisplayer HoveredPerkTooltipDisplayer;
 
 	private int lastUnlockPerkClipIndex = -1;
 
 	public bool Inited { get; private set; }
+
+	public HUDJoystickSimpleTarget JoystickTarget => joystickTarget;
 
 	public UnitPerkDisplay SelectedPerk { get; private set; }
 
@@ -180,7 +187,7 @@ public class UnitPerkTreeView : TabbedPageView
 		{
 			SelectedPerk.Refresh();
 		}
-		bool flag = (Object)(object)SelectedPerk != (Object)null && !SelectedPerk.Perk.Unlocked && SelectedPerk.Perk.PerkTier.Available && UnitPerkTree.CanBuyPerk();
+		bool flag = (Object)(object)SelectedPerk != (Object)null && !SelectedPerk.Perk.UnlockedInPerkTree && SelectedPerk.Perk.PerkTier.Available && UnitPerkTree.CanBuyPerk();
 		bool flag2 = TPSingleton<GameManager>.Instance.Game.State == Game.E_State.GameOver;
 		trainButton.Interactable = (Object)(object)SelectedPerk != (Object)null && flag;
 		((Component)perkSelectorRect).gameObject.SetActive((Object)(object)SelectedPerk != (Object)null && (!flag2 || InputManager.IsLastControllerJoystick));
@@ -190,7 +197,7 @@ public class UnitPerkTreeView : TabbedPageView
 			string text = string.Empty;
 			if (!flag && !flag2)
 			{
-				text = ((!SelectedPerk.Perk.Unlocked) ? (UnitPerkTree.HasReachedMaxPerks() ? "CharacterSheet_MaxPerksReached" : (SelectedPerk.Perk.PerkTier.Available ? "CharacterSheet_NotEnoughPoints" : "CharacterSheet_TierLocked")) : "CharacterSheet_PerkAlreadyUnlocked");
+				text = ((!SelectedPerk.Perk.UnlockedInPerkTree) ? (UnitPerkTree.HasReachedMaxPerks() ? "CharacterSheet_MaxPerksReached" : (SelectedPerk.Perk.PerkTier.Available ? "CharacterSheet_NotEnoughPoints" : "CharacterSheet_TierLocked")) : "CharacterSheet_PerkAlreadyUnlocked");
 			}
 			((TMP_Text)unavailableText).text = Localizer.Get(text);
 			((Transform)perkSelectorRect).SetParent(((Component)SelectedPerk).transform);
@@ -286,8 +293,8 @@ public class UnitPerkTreeView : TabbedPageView
 
 	private void InitializeJoystickNavigation()
 	{
-		//IL_0186: Unknown result type (might be due to invalid IL or missing references)
-		//IL_018b: Unknown result type (might be due to invalid IL or missing references)
+		//IL_01a3: Unknown result type (might be due to invalid IL or missing references)
+		//IL_01a8: Unknown result type (might be due to invalid IL or missing references)
 		RevertJoystickNavigation();
 		List<List<UnitPerkDisplay>> list = new List<List<UnitPerkDisplay>>();
 		foreach (UnitPerkTierView unitPerkTierView in UnitPerkTierViews)
@@ -323,6 +330,10 @@ public class UnitPerkTreeView : TabbedPageView
 				if (!flag2)
 				{
 					((Selectable)(object)unitPerkDisplay.JoystickSelectable).SetSelectOnUp((Selectable)(object)list[i - 1][j].JoystickSelectable);
+				}
+				else
+				{
+					((Selectable)(object)unitPerkDisplay.JoystickSelectable).SetSelectOnUp((Selectable)(object)TPSingleton<CharacterSheetPanel>.Instance.UnitRaceDisplay.JoystickSelectable);
 				}
 				if (!flag3)
 				{

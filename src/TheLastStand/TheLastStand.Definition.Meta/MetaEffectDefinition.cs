@@ -9,4 +9,8 @@ public abstract class MetaEffectDefinition : TheLastStand.Framework.Serializatio
 		: base(container)
 	{
 	}
+
+	public virtual void OnMetaEffectActivated(bool hasBeenActivated)
+	{
+	}
 }

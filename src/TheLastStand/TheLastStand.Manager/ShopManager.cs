@@ -5,7 +5,6 @@ using TheLastStand.Database.Building;
 using TheLastStand.Definition.Item;
 using TheLastStand.Manager.Building;
 using TheLastStand.Manager.Item;
-using TheLastStand.Manager.Meta;
 using TheLastStand.Manager.Unit;
 using TheLastStand.Model;
 using TheLastStand.View;
@@ -53,18 +52,18 @@ public class ShopManager : Manager<ShopManager>
 
 	public void RefreshItemsCountPerCategory()
 	{
-		HashSet<string> hashSet = new HashSet<string>(TPSingleton<MetaUpgradesManager>.Instance.GetLockedItemsIds());
-		HashSet<ItemDefinition.E_Category> hashSet2 = new HashSet<ItemDefinition.E_Category>();
+		HashSet<string> allLockedItemsIds = ItemManager.GetAllLockedItemsIds();
+		HashSet<ItemDefinition.E_Category> hashSet = new HashSet<ItemDefinition.E_Category>();
 		foreach (ItemDefinition.E_Category key in ItemsCountPerCategory.Keys)
 		{
-			hashSet2.Add(key);
+			hashSet.Add(key);
 		}
-		foreach (ItemDefinition.E_Category item in hashSet2)
+		foreach (ItemDefinition.E_Category item in hashSet)
 		{
 			int num = 0;
 			foreach (string item2 in BuildingDatabase.ShopItemsByCategory[item])
 			{
-				if (!hashSet.Contains(item2))
+				if (!allLockedItemsIds.Contains(item2))
 				{
 					num++;
 				}

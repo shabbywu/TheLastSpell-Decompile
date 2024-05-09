@@ -818,10 +818,14 @@ public class TileMapView : TPSingleton<TileMapView>
 		tileMap.SetColor((Vector3Int)tile.Position, color);
 	}
 
-	public static void SpawnConstructionAnimation(Vector3 worldPosition, Sprite[] sprites, int sortingOrder, int animationFrameRate, int shockwaveFrame, Sprite[] spritesLUT = null)
+	public static void SpawnConstructionAnimation(Vector3 worldPosition, Sprite[] sprites, int sortingOrder, int animationFrameRate, int shockwaveFrame, Sprite[] spritesLUT = null, TheLastStand.Model.Building.Building building = null)
 	{
-		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0029: Unknown result type (might be due to invalid IL or missing references)
 		ConstructionAnimationView pooledComponent = ObjectPooler.GetPooledComponent<ConstructionAnimationView>("Building Construction Animation", TPSingleton<TileMapView>.Instance.constructionAnimationViewPrefab, (Transform)null, dontSetParent: false);
+		if (building != null)
+		{
+			pooledComponent.ChangeBuilding(building);
+		}
 		((Component)pooledComponent).transform.position = worldPosition;
 		pooledComponent.Init(sortingOrder, sprites, animationFrameRate, shockwaveFrame, spritesLUT);
 		pooledComponent.PlayConstructionAnimation();
@@ -835,13 +839,14 @@ public class TileMapView : TPSingleton<TileMapView>
 		//IL_0015: Unknown result type (might be due to invalid IL or missing references)
 		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
-		//IL_008d: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0094: Unknown result type (might be due to invalid IL or missing references)
 		Vector3 worldPosition = ((GridLayout)BuildingTilemap).CellToWorld((Vector3Int)tile.Position);
 		Vector2Int relativeBuildingTilePosition = building.BlueprintModule.GetRelativeBuildingTilePosition(tile);
 		Sprite[] array = ResourcePooler.LoadAllOnce<Sprite>(string.Format("{0}/{1}/{2}{3}", "View/Sprites/DestructionAnimation", building.BuildingDefinition.Id, ((Vector2Int)(ref relativeBuildingTilePosition)).x, ((Vector2Int)(ref relativeBuildingTilePosition)).y), failSilently: false);
 		if (array != null && array.Length != 0)
 		{
 			DestructionAnimationView pooledComponent = ObjectPooler.GetPooledComponent<DestructionAnimationView>("Building Destruction Animation", TPSingleton<TileMapView>.Instance.destructionAnimationViewPrefab, (Transform)null, dontSetParent: false);
+			pooledComponent.ChangeBuilding(building);
 			pooledComponent.Init(worldPosition, array, delay);
 			pooledComponent.PlayDestructionAnimation();
 		}
@@ -1191,12 +1196,12 @@ public class TileMapView : TPSingleton<TileMapView>
 	{
 		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0243: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0244: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0113: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0114: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0182: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01d7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0215: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0183: Unknown result type (might be due to invalid IL or missing references)
+		//IL_01d8: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0216: Unknown result type (might be due to invalid IL or missing references)
 		int animationSpritesCount = 0;
 		Vector3Int val = default(Vector3Int);
 		for (int i = 0; i < building.BlueprintModule.OccupiedTiles.Count; i++)
@@ -1208,7 +1213,7 @@ public class TileMapView : TPSingleton<TileMapView>
 			if (array.Length != 0)
 			{
 				animationSpritesCount = array.Length;
-				SpawnConstructionAnimation(((GridLayout)BuildingTilemap).CellToWorld(val), array, ((Renderer)((Component)BuildingTilemap).GetComponent<TilemapRenderer>()).sortingOrder, building.BuildingDefinition.ConstructionModuleDefinition.ConstructionAnimationFrameRate, building.BuildingDefinition.ConstructionModuleDefinition.ConstructionAnimationShockwaveFrame, spritesLUT);
+				SpawnConstructionAnimation(((GridLayout)BuildingTilemap).CellToWorld(val), array, ((Renderer)((Component)BuildingTilemap).GetComponent<TilemapRenderer>()).sortingOrder, building.BuildingDefinition.ConstructionModuleDefinition.ConstructionAnimationFrameRate, building.BuildingDefinition.ConstructionModuleDefinition.ConstructionAnimationShockwaveFrame, spritesLUT, building);
 			}
 			TileBase val2 = ResourcePooler<TileBase>.LoadOnce("View/Tiles/Buildings/Diffuse/_Shadows/" + building.BuildingDefinition.BlueprintModuleDefinition.ShadowType);
 			if ((Object)(object)val2 != (Object)null)
@@ -1368,7 +1373,7 @@ public class TileMapView : TPSingleton<TileMapView>
 		//IL_03ab: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0400: Unknown result type (might be due to invalid IL or missing references)
 		//IL_043e: Unknown result type (might be due to invalid IL or missing references)
-		if (string.IsNullOrEmpty(suffix) && building.BlueprintModule is GateBlueprintModule gateBlueprintModule && gateBlueprintModule.IsOpen)
+		if (string.IsNullOrEmpty(suffix) && building.BlueprintModule is GateBlueprintModule { IsOpen: not false })
 		{
 			suffix = "Opened";
 		}

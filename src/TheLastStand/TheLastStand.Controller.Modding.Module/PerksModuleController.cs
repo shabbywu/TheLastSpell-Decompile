@@ -31,10 +31,10 @@ public class PerksModuleController : ModuleController
 				int key = perkCollectionSetDefinition.Key;
 				if (PlayableUnitDatabase.UnitPerkTemplateDefinition.UnitPerkCollectionSetDefinitions.ContainsKey(key))
 				{
-					foreach (Tuple<UnitPerkCollectionDefinition, int> collectionAndWeight in perkCollectionSetDefinition.Value.CollectionsPerWeight)
+					foreach (Tuple<UnitPerkCollectionDefinition, int, string> collectionAndWeight in perkCollectionSetDefinition.Value.CollectionsPerWeight)
 					{
-						HashSet<Tuple<UnitPerkCollectionDefinition, int>> collectionsPerWeight = PlayableUnitDatabase.UnitPerkTemplateDefinition.UnitPerkCollectionSetDefinitions[key].CollectionsPerWeight;
-						collectionsPerWeight.RemoveWhere((Tuple<UnitPerkCollectionDefinition, int> x) => x.Item1.Id == collectionAndWeight.Item1.Id);
+						HashSet<Tuple<UnitPerkCollectionDefinition, int, string>> collectionsPerWeight = PlayableUnitDatabase.UnitPerkTemplateDefinition.UnitPerkCollectionSetDefinitions[key].CollectionsPerWeight;
+						collectionsPerWeight.RemoveWhere((Tuple<UnitPerkCollectionDefinition, int, string> x) => x.Item1.Id == collectionAndWeight.Item1.Id);
 						collectionsPerWeight.Add(collectionAndWeight);
 					}
 				}

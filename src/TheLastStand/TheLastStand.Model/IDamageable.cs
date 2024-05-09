@@ -21,5 +21,7 @@ public interface IDamageable
 
 	bool IsDead { get; }
 
+	bool IsTargetableByAI();
+
 	bool CanBeDamaged();
 }

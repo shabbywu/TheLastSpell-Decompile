@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using TMPro;
+using TPLib;
 using TheLastStand.Definition.TileMap;
 using TheLastStand.Framework.UI;
 using TheLastStand.Manager;
@@ -15,11 +17,21 @@ public class SelectTileFlagPanel : MonoBehaviour
 	[SerializeField]
 	private Toggle tileFlagToggle;
 
+	[SerializeField]
+	private TextMeshProUGUI selectedTileFlagTilesNbText;
+
 	private Dictionary<TileFlagDefinition.E_TileFlagTag, LevelEditorButton> buttonsByFlag = new Dictionary<TileFlagDefinition.E_TileFlagTag, LevelEditorButton>();
+
+	private RectTransform rectTransform;
 
 	public void ToggleOffFlag(TileFlagDefinition.E_TileFlagTag tileFlag)
 	{
 		buttonsByFlag[tileFlag].ToggleOff();
+	}
+
+	public void RefreshText()
+	{
+		RefreshTileFlagTilesNbText();
 	}
 
 	private void OnBackButtonClick()
@@ -31,6 +43,7 @@ public class SelectTileFlagPanel : MonoBehaviour
 	{
 		TileMapView.ToggleTilesFlag(tileFlag, true, clearPreviousState: false);
 		LevelEditorManager.SelectTileFlag(tileFlag);
+		RefreshText();
 	}
 
 	private void OnTileFlagToggleValueChanged(TileFlagDefinition.E_TileFlagTag tileFlag, bool state)
@@ -40,26 +53,27 @@ public class SelectTileFlagPanel : MonoBehaviour
 
 	private void Awake()
 	{
-		//IL_00a8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00be: Expected O, but got Unknown
-		//IL_00c6: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00dd: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ef: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0101: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0106: Unknown result type (might be due to invalid IL or missing references)
-		//IL_010a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0121: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0125: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0137: Unknown result type (might be due to invalid IL or missing references)
-		//IL_013c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0152: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0157: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0165: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01a4: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ae: Expected O, but got Unknown
+		//IL_00b4: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00ca: Expected O, but got Unknown
+		//IL_00d2: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00e0: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00e5: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00e9: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00fb: Unknown result type (might be due to invalid IL or missing references)
+		//IL_010d: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0112: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0116: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0128: Unknown result type (might be due to invalid IL or missing references)
+		//IL_012d: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0131: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0143: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0148: Unknown result type (might be due to invalid IL or missing references)
+		//IL_015e: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0163: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0171: Unknown result type (might be due to invalid IL or missing references)
+		//IL_01b0: Unknown result type (might be due to invalid IL or missing references)
+		//IL_01ba: Expected O, but got Unknown
+		rectTransform = ((Component)this).GetComponent<RectTransform>();
 		TPHelpers.DestroyChildren(((Component)this).transform);
 		List<TileFlagDefinition> list = new List<TileFlagDefinition>(TileMapManager.TileFlagDefinitions);
 		list.Sort((TileFlagDefinition a, TileFlagDefinition b) => a.TileFlagTag.ToString().CompareTo(b.TileFlagTag.ToString()));
@@ -92,10 +106,23 @@ public class SelectTileFlagPanel : MonoBehaviour
 		Object.Instantiate<LevelEditorButton>(LevelEditorManager.LevelEditorButtonPrefab, ((Component)this).transform).Init("BACK (Esc)", new UnityAction(OnBackButtonClick));
 	}
 
+	private void Start()
+	{
+		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
+		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0049: Unknown result type (might be due to invalid IL or missing references)
+		if ((Object)(object)selectedTileFlagTilesNbText != (Object)null)
+		{
+			LayoutRebuilder.ForceRebuildLayoutImmediate(rectTransform);
+			((TMP_Text)selectedTileFlagTilesNbText).rectTransform.anchoredPosition = new Vector2(((TMP_Text)selectedTileFlagTilesNbText).rectTransform.anchoredPosition.x, rectTransform.sizeDelta.y);
+		}
+	}
+
 	private void OnEnable()
 	{
 		((Component)tileFlagToggle).gameObject.SetActive(false);
 		TileMapView.ToggleTilesFlagAll(false);
+		((Component)selectedTileFlagTilesNbText).gameObject.SetActive(true);
 	}
 
 	private void OnDisable()
@@ -103,5 +130,14 @@ public class SelectTileFlagPanel : MonoBehaviour
 		((Component)tileFlagToggle).gameObject.SetActive(true);
 		tileFlagToggle.isOn = false;
 		TileMapView.ToggleTilesFlagAll(false);
+		((Component)selectedTileFlagTilesNbText).gameObject.SetActive(false);
+	}
+
+	private void RefreshTileFlagTilesNbText()
+	{
+		if ((Object)(object)selectedTileFlagTilesNbText != (Object)null && TPSingleton<TileMapManager>.Exist() && TPSingleton<LevelEditorManager>.Exist())
+		{
+			((TMP_Text)selectedTileFlagTilesNbText).text = TileMapManager.DebugGetFormattedTileFlagTilesNb(TPSingleton<LevelEditorManager>.Instance.CurrentTileFlag);
+		}
 	}
 }

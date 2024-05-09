@@ -188,7 +188,17 @@ public class CharacterDetailsView : TabbedPageView
 	[SerializeField]
 	private bool initSecondaryAttributesNavigationOnInit;
 
+	[SerializeField]
+	private Selectable dismissHeroButtonSelectable;
+
+	[SerializeField]
+	private Selectable leftTraitSelectable;
+
 	private PlayableUnit playableUnit;
+
+	public Selectable DismissHeroButtonSelectable => dismissHeroButtonSelectable;
+
+	public Selectable LeftTraitSelectable => leftTraitSelectable;
 
 	public Button LevelUpButton => levelUpButton;
 

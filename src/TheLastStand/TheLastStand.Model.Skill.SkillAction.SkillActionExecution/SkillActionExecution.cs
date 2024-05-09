@@ -51,6 +51,9 @@ public abstract class SkillActionExecution
 
 	public int HitIndex { get; set; }
 
+	public Dictionary<Tile, List<Tile>> MultiHitTargetedTiles { get; private set; } = new Dictionary<Tile, List<Tile>>();
+
+
 	public List<IDamageable> PreviewAffectedDamageables { get; set; } = new List<IDamageable>();
 
 

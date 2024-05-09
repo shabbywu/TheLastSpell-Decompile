@@ -84,17 +84,14 @@ public abstract class AGlyphDisplay : MonoBehaviour, IPointerEnterHandler, IEven
 	{
 		OnPointerEnter(null);
 		JoystickSelected = true;
-		TPSingleton<HUDJoystickNavigationManager>.Instance.TooltipsToggled += OnTooltipsToggled;
+		HUDJoystickNavigationManager.TooltipsToggled += OnTooltipsToggled;
 	}
 
 	public virtual void OnDeselect(BaseEventData eventData)
 	{
 		OnPointerExit(null);
 		JoystickSelected = false;
-		if (TPSingleton<HUDJoystickNavigationManager>.Exist())
-		{
-			TPSingleton<HUDJoystickNavigationManager>.Instance.TooltipsToggled -= OnTooltipsToggled;
-		}
+		HUDJoystickNavigationManager.TooltipsToggled -= OnTooltipsToggled;
 	}
 
 	private void OnTooltipsToggled(bool showTooltips)

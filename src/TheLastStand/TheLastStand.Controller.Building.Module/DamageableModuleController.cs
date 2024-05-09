@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using DG.Tweening;
 using TPLib;
@@ -6,8 +7,10 @@ using TheLastStand.Controller.Skill.SkillAction;
 using TheLastStand.Controller.Trophy.TrophyConditions;
 using TheLastStand.Definition.Building.Module;
 using TheLastStand.Manager;
+using TheLastStand.Manager.Achievements;
 using TheLastStand.Manager.Building;
 using TheLastStand.Manager.Sound;
+using TheLastStand.Manager.Unit;
 using TheLastStand.Model;
 using TheLastStand.Model.Building;
 using TheLastStand.Model.Building.Module;
@@ -20,6 +23,9 @@ namespace TheLastStand.Controller.Building.Module;
 
 public class DamageableModuleController : BuildingModuleController, IDamageableController, IEffectTargetSkillActionController
 {
+	public bool CanPrepareForDeath { get; set; } = true;
+
+
 	public DamageableModule DamageableModule { get; }
 
 	public IDamageable Damageable => DamageableModule;
@@ -33,6 +39,14 @@ public class DamageableModuleController : BuildingModuleController, IDamageableC
 	public void AddEffectDisplay(IDisplayableEffect displayableEffect)
 	{
 		base.BuildingControllerParent.BlueprintModuleController.AddEffectDisplay(displayableEffect);
+	}
+
+	public void ChangeCanPrepareForDeath(bool canPrepareForDeath)
+	{
+		if (canPrepareForDeath || !DamageableModule.IsDead)
+		{
+			CanPrepareForDeath = canPrepareForDeath;
+		}
 	}
 
 	public void Demolish()
@@ -108,6 +122,7 @@ public class DamageableModuleController : BuildingModuleController, IDamageableC
 			{
 				TrophyManager.AppendValueToTrophiesConditions<BuildingsLostTrophyConditionController>(new object[1] { 1 });
 			}
+			TPSingleton<AchievementManager>.Instance.HandleDestroyedBuilding(base.BuildingControllerParent.Building, attacker);
 			DamageableModule.State = DamageableModule.E_State.Dead;
 			((MonoBehaviour)TPSingleton<GameManager>.Instance).StartCoroutine(PrepareForDeath());
 		}
@@ -157,6 +172,8 @@ public class DamageableModuleController : BuildingModuleController, IDamageableC
 
 	private IEnumerator PrepareForDeath()
 	{
+		yield return (object)new WaitUntil((Func<bool>)(() => CanPrepareForDeath));
+		yield return TPSingleton<EnemyUnitManager>.Instance.WaitUntilDeathRattlingEnemiesAreDone;
 		if (base.BuildingModule.BuildingParent.IsBossPhaseActor)
 		{
 			base.BuildingModule.BuildingParent.PrepareBossActorDeath();

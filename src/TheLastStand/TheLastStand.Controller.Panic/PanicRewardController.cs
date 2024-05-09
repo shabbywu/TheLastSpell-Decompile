@@ -3,6 +3,7 @@ using TPLib;
 using TPLib.Log;
 using TheLastStand.Controller.Meta;
 using TheLastStand.Database;
+using TheLastStand.Definition;
 using TheLastStand.Definition.Item;
 using TheLastStand.Definition.Meta;
 using TheLastStand.Definition.Panic;
@@ -55,11 +56,32 @@ public class PanicRewardController
 			((CLogger<ItemManager>)TPSingleton<ItemManager>.Instance).LogError((object)("Could not find item modifiers list of ID " + itemGenerationModifiersListId), (CLogLevel)1, true, true);
 		}
 		LevelProbabilitiesTreeController levelProbabilitiesTreeController = new LevelProbabilitiesTreeController(dayGenerationDatas.BaseGenerationLevel, value);
+		int num3 = 1000;
+		int num4 = 0;
 		for (int i = 0; i < PanicReward.Items.Length; i++)
 		{
-			ItemDefinition itemDefinition = ItemManager.TakeRandomItemInList(ItemDatabase.ItemsListDefinitions[dayGenerationDatas.ItemsListId]);
-			int level2 = levelProbabilitiesTreeController.GenerateLevel();
-			ItemDefinition.E_Rarity rarity = RarityProbabilitiesTreeController.GenerateRarity(ItemDatabase.ItemRaritiesListDefinitions[dayGenerationDatas.ItemRaritiesListId]);
+			num4 = 0;
+			ItemsListDefinition itemsListDefinition = ItemDatabase.ItemsListDefinitions[dayGenerationDatas.ItemsListId];
+			ItemDefinition itemDefinition;
+			int level2;
+			do
+			{
+				itemDefinition = ItemManager.TakeRandomItemInList(itemsListDefinition);
+				level2 = levelProbabilitiesTreeController.GenerateLevel();
+				level2 = itemDefinition.GetHigherExistingLevelFromInitValue(level2);
+				if (level2 == -1)
+				{
+					num4++;
+				}
+			}
+			while (level2 == -1 && num4 < num3);
+			if (num4 >= num3)
+			{
+				((CLogger<PanicManager>)TPSingleton<PanicManager>.Instance).LogError((object)"The generation of a panic reward took the maximum iterations nb and couldn't find a suitable item !", (CLogLevel)0, true, true);
+			}
+			ProbabilityTreeEntriesDefinition probabilityTreeEntriesDefinition = ItemDatabase.ItemRaritiesListDefinitions[dayGenerationDatas.ItemRaritiesListId];
+			int minRarityIndexFromItemDefinition = RarityProbabilitiesTreeController.GetMinRarityIndexFromItemDefinition(itemDefinition);
+			ItemDefinition.E_Rarity rarity = RarityProbabilitiesTreeController.GenerateRarity(probabilityTreeEntriesDefinition, minRarityIndexFromItemDefinition);
 			ItemManager.ItemGenerationInfo generationInfo = default(ItemManager.ItemGenerationInfo);
 			generationInfo.ItemDefinition = itemDefinition;
 			generationInfo.Level = level2;

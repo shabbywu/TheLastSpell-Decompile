@@ -53,6 +53,10 @@ public class PlayableUnitGhostView : PlayableUnitView
 		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
 		base.PrepareForSnapshot();
 		ChangeColors(Color.white);
+		if (!base.AreAnimationsInitialized)
+		{
+			InitAndStartAnimations(playSpawnAnim: false);
+		}
 	}
 
 	protected void ChangeColors(Color col)

@@ -22,6 +22,8 @@ public class ItemTooltipSkillCycle : MonoBehaviour
 
 	public int SkillTabIndex { get; private set; }
 
+	public int PerkSkillTabIndex { get; private set; }
+
 	public bool CompendiumFollowRight { get; set; } = true;
 
 
@@ -30,6 +32,7 @@ public class ItemTooltipSkillCycle : MonoBehaviour
 	public void Reset()
 	{
 		SkillTabIndex = 0;
+		PerkSkillTabIndex = 0;
 		for (int i = 0; i < tooltipsCount; i++)
 		{
 			if (itemTooltips[i].Displayed)
@@ -58,6 +61,10 @@ public class ItemTooltipSkillCycle : MonoBehaviour
 		{
 			list[k].AddSkillEffectEntries();
 		}
+		for (int l = 0; l < list.Count; l++)
+		{
+			list[l].AddPerkEffectEntries();
+		}
 		bool flag = compendiumPanel.CompendiumEntries.Count > 0;
 		if (flag && !TPSingleton<SettingsManager>.Instance.Settings.HideCompendium)
 		{
@@ -82,7 +89,7 @@ public class ItemTooltipSkillCycle : MonoBehaviour
 		{
 			for (int i = 0; i < tooltipsCount; i++)
 			{
-				if (itemTooltips[i].Item != null && itemTooltips[i].Item.Skills != null)
+				if (itemTooltips[i].Item != null && (itemTooltips[i].Item.Skills != null || itemTooltips[i].Item.Perks != null))
 				{
 					flag = true;
 					break;
@@ -93,10 +100,11 @@ public class ItemTooltipSkillCycle : MonoBehaviour
 		{
 			int skillTabIndex = SkillTabIndex;
 			SkillTabIndex++;
+			PerkSkillTabIndex = 0;
 			bool flag2 = true;
 			for (int j = 0; j < tooltipsCount; j++)
 			{
-				if (itemTooltips[j].Displayed && itemTooltips[j].Item != null && itemTooltips[j].Item.Skills != null && SkillTabIndex < itemTooltips[j].Item.Skills.Count)
+				if (itemTooltips[j].Displayed && itemTooltips[j].Item != null && itemTooltips[j].Item.Skills != null && itemTooltips[j].Item.Perks != null && SkillTabIndex < itemTooltips[j].Item.Skills.Count + itemTooltips[j].Item.Perks.Count)
 				{
 					flag2 = false;
 					break;
@@ -118,23 +126,71 @@ public class ItemTooltipSkillCycle : MonoBehaviour
 				}
 			}
 		}
-		if (SkillTabIndex == 0)
+		if (SkillTabIndex != 0)
+		{
+			bool flag3 = true;
+			for (int l = 0; l < tooltipsCount; l++)
+			{
+				if (itemTooltips[l].Displayed)
+				{
+					flag3 = false;
+					break;
+				}
+			}
+			if (flag3)
+			{
+				SkillTabIndex = 0;
+				PerkSkillTabIndex = 0;
+				CompendiumPanel.Clear();
+			}
+		}
+		HandlePerkSkillCycle();
+	}
+
+	private void HandlePerkSkillCycle()
+	{
+		if (!InputManager.GetButtonDown(140))
 		{
 			return;
 		}
-		bool flag3 = true;
-		for (int l = 0; l < tooltipsCount; l++)
+		bool flag = false;
+		for (int i = 0; i < tooltipsCount; i++)
 		{
-			if (itemTooltips[l].Displayed)
+			if (itemTooltips[i].Item != null && itemTooltips[i].Item.Perks != null && itemTooltips[i].CurrentPerk != null && itemTooltips[i].CurrentPerk.PerkDefinition.SkillsToShow.Count > 1)
 			{
-				flag3 = false;
+				flag = true;
 				break;
 			}
 		}
-		if (flag3)
+		if (!flag)
 		{
-			SkillTabIndex = 0;
+			return;
+		}
+		int perkSkillTabIndex = PerkSkillTabIndex;
+		PerkSkillTabIndex++;
+		bool flag2 = true;
+		for (int j = 0; j < tooltipsCount; j++)
+		{
+			if (itemTooltips[j].Displayed && itemTooltips[j].Item != null && itemTooltips[j].Item.Perks != null && itemTooltips[j].CurrentPerk != null && PerkSkillTabIndex < itemTooltips[j].CurrentPerk.PerkDefinition.SkillsToShow.Count)
+			{
+				flag2 = false;
+				break;
+			}
+		}
+		if (flag2)
+		{
+			PerkSkillTabIndex = 0;
+		}
+		if (PerkSkillTabIndex != perkSkillTabIndex)
+		{
 			CompendiumPanel.Clear();
+		}
+		for (int k = 0; k < tooltipsCount; k++)
+		{
+			if (itemTooltips[k].Displayed)
+			{
+				itemTooltips[k].Refresh();
+			}
 		}
 	}
 }

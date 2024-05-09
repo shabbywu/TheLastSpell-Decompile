@@ -28,7 +28,7 @@ public class PassivesModule : BuildingModule
 		{
 			foreach (BuildingPassiveEffect passiveEffect in buildingPassife.PassiveEffects)
 			{
-				if (passiveEffect is GenerateGuardian generateGuardian && generateGuardian.Guardian != null)
+				if (passiveEffect is GenerateGuardian { Guardian: not null } generateGuardian)
 				{
 					list.Add(generateGuardian.Guardian);
 				}

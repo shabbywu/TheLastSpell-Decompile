@@ -5,6 +5,7 @@ using TheLastStand.View.Generic;
 using TheLastStand.View.MetaShops;
 using TheLastStand.View.WorldMap;
 using TheLastStand.View.WorldMap.Glyphs;
+using TheLastStand.View.WorldMap.ItemRestriction;
 
 namespace TheLastStand.Manager.WorldMap;
 
@@ -41,6 +42,10 @@ public class WorldMapStateManager : TPSingleton<WorldMapStateManager>
 		}
 		if (InputManager.GetButtonDown(23))
 		{
+			if (TryClosingWeaponRestrictionsPanel())
+			{
+				return;
+			}
 			switch (CurrentState)
 			{
 			case WorldMapState.FOCUSED:
@@ -66,9 +71,22 @@ public class WorldMapStateManager : TPSingleton<WorldMapStateManager>
 			}
 			}
 		}
-		else if (InputManager.GetButtonDown(137) && CurrentState == WorldMapState.FOCUSED)
+		else if (InputManager.GetButtonDown(137) && !TryClosingWeaponRestrictionsPanel() && CurrentState == WorldMapState.FOCUSED)
 		{
 			TPSingleton<GameConfigurationsView>.Instance.OnCloseButtonClicked();
 		}
+	}
+
+	private bool TryClosingWeaponRestrictionsPanel()
+	{
+		if (TPSingleton<WeaponRestrictionsPanel>.Instance.Displayed)
+		{
+			if (TPSingleton<WeaponRestrictionsPanel>.Instance.CanClosePanel)
+			{
+				TPSingleton<WeaponRestrictionsPanel>.Instance.Close();
+			}
+			return true;
+		}
+		return false;
 	}
 }

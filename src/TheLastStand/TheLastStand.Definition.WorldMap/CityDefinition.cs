@@ -36,7 +36,13 @@ public class CityDefinition : TheLastStand.Framework.Serialization.Definition
 			public const string Elderlicht = "Elderlicht";
 
 			public const string Glintfein = "Glintfein";
+
+			public const string Runenberg = "GildenbergRedux";
 		}
+
+		public const string CityMetaUnlockName = "Unlock{0}City";
+
+		public const float WorldMapZoomedCityOffsetX = 4.392857f;
 	}
 
 	public bool BlackenBackground { get; private set; }
@@ -49,11 +55,17 @@ public class CityDefinition : TheLastStand.Framework.Serialization.Definition
 
 	public string Description => Localizer.Get("WorldMap_CityDescription_" + Id);
 
+	public int DifficultySkullsNb { get; private set; }
+
 	public int EnemiesProgressionOffset { get; private set; }
 
 	public string FogDefinitionId { get; private set; }
 
 	public List<SpawnDirectionsDefinition.E_Direction> ForbiddenDirections { get; private set; }
+
+	public bool HasLinkedCity => !string.IsNullOrEmpty(LinkedCityId);
+
+	public bool HasLinkedDLC => !string.IsNullOrEmpty(LinkedDLCId);
 
 	public bool Hidden { get; private set; }
 
@@ -65,6 +77,8 @@ public class CityDefinition : TheLastStand.Framework.Serialization.Definition
 
 	public bool IsLastMap { get; private set; }
 
+	public bool IsStoryMap { get; private set; }
+
 	public bool IsTutorialMap { get; private set; }
 
 	public string LevelLayoutBuildingsId { get; private set; }
@@ -74,6 +88,10 @@ public class CityDefinition : TheLastStand.Framework.Serialization.Definition
 	public string LevelArtPrefabId { get; private set; }
 
 	public LightFogSpawnersGenerationDefinition LightFogSpawnersGenerationDefinition { get; private set; }
+
+	public string LinkedCityId { get; private set; }
+
+	public string LinkedDLCId { get; private set; }
 
 	public int MaxGlyphPoints { get; private set; }
 
@@ -101,6 +119,8 @@ public class CityDefinition : TheLastStand.Framework.Serialization.Definition
 
 	public string UnitGenerationDefinitionId { get; private set; }
 
+	public string UnitGenerationGuaranteedRaceId { get; private set; }
+
 	public bool UseCommanderAsMage { get; private set; }
 
 	public int VictoryDaysCount { get; private set; }
@@ -114,15 +134,15 @@ public class CityDefinition : TheLastStand.Framework.Serialization.Definition
 
 	public override void Deserialize(XContainer container)
 	{
-		//IL_0ac2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0ac8: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0ab5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0b13: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0b82: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0c12: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0ca2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0d87: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0d32: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0bcd: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0bd3: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0bc0: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0c1e: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0c8d: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0d1d: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0dad: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0e92: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0e3d: Unknown result type (might be due to invalid IL or missing references)
 		XElement val = (XElement)(object)((container is XElement) ? container : null);
 		CityDefinition cityDefinition = null;
 		Hidden = ((XContainer)val).Element(XName.op_Implicit("Hidden")) != null;
@@ -161,22 +181,57 @@ public class CityDefinition : TheLastStand.Framework.Serialization.Definition
 		{
 			BrazierDefinition = cityDefinition.BrazierDefinition;
 		}
-		IsTutorialMap = ((val4 != null) ? ((XContainer)val4).Element(XName.op_Implicit("IsTutorialMap")) : null) != null;
-		IsLastMap = ((XContainer)val4).Element(XName.op_Implicit("IsLastMap")) != null;
-		XElement val7 = ((val4 != null) ? ((XContainer)val4).Element(XName.op_Implicit("EnemiesProgressionOffset")) : null);
+		XElement val7 = ((XContainer)val5).Element(XName.op_Implicit("DifficultySkullsNb"));
 		if (val7 != null)
 		{
 			if (int.TryParse(val7.Value, out var result))
 			{
-				EnemiesProgressionOffset = result;
+				DifficultySkullsNb = result;
+			}
+			else
+			{
+				CLoggerManager.Log((object)("Could not parse DifficultySkullNb element into an int in \"" + Id + "\"'s definition."), (LogType)0, (CLogLevel)2, true, "CityDefinition", false);
+			}
+		}
+		XElement val8 = ((XContainer)val5).Element(XName.op_Implicit("IsStoryMap"));
+		if (val8 != null)
+		{
+			if (!bool.TryParse(val8.Value, out var result2))
+			{
+				CLoggerManager.Log((object)"Could not parse CityDefinition IsStoryMap value to a valid bool.", (LogType)3, (CLogLevel)1, true, "StaticLog", false);
+				IsStoryMap = false;
+			}
+			else
+			{
+				IsStoryMap = result2;
+			}
+		}
+		IsTutorialMap = ((val4 != null) ? ((XContainer)val4).Element(XName.op_Implicit("IsTutorialMap")) : null) != null;
+		IsLastMap = ((XContainer)val4).Element(XName.op_Implicit("IsLastMap")) != null;
+		XElement val9 = ((XContainer)val5).Element(XName.op_Implicit("LinkedCityId"));
+		if (val9 != null)
+		{
+			LinkedCityId = val9.Value;
+		}
+		XElement val10 = ((XContainer)val5).Element(XName.op_Implicit("LinkedDLCId"));
+		if (val10 != null)
+		{
+			LinkedDLCId = val10.Value;
+		}
+		XElement val11 = ((val4 != null) ? ((XContainer)val4).Element(XName.op_Implicit("EnemiesProgressionOffset")) : null);
+		if (val11 != null)
+		{
+			if (int.TryParse(val11.Value, out var result3))
+			{
+				EnemiesProgressionOffset = result3;
 			}
 			else
 			{
 				CLoggerManager.Log((object)("Could not parse EnemiesProgressionOffset element into an int in \"" + Id + "\"'s definition."), (Object)(object)TPSingleton<WorldMapCityManager>.Instance, (LogType)0, (CLogLevel)2, true, "WorldMapCityManager", false);
 			}
 		}
-		XElement val8 = ((val4 != null) ? ((XContainer)val4).Element(XName.op_Implicit("FogId")) : null);
-		if (val8.IsNullOrEmpty())
+		XElement val12 = ((val4 != null) ? ((XContainer)val4).Element(XName.op_Implicit("FogId")) : null);
+		if (val12.IsNullOrEmpty())
 		{
 			if (cityDefinition == null)
 			{
@@ -187,10 +242,10 @@ public class CityDefinition : TheLastStand.Framework.Serialization.Definition
 		}
 		else
 		{
-			FogDefinitionId = val8.Value;
+			FogDefinitionId = val12.Value;
 		}
-		XElement val9 = ((val4 != null) ? ((XContainer)val4).Element(XName.op_Implicit("InitResourceId")) : null);
-		if (val9.IsNullOrEmpty())
+		XElement val13 = ((val4 != null) ? ((XContainer)val4).Element(XName.op_Implicit("InitResourceId")) : null);
+		if (val13.IsNullOrEmpty())
 		{
 			if (cityDefinition == null)
 			{
@@ -201,17 +256,17 @@ public class CityDefinition : TheLastStand.Framework.Serialization.Definition
 		}
 		else
 		{
-			InitResourceDefinitionId = val9.Value;
+			InitResourceDefinitionId = val13.Value;
 		}
-		XElement val10 = ((XContainer)val5).Element(XName.op_Implicit("LevelLayoutIds"));
-		if (val10 != null)
+		XElement val14 = ((XContainer)val5).Element(XName.op_Implicit("LevelLayoutIds"));
+		if (val14 != null)
 		{
-			XElement val11 = ((XContainer)val10).Element(XName.op_Implicit("Buildings"));
-			LevelLayoutBuildingsId = ((!val11.IsNullOrEmpty()) ? val11.Value : Id);
-			XElement val12 = ((XContainer)val10).Element(XName.op_Implicit("TileMap"));
-			LevelLayoutTileMapId = ((!val12.IsNullOrEmpty()) ? val12.Value : Id);
-			XElement val13 = ((XContainer)val10).Element(XName.op_Implicit("LevelArtPrefabId"));
-			LevelArtPrefabId = ((!val13.IsNullOrEmpty()) ? val13.Value : Id);
+			XElement val15 = ((XContainer)val14).Element(XName.op_Implicit("Buildings"));
+			LevelLayoutBuildingsId = ((!val15.IsNullOrEmpty()) ? val15.Value : Id);
+			XElement val16 = ((XContainer)val14).Element(XName.op_Implicit("TileMap"));
+			LevelLayoutTileMapId = ((!val16.IsNullOrEmpty()) ? val16.Value : Id);
+			XElement val17 = ((XContainer)val14).Element(XName.op_Implicit("LevelArtPrefabId"));
+			LevelArtPrefabId = ((!val17.IsNullOrEmpty()) ? val17.Value : Id);
 		}
 		else
 		{
@@ -219,8 +274,8 @@ public class CityDefinition : TheLastStand.Framework.Serialization.Definition
 			LevelLayoutTileMapId = Id;
 			LevelArtPrefabId = Id;
 		}
-		XElement val14 = ((val4 != null) ? ((XContainer)val4).Element(XName.op_Implicit("LightFogSpawnersGenerationId")) : null);
-		if (val14 != null && FogDatabase.LightFogDefinition.LightFogSpawnersGenerationDefinitions.TryGetValue(val14.Value, out var value2))
+		XElement val18 = ((val4 != null) ? ((XContainer)val4).Element(XName.op_Implicit("LightFogSpawnersGenerationId")) : null);
+		if (val18 != null && FogDatabase.LightFogDefinition.LightFogSpawnersGenerationDefinitions.TryGetValue(val18.Value, out var value2))
 		{
 			LightFogSpawnersGenerationDefinition = value2;
 		}
@@ -228,12 +283,12 @@ public class CityDefinition : TheLastStand.Framework.Serialization.Definition
 		{
 			LightFogSpawnersGenerationDefinition = new LightFogSpawnersGenerationDefinition(null, FogDatabase.LightFogDefinition.TokenVariables);
 		}
-		XElement val15 = ((val4 != null) ? ((XContainer)val4).Element(XName.op_Implicit("MaxGlyphPoints")) : null);
-		if (val15 != null)
+		XElement val19 = ((val4 != null) ? ((XContainer)val4).Element(XName.op_Implicit("MaxGlyphPoints")) : null);
+		if (val19 != null)
 		{
-			if (int.TryParse(val15.Value, out var result2))
+			if (int.TryParse(val19.Value, out var result4))
 			{
-				MaxGlyphPoints = result2;
+				MaxGlyphPoints = result4;
 			}
 			else
 			{
@@ -244,27 +299,27 @@ public class CityDefinition : TheLastStand.Framework.Serialization.Definition
 		{
 			MaxGlyphPoints = cityDefinition.MaxGlyphPoints;
 		}
-		XElement val16 = ((val4 != null) ? ((XContainer)val4).Element(XName.op_Implicit("PanicRewardOffsets")) : null);
-		if (val16 != null)
+		XElement val20 = ((val4 != null) ? ((XContainer)val4).Element(XName.op_Implicit("PanicRewardOffsets")) : null);
+		if (val20 != null)
 		{
-			XElement val17 = ((XContainer)val16).Element(XName.op_Implicit("Resources"));
-			if (val17 != null)
+			XElement val21 = ((XContainer)val20).Element(XName.op_Implicit("Resources"));
+			if (val21 != null)
 			{
-				if (int.TryParse(val17.Value, out var result3))
+				if (int.TryParse(val21.Value, out var result5))
 				{
-					PanicRewardResourcesOffset = result3;
+					PanicRewardResourcesOffset = result5;
 				}
 				else
 				{
 					CLoggerManager.Log((object)("Could not parse PanicRewardOffsets Resources element into an int in \"" + Id + "\"'s definition."), (Object)(object)TPSingleton<WorldMapCityManager>.Instance, (LogType)0, (CLogLevel)2, true, "WorldMapCityManager", false);
 				}
 			}
-			XElement val18 = ((XContainer)val16).Element(XName.op_Implicit("Items"));
-			if (val18 != null)
+			XElement val22 = ((XContainer)val20).Element(XName.op_Implicit("Items"));
+			if (val22 != null)
 			{
-				if (int.TryParse(val18.Value, out var result4))
+				if (int.TryParse(val22.Value, out var result6))
 				{
-					PanicRewardItemsOffset = result4;
+					PanicRewardItemsOffset = result6;
 				}
 				else
 				{
@@ -277,8 +332,8 @@ public class CityDefinition : TheLastStand.Framework.Serialization.Definition
 			PanicRewardResourcesOffset = cityDefinition.PanicRewardResourcesOffset;
 			PanicRewardItemsOffset = cityDefinition.PanicRewardItemsOffset;
 		}
-		XElement val19 = ((val4 != null) ? ((XContainer)val4).Element(XName.op_Implicit("SectorsId")) : null);
-		if (val19.IsNullOrEmpty())
+		XElement val23 = ((val4 != null) ? ((XContainer)val4).Element(XName.op_Implicit("SectorsId")) : null);
+		if (val23.IsNullOrEmpty())
 		{
 			if (cityDefinition == null)
 			{
@@ -289,12 +344,12 @@ public class CityDefinition : TheLastStand.Framework.Serialization.Definition
 		}
 		else
 		{
-			SectorContainerPrefabId = val19.Value;
+			SectorContainerPrefabId = val23.Value;
 		}
-		XElement val20 = ((val4 != null) ? ((XContainer)val4).Element(XName.op_Implicit("BonePilesEvolutionId")) : null);
-		if (val20 != null)
+		XElement val24 = ((val4 != null) ? ((XContainer)val4).Element(XName.op_Implicit("BonePilesEvolutionId")) : null);
+		if (val24 != null)
 		{
-			BonePilesEvolutionId = val20.Value;
+			BonePilesEvolutionId = val24.Value;
 		}
 		else if (cityDefinition != null)
 		{
@@ -304,19 +359,19 @@ public class CityDefinition : TheLastStand.Framework.Serialization.Definition
 		{
 			CLoggerManager.Log((object)("CityDefinition " + Id + " has no BonePilesEvolutionId and no Template to copy it from!"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 		}
-		XElement val21 = ((val4 != null) ? ((XContainer)val4).Element(XName.op_Implicit("RandomBuildingsPerDayDefinitionId")) : null);
-		if (val21 != null)
+		XElement val25 = ((val4 != null) ? ((XContainer)val4).Element(XName.op_Implicit("RandomBuildingsPerDayDefinitionId")) : null);
+		if (val25 != null)
 		{
-			RandomBuildingsPerDayDefinitionId = val21.Value;
+			RandomBuildingsPerDayDefinitionId = val25.Value;
 		}
 		else if (cityDefinition != null)
 		{
 			RandomBuildingsPerDayDefinitionId = cityDefinition.RandomBuildingsPerDayDefinitionId;
 		}
-		XElement val22 = ((val4 != null) ? ((XContainer)val4).Element(XName.op_Implicit("ShopEvolutionId")) : null);
-		if (val22 != null)
+		XElement val26 = ((val4 != null) ? ((XContainer)val4).Element(XName.op_Implicit("ShopEvolutionId")) : null);
+		if (val26 != null)
 		{
-			ShopEvolutionId = val22.Value;
+			ShopEvolutionId = val26.Value;
 		}
 		else if (cityDefinition != null)
 		{
@@ -326,9 +381,9 @@ public class CityDefinition : TheLastStand.Framework.Serialization.Definition
 		{
 			CLoggerManager.Log((object)("CityDefinition " + Id + " has no ShopEvolutionId and no Template to copy it from!"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 		}
-		XElement val23 = ((val4 != null) ? ((XContainer)val4).Element(XName.op_Implicit("Spawn")) : null);
-		XAttribute val24 = val23.Attribute(XName.op_Implicit("Id"));
-		if (val24.IsNullOrEmpty())
+		XElement val27 = ((val4 != null) ? ((XContainer)val4).Element(XName.op_Implicit("Spawn")) : null);
+		XAttribute val28 = val27.Attribute(XName.op_Implicit("Id"));
+		if (val28.IsNullOrEmpty())
 		{
 			if (cityDefinition == null)
 			{
@@ -339,11 +394,11 @@ public class CityDefinition : TheLastStand.Framework.Serialization.Definition
 		}
 		else
 		{
-			SpawnDefinitionId = val24.Value;
+			SpawnDefinitionId = val28.Value;
 		}
 		ForbiddenDirections = new List<SpawnDirectionsDefinition.E_Direction>();
-		XElement val25 = ((XContainer)val23).Element(XName.op_Implicit("ForbiddenDirections"));
-		if (val25.IsNullOrEmpty())
+		XElement val29 = ((XContainer)val27).Element(XName.op_Implicit("ForbiddenDirections"));
+		if (val29.IsNullOrEmpty())
 		{
 			if (cityDefinition != null)
 			{
@@ -352,39 +407,39 @@ public class CityDefinition : TheLastStand.Framework.Serialization.Definition
 		}
 		else
 		{
-			foreach (XElement item in ((XContainer)val25).Elements(XName.op_Implicit("ForbiddenDirection")))
+			foreach (XElement item in ((XContainer)val29).Elements(XName.op_Implicit("ForbiddenDirection")))
 			{
-				if (!Enum.TryParse<SpawnDirectionsDefinition.E_Direction>(item.Value, out var result5))
+				if (!Enum.TryParse<SpawnDirectionsDefinition.E_Direction>(item.Value, out var result7))
 				{
 					CLoggerManager.Log((object)("Could not parse Forbidden Direction " + item.Value + " of city " + Id + " as a valid Direction!"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 				}
-				else if (ForbiddenDirections.Contains(result5))
+				else if (ForbiddenDirections.Contains(result7))
 				{
 					CLoggerManager.Log((object)("Forbidden Direction " + item.Value + " of city " + Id + " is set twice!"), (LogType)2, (CLogLevel)1, true, "StaticLog", false);
 				}
 				else
 				{
-					ForbiddenDirections.Add(result5);
+					ForbiddenDirections.Add(result7);
 				}
 			}
 		}
-		XElement val26 = ((XContainer)val4).Element(XName.op_Implicit("StartingDayTurn"));
-		Game.E_DayTurn result6;
-		if (val26 == null)
+		XElement val30 = ((XContainer)val4).Element(XName.op_Implicit("StartingDayTurn"));
+		Game.E_DayTurn result8;
+		if (val30 == null)
 		{
 			StartingDayTurn = cityDefinition?.StartingDayTurn ?? Game.E_DayTurn.Deployment;
 		}
-		else if (Enum.TryParse<Game.E_DayTurn>(val26.Value, out result6))
+		else if (Enum.TryParse<Game.E_DayTurn>(val30.Value, out result8))
 		{
-			StartingDayTurn = result6;
+			StartingDayTurn = result8;
 		}
 		else
 		{
-			CLoggerManager.Log((object)$"Could not parse StartingDayTurn element {val26.Value} of city {Id} as a valid DayTurn! Setting it to {Game.E_DayTurn.Deployment}.", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+			CLoggerManager.Log((object)$"Could not parse StartingDayTurn element {val30.Value} of city {Id} as a valid DayTurn! Setting it to {Game.E_DayTurn.Deployment}.", (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 			StartingDayTurn = Game.E_DayTurn.Deployment;
 		}
-		XElement val27 = ((XContainer)val5).Element(XName.op_Implicit("StartingSetup"));
-		if (val27.IsNullOrEmpty())
+		XElement val31 = ((XContainer)val5).Element(XName.op_Implicit("StartingSetup"));
+		if (val31.IsNullOrEmpty())
 		{
 			if (cityDefinition == null)
 			{
@@ -395,10 +450,10 @@ public class CityDefinition : TheLastStand.Framework.Serialization.Definition
 		}
 		else
 		{
-			StartingSetup = val27.Value;
+			StartingSetup = val31.Value;
 		}
-		XElement val28 = ((XContainer)val4).Element(XName.op_Implicit("UnitGenerationId"));
-		if (val28.IsNullOrEmpty())
+		XElement val32 = ((XContainer)val4).Element(XName.op_Implicit("UnitGenerationId"));
+		if (val32.IsNullOrEmpty())
 		{
 			if (cityDefinition == null)
 			{
@@ -409,10 +464,15 @@ public class CityDefinition : TheLastStand.Framework.Serialization.Definition
 		}
 		else
 		{
-			UnitGenerationDefinitionId = val28.Value;
+			UnitGenerationDefinitionId = val32.Value;
 		}
-		XElement val29 = ((XContainer)val4).Element(XName.op_Implicit("VictoryDaysCount"));
-		if (val29.IsNullOrEmpty())
+		XElement val33 = ((XContainer)val4).Element(XName.op_Implicit("UnitGenerationGuaranteedRaceId"));
+		if (!val33.IsNullOrEmpty())
+		{
+			UnitGenerationGuaranteedRaceId = val33.Value;
+		}
+		XElement val34 = ((XContainer)val4).Element(XName.op_Implicit("VictoryDaysCount"));
+		if (val34.IsNullOrEmpty())
 		{
 			if (cityDefinition == null)
 			{
@@ -423,28 +483,28 @@ public class CityDefinition : TheLastStand.Framework.Serialization.Definition
 		}
 		else
 		{
-			if (!int.TryParse(val29.Value, out var result7))
+			if (!int.TryParse(val34.Value, out var result9))
 			{
-				CLoggerManager.Log((object)("Could not parse VictoryDaysCount from CityDefinition " + Id + " value " + val29.Value + " to a valid integer value."), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
+				CLoggerManager.Log((object)("Could not parse VictoryDaysCount from CityDefinition " + Id + " value " + val34.Value + " to a valid integer value."), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 				return;
 			}
-			if (result7 < 1)
+			if (result9 < 1)
 			{
-				CLoggerManager.Log((object)$"VictoryDaysCount in CityDefinition {Id} is less than 1 ({result7}) which is invalid, setting it to 1.", (LogType)2, (CLogLevel)1, true, "StaticLog", false);
-				result7 = 1;
+				CLoggerManager.Log((object)$"VictoryDaysCount in CityDefinition {Id} is less than 1 ({result9}) which is invalid, setting it to 1.", (LogType)2, (CLogLevel)1, true, "StaticLog", false);
+				result9 = 1;
 			}
-			VictoryDaysCount = result7;
+			VictoryDaysCount = result9;
 		}
 		XElement obj = ((XContainer)val5).Element(XName.op_Implicit("WorldMapPosition"));
-		XAttribute val30 = obj.Attribute(XName.op_Implicit("X"));
-		XAttribute val31 = obj.Attribute(XName.op_Implicit("Y"));
-		if (float.TryParse(val30.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var result8) && float.TryParse(val31.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var result9))
+		XAttribute val35 = obj.Attribute(XName.op_Implicit("X"));
+		XAttribute val36 = obj.Attribute(XName.op_Implicit("Y"));
+		if (float.TryParse(val35.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var result10) && float.TryParse(val36.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var result11))
 		{
-			WorldMapPosition = new Vector2(result8, result9);
+			WorldMapPosition = new Vector2(result10, result11);
 		}
 		CameraBoundaries = default(Vector4);
-		XElement val32 = ((XContainer)val5).Element(XName.op_Implicit("CameraBoundaries"));
-		if (val32.IsNullOrEmpty())
+		XElement val37 = ((XContainer)val5).Element(XName.op_Implicit("CameraBoundaries"));
+		if (val37.IsNullOrEmpty())
 		{
 			if (cityDefinition == null)
 			{
@@ -455,95 +515,95 @@ public class CityDefinition : TheLastStand.Framework.Serialization.Definition
 		}
 		else
 		{
-			float result10 = 0f;
-			float result11 = 0f;
 			float result12 = 0f;
 			float result13 = 0f;
-			XElement val33 = ((XContainer)val32).Element(XName.op_Implicit("Top"));
-			if (val33.IsNullOrEmpty())
+			float result14 = 0f;
+			float result15 = 0f;
+			XElement val38 = ((XContainer)val37).Element(XName.op_Implicit("Top"));
+			if (val38.IsNullOrEmpty())
 			{
 				if (cityDefinition == null)
 				{
 					CLoggerManager.Log((object)("CityDefinition " + Id + " has no CameraBoundaries.Top and no Template to copy it from!"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 					return;
 				}
-				result10 = cityDefinition.CameraBoundaries.x;
+				result12 = cityDefinition.CameraBoundaries.x;
 			}
-			else if (!float.TryParse(val33.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out result10))
+			else if (!float.TryParse(val38.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out result12))
 			{
 				CLoggerManager.Log((object)("CityDefinition " + Id + " has an invalid value from CameraBoundaries.Top Element !"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 				return;
 			}
-			XElement val34 = ((XContainer)val32).Element(XName.op_Implicit("Bottom"));
-			if (val34.IsNullOrEmpty())
+			XElement val39 = ((XContainer)val37).Element(XName.op_Implicit("Bottom"));
+			if (val39.IsNullOrEmpty())
 			{
 				if (cityDefinition == null)
 				{
 					CLoggerManager.Log((object)("CityDefinition " + Id + " has no CameraBoundaries.Bottom and no Template to copy it from!"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 					return;
 				}
-				result11 = cityDefinition.CameraBoundaries.y;
+				result13 = cityDefinition.CameraBoundaries.y;
 			}
-			else if (!float.TryParse(val34.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out result11))
+			else if (!float.TryParse(val39.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out result13))
 			{
 				CLoggerManager.Log((object)("CityDefinition " + Id + " has an invalid value from CameraBoundaries.Bottom Element !"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 				return;
 			}
-			XElement val35 = ((XContainer)val32).Element(XName.op_Implicit("Left"));
-			if (val35.IsNullOrEmpty())
+			XElement val40 = ((XContainer)val37).Element(XName.op_Implicit("Left"));
+			if (val40.IsNullOrEmpty())
 			{
 				if (cityDefinition == null)
 				{
 					CLoggerManager.Log((object)("CityDefinition " + Id + " has no CameraBoundaries.Left and no Template to copy it from!"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 					return;
 				}
-				result12 = cityDefinition.CameraBoundaries.z;
+				result14 = cityDefinition.CameraBoundaries.z;
 			}
-			else if (!float.TryParse(val35.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out result12))
+			else if (!float.TryParse(val40.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out result14))
 			{
 				CLoggerManager.Log((object)("CityDefinition " + Id + " has an invalid value from CameraBoundaries.Left Element !"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 				return;
 			}
-			XElement val36 = ((XContainer)val32).Element(XName.op_Implicit("Right"));
-			if (val36.IsNullOrEmpty())
+			XElement val41 = ((XContainer)val37).Element(XName.op_Implicit("Right"));
+			if (val41.IsNullOrEmpty())
 			{
 				if (cityDefinition == null)
 				{
 					CLoggerManager.Log((object)("CityDefinition " + Id + " has no CameraBoundaries.Right and no Template to copy it from!"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 					return;
 				}
-				result13 = cityDefinition.CameraBoundaries.w;
+				result15 = cityDefinition.CameraBoundaries.w;
 			}
-			else if (!float.TryParse(val36.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out result13))
+			else if (!float.TryParse(val41.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out result15))
 			{
 				CLoggerManager.Log((object)("CityDefinition " + Id + " has an invalid value from CameraBoundaries.Right Element !"), (LogType)0, (CLogLevel)1, true, "StaticLog", false);
 				return;
 			}
-			CameraBoundaries = new Vector4(result10, result11, result12, result13);
+			CameraBoundaries = new Vector4(result12, result13, result14, result15);
 		}
 		BlackenBackground = ((XContainer)val5).Element(XName.op_Implicit("BlackenBackground")) != null;
-		XElement val37 = ((XContainer)val5).Element(XName.op_Implicit("AnimatedCutscenes"));
-		if (!val37.IsNullOrEmpty())
+		XElement val42 = ((XContainer)val5).Element(XName.op_Implicit("AnimatedCutscenes"));
+		if (!val42.IsNullOrEmpty())
 		{
 			object preGameCutscene;
-			if (val37 == null)
+			if (val42 == null)
 			{
 				preGameCutscene = null;
 			}
 			else
 			{
-				XElement obj2 = ((XContainer)val37).Element(XName.op_Implicit("PreGameCutscene"));
+				XElement obj2 = ((XContainer)val42).Element(XName.op_Implicit("PreGameCutscene"));
 				preGameCutscene = ((obj2 != null) ? obj2.Value : null);
 			}
 			PreGameCutscene = (string)preGameCutscene;
 			object postVictoryCutscene;
-			if (val37 == null)
+			if (val42 == null)
 			{
 				postVictoryCutscene = null;
 			}
 			else
 			{
-				XElement obj3 = ((XContainer)val37).Element(XName.op_Implicit("PostVictoryCutscene"));
+				XElement obj3 = ((XContainer)val42).Element(XName.op_Implicit("PostVictoryCutscene"));
 				postVictoryCutscene = ((obj3 != null) ? obj3.Value : null);
 			}
 			PostVictoryCutscene = (string)postVictoryCutscene;

@@ -36,6 +36,7 @@ using TheLastStand.View.Skill.UI;
 using TheLastStand.View.ToDoList;
 using TheLastStand.View.Unit;
 using TheLastStand.View.Unit.Perk;
+using TheLastStand.View.Unit.Race;
 using TheLastStand.View.Unit.Stat;
 using TheLastStand.View.Unit.UI;
 using UnityEngine;
@@ -66,23 +67,23 @@ public class CharacterSheetPanel : TPSingleton<CharacterSheetPanel>, IOverlayUse
 	{
 		public static readonly _003C_003Ec _003C_003E9 = new _003C_003Ec();
 
-		public static Func<KeyValuePair<Toggle, TabbedPageView>, bool> _003C_003E9__84_0;
+		public static Func<KeyValuePair<Toggle, TabbedPageView>, bool> _003C_003E9__91_0;
 
-		public static TweenCallback _003C_003E9__94_1;
+		public static TweenCallback _003C_003E9__101_1;
 
-		public static Func<Toggle, bool> _003C_003E9__120_0;
+		public static Func<Toggle, bool> _003C_003E9__128_0;
 
-		internal bool _003CClose_003Eb__84_0(KeyValuePair<Toggle, TabbedPageView> x)
+		internal bool _003CClose_003Eb__91_0(KeyValuePair<Toggle, TabbedPageView> x)
 		{
 			return x.Key.isOn;
 		}
 
-		internal void _003COpen_003Eb__94_1()
+		internal void _003COpen_003Eb__101_1()
 		{
 			TPSingleton<HUDJoystickNavigationManager>.Instance.JoystickHighlight.ToggleAlwaysFollow(state: false);
 		}
 
-		internal bool _003CSelectNeighbourTab_003Eb__120_0(Toggle x)
+		internal bool _003CSelectNeighbourTab_003Eb__128_0(Toggle x)
 		{
 			return ((Selectable)x).interactable;
 		}
@@ -206,7 +207,16 @@ public class CharacterSheetPanel : TPSingleton<CharacterSheetPanel>, IOverlayUse
 	private Image perkAvailableNotif;
 
 	[SerializeField]
+	private UnitRaceDisplay unitRaceDisplay;
+
+	[SerializeField]
+	private Selectable nextHeroButtonSelectable;
+
+	[SerializeField]
 	private HUDJoystickTarget rightPanelJoystickTarget;
+
+	[SerializeField]
+	private HUDJoystickTarget inventoryJoystickTarget;
 
 	[SerializeField]
 	private HUDJoystickTarget perksJoystickTarget;
@@ -216,6 +226,12 @@ public class CharacterSheetPanel : TPSingleton<CharacterSheetPanel>, IOverlayUse
 
 	[SerializeField]
 	private HUDJoystickTarget joystickTarget;
+
+	[SerializeField]
+	private Selectable movePointsSelectable;
+
+	[SerializeField]
+	private HUDJoystickTarget unitRaceJoystickTarget;
 
 	[SerializeField]
 	private AudioClip openClip;
@@ -267,6 +283,8 @@ public class CharacterSheetPanel : TPSingleton<CharacterSheetPanel>, IOverlayUse
 	public HUDJoystickTarget RightPanelJoystickTarget => rightPanelJoystickTarget;
 
 	public UnitPerkTreeView UnitPerkTreeView => unitPerkTreeView;
+
+	public UnitRaceDisplay UnitRaceDisplay => unitRaceDisplay;
 
 	public event Action<bool> OnCharacterSheetToggle;
 
@@ -508,14 +526,14 @@ public class CharacterSheetPanel : TPSingleton<CharacterSheetPanel>, IOverlayUse
 				displayTween = null;
 				TPSingleton<HUDJoystickNavigationManager>.Instance.JoystickHighlight.ToggleAlwaysFollow(state: false);
 			});
-			object obj3 = _003C_003Ec._003C_003E9__94_1;
+			object obj3 = _003C_003Ec._003C_003E9__101_1;
 			if (obj3 == null)
 			{
 				TweenCallback val = delegate
 				{
 					TPSingleton<HUDJoystickNavigationManager>.Instance.JoystickHighlight.ToggleAlwaysFollow(state: false);
 				};
-				_003C_003Ec._003C_003E9__94_1 = val;
+				_003C_003Ec._003C_003E9__101_1 = val;
 				obj3 = (object)val;
 			}
 			displayTween = (Tweener)(object)TweenSettingsExtensions.OnComplete<TweenerCore<Vector2, Vector2, VectorOptions>>(obj2, (TweenCallback)obj3);
@@ -674,6 +692,12 @@ public class CharacterSheetPanel : TPSingleton<CharacterSheetPanel>, IOverlayUse
 		unitPortaitDetails.RefreshPortrait();
 	}
 
+	public void RefreshRaceIcon(PlayableUnit playableUnit)
+	{
+		unitRaceDisplay.SetContent(playableUnit?.RaceDefinition);
+		unitRaceDisplay.Refresh();
+	}
+
 	public void RefreshSkills(PlayableUnit playableUnit)
 	{
 		List<TheLastStand.Model.Skill.Skill> skills = playableUnit.PlayableUnitController.GetSkills();
@@ -814,6 +838,7 @@ public class CharacterSheetPanel : TPSingleton<CharacterSheetPanel>, IOverlayUse
 		}
 		RefreshStats();
 		RefreshPortrait(playableUnit);
+		RefreshRaceIcon(playableUnit);
 		RefreshUnitHeader(playableUnit);
 		RefreshTabs();
 		RefreshAvatar(playableUnit);
@@ -824,6 +849,10 @@ public class CharacterSheetPanel : TPSingleton<CharacterSheetPanel>, IOverlayUse
 		if (PlayableUnitManager.StatTooltip.Displayed)
 		{
 			PlayableUnitManager.StatTooltip.Refresh();
+		}
+		if (PlayableUnitManager.RaceTooltip.Displayed)
+		{
+			PlayableUnitManager.RaceTooltip.Refresh();
 		}
 	}
 
@@ -1016,6 +1045,7 @@ public class CharacterSheetPanel : TPSingleton<CharacterSheetPanel>, IOverlayUse
 		if (value)
 		{
 			tabPagePairs[sender].Open();
+			RefreshRaceIconJoystickNavigation();
 		}
 		else
 		{
@@ -1036,6 +1066,35 @@ public class CharacterSheetPanel : TPSingleton<CharacterSheetPanel>, IOverlayUse
 		else
 		{
 			EventSystem.current.SetSelectedGameObject(((Component)GameView.CharacterDetailsView.LevelUpButtonDisabledTarget).gameObject);
+		}
+	}
+
+	private void RefreshRaceIconJoystickNavigation()
+	{
+		((Selectable)(object)unitRaceDisplay.JoystickSelectable).SetMode((Mode)4);
+		((Selectable)(object)unitRaceDisplay.JoystickSelectable).ClearNavigation();
+		((Selectable)(object)unitRaceDisplay.JoystickSelectable).SetSelectOnLeft(movePointsSelectable);
+		nextHeroButtonSelectable.SetSelectOnRight(null);
+		((Component)unitRaceJoystickTarget).gameObject.SetActive(false);
+		if (unitPerkTreeView.IsOpened)
+		{
+			((Component)unitRaceJoystickTarget).gameObject.SetActive(true);
+			((Selectable)(object)unitRaceDisplay.JoystickSelectable).SetSelectOnDown(unitPerkTreeView.JoystickTarget.GetSelectionInfo().Selectable);
+			movePointsSelectable.SetSelectOnRight((Selectable)(object)unitRaceDisplay.JoystickSelectable);
+			nextHeroButtonSelectable.SetSelectOnRight((Selectable)(object)unitRaceDisplay.JoystickSelectable);
+			return;
+		}
+		if (GameView.CharacterDetailsView.IsOpened)
+		{
+			((Component)unitRaceJoystickTarget).gameObject.SetActive(true);
+			((Selectable)(object)unitRaceDisplay.JoystickSelectable).SetSelectOnRight(GameView.CharacterDetailsView.DismissHeroButtonSelectable);
+			((Selectable)(object)unitRaceDisplay.JoystickSelectable).SetSelectOnDown(GameView.CharacterDetailsView.LeftTraitSelectable);
+			movePointsSelectable.SetSelectOnRight((Selectable)(object)unitRaceDisplay.JoystickSelectable);
+			nextHeroButtonSelectable.SetSelectOnRight((Selectable)(object)unitRaceDisplay.JoystickSelectable);
+		}
+		if (IsInventoryOpened)
+		{
+			movePointsSelectable.SetSelectOnRight(inventoryJoystickTarget.GetSelectionInfo().Selectable);
 		}
 	}
 }

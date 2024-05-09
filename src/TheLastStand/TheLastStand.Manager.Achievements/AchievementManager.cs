@@ -9,15 +9,18 @@ using TheLastStand.Database.Building;
 using TheLastStand.Definition.Building;
 using TheLastStand.Definition.Unit;
 using TheLastStand.Manager.Building;
+using TheLastStand.Manager.Item;
 using TheLastStand.Manager.Meta;
 using TheLastStand.Manager.Unit;
 using TheLastStand.Manager.WorldMap;
 using TheLastStand.Model;
 using TheLastStand.Model.Building;
 using TheLastStand.Model.Building.Module;
+using TheLastStand.Model.Item;
 using TheLastStand.Model.Meta;
 using TheLastStand.Model.Skill.SkillAction.SkillActionExecution.SkillActionExecutionTileData;
 using TheLastStand.Model.Status;
+using TheLastStand.Model.TileMap;
 using TheLastStand.Model.Unit;
 using TheLastStand.Model.Unit.Enemy;
 using TheLastStand.Serialization.Achievements;
@@ -34,13 +37,33 @@ public sealed class AchievementManager : Manager<AchievementManager>
 
 	private AchievementUnlocker perfectWinAchievementUnlocker;
 
+	private AchievementUnlocker destroy10CrystalsRunAchievementUnlocker;
+
+	private AchievementUnlocker use50BeersRunAchievementUnlocker;
+
+	private AchievementUnlocker crystalCorrupt5EnemiesNightAchievementUnlocker;
+
 	private HashSet<string> remainingBuildingsToBuild;
 
 	private HashSet<string> remainingWeaponsToUnlock;
 
+	private HashSet<string> remainingDLC1WeaponsAndTrinketsToUnlock;
+
 	private HashSet<Achievement> remainingAchievementsToUnlock;
 
 	private bool isInitialized;
+
+	public static bool IsAnyBoundlessModeActive
+	{
+		get
+		{
+			if (!TPSingleton<WorldMapCityManager>.Instance.SelectedCity.GlyphsConfig.CustomModeEnabled)
+			{
+				return TPSingleton<ItemRestrictionManager>.Instance.WeaponsRestrictionsCategories.IsBoundlessModeActive;
+			}
+			return true;
+		}
+	}
 
 	private void Start()
 	{
@@ -116,9 +139,11 @@ public sealed class AchievementManager : Manager<AchievementManager>
 			}
 		}
 		remainingWeaponsToUnlock = new HashSet<string>(AchievementContainer.UnlockAllWeapons);
+		remainingDLC1WeaponsAndTrinketsToUnlock = new HashSet<string>(AchievementContainer.UnlockAllDLC1WeaponsAndTrinkets);
 		foreach (MetaUpgrade activatedUpgrade in TPSingleton<MetaUpgradesManager>.Instance.ActivatedUpgrades)
 		{
 			remainingWeaponsToUnlock.Remove(activatedUpgrade.MetaUpgradeDefinition.Id);
+			remainingDLC1WeaponsAndTrinketsToUnlock.Remove(activatedUpgrade.MetaUpgradeDefinition.Id);
 		}
 		remainingAchievementsToUnlock = new HashSet<Achievement>(AchievementContainer.AllAchievements);
 		if (achievementHandler != null)
@@ -142,6 +167,18 @@ public sealed class AchievementManager : Manager<AchievementManager>
 		if (perfectWinAchievementUnlocker == null)
 		{
 			perfectWinAchievementUnlocker = new AchievementUnlocker(AchievementContainer.ACH_PERFECT_WIN, 14);
+		}
+		if (destroy10CrystalsRunAchievementUnlocker == null)
+		{
+			destroy10CrystalsRunAchievementUnlocker = new AchievementUnlocker(AchievementContainer.ACH_DESTROY_10_CRYSTALS_RUN, 10);
+		}
+		if (use50BeersRunAchievementUnlocker == null)
+		{
+			use50BeersRunAchievementUnlocker = new AchievementUnlocker(AchievementContainer.ACH_USE_50_BEERS_RUN, 50);
+		}
+		if (crystalCorrupt5EnemiesNightAchievementUnlocker == null)
+		{
+			crystalCorrupt5EnemiesNightAchievementUnlocker = new AchievementUnlocker(AchievementContainer.ACH_5_ENEMIES_CORRUPTED_BY_CRYSTALS, 5);
 		}
 	}
 
@@ -229,7 +266,7 @@ public sealed class AchievementManager : Manager<AchievementManager>
 		{
 			TPSingleton<AchievementManager>.Instance.UnlockAchievement(AchievementContainer.ACH_FREUDE_REVEAL, refreshIfAchieved: false);
 		}
-		if (TPSingleton<GameManager>.Instance.Game.DayNumber >= 4 && ApocalypseManager.CurrentApocalypseIndex >= 1 && !TPSingleton<WorldMapCityManager>.Instance.SelectedCity.GlyphsConfig.CustomModeEnabled)
+		if (TPSingleton<GameManager>.Instance.Game.DayNumber >= 4 && ApocalypseManager.CurrentApocalypseIndex >= 1 && !IsAnyBoundlessModeActive)
 		{
 			UnlockAchievement(AchievementContainer.ACH_NIGHT3_APO1);
 		}
@@ -303,6 +340,14 @@ public sealed class AchievementManager : Manager<AchievementManager>
 		}
 	}
 
+	public void HandleDestroyedBuilding(TheLastStand.Model.Building.Building building, ISkillCaster attacker)
+	{
+		if (building.IsCrystal && attacker is PlayableUnit)
+		{
+			destroy10CrystalsRunAchievementUnlocker.IncreaseValue();
+		}
+	}
+
 	public void HandleGameOver(Game.E_GameOverCause gameOverCause)
 	{
 		if (gameOverCause != Game.E_GameOverCause.MagicSealsCompleted)
@@ -316,13 +361,14 @@ public sealed class AchievementManager : Manager<AchievementManager>
 			"Glenwald" => AchievementContainer.ACH_WIN_GLENWALD, 
 			"Elderlicht" => AchievementContainer.ACH_WIN_ELDERLICHT, 
 			"Glintfein" => AchievementContainer.ACH_WIN_GLINTFEIN, 
+			"GildenbergRedux" => AchievementContainer.ACH_WIN_RUNENBERG, 
 			_ => null, 
 		};
 		if (achievement.HasValue)
 		{
 			UnlockAchievement(achievement.Value);
 		}
-		if (TPSingleton<WorldMapCityManager>.Instance.SelectedCity.GlyphsConfig.CustomModeEnabled)
+		if (IsAnyBoundlessModeActive)
 		{
 			return;
 		}
@@ -339,6 +385,7 @@ public sealed class AchievementManager : Manager<AchievementManager>
 				"Glenwald" => AchievementContainer.ACH_WIN_GLENWALD_APO3, 
 				"Elderlicht" => AchievementContainer.ACH_WIN_ELDERLICHT_APO3, 
 				"Glintfein" => AchievementContainer.ACH_WIN_GLINTFEIN_APO3, 
+				"GildenbergRedux" => AchievementContainer.ACH_WIN_RUNENBERG_APO3, 
 				_ => null, 
 			};
 			if (achievement2.HasValue)
@@ -359,12 +406,17 @@ public sealed class AchievementManager : Manager<AchievementManager>
 		{
 			UnlockAchievement(AchievementContainer.ACH_UNLOCK_ALL_WEAPONS);
 		}
+		if (remainingDLC1WeaponsAndTrinketsToUnlock != null && remainingDLC1WeaponsAndTrinketsToUnlock.Remove(upgradeId) && remainingDLC1WeaponsAndTrinketsToUnlock.Count == 0)
+		{
+			UnlockAchievement(AchievementContainer.ACH_UNLOCK_ALL_DLC1_WEAPONS_TRINKETS);
+		}
 	}
 
 	public void HandleNightEnd()
 	{
 		stun50EnemiesNightAchievementUnlocker.Reset();
-		if (TPSingleton<GameManager>.Instance.Game.DayNumber == 3 && ApocalypseManager.CurrentApocalypseIndex >= 1 && !TPSingleton<WorldMapCityManager>.Instance.SelectedCity.GlyphsConfig.CustomModeEnabled)
+		crystalCorrupt5EnemiesNightAchievementUnlocker.Reset();
+		if (TPSingleton<GameManager>.Instance.Game.DayNumber == 3 && ApocalypseManager.CurrentApocalypseIndex >= 1 && !IsAnyBoundlessModeActive)
 		{
 			UnlockAchievement(AchievementContainer.ACH_NIGHT3_APO1);
 		}
@@ -409,6 +461,9 @@ public sealed class AchievementManager : Manager<AchievementManager>
 
 	public void HandleRunStart()
 	{
+		use50BeersRunAchievementUnlocker.Reset();
+		destroy10CrystalsRunAchievementUnlocker.Reset();
+		crystalCorrupt5EnemiesNightAchievementUnlocker.Reset();
 		perfectWinAchievementUnlocker.Reset();
 		perfectWinAchievementUnlocker.SetValueLimit(TPSingleton<WorldMapCityManager>.Instance.SelectedCity.CityDefinition.VictoryDaysCount);
 		SetAchievementProgression(StatContainer.STAT_NUMBER_OF_RUNS, (int)ApplicationManager.Application.RunsCompleted);
@@ -437,7 +492,7 @@ public sealed class AchievementManager : Manager<AchievementManager>
 		}
 		foreach (TheLastStand.Model.Unit.Unit allAttackedUnit2 in skillActionExecutionController.SkillActionExecution.AllAttackedUnits)
 		{
-			if (allAttackedUnit2 is EnemyUnit enemyUnit && enemyUnit.IsDead && TileMapController.DistanceBetweenTiles(allAttackedUnit2.OriginTile, playableUnit.OriginTile) >= 14)
+			if (allAttackedUnit2 is EnemyUnit { IsDead: not false } && TileMapController.DistanceBetweenTiles(allAttackedUnit2.OriginTile, playableUnit.OriginTile) >= 14)
 			{
 				UnlockAchievement(AchievementContainer.ACH_KILL_14_TILES);
 				break;
@@ -451,6 +506,19 @@ public sealed class AchievementManager : Manager<AchievementManager>
 		{
 			stun50EnemiesNightAchievementUnlocker.IncreaseValue();
 		}
+	}
+
+	public void HandlePotionUsed(TheLastStand.Model.Item.Item item, Tile targetTile)
+	{
+		if (item.IsBeer)
+		{
+			use50BeersRunAchievementUnlocker.IncreaseValue();
+		}
+	}
+
+	public void HandleCrystalCorruptedEnemy()
+	{
+		crystalCorrupt5EnemiesNightAchievementUnlocker.IncreaseValue();
 	}
 
 	public void HandleTurnStart()
@@ -478,6 +546,21 @@ public sealed class AchievementManager : Manager<AchievementManager>
 			perfectWinAchievementUnlocker = new AchievementUnlocker(AchievementContainer.ACH_PERFECT_WIN, 14);
 		}
 		perfectWinAchievementUnlocker.Deserialize(serializedAchievements?.PerfectWinAchievementUnlocker);
+		if (destroy10CrystalsRunAchievementUnlocker == null)
+		{
+			destroy10CrystalsRunAchievementUnlocker = new AchievementUnlocker(AchievementContainer.ACH_DESTROY_10_CRYSTALS_RUN, 10);
+		}
+		destroy10CrystalsRunAchievementUnlocker.Deserialize(serializedAchievements?.Destroy10CrystalsRunAchievementUnlocker);
+		if (use50BeersRunAchievementUnlocker == null)
+		{
+			use50BeersRunAchievementUnlocker = new AchievementUnlocker(AchievementContainer.ACH_USE_50_BEERS_RUN, 50);
+		}
+		use50BeersRunAchievementUnlocker.Deserialize(serializedAchievements?.Use50BeersRunAchievementUnlocker);
+		if (crystalCorrupt5EnemiesNightAchievementUnlocker == null)
+		{
+			crystalCorrupt5EnemiesNightAchievementUnlocker = new AchievementUnlocker(AchievementContainer.ACH_5_ENEMIES_CORRUPTED_BY_CRYSTALS, 5);
+		}
+		crystalCorrupt5EnemiesNightAchievementUnlocker.Deserialize(serializedAchievements?.CrystalCorrupt5EnemiesNightAchievementUnlocker);
 	}
 
 	public SerializedAchievements Serialize()
@@ -486,7 +569,10 @@ public sealed class AchievementManager : Manager<AchievementManager>
 		{
 			Crit20EnemiesTurnAchievementUnlocker = (crit20EnemiesTurnAchievementUnlocker.Serialize() as SerializedAchievementUnlocker),
 			Stun50EnemiesNightAchievementUnlocker = (stun50EnemiesNightAchievementUnlocker.Serialize() as SerializedAchievementUnlocker),
-			PerfectWinAchievementUnlocker = (perfectWinAchievementUnlocker.Serialize() as SerializedAchievementUnlocker)
+			PerfectWinAchievementUnlocker = (perfectWinAchievementUnlocker.Serialize() as SerializedAchievementUnlocker),
+			Destroy10CrystalsRunAchievementUnlocker = (destroy10CrystalsRunAchievementUnlocker.Serialize() as SerializedAchievementUnlocker),
+			Use50BeersRunAchievementUnlocker = (use50BeersRunAchievementUnlocker.Serialize() as SerializedAchievementUnlocker),
+			CrystalCorrupt5EnemiesNightAchievementUnlocker = (crystalCorrupt5EnemiesNightAchievementUnlocker.Serialize() as SerializedAchievementUnlocker)
 		};
 	}
 

@@ -196,12 +196,14 @@ public class MetaShopsManager : Manager<MetaShopsManager>, ISerializable, IDeser
 			break;
 		case "WorldMap":
 		{
+			TPSingleton<WorldMapCityManager>.Instance.RefreshCitiesUnlock();
 			OraculumHub<OraculumView>.Display(show: false);
 			TPSingleton<SoundManager>.Instance.FadeMusic(TPSingleton<SoundManager>.Instance.WorldMapMusic);
 			for (int i = 0; i < TPSingleton<WorldMapRefsManager>.Instance.AmbientSounds.Length; i++)
 			{
 				TPSingleton<WorldMapRefsManager>.Instance.AmbientSounds[i].FadeIn();
 			}
+			WorldMapUIManager.OnReturnedFromOraculum();
 			break;
 		}
 		case "MetaShops":

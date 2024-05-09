@@ -5,6 +5,7 @@ using TheLastStand.Definition.Item;
 using TheLastStand.Definition.Meta;
 using TheLastStand.Definition.Unit;
 using TheLastStand.Definition.Unit.PlayableUnitGeneration;
+using TheLastStand.Definition.Unit.Race;
 using TheLastStand.Definition.Unit.Trait;
 using TheLastStand.Manager;
 using TheLastStand.Manager.Meta;
@@ -52,7 +53,7 @@ public class PlayableUnitStatsController : UnitStatsController
 
 	public override float ComputeStatBonus(UnitStatDefinition.E_Stat stat, bool withoutStatus = false)
 	{
-		return base.ComputeStatBonus(stat, withoutStatus) + GetStat(stat).Traits + GetStat(stat).Perks + GetStat(stat).Equipment;
+		return base.ComputeStatBonus(stat, withoutStatus) + GetStat(stat).Race + GetStat(stat).Traits + GetStat(stat).Perks + GetStat(stat).Equipment;
 	}
 
 	public new PlayableUnitStat GetStat(UnitStatDefinition.E_Stat stat)
@@ -117,29 +118,40 @@ public class PlayableUnitStatsController : UnitStatsController
 		return num;
 	}
 
-	public void IncreaseEquipmentStat(UnitStatDefinition.E_Stat stat, float value, bool includeChildStat)
+	public void IncreaseEquipmentStat(UnitStatDefinition.E_Stat statType, float value, bool includeChildStat)
 	{
-		GetStat(stat).Equipment = GetStat(stat).Equipment + value;
+		PlayableUnitStat stat = GetStat(statType);
+		float finalClamped = stat.FinalClamped;
+		stat.Equipment += value;
 		if (includeChildStat)
 		{
-			UnitStatDefinition.E_Stat childStatIfExists = UnitDatabase.UnitStatDefinitions[stat].GetChildStatIfExists();
-			if (stat != childStatIfExists)
+			UnitStatDefinition.E_Stat childStatIfExists = UnitDatabase.UnitStatDefinitions[statType].GetChildStatIfExists();
+			if (statType != childStatIfExists)
 			{
-				SetBaseStat(childStatIfExists, GetStat(childStatIfExists).Base + value);
+				float num = stat.FinalClamped - finalClamped;
+				SetBaseStat(childStatIfExists, GetStat(childStatIfExists).Base + num);
 			}
 		}
 	}
 
 	public void DecreaseEquipmentStat(UnitStatDefinition.E_Stat stat, float value, bool includeChildStat)
 	{
-		GetStat(stat).Equipment = GetStat(stat).Equipment - value;
-		if (includeChildStat)
+		IncreaseEquipmentStat(stat, 0f - value, includeChildStat);
+	}
+
+	public void OnRaceGenerated(RaceDefinition raceDefinition)
+	{
+		for (int num = raceDefinition.StatModifiers.Count - 1; num >= 0; num--)
 		{
-			UnitStatDefinition.E_Stat childStatIfExists = UnitDatabase.UnitStatDefinitions[stat].GetChildStatIfExists();
-			if (stat != childStatIfExists)
-			{
-				SetBaseStat(childStatIfExists, GetStat(childStatIfExists).Base - value);
-			}
+			GetStat(raceDefinition.StatModifiers[num].Stat).Race += raceDefinition.StatModifiers[num].Value;
+		}
+	}
+
+	public void OnRaceRemoved(RaceDefinition raceDefinition)
+	{
+		for (int num = raceDefinition.StatModifiers.Count - 1; num >= 0; num--)
+		{
+			GetStat(raceDefinition.StatModifiers[num].Stat).Race -= raceDefinition.StatModifiers[num].Value;
 		}
 	}
 
@@ -235,6 +247,7 @@ public class PlayableUnitStatsController : UnitStatsController
 
 	public void RefreshEquipmentValues()
 	{
+		PlayableUnitStat.AllowPerkRefreshInjuries = false;
 		foreach (KeyValuePair<UnitStatDefinition.E_Stat, UnitStat> stat in PlayableUnitStats.Stats)
 		{
 			(stat.Value as PlayableUnitStat).Equipment = 0f;
@@ -250,6 +263,7 @@ public class PlayableUnitStatsController : UnitStatsController
 				}
 			}
 		}
+		PlayableUnitStat.AllowPerkRefreshInjuries = true;
 	}
 
 	public void OnLevelUpStatValidated(UnitLevelUp unitLevelUp)
@@ -307,6 +321,7 @@ public class PlayableUnitStatsController : UnitStatsController
 		//IL_04e2: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0501: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0520: Unknown result type (might be due to invalid IL or missing references)
+		//IL_053f: Unknown result type (might be due to invalid IL or missing references)
 		PlayableUnitGenerationDefinition playableUnitGenerationDefinition = PlayableUnitDatabase.PlayableUnitGenerationDefinitions[PlayableUnitStats.PlayableUnit.ArchetypeId];
 		InitStat(UnitStatDefinition.E_Stat.HealthTotal, playableUnitGenerationDefinition.StatGenerationDefinitions[UnitStatDefinition.E_Stat.HealthTotal].GetBoundaries().x);
 		InitStat(UnitStatDefinition.E_Stat.HealthRegen, playableUnitGenerationDefinition.StatGenerationDefinitions[UnitStatDefinition.E_Stat.HealthRegen].GetBoundaries().x);
@@ -355,6 +370,7 @@ public class PlayableUnitStatsController : UnitStatsController
 		InitStat(UnitStatDefinition.E_Stat.BonusUsableItemsUses, playableUnitGenerationDefinition.StatGenerationDefinitions[UnitStatDefinition.E_Stat.BonusUsableItemsUses].GetBoundaries().x);
 		InitStat(UnitStatDefinition.E_Stat.StunDurationModifier, playableUnitGenerationDefinition.StatGenerationDefinitions[UnitStatDefinition.E_Stat.StunDurationModifier].GetBoundaries().x);
 		InitStat(UnitStatDefinition.E_Stat.ContagionDurationModifier, playableUnitGenerationDefinition.StatGenerationDefinitions[UnitStatDefinition.E_Stat.ContagionDurationModifier].GetBoundaries().x);
+		InitStat(UnitStatDefinition.E_Stat.GauntletRangeModifier, playableUnitGenerationDefinition.StatGenerationDefinitions[UnitStatDefinition.E_Stat.GauntletRangeModifier].GetBoundaries().x);
 	}
 
 	private void RandomizeGenerationStats()

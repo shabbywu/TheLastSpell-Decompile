@@ -16,6 +16,13 @@ namespace TheLastStand.View.PlayableUnitCustomisation;
 
 public class LayerTextureHandler : Handler
 {
+	public static class Constants
+	{
+		public const string DropDownTitleMaleFormatting = "HeroCustomization_TextureDropdownTitle_Male_Formatting";
+
+		public const string DropDownTitleFemaleFormatting = "HeroCustomization_TextureDropdownTitle_Female_Formatting";
+	}
+
 	private const string IndexFormat = "00";
 
 	private const string Space = " ";
@@ -77,23 +84,23 @@ public class LayerTextureHandler : Handler
 	{
 		//IL_0003: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0009: Invalid comparison between Unknown and I4
-		//IL_00ff: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0105: Invalid comparison between Unknown and I4
+		//IL_0101: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0107: Invalid comparison between Unknown and I4
 		//IL_002e: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0033: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0036: Invalid comparison between Unknown and I4
-		//IL_010c: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0112: Unknown result type (might be due to invalid IL or missing references)
+		//IL_010e: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0114: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0075: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0089: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0038: Unknown result type (might be due to invalid IL or missing references)
 		//IL_003a: Invalid comparison between Unknown and I4
-		//IL_013e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_014a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0150: Invalid comparison between Unknown and I4
-		//IL_00cc: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00d2: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0141: Unknown result type (might be due to invalid IL or missing references)
+		//IL_014d: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0153: Invalid comparison between Unknown and I4
+		//IL_00cd: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00d3: Unknown result type (might be due to invalid IL or missing references)
 		int num = 0;
 		if ((int)LayerType == 6)
 		{
@@ -108,12 +115,12 @@ public class LayerTextureHandler : Handler
 			E_LayerType val = LayerType;
 			if ((int)val != 1)
 			{
-				num = (((int)val != 6) ? IEnumerableExtension.RandomWeightedIndex<SimpleLayer>(LayerManagement.GetTheseLayers<SimpleLayer>(TPSingleton<PlayableUnitCustomisationPanel>.Instance.CurrentGender, layerType), RandomManager.GetRandomForCaller(((object)TPSingleton<PlayableUnitCustomisationPanel>.Instance).GetType().Name)) : IEnumerableExtension.RandomWeightedIndex<SimpleLayer>(TPSingleton<PlayableUnitCustomisationPanel>.Instance.CurrentBeards, RandomManager.GetRandomForCaller(((object)TPSingleton<PlayableUnitCustomisationPanel>.Instance).GetType().Name)));
+				num = (((int)val != 6) ? IEnumerableExtension.RandomWeightedIndex<SimpleLayer>(LayerManagement.GetTheseLayers<SimpleLayer>(TPSingleton<PlayableUnitCustomisationPanel>.Instance.CurrentGender, layerType, true), RandomManager.GetRandomForCaller(((object)TPSingleton<PlayableUnitCustomisationPanel>.Instance).GetType().Name)) : IEnumerableExtension.RandomWeightedIndex<SimpleLayer>(TPSingleton<PlayableUnitCustomisationPanel>.Instance.CurrentBeards, RandomManager.GetRandomForCaller(((object)TPSingleton<PlayableUnitCustomisationPanel>.Instance).GetType().Name)));
 			}
 			else
 			{
 				string faceId = GetRandomFaceId(TPSingleton<PlayableUnitCustomisationPanel>.Instance.CurrentGender);
-				List<HairLayer> theseLayers = LayerManagement.GetTheseLayers<HairLayer>(TPSingleton<PlayableUnitCustomisationPanel>.Instance.CurrentGender, (E_LayerType)1);
+				List<HairLayer> theseLayers = LayerManagement.GetTheseLayers<HairLayer>(TPSingleton<PlayableUnitCustomisationPanel>.Instance.CurrentGender, (E_LayerType)1, true);
 				if (theseLayers.Find((HairLayer x) => x.FaceId == faceId) != null)
 				{
 					num = theseLayers.IndexOf(theseLayers.Find((HairLayer x) => x.FaceId == faceId));
@@ -122,7 +129,7 @@ public class LayerTextureHandler : Handler
 		}
 		else
 		{
-			num = RandomManager.GetRandomRange(TPSingleton<PlayableUnitCustomisationPanel>.Instance, 0, ((int)LayerType == 6) ? TPSingleton<PlayableUnitCustomisationPanel>.Instance.CurrentBeards.Count : LayerManagement.GetTheseLayers<SimpleLayer>(TPSingleton<PlayableUnitCustomisationPanel>.Instance.CurrentGender, layerType).Count);
+			num = RandomManager.GetRandomRange(TPSingleton<PlayableUnitCustomisationPanel>.Instance, 0, ((int)LayerType == 6) ? TPSingleton<PlayableUnitCustomisationPanel>.Instance.CurrentBeards.Count : LayerManagement.GetTheseLayers<SimpleLayer>(TPSingleton<PlayableUnitCustomisationPanel>.Instance.CurrentGender, layerType, true).Count);
 		}
 		TPSingleton<PlayableUnitCustomisationPanel>.Instance.ChangeIndexOfLayerType(LayerType, num);
 		if ((int)LayerType == 1)
@@ -136,80 +143,53 @@ public class LayerTextureHandler : Handler
 	{
 		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0007: Invalid comparison between Unknown and I4
-		//IL_0044: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0033: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0038: Unknown result type (might be due to invalid IL or missing references)
+		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
+		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0049: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_004d: Unknown result type (might be due to invalid IL or missing references)
-		//IL_005a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006c: Expected I4, but got Unknown
-		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0071: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0083: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0085: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0099: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00a9: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b0: Invalid comparison between Unknown and I4
-		//IL_0036: Unknown result type (might be due to invalid IL or missing references)
-		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00ca: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00cf: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_011f: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0125: Invalid comparison between Unknown and I4
-		//IL_0149: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0290: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0297: Invalid comparison between Unknown and I4
-		//IL_024e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0258: Expected O, but got Unknown
-		//IL_0194: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02e7: Unknown result type (might be due to invalid IL or missing references)
-		//IL_02f1: Expected O, but got Unknown
-		//IL_01e2: Unknown result type (might be due to invalid IL or missing references)
-		//IL_01ec: Expected O, but got Unknown
-		//IL_03ea: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0323: Unknown result type (might be due to invalid IL or missing references)
-		//IL_032a: Invalid comparison between Unknown and I4
-		//IL_037a: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0384: Expected O, but got Unknown
-		if ((int)LayerType != 6)
-		{
-			goto IL_003f;
-		}
-		E_Gender val;
-		if (!TPSingleton<PlayableUnitCustomisationPanel>.Instance.BeardIsLockToHairType)
-		{
-			val = (E_Gender)2;
-		}
-		else
-		{
-			if (!TPSingleton<PlayableUnitCustomisationPanel>.Instance.BeardIsLockToHairType)
-			{
-				goto IL_003f;
-			}
-			val = TPSingleton<PlayableUnitCustomisationPanel>.Instance.CurrentIndexByLayerType[(E_LayerType)1].Gender;
-		}
-		goto IL_004b;
-		IL_003f:
-		val = TPSingleton<PlayableUnitCustomisationPanel>.Instance.CurrentGender;
-		goto IL_004b;
-		IL_004b:
+		//IL_005b: Expected I4, but got Unknown
+		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
+		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
+		//IL_005e: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0060: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0073: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0075: Unknown result type (might be due to invalid IL or missing references)
+		//IL_008a: Unknown result type (might be due to invalid IL or missing references)
+		//IL_009b: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00a2: Invalid comparison between Unknown and I4
+		//IL_00bd: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00c2: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00a7: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0112: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0118: Invalid comparison between Unknown and I4
+		//IL_0153: Unknown result type (might be due to invalid IL or missing references)
+		//IL_01f5: Unknown result type (might be due to invalid IL or missing references)
+		//IL_01fc: Invalid comparison between Unknown and I4
+		//IL_0352: Unknown result type (might be due to invalid IL or missing references)
+		//IL_024c: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0256: Expected O, but got Unknown
+		//IL_028b: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0292: Invalid comparison between Unknown and I4
+		//IL_02e2: Unknown result type (might be due to invalid IL or missing references)
+		//IL_02ec: Expected O, but got Unknown
+		E_Gender val = (((int)LayerType != 6 || !TPSingleton<PlayableUnitCustomisationPanel>.Instance.BeardIsLockToHairType) ? TPSingleton<PlayableUnitCustomisationPanel>.Instance.CurrentGender : TPSingleton<PlayableUnitCustomisationPanel>.Instance.CurrentIndexByLayerType[(E_LayerType)1].Gender);
 		E_Gender val2 = val;
 		List<SimpleLayer> list = new List<SimpleLayer>();
 		List<SimpleLayer> list2 = new List<SimpleLayer>();
 		switch ((int)val2)
 		{
 		case 0:
-			list.AddRange(LayerManagement.GetTheseLayers<SimpleLayer>(val2, layerType));
+			list.AddRange(LayerManagement.GetTheseLayers<SimpleLayer>(val2, layerType, true));
 			break;
 		case 1:
-			list2.AddRange(LayerManagement.GetTheseLayers<SimpleLayer>(val2, layerType));
+			list2.AddRange(LayerManagement.GetTheseLayers<SimpleLayer>(val2, layerType, true));
 			break;
 		case 2:
-			list.AddRange(LayerManagement.GetTheseLayers<SimpleLayer>((E_Gender)0, layerType));
+			list.AddRange(LayerManagement.GetTheseLayers<SimpleLayer>((E_Gender)0, layerType, true));
 			if ((int)layerType != 9)
 			{
-				list2.AddRange(LayerManagement.GetTheseLayers<SimpleLayer>((E_Gender)1, layerType));
+				list2.AddRange(LayerManagement.GetTheseLayers<SimpleLayer>((E_Gender)1, layerType, true));
 			}
 			break;
 		}
@@ -224,53 +204,50 @@ public class LayerTextureHandler : Handler
 		if ((int)LayerType == 6)
 		{
 			TPSingleton<PlayableUnitCustomisationPanel>.Instance.CurrentBeards.Clear();
-			HairLayer val4 = LayerManagement.GetTheseLayers<HairLayer>(TPSingleton<PlayableUnitCustomisationPanel>.Instance.CurrentIndexByLayerType[(E_LayerType)1].Gender, (E_LayerType)1)[TPSingleton<PlayableUnitCustomisationPanel>.Instance.CurrentIndexByLayerType[(E_LayerType)1].LayerIndex];
+			int layerIndex = TPSingleton<PlayableUnitCustomisationPanel>.Instance.CurrentIndexByLayerType[(E_LayerType)1].LayerIndex;
+			List<HairLayer> theseLayers = LayerManagement.GetTheseLayers<HairLayer>(TPSingleton<PlayableUnitCustomisationPanel>.Instance.CurrentIndexByLayerType[(E_LayerType)1].Gender, (E_LayerType)1, true);
+			int count = theseLayers.Count;
+			HairLayer hairLayer = null;
+			if (layerIndex != -1 && layerIndex < count)
+			{
+				hairLayer = theseLayers[layerIndex];
+			}
 			if (TPSingleton<PlayableUnitCustomisationPanel>.Instance.BeardIsLockToHairType)
 			{
-				foreach (SimpleLayer item in list)
-				{
-					if (((BeardLayers)item).FaceIds.Contains(val4.FaceId))
-					{
-						TPSingleton<PlayableUnitCustomisationPanel>.Instance.CurrentBeards.Add(item);
-						list3.Add(new OptionData(text + " " + (list.IndexOf(item) + 1).ToString("00")));
-					}
-				}
+				AddBeardsToCurrentBeards(list, list3, text, "HeroCustomization_TextureDropdownTitle_Male_Formatting", isBeardLockedToHair: true, hairLayer);
+				AddBeardsToCurrentBeards(list2, list3, text, "HeroCustomization_TextureDropdownTitle_Female_Formatting", isBeardLockedToHair: true, hairLayer);
 			}
 			else
 			{
-				int num = 0;
-				foreach (SimpleLayer item2 in list)
-				{
-					TPSingleton<PlayableUnitCustomisationPanel>.Instance.CurrentBeards.Add(item2);
-					list3.Add(new OptionData(text + " " + (num + 1).ToString("00")));
-					num++;
-				}
+				AddBeardsToCurrentBeards(list, list3, text, "HeroCustomization_TextureDropdownTitle_Male_Formatting", isBeardLockedToHair: false);
+				AddBeardsToCurrentBeards(list2, list3, text, "HeroCustomization_TextureDropdownTitle_Female_Formatting", isBeardLockedToHair: false);
 			}
 		}
 		else
 		{
-			int num2 = 0;
-			foreach (SimpleLayer item3 in list)
+			int num = 0;
+			foreach (SimpleLayer item in list)
 			{
-				_ = item3;
+				_ = item;
 				string text2 = (((int)layerType != 9) ? Localizer.Format("HeroCustomization_TextureDropdownTitle_Male_Formatting", new object[2]
 				{
 					text,
-					(num2 + 1).ToString("00")
-				}) : (text + " " + (num2 + 1).ToString("00")));
+					(num + 1).ToString("00")
+				}) : (text + " " + (num + 1).ToString("00")));
 				list3.Add(new OptionData(text2));
-				num2++;
+				num++;
 			}
-			foreach (SimpleLayer item4 in list2)
+			num = 0;
+			foreach (SimpleLayer item2 in list2)
 			{
-				_ = item4;
+				_ = item2;
 				string text3 = (((int)layerType != 9) ? Localizer.Format("HeroCustomization_TextureDropdownTitle_Female_Formatting", new object[2]
 				{
 					text,
-					(num2 + 1).ToString("00")
-				}) : (text + " " + (num2 + 1).ToString("00")));
+					(num + 1).ToString("00")
+				}) : (text + " " + (num + 1).ToString("00")));
 				list3.Add(new OptionData(text3));
-				num2++;
+				num++;
 			}
 		}
 		if (list3.Count > 0)
@@ -293,6 +270,33 @@ public class LayerTextureHandler : Handler
 		base.SwitchHandlerLockState(state);
 		((Selectable)dropDown).interactable = state;
 		((Graphic)((Selectable)dropDown).image).CrossFadeColor(state ? interactableColor : uninteractableColor, 0.2f, false, true);
+	}
+
+	private void AddBeardsToCurrentBeards(List<SimpleLayer> genderedLayers, List<OptionData> optionsData, string localizedLayerType, string localizeFinalTextKey, bool isBeardLockedToHair, HairLayer hairLayer = null)
+	{
+		//IL_0072: Unknown result type (might be due to invalid IL or missing references)
+		//IL_007c: Expected O, but got Unknown
+		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
+		int num = 0;
+		foreach (SimpleLayer genderedLayer in genderedLayers)
+		{
+			bool flag = true;
+			if (isBeardLockedToHair && hairLayer != null)
+			{
+				flag = ((BeardLayers)genderedLayer).FaceIds.Contains(hairLayer.FaceId);
+			}
+			if (flag)
+			{
+				TPSingleton<PlayableUnitCustomisationPanel>.Instance.CurrentBeards.Add(genderedLayer);
+				string text = Localizer.Format(localizeFinalTextKey, new object[2]
+				{
+					localizedLayerType,
+					(num + 1).ToString("00")
+				});
+				optionsData.Add(new OptionData(text));
+				num++;
+			}
+		}
 	}
 
 	private string GetRandomFaceId(E_Gender gender)

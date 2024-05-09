@@ -20,7 +20,7 @@ public class PerkDefinition : LocalizableDefinition
 
 		public readonly string IconFileName;
 
-		public static readonly (int width, int height) IconDimensions = (42, 42);
+		public static readonly (int width, int height) IconDimensions = (width: 42, height: 42);
 
 		public string IconExternalFullPath => Path.Combine(IconFolderExternalPath, IconFileName);
 
@@ -46,6 +46,8 @@ public class PerkDefinition : LocalizableDefinition
 	public bool IsModded => ModdingData != null;
 
 	public ModdedPerkDefinitionData ModdingData { get; set; }
+
+	public string ColorizedName => "<style=Perk>" + Name + "</style>";
 
 	public string Name => Localizer.Get("PerkName_" + Id);
 

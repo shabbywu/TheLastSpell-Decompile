@@ -45,6 +45,9 @@ public class UnitPerkDisplay : MonoBehaviour
 	private GameObject separator;
 
 	[SerializeField]
+	private bool neverDisplayAdditionalValues;
+
+	[SerializeField]
 	private Image perkBorder;
 
 	[SerializeField]
@@ -78,6 +81,18 @@ public class UnitPerkDisplay : MonoBehaviour
 	private bool IsOnBottomLine;
 
 	private Tween bookmarkFadeTween;
+
+	public bool CanDisplayAdditionalInfo
+	{
+		get
+		{
+			if (Perk != null)
+			{
+				return Perk.Owner != null;
+			}
+			return false;
+		}
+	}
 
 	public JoystickSelectable JoystickSelectable => joystickSelectable;
 
@@ -145,7 +160,7 @@ public class UnitPerkDisplay : MonoBehaviour
 		}
 		if ((Object)(object)descriptionAdditionalValues != (Object)null)
 		{
-			if (Perk != null && PerkDefinition.PerkEffectsInformationsExist && (Perk.Unlocked || PerkDefinition.DisplayBonusBeforePurchase))
+			if (Perk != null && PerkDefinition.PerkEffectsInformationsExist && ((IsPerkUnlockedForCurrentDisplay() && !neverDisplayAdditionalValues) || PerkDefinition.DisplayBonusBeforePurchase) && CanDisplayAdditionalInfo)
 			{
 				((Component)descriptionAdditionalValues).gameObject.SetActive(true);
 				separator.SetActive(true);
@@ -162,6 +177,19 @@ public class UnitPerkDisplay : MonoBehaviour
 			((Behaviour)bookmarkCanvas).enabled = true;
 			DisplayBookmark(triggerAnimation: false);
 		}
+	}
+
+	public bool IsPerkUnlockedForCurrentDisplay()
+	{
+		if (Perk != null)
+		{
+			if (Perk.PerkTier != null)
+			{
+				return Perk.UnlockedInPerkTree;
+			}
+			return Perk.Unlocked;
+		}
+		return false;
 	}
 
 	public void OnPerkButtonClick()
@@ -191,7 +219,7 @@ public class UnitPerkDisplay : MonoBehaviour
 			perkBorder.sprite = UnitPerkTreeView.GetCollectionAssetOrDefault<Sprite>(IsOnBottomLine ? "View/Sprites/UI/CharacterSheet/PerkTree/{0}/Collection_{0}_Bot_Off" : "View/Sprites/UI/CharacterSheet/PerkTree/{0}/Collection_{0}_Center_Off", "Misc");
 			return;
 		}
-		perkBorder.sprite = (Perk.Unlocked ? UnitPerkTreeView.GetCollectionAssetOrDefault<Sprite>(IsOnBottomLine ? "View/Sprites/UI/CharacterSheet/PerkTree/{0}/Collection_{0}_Bot_On" : "View/Sprites/UI/CharacterSheet/PerkTree/{0}/Collection_{0}_Center_On", Perk.CollectionId) : UnitPerkTreeView.GetCollectionAssetOrDefault<Sprite>(IsOnBottomLine ? "View/Sprites/UI/CharacterSheet/PerkTree/{0}/Collection_{0}_Bot_Off" : "View/Sprites/UI/CharacterSheet/PerkTree/{0}/Collection_{0}_Center_Off", Perk.CollectionId));
+		perkBorder.sprite = (IsPerkUnlockedForCurrentDisplay() ? UnitPerkTreeView.GetCollectionAssetOrDefault<Sprite>(IsOnBottomLine ? "View/Sprites/UI/CharacterSheet/PerkTree/{0}/Collection_{0}_Bot_On" : "View/Sprites/UI/CharacterSheet/PerkTree/{0}/Collection_{0}_Center_On", Perk.CollectionId) : UnitPerkTreeView.GetCollectionAssetOrDefault<Sprite>(IsOnBottomLine ? "View/Sprites/UI/CharacterSheet/PerkTree/{0}/Collection_{0}_Bot_Off" : "View/Sprites/UI/CharacterSheet/PerkTree/{0}/Collection_{0}_Center_Off", Perk.CollectionId));
 		if (InputManager.IsLastControllerJoystick && (Object)(object)EventSystem.current.currentSelectedGameObject == (Object)(object)((Component)this).gameObject && TPSingleton<HUDJoystickNavigationManager>.Instance.ShowTooltips)
 		{
 			JoystickSelectable.TooltipDisplayer.HideTooltip();

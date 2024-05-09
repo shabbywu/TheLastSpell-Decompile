@@ -37,7 +37,7 @@ public abstract class MetaUpgradeLineView : MonoBehaviour, IPointerEnterHandler,
 		Activated
 	}
 
-	private static class Constants
+	public static class Constants
 	{
 		public const string MetaUnlocksLockedTitle = "<color=#fff>???</color>";
 
@@ -60,6 +60,8 @@ public abstract class MetaUpgradeLineView : MonoBehaviour, IPointerEnterHandler,
 		public const float SliderHeight = 45f;
 
 		public const float SpacingHeight = 15f;
+
+		public const int DescriptionMaximumIconsPerLineNb = 5;
 	}
 
 	[SerializeField]
@@ -864,11 +866,12 @@ public abstract class MetaUpgradeLineView : MonoBehaviour, IPointerEnterHandler,
 			sprite = lockSprite;
 		}
 		goto IL_00c0;
+		IL_00c0:
+		val.sprite = sprite;
+		return;
 		IL_00b4:
 		sprite = stateImage.sprite;
 		goto IL_00c0;
-		IL_00c0:
-		val.sprite = sprite;
 	}
 
 	private void UnlockUpgrade()

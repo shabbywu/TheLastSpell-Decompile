@@ -127,7 +127,7 @@ public class AttackFeedback : SerializedMonoBehaviour, IDisplayableEffect
 					TPSingleton<NightTurnsManager>.Instance.StopCoroutinesExecution();
 				}
 			}
-			else if (!(DamageableView.Damageable is TheLastStand.Model.Unit.Unit unit) || !unit.HasBeenExiled || unit.ExileForcePlayDieAnim)
+			else if (!(DamageableView.Damageable is TheLastStand.Model.Unit.Unit { HasBeenExiled: not false, ExileForcePlayDieAnim: false }))
 			{
 				DamageableView.PlayDieAnim();
 			}

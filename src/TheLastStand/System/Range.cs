@@ -18,7 +18,7 @@ internal readonly struct Range : IEquatable<Range>
 
 	public override bool Equals(object? value)
 	{
-		if (value is Range range && range.Start.Equals(Start))
+		if (value is Range { Start: var start } range && start.Equals(Start))
 		{
 			return range.End.Equals(End);
 		}
@@ -65,6 +65,6 @@ internal readonly struct Range : IEquatable<Range>
 		{
 			throw new ArgumentOutOfRangeException("length");
 		}
-		return (num, num2 - num);
+		return (Offset: num, Length: num2 - num);
 	}
 }

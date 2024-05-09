@@ -75,42 +75,42 @@ public class MetaDatabase : Database<MetaDatabase>
 
 	private List<string> GetRelatedIdsFromUpgrade(MetaEffectDefinition metaEffectDefinition)
 	{
-		if (!(metaEffectDefinition is UnlockAffixesMetaEffectDefinition unlockAffixesMetaEffectDefinition))
+		if (!(metaEffectDefinition is UnlockAffixesMetaEffectDefinition { AffixesToUnlock: var affixesToUnlock }))
 		{
 			if (!(metaEffectDefinition is UnlockBuildingMetaEffectDefinition unlockBuildingMetaEffectDefinition))
 			{
 				if (!(metaEffectDefinition is UnlockBuildingUpgradeMetaEffectDefinition unlockBuildingUpgradeMetaEffectDefinition))
 				{
-					if (!(metaEffectDefinition is UnlockCitiesMetaEffectDefinition unlockCitiesMetaEffectDefinition))
+					if (!(metaEffectDefinition is UnlockCitiesMetaEffectDefinition { CitiesToUnlock: var citiesToUnlock }))
 					{
-						if (!(metaEffectDefinition is UnlockItemsMetaEffectDefinition unlockItemsMetaEffectDefinition))
+						if (!(metaEffectDefinition is UnlockItemsMetaEffectDefinition { ItemsToUnlock: var itemsToUnlock }))
 						{
-							if (!(metaEffectDefinition is UnlockTraitsMetaEffectDefinition unlockTraitsMetaEffectDefinition))
+							if (!(metaEffectDefinition is UnlockTraitsMetaEffectDefinition { TraitsToUnlock: var traitsToUnlock }))
 							{
-								if (!(metaEffectDefinition is UnlockWavesMetaEffectDefinition unlockWavesMetaEffectDefinition))
+								if (!(metaEffectDefinition is UnlockWavesMetaEffectDefinition { WavesToUnlock: var wavesToUnlock }))
 								{
 									if (!(metaEffectDefinition is NewEnemyMetaEffectDefinition newEnemyMetaEffectDefinition))
 									{
-										if (metaEffectDefinition is UnlockGlyphsMetaEffectDefinition unlockGlyphsMetaEffectDefinition)
+										if (!(metaEffectDefinition is UnlockGlyphsMetaEffectDefinition { GlyphIds: var glyphIds }))
 										{
-											return unlockGlyphsMetaEffectDefinition.GlyphIds;
+											return null;
 										}
-										return null;
+										return glyphIds;
 									}
 									return new List<string> { newEnemyMetaEffectDefinition.EnemyId };
 								}
-								return unlockWavesMetaEffectDefinition.WavesToUnlock;
+								return wavesToUnlock;
 							}
-							return unlockTraitsMetaEffectDefinition.TraitsToUnlock;
+							return traitsToUnlock;
 						}
-						return unlockItemsMetaEffectDefinition.ItemsToUnlock;
+						return itemsToUnlock;
 					}
-					return unlockCitiesMetaEffectDefinition.CitiesToUnlock;
+					return citiesToUnlock;
 				}
 				return new List<string> { unlockBuildingUpgradeMetaEffectDefinition.UpgradeId };
 			}
 			return new List<string> { unlockBuildingMetaEffectDefinition.BuildingId };
 		}
-		return unlockAffixesMetaEffectDefinition.AffixesToUnlock;
+		return affixesToUnlock;
 	}
 }

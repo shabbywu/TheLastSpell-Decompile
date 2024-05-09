@@ -82,7 +82,7 @@ public class EffectTimeEventManager : Manager<EffectTimeEventManager>
 		events = new Dictionary<E_EffectTime, Action<PerkDataContainer>>();
 		foreach (E_EffectTime value in Enum.GetValues(typeof(E_EffectTime)))
 		{
-			if (value != E_EffectTime.OnDeath && value != E_EffectTime.OnTileCrossed && value != E_EffectTime.OnMovementEnd && value != E_EffectTime.OnHitTaken && value != E_EffectTime.OnDodge && value != E_EffectTime.OnTargetHit && value != E_EffectTime.OnTargetDodge && value != E_EffectTime.OnTargetKilled && value != E_EffectTime.OnAttackDataComputed && value != E_EffectTime.OnSkillNextHit && value != E_EffectTime.OnSkillCastBegin && value != E_EffectTime.OnSkillCastEnd && value != E_EffectTime.OnEnemyMovementEnd && value != E_EffectTime.OnSkillStatusApplied && value != E_EffectTime.OnStatusApplied && value != E_EffectTime.OnSkillUndo)
+			if (value != E_EffectTime.OnDeath && value != E_EffectTime.OnTileCrossed && value != E_EffectTime.OnMovementEnd && value != E_EffectTime.OnHitTaken && value != E_EffectTime.OnDodge && value != E_EffectTime.OnTargetHit && value != E_EffectTime.OnTargetDodge && value != E_EffectTime.OnTargetKilled && value != E_EffectTime.OnAttackDataComputed && value != E_EffectTime.OnSkillNextHit && value != E_EffectTime.OnSkillCastBegin && value != E_EffectTime.OnSkillCastEnd && value != E_EffectTime.OnEnemyMovementEnd && value != E_EffectTime.OnSkillStatusApplied && value != E_EffectTime.OnStatusApplied && value != E_EffectTime.OnSkillUndo && value != E_EffectTime.OnDealDamageTargetHit && value != E_EffectTime.OnDealDamageTargetKill && value != E_EffectTime.OnDealDamageExecutionEnd && value != E_EffectTime.OnPerkApplyStatusEnd)
 			{
 				events.Add(value, null);
 			}

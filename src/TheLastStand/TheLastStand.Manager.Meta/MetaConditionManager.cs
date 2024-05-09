@@ -304,7 +304,7 @@ public class MetaConditionManager : Manager<MetaConditionManager>
 				{
 					Id = item.ItemsBought[num2].Id,
 					Cost = item.ItemsBought[num2].Cost,
-					Category = ItemDatabase.ItemDefinitions[item.ItemsBought[num2].Id].Category
+					Category = ItemDatabase.AllItemsDefinitions[item.ItemsBought[num2].Id].Category
 				};
 			}
 			for (int num3 = item.ItemsProduced.Count - 1; num3 >= 0; num3--)
@@ -313,7 +313,7 @@ public class MetaConditionManager : Manager<MetaConditionManager>
 				{
 					Id = item.ItemsProduced[num3].Id,
 					SourceBuildingId = item.ItemsProduced[num3].SourceBuildingId,
-					Category = ItemDatabase.ItemDefinitions[item.ItemsProduced[num3].Id].Category
+					Category = ItemDatabase.AllItemsDefinitions[item.ItemsProduced[num3].Id].Category
 				};
 			}
 		}

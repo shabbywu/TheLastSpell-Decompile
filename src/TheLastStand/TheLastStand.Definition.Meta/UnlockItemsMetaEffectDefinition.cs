@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Xml.Linq;
+using TheLastStand.Database;
+using TheLastStand.Manager.Item;
 
 namespace TheLastStand.Definition.Meta;
 
@@ -23,6 +25,18 @@ public class UnlockItemsMetaEffectDefinition : MetaEffectDefinition
 			if (!string.IsNullOrEmpty(item.Value))
 			{
 				ItemsToUnlock.Add(item.Value);
+			}
+		}
+	}
+
+	public override void OnMetaEffectActivated(bool hasBeenActivated)
+	{
+		base.OnMetaEffectActivated(hasBeenActivated);
+		foreach (string item in ItemsToUnlock)
+		{
+			if (ItemDatabase.ItemDefinitions.TryGetValue(item, out var value))
+			{
+				ItemRestrictionManager.RefreshItemFamiliesLockedItemsFromCategory(value.Category, hasBeenActivated);
 			}
 		}
 	}

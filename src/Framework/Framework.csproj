@@ -14,14 +14,14 @@
     <Reference Include="UnityEngine.CoreModule" />
     <Reference Include="UnityEngine.UI" />
     <Reference Include="System.Xml.Linq">
-      <HintPath>../../../../opt/bitnami/dotnet-sdk/bin/shared/Microsoft.NETCore.App/6.0.22/System.Xml.Linq.dll</HintPath>
+      <HintPath>../../../../opt/bitnami/dotnet-sdk/bin/shared/Microsoft.NETCore.App/6.0.29/System.Xml.Linq.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml">
-      <HintPath>../../../../opt/bitnami/dotnet-sdk/bin/shared/Microsoft.NETCore.App/6.0.22/System.Xml.dll</HintPath>
+      <HintPath>../../../../opt/bitnami/dotnet-sdk/bin/shared/Microsoft.NETCore.App/6.0.29/System.Xml.dll</HintPath>
     </Reference>
     <Reference Include="DOTween" />
     <Reference Include="System.Core">
-      <HintPath>../../../../opt/bitnami/dotnet-sdk/bin/shared/Microsoft.NETCore.App/6.0.22/System.Core.dll</HintPath>
+      <HintPath>../../../../opt/bitnami/dotnet-sdk/bin/shared/Microsoft.NETCore.App/6.0.29/System.Core.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro" />
     <Reference Include="UnityEngine.UIModule" />

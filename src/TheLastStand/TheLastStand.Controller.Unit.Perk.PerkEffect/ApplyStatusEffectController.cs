@@ -3,9 +3,11 @@ using System.Linq;
 using Sirenix.Utilities;
 using TPLib;
 using TheLastStand.Definition.Unit.Perk.PerkEffect;
+using TheLastStand.Framework.Extensions;
 using TheLastStand.Manager;
 using TheLastStand.Manager.Skill;
 using TheLastStand.Manager.Unit;
+using TheLastStand.Model;
 using TheLastStand.Model.Status;
 using TheLastStand.Model.TileMap;
 using TheLastStand.Model.Unit;
@@ -36,6 +38,7 @@ public class ApplyStatusEffectController : APerkEffectController
 		TheLastStand.Model.Status.Status.E_StatusType statusType = ApplyStatusEffect.ApplyStatusEffectDefinition.StatusType;
 		PlayableUnit owner = base.PerkEffect.APerkModule.Perk.Owner;
 		HashSet<TheLastStand.Model.Unit.Unit> hashSet = new HashSet<TheLastStand.Model.Unit.Unit>();
+		TheLastStand.Model.Status.Status status = null;
 		LinqExtensions.AddRange<TheLastStand.Model.Unit.Unit>(hashSet, from t in ApplyStatusEffect.PerkTargeting.GetTargetTiles(data, base.PerkEffect.APerkModule.Perk)
 			select t.Unit into u
 			where u != null
@@ -69,8 +72,23 @@ public class ApplyStatusEffectController : APerkEffectController
 				statusCreationInfo.IsFromPerk = true;
 				statusCreationInfo.HideDisplayEffect = ApplyStatusEffect.ApplyStatusEffectDefinition.HideDisplayEffect;
 				StatusCreationInfo statusCreationInfo2 = statusCreationInfo;
-				SkillManager.AddStatus(item, statusType, statusCreationInfo2, ApplyStatusEffect.ApplyStatusEffectDefinition.RefreshHUD);
+				TheLastStand.Model.Status.Status status2 = SkillManager.AddStatus(item, statusType, statusCreationInfo2, ApplyStatusEffect.ApplyStatusEffectDefinition.RefreshHUD);
+				if (ApplyStatusEffect.ApplyStatusEffectDefinition.RefreshHUD)
+				{
+					item.UnitView.UnitHUD.DisplayIconAndTileFeedback(show: true);
+				}
+				if (status == null)
+				{
+					status = status2;
+				}
 			}
 		}
+		PerkDataContainer obj = new PerkDataContainer
+		{
+			Caster = base.PerkEffect.APerkModule.Perk.Owner,
+			StatusApplied = status,
+			IsTriggeredByPerk = true
+		};
+		base.PerkEffect.APerkModule.Perk.Owner?.Events.GetValueOrDefault(E_EffectTime.OnPerkApplyStatusEnd)?.Invoke(obj);
 	}
 }

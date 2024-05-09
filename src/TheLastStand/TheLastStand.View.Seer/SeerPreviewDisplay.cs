@@ -12,6 +12,7 @@ using TheLastStand.Definition.Unit.Enemy;
 using TheLastStand.Framework.Extensions;
 using TheLastStand.Manager;
 using TheLastStand.Manager.Unit;
+using TheLastStand.Model;
 using TheLastStand.Model.Unit.Enemy;
 using UnityEngine;
 using UnityEngine.UI;
@@ -26,30 +27,30 @@ public class SeerPreviewDisplay : TPSingleton<SeerPreviewDisplay>
 	{
 		public static readonly _003C_003Ec _003C_003E9 = new _003C_003Ec();
 
-		public static Comparison<EnemyUnitTemplateDefinition> _003C_003E9__35_0;
+		public static Comparison<EnemyUnitTemplateDefinition> _003C_003E9__36_0;
 
-		public static Func<SeerEnemyPortraitPreview, bool> _003C_003E9__41_0;
+		public static Func<SeerEnemyPortraitPreview, bool> _003C_003E9__42_0;
 
-		public static TweenCallback _003C_003E9__41_1;
+		public static TweenCallback _003C_003E9__42_1;
 
-		public static TweenCallback _003C_003E9__42_0;
+		public static TweenCallback _003C_003E9__43_0;
 
-		internal int _003CDisplayEnemyPortraits_003Eb__35_0(EnemyUnitTemplateDefinition enemyA, EnemyUnitTemplateDefinition enemyB)
+		internal int _003CDisplayEnemyPortraits_003Eb__36_0(EnemyUnitTemplateDefinition enemyA, EnemyUnitTemplateDefinition enemyB)
 		{
 			return enemyA.Tier.CompareTo(enemyB.Tier);
 		}
 
-		internal bool _003CFold_003Eb__41_0(SeerEnemyPortraitPreview o)
+		internal bool _003CFold_003Eb__42_0(SeerEnemyPortraitPreview o)
 		{
 			return o.QuantityDisplayed;
 		}
 
-		internal void _003CFold_003Eb__41_1()
+		internal void _003CFold_003Eb__42_1()
 		{
 			TPSingleton<HUDJoystickNavigationManager>.Instance.JoystickHighlight.ToggleAlwaysFollow(state: false);
 		}
 
-		internal void _003CUnfold_003Eb__42_0()
+		internal void _003CUnfold_003Eb__43_0()
 		{
 			TPSingleton<HUDJoystickNavigationManager>.Instance.JoystickHighlight.ToggleAlwaysFollow(state: false);
 		}
@@ -147,6 +148,8 @@ public class SeerPreviewDisplay : TPSingleton<SeerPreviewDisplay>
 
 	private readonly List<EnemyUnitTemplateDefinition> enemyDefinitions = new List<EnemyUnitTemplateDefinition>();
 
+	private readonly Dictionary<string, SeerAdditionalPortraitSettings> seerAdditionalPortraits = new Dictionary<string, SeerAdditionalPortraitSettings>();
+
 	private bool isFolded;
 
 	private Sequence previewFoldSequence;
@@ -183,7 +186,20 @@ public class SeerPreviewDisplay : TPSingleton<SeerPreviewDisplay>
 	public void DisplayEnemyPortraits()
 	{
 		enemyDefinitions.Clear();
+		seerAdditionalPortraits.Clear();
 		SpawnWave currentSpawnWave = SpawnWaveManager.CurrentSpawnWave;
+		if (currentSpawnWave.SpawnWaveDefinition.WaveEnemiesDefinition.SeerAdditionalPortraitsSettings.Count > 0)
+		{
+			for (int i = 0; i < currentSpawnWave.SpawnWaveDefinition.WaveEnemiesDefinition.SeerAdditionalPortraitsSettings.Count; i++)
+			{
+				SeerAdditionalPortraitSettings seerAdditionalPortraitSettings = currentSpawnWave.SpawnWaveDefinition.WaveEnemiesDefinition.SeerAdditionalPortraitsSettings[i];
+				if (seerAdditionalPortraitSettings.PortraitType == DamageableType.Enemy)
+				{
+					enemyDefinitions.Add(EnemyUnitDatabase.EnemyUnitTemplateDefinitions[seerAdditionalPortraitSettings.PortraitTemplateId]);
+				}
+				seerAdditionalPortraits.Add(seerAdditionalPortraitSettings.PortraitTemplateId, seerAdditionalPortraitSettings);
+			}
+		}
 		if (SpawnWaveManager.AliveSeer)
 		{
 			for (int num = currentSpawnWave.RemainingEnemiesToSpawn.Count - 1; num >= 0; num--)
@@ -204,27 +220,36 @@ public class SeerPreviewDisplay : TPSingleton<SeerPreviewDisplay>
 			}
 		}
 		enemyDefinitions.Sort((EnemyUnitTemplateDefinition enemyA, EnemyUnitTemplateDefinition enemyB) => enemyA.Tier.CompareTo(enemyB.Tier));
-		if (currentSpawnWave.SpawnWaveDefinition.IsBossWave)
+		if (currentSpawnWave.SpawnWaveDefinition.IsBossWave && currentSpawnWave.SpawnWaveDefinition.DisplayBossInSeer)
 		{
 			enemyDefinitions.Insert(0, BossUnitDatabase.BossUnitTemplateDefinitions[currentSpawnWave.SpawnWaveDefinition.WaveEnemiesDefinition.BossWaveSettings.BossUnitTemplateId]);
 		}
-		int i = 0;
+		int j = 0;
 		InstantiatePortraitsIfNeeded(enemyDefinitions.Count);
-		for (; i < enemyDefinitions.Count; i++)
+		for (; j < enemyDefinitions.Count; j++)
 		{
-			SeerEnemyPortraitPreview seerEnemyPortraitPreview = portraits[i];
-			EnemyUnitTemplateDefinition enemyDefinition = enemyDefinitions[i];
+			SeerEnemyPortraitPreview seerEnemyPortraitPreview = portraits[j];
+			bool forceHideQuantity = false;
+			EnemyUnitTemplateDefinition enemyDefinition = enemyDefinitions[j];
 			bool flag = enemyDefinition is BossUnitTemplateDefinition;
 			bool flag2 = enemyDefinition.Tier == 1 || SpawnWaveManager.DisplayAllEnemyTiers || flag;
 			bool display = flag2 && SpawnWaveManager.DisplayQuantities && !flag;
 			seerEnemyPortraitPreview.SetEnemyInfo(enemyDefinition, !flag2, flag);
-			int enemyQuantity = ((!currentSpawnWave.SpawnWaveDefinition.IsBossWave) ? (currentSpawnWave.RemainingEnemiesToSpawn.Count((EnemyUnitTemplateDefinition o) => o.Id == enemyDefinition.Id) + currentSpawnWave.RemainingEliteEnemiesToSpawn.Count((EliteEnemyUnitTemplateDefinition o) => o.Id == enemyDefinition.Id)) : (-1));
-			seerEnemyPortraitPreview.SetEnemyQuantity(enemyQuantity, display);
+			int num3 = ((!currentSpawnWave.SpawnWaveDefinition.IsBossWave || !currentSpawnWave.SpawnWaveDefinition.IsInfinite) ? (currentSpawnWave.RemainingEnemiesToSpawn.Count((EnemyUnitTemplateDefinition o) => o.Id == enemyDefinition.Id) + currentSpawnWave.RemainingEliteEnemiesToSpawn.Count((EliteEnemyUnitTemplateDefinition o) => o.Id == enemyDefinition.Id)) : (-1));
+			if (seerAdditionalPortraits.ContainsKey(enemyDefinition.Id))
+			{
+				if (num3 != -1)
+				{
+					num3 += seerAdditionalPortraits[enemyDefinition.Id].PortraitAmount;
+				}
+				forceHideQuantity = !seerAdditionalPortraits[enemyDefinition.Id].DisplayPortraitAmount && num3 == 0;
+			}
+			seerEnemyPortraitPreview.SetEnemyQuantity(num3, display, forceHideQuantity);
 			seerEnemyPortraitPreview.Display(show: true);
 		}
-		for (; i < portraits.Count; i++)
+		for (; j < portraits.Count; j++)
 		{
-			portraits[i].Display(show: false);
+			portraits[j].Display(show: false);
 		}
 		RefreshPanel();
 	}
@@ -234,7 +259,7 @@ public class SeerPreviewDisplay : TPSingleton<SeerPreviewDisplay>
 		for (int num = portraits.Count - 1; num >= 0; num--)
 		{
 			SeerEnemyPortraitPreview seerEnemyPortraitPreview = portraits[num];
-			seerEnemyPortraitPreview.QuantityDisplayed = seerEnemyPortraitPreview.Displayed && !seerEnemyPortraitPreview.IsBossEnemy && !seerEnemyPortraitPreview.HiddenEnemy;
+			seerEnemyPortraitPreview.QuantityDisplayed = seerEnemyPortraitPreview.Displayed && !seerEnemyPortraitPreview.IsBossEnemy && !seerEnemyPortraitPreview.HiddenEnemy && !seerEnemyPortraitPreview.ForceHideQuantity;
 		}
 	}
 
@@ -289,14 +314,14 @@ public class SeerPreviewDisplay : TPSingleton<SeerPreviewDisplay>
 		TPSingleton<HUDJoystickNavigationManager>.Instance.JoystickHighlight.ToggleAlwaysFollow(state: true);
 		TweenSettingsExtensions.Join(previewFoldSequence, (Tween)(object)TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosX(portraitsContainerRectTransform, num, foldDuration, false), foldEasing));
 		Sequence obj2 = TweenSettingsExtensions.Join(previewFoldSequence, (Tween)(object)TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosX(titleRectTransform, foldedTitlePosition, foldTitleDuration, false), foldTitleEasing)).SetFullId<Sequence>("SeerPreviewFoldTween", (Component)(object)this);
-		object obj3 = _003C_003Ec._003C_003E9__41_1;
+		object obj3 = _003C_003Ec._003C_003E9__42_1;
 		if (obj3 == null)
 		{
 			TweenCallback val = delegate
 			{
 				TPSingleton<HUDJoystickNavigationManager>.Instance.JoystickHighlight.ToggleAlwaysFollow(state: false);
 			};
-			_003C_003Ec._003C_003E9__41_1 = val;
+			_003C_003Ec._003C_003E9__42_1 = val;
 			obj3 = (object)val;
 		}
 		TweenSettingsExtensions.OnComplete<Sequence>(obj2, (TweenCallback)obj3);
@@ -325,14 +350,14 @@ public class SeerPreviewDisplay : TPSingleton<SeerPreviewDisplay>
 		TPSingleton<HUDJoystickNavigationManager>.Instance.JoystickHighlight.ToggleAlwaysFollow(state: true);
 		TweenSettingsExtensions.Join(previewFoldSequence, (Tween)(object)TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosX(portraitsContainerRectTransform, unfoldedPosition, unfoldDuration, false), unfoldEasing));
 		Sequence obj2 = TweenSettingsExtensions.Join(previewFoldSequence, (Tween)(object)TweenSettingsExtensions.SetEase<TweenerCore<Vector2, Vector2, VectorOptions>>(DOTweenModuleUI.DOAnchorPosX(titleRectTransform, 0f, unfoldTitleDuration, false), unfoldTitleEasing)).SetFullId<Sequence>("SeerPreviewFoldTween", (Component)(object)this);
-		object obj3 = _003C_003Ec._003C_003E9__42_0;
+		object obj3 = _003C_003Ec._003C_003E9__43_0;
 		if (obj3 == null)
 		{
 			TweenCallback val = delegate
 			{
 				TPSingleton<HUDJoystickNavigationManager>.Instance.JoystickHighlight.ToggleAlwaysFollow(state: false);
 			};
-			_003C_003Ec._003C_003E9__42_0 = val;
+			_003C_003Ec._003C_003E9__43_0 = val;
 			obj3 = (object)val;
 		}
 		TweenSettingsExtensions.OnComplete<Sequence>(obj2, (TweenCallback)obj3);

@@ -13,7 +13,8 @@ public class ItemTooltipDisplayer : IconTooltipDisplayer
 
 	public override void DisplayTooltip()
 	{
-		ItemTooltip.SetContent(new ItemController(ItemDefinition, 0, ItemDefinition.E_Rarity.Common).Item, null, newUseDefaultValues: true);
+		int lowerExistingLevelFromInitValue = ItemDefinition.GetLowerExistingLevelFromInitValue(0);
+		ItemTooltip.SetContent(new ItemController(ItemDefinition, lowerExistingLevelFromInitValue, ItemDefinition.E_Rarity.Common).Item, null, newUseDefaultValues: true);
 		base.DisplayTooltip();
 	}
 

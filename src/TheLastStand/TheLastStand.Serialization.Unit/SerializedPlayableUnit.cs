@@ -39,6 +39,10 @@ public class SerializedPlayableUnit : ISerializedData
 
 	public List<SerializedPerk> NativePerks = new List<SerializedPerk>();
 
+	public List<SerializedPerk> RacePerks = new List<SerializedPerk>();
+
+	public List<SerializedPerk> DynamicPerks = new List<SerializedPerk>();
+
 	public SerializedLifetimeStats LifetimeStats;
 
 	public List<SerializedSkill> ContextualSkills = new List<SerializedSkill>();
@@ -58,6 +62,8 @@ public class SerializedPlayableUnit : ISerializedData
 	public int TilesCrossedThisTurn;
 
 	public SerializedUnit Unit;
+
+	public string RaceId;
 
 	public SerializedPlayableUnit()
 	{

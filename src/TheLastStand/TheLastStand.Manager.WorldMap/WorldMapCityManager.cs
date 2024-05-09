@@ -11,6 +11,7 @@ using TheLastStand.Framework.Database;
 using TheLastStand.Framework.Serialization;
 using TheLastStand.Manager.Meta;
 using TheLastStand.Model;
+using TheLastStand.Model.Tutorial;
 using TheLastStand.Model.WorldMap;
 using TheLastStand.Serialization;
 using TheLastStand.View.Camera;
@@ -18,6 +19,7 @@ using TheLastStand.View.Generic;
 using TheLastStand.View.MetaShops;
 using TheLastStand.View.WorldMap;
 using TheLastStand.View.WorldMap.Glyphs;
+using TheLastStand.View.WorldMap.ItemRestriction;
 using UnityEngine;
 
 namespace TheLastStand.Manager.WorldMap;
@@ -30,6 +32,18 @@ public class WorldMapCityManager : Manager<WorldMapCityManager>, ISerializable, 
 	private WorldMapCity selectedCity;
 
 	private bool hasBeenInitialized;
+
+	public static bool CanSelectAnyCity
+	{
+		get
+		{
+			if (!TPSingleton<WeaponRestrictionsPanel>.Instance.Displayed)
+			{
+				return !TPSingleton<WeaponRestrictionsPanel>.Instance.OpeningOrClosing;
+			}
+			return false;
+		}
+	}
 
 	public LastRunInfo LastRunInfo { get; private set; }
 
@@ -52,6 +66,14 @@ public class WorldMapCityManager : Manager<WorldMapCityManager>, ISerializable, 
 	}
 
 	public List<WorldMapCity> Cities { get; private set; }
+
+	public void RefreshCitiesUnlock()
+	{
+		foreach (WorldMapCity city in Cities)
+		{
+			city.CheckRefreshIsUnlocked();
+		}
+	}
 
 	private static WorldMapCity CreateCity(CityDefinition cityDefinition, int saveVersion, SerializedCity cityElement = null)
 	{
@@ -106,12 +128,10 @@ public class WorldMapCityManager : Manager<WorldMapCityManager>, ISerializable, 
 
 	private void CreateCityViews()
 	{
-		Cities.ForEach(delegate(WorldMapCity x)
-		{
-			x.RefreshIsUnlocked();
-		});
 		foreach (WorldMapCity city in Cities)
 		{
+			city.RefreshIsVisible();
+			city.RefreshIsUnlocked();
 			city.WorldMapCityView = CreateCityView(city.CityDefinition, TPSingleton<WorldMapRefsManager>.Instance.CitiesParent);
 			city.WorldMapCityView.WorldMapCity = city;
 			city.WorldMapCityView.Init();
@@ -209,31 +229,63 @@ public class WorldMapCityManager : Manager<WorldMapCityManager>, ISerializable, 
 
 	public void SelectNextCity()
 	{
+		if (!CanSelectAnyCity)
+		{
+			return;
+		}
 		if (selectedCity == null)
 		{
-			SelectedCity = Cities.FirstOrDefault((WorldMapCity x) => x.IsUnlocked && x.IsSelectable);
+			SelectedCity = Cities.FirstOrDefault((WorldMapCity x) => x.IsVisible && x.IsSelectable && x.CityDefinition.IsStoryMap);
 		}
 		else
 		{
-			SelectedCity = GetNextCity(Cities.Where((WorldMapCity x) => x.IsUnlocked && x.IsSelectable), selectedCity);
+			SelectedCity = GetNextCity(Cities.Where((WorldMapCity x) => x.IsVisible && x.IsSelectable && x.CityDefinition.IsStoryMap), selectedCity);
 		}
 	}
 
 	public void SelectPreviousCity()
 	{
+		if (!CanSelectAnyCity)
+		{
+			return;
+		}
 		if (selectedCity == null)
 		{
-			SelectedCity = Cities.FirstOrDefault((WorldMapCity x) => x.IsUnlocked && x.IsSelectable);
+			SelectedCity = Cities.FirstOrDefault((WorldMapCity x) => x.IsVisible && x.IsSelectable && x.CityDefinition.IsStoryMap);
 		}
 		else
 		{
-			SelectedCity = GetPreviousCity(Cities.Where((WorldMapCity x) => x.IsUnlocked && x.IsSelectable), selectedCity);
+			SelectedCity = GetPreviousCity(Cities.Where((WorldMapCity x) => x.IsVisible && x.IsSelectable && x.CityDefinition.IsStoryMap), selectedCity);
+		}
+	}
+
+	public void SelectDLCMapCity()
+	{
+		if (selectedCity != null)
+		{
+			WorldMapCity selectedCityMapType = GetSelectedCityMapType(getStoryMap: false);
+			if (selectedCityMapType != null)
+			{
+				SelectedCity = selectedCityMapType;
+			}
+		}
+	}
+
+	public void SelectStoryMapCity()
+	{
+		if (selectedCity != null)
+		{
+			WorldMapCity selectedCityMapType = GetSelectedCityMapType(getStoryMap: true);
+			if (selectedCityMapType != null)
+			{
+				SelectedCity = selectedCityMapType;
+			}
 		}
 	}
 
 	public void SelectCity(WorldMapCity city)
 	{
-		if (city.IsSelectable && SelectedCity == null && !ACameraView.IsZooming)
+		if (CanSelectAnyCity && city.IsSelectable && SelectedCity == null && !ACameraView.IsZooming)
 		{
 			SelectedCity = city;
 		}
@@ -251,7 +303,45 @@ public class WorldMapCityManager : Manager<WorldMapCityManager>, ISerializable, 
 			{
 				TPSingleton<WorldMapRefsManager>.Instance.AmbientSounds[i].FadeIn();
 			}
+			TPSingleton<TutorialManager>.Instance.OnTrigger(E_TutorialTrigger.OnWorldMapOpen);
 		}
+	}
+
+	private WorldMapCity GetSelectedCityMapType(bool getStoryMap)
+	{
+		if (selectedCity == null)
+		{
+			return null;
+		}
+		string cityId = string.Empty;
+		if (getStoryMap)
+		{
+			if (!selectedCity.CityDefinition.IsStoryMap && !string.IsNullOrEmpty(selectedCity.CityDefinition.LinkedCityId))
+			{
+				cityId = selectedCity.CityDefinition.LinkedCityId;
+			}
+			else if (selectedCity.CityDefinition.IsStoryMap)
+			{
+				return selectedCity;
+			}
+		}
+		else if (selectedCity.CityDefinition.IsStoryMap && !string.IsNullOrEmpty(selectedCity.CityDefinition.LinkedCityId))
+		{
+			cityId = selectedCity.CityDefinition.LinkedCityId;
+		}
+		else if (!selectedCity.CityDefinition.IsStoryMap)
+		{
+			return selectedCity;
+		}
+		if (!string.IsNullOrEmpty(cityId))
+		{
+			WorldMapCity worldMapCity = Cities.Find((WorldMapCity city) => city.CityDefinition.Id == cityId);
+			if (worldMapCity != null)
+			{
+				return worldMapCity;
+			}
+		}
+		return null;
 	}
 
 	private void Update()
@@ -260,23 +350,31 @@ public class WorldMapCityManager : Manager<WorldMapCityManager>, ISerializable, 
 		{
 			return;
 		}
-		if (InputManager.GetButtonDown(97) && WorldMapUIManager.CanAccessMetaShops && !TPSingleton<OraculumView>.Instance.Displayed && !TPSingleton<OraculumView>.Instance.OpeningOrClosing && !TPSingleton<GlyphSelectionPanel>.Instance.Displayed && !TPSingleton<GlyphSelectionPanel>.Instance.OpeningOrClosing)
+		if (InputManager.GetButtonDown(97) && WorldMapUIManager.CanAccessMetaShops && !TPSingleton<OraculumView>.Instance.Displayed && !TPSingleton<OraculumView>.Instance.OpeningOrClosing && !TPSingleton<GlyphSelectionPanel>.Instance.Displayed && !TPSingleton<GlyphSelectionPanel>.Instance.OpeningOrClosing && !TPSingleton<WeaponRestrictionsPanel>.Instance.Displayed && !TPSingleton<WeaponRestrictionsPanel>.Instance.OpeningOrClosing)
 		{
 			TPSingleton<MetaShopsManager>.Instance.OpenShops();
 		}
-		if (TPSingleton<OraculumView>.Instance.Displayed || TPSingleton<OraculumView>.Instance.OpeningOrClosing || TPSingleton<GlyphSelectionPanel>.Instance.Displayed || TPSingleton<GlyphSelectionPanel>.Instance.OpeningOrClosing)
+		if (InputManager.GetButtonDown(139) && !TPSingleton<OraculumView>.Instance.Displayed && !TPSingleton<OraculumView>.Instance.OpeningOrClosing && !TPSingleton<GlyphSelectionPanel>.Instance.Displayed && !TPSingleton<GlyphSelectionPanel>.Instance.OpeningOrClosing && !TPSingleton<WeaponRestrictionsPanel>.Instance.Displayed && !TPSingleton<WeaponRestrictionsPanel>.Instance.OpeningOrClosing)
+		{
+			TPSingleton<WeaponRestrictionsPanel>.Instance.Open();
+		}
+		if (TPSingleton<OraculumView>.Instance.Displayed || TPSingleton<OraculumView>.Instance.OpeningOrClosing || TPSingleton<GlyphSelectionPanel>.Instance.Displayed || TPSingleton<GlyphSelectionPanel>.Instance.OpeningOrClosing || TPSingleton<WeaponRestrictionsPanel>.Instance.Displayed || TPSingleton<WeaponRestrictionsPanel>.Instance.OpeningOrClosing)
 		{
 			return;
 		}
 		if (InputManager.GetButtonDown(100))
 		{
-			if (SelectedCity != null && SelectedCity.WorldMapCityView.ValidApocalypseStateToStart && !GenericConsent.IsOpen)
+			if (SelectedCity != null && SelectedCity.WorldMapCityView.CanStartGame && !GenericConsent.IsOpen)
 			{
 				for (int i = 0; i < TPSingleton<WorldMapRefsManager>.Instance.AmbientSounds.Length; i++)
 				{
 					TPSingleton<WorldMapRefsManager>.Instance.AmbientSounds[i].FadeOut(TPSingleton<CanvasFadeManager>.Instance.FadeDuration);
 				}
 				GameConfigurationsView.StartNewGameIfEnoughGlyph();
+			}
+			if (SelectedCity != null && !SelectedCity.WorldMapCityView.CanStartGame && !GenericConsent.IsOpen && SelectedCity.CityDefinition.HasLinkedDLC && !SelectedCity.IsLinkedDLCOwned)
+			{
+				GameConfigurationsView.OpenSelectedCityLinkedDLCStorePage();
 			}
 		}
 		else if (InputManager.GetButtonDown(107))
@@ -286,6 +384,14 @@ public class WorldMapCityManager : Manager<WorldMapCityManager>, ISerializable, 
 		else if (InputManager.GetButtonDown(108))
 		{
 			SelectPreviousCity();
+		}
+		else if (InputManager.GetButtonDown(141))
+		{
+			SelectStoryMapCity();
+		}
+		else if (InputManager.GetButtonDown(142))
+		{
+			SelectDLCMapCity();
 		}
 		else
 		{
